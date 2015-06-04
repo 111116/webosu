@@ -14,7 +14,7 @@ define([], function() {
         function loadNext() {
             var xhr = new XMLHttpRequest();
             var resource = to_load[0];
-            xhr.open("GET", "/skin/" + resource);
+            xhr.open("GET", "skin/" + resource);
             xhr.responseType = 'blob';
             to_load.splice(0, 1);
             xhr.onload = function() {
