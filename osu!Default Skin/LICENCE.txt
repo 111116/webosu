@@ -1,0 +1,7 @@
+All osu! graphic and other game assets are copyright ppy Pty Ltd.
+
+You are granted permission to use the elements contained within this archive as a template for creating your own skins. You can modify these in any way you see fit. Please do not include the resources if you haven't modified them; the defaults will automatically be used in this case.
+
+You are NOT permitted to use these graphics outside of skins and/or beatmaps. This includes using them on other websites, games, products etc.
+
+If you would like to use the resources outside of the scope provided above, please contact me at pe@ppy.sh

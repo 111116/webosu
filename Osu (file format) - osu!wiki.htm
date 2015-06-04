@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html dir="ltr" class="client-js" lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><script src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/ga.js" async="" type="text/javascript"></script>
+<title>Osu (file format) - osu!wiki</title>
+<meta charset="UTF-8">
+<meta name="generator" content="MediaWiki 1.18.0">
+<script src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/cloudflare.js" async=""></script><script type="text/javascript">
+//<![CDATA[
+try{if (!window.CloudFlare) {var CloudFlare=[{verbose:0,p:0,byc:0,owlid:"cf",bag2:1,mirage2:0,oracle:0,paths:{cloudflare:"/cdn-cgi/nexp/dok3v=1613a3a185/"},atok:"f24731aa09683f9e6ff9f0dd09063052",petok:"4830f6ecf6dc445979ef6610093a44855bb49e36-1433437107-1800",zone:"ppy.sh",rocket:"0",apps:{"abetterbrowser":{"ie":"7"}}}];!function(a,b){a=document.createElement("script"),b=document.getElementsByTagName("script")[0],a.async=!0,a.src="//ajax.cloudflare.com/cdn-cgi/nexp/dok3v=7e13c32551/cloudflare.min.js",b.parentNode.insertBefore(a,b)}()}}catch(e){};
+//]]>
+</script>
+<link rel="alternate" type="application/x-wiki" title="Edit this article" href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit">
+<link rel="edit" title="Edit this article" href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit">
+<link rel="shortcut icon" href="https://osu.ppy.sh/favicon.ico">
+<link rel="search" type="application/opensearchdescription+xml" href="https://osu.ppy.sh/wiki/opensearch_desc.php" title="osu!wiki (en)">
+<link rel="EditURI" type="application/rsd+xml" href="http://osu.ppy.sh/wiki/api.php?action=rsd">
+<link rel="copyright" href="http://creativecommons.org/licenses/by/3.0/">
+<link rel="alternate" type="application/atom+xml" title="osu!wiki Atom feed" href="https://osu.ppy.sh/wiki/index.php?title=Special:RecentChanges&amp;feed=atom">
+<link rel="stylesheet" href="Osu%20%28file%20format%29%20-%20osu%21wiki_files/load_002.css">
+<style type="text/css" media="all">.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+
+/* cache key: osu_wiki:resourceloader:filter:minify-css:4:4250852ed2349a0d4d0fc6509a3e7d4c */</style><style type="text/css" media="all">.js-messagebox{margin:1em 5%;padding:0.5em 2.5%;border:1px solid #ccc;background-color:#fcfcfc;font-size:0.8em}.js-messagebox .js-messagebox-group{margin:1px;padding:0.5em 2.5%;border-bottom:1px solid #ddd}.js-messagebox .js-messagebox-group:last-child{border-bottom:thin none transparent}
+
+/* cache key: osu_wiki:resourceloader:filter:minify-css:4:8b08bdc91c52a9ffba396dccfb5b473c */</style><meta name="ResourceLoaderDynamicStyles" content="">
+<link rel="stylesheet" href="Osu%20%28file%20format%29%20-%20osu%21wiki_files/load.css">
+<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}</style>
+<script src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/load_004.php"></script><script src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/load_005.php"></script><style>#content > #right > .dose > .dosesingle,
+#content > #center > .dose > .dosesingle
+{display:none !important;}</style><style type="text/css">.cf-hidden { display: none; } .cf-invisible { visibility: hidden; }</style>
+<script>if(window.mw){
+	mw.config.set({"wgCanonicalNamespace": "", "wgCanonicalSpecialPageName": false, "wgNamespaceNumber": 0, "wgPageName": "Osu_(file_format)", "wgTitle": "Osu (file format)", "wgCurRevisionId": 22156, "wgArticleId": 2295, "wgIsArticle": true, "wgAction": "view", "wgUserName": "SirCmpwn", "wgUserGroups": ["*", "user", "autoconfirmed"], "wgCategories": ["File Formats"], "wgBreakFrames": false, "wgRestrictionEdit": [], "wgRestrictionMove": [], "wgWikiEditorEnabledModules": {"toolbar": false, "dialogs": false, "hidesig": true, "templateEditor": false, "templates": false, "preview": false, "previewDialog": false, "publish": false, "toc": false}});
+}
+</script><script>if(window.mw){
+	mw.loader.load(["mediawiki.page.startup"]);
+}
+</script><script type="text/javascript" src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/load_002.php"></script>
+<!--[if lt IE 7]><style type="text/css">body{behavior:url("/wiki/skins/vector/csshover.min.htc")}</style><![endif]--></head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-Osu_file_format action-view skin-vector">
+
+
+
+<link rel="shortcut icon" href="https://s.ppy.sh/favicon.ico" type="image/vnd.microsoft.icon">
+<link rel="icon" href="https://s.ppy.sh/favicon.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="description" content="osu! - Rhythm is just a *click* away! Actually free, online, with four gameplay modes as well as a built-in editor.">
+<meta name="keywords" content="osu, peppy, ouendan, elite, beat, agents, ds, windows, game, taiko, tatsujin, simulator, sim, xna, ddr, beatmania, osu!, osume">
+<meta name="google-translate-customization" content="f4528935662aea93-cf76d112fd18ea08-g9ae3de066ae573ce-a">
+<meta name="viewport" content="width=864, user-scalable=yes">
+<script>
+	var STATIC_DOMAIN = "//s.ppy.sh";
+    var STATIC_DOMAIN_BEATMAP = "//b.ppy.sh";
+        var downloadCount = 0
+</script>
+<script type="text/javascript" src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/jquery.js"></script>
+<script type="text/javascript" src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/main.js"></script>
+<link rel="stylesheet" type="text/css" href="Osu%20%28file%20format%29%20-%20osu%21wiki_files/style.css" media="all">
+<title>osu!</title>
+<script type="text/javascript">
+
+$.getScript('//cse.google.com/coop/cse/brand?form=cse-search-box&lang=en');
+
+
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-4774947-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+
+
+</script>
+
+<a name="top"></a>
+<div class="bodytopbg">
+<div class="mainbody"><div class="mainbody2">
+<div id="coolheader" style="background-image: url('//s.ppy.sh/images/right-pippi.jpg');"></div>
+<a id="top_facebook" class="top_button" href="http://facebook.com/osugame"> </a>
+<a id="top_follow" class="top_button" href="https://osu.ppy.sh/p/twitter"> </a>
+<a id="top_support" class="top_button" href="https://osu.ppy.sh/p/support"> </a>
+<div class="main-osu-logo"><img src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/head-logo.png"></div>
+<a class="main-osu-logo-clickable" alt="home" href="https://osu.ppy.sh/"></a>
+<div class="header clickable-cell">
+<a class="hidden" href="https://osu.ppy.sh/">home</a>
+<div id="playstats">
+<b>6,391,255</b> users, <b>12,260</b> online now.<br>
+A total of <b><span id="playcount">3.01 billion</span></b> ranked plays!
+</div>
+<div class="menu">
+<ul class="sf-menu sf-js-enabled sf-shadow">
+<li>
+<a class="sf-with-ul" href="https://osu.ppy.sh/wiki/Welcome">Info<span class="sf-sub-indicator"> »</span></a>
+<ul style="display: none; visibility: hidden;">
+<li><a href="https://osu.ppy.sh/p/changelog">Changelog</a></li>
+<li><a href="https://osu.ppy.sh/wiki/History_of_osu%21">History</a></li>
+<li><a href="https://osu.ppy.sh/wiki/The_Team">The Team</a></li>
+<li><a href="https://osu.ppy.sh/wiki/Osu%21:Rules">Rules</a></li>
+</ul>
+</li>
+<li><a href="https://osu.ppy.sh/p/download">Download</a></li>
+<li><a class="sf-with-ul" href="https://osu.ppy.sh/wiki/">Wiki / Help<span class="sf-sub-indicator"> »</span></a>
+<ul style="display: none; visibility: hidden;">
+<li><a href="https://osu.ppy.sh/wiki/FAQ">FAQ</a></li>
+<li><a href="https://osu.ppy.sh/forum/t/151363">Report a Bug</a></li>
+<li><a href="https://osu.ppy.sh/wiki/Help_Center">Help Centre</a></li>
+</ul>
+</li>
+<li><a class="sf-with-ul" href="https://osu.ppy.sh/p/beatmaplist">Beatmaps<span class="sf-sub-indicator"> »</span></a>
+<ul style="display: none; visibility: hidden;">
+<li><a href="https://osu.ppy.sh/p/beatmaplist&amp;s=4&amp;r=0">Ranked</a></li>
+<li><a href="https://osu.ppy.sh/p/beatmaplist&amp;s=4&amp;r=11">Qualified</a></li>
+<li><a href="https://osu.ppy.sh/p/beatmaplist&amp;s=7&amp;r=2">Pending</a></li>
+<li><a href="https://osu.ppy.sh/p/packlist">Beatmap Packs</a></li>
+</ul>
+</li>
+<li><a class="sf-with-ul" href="https://osu.ppy.sh/p/pp">Rankings<span class="sf-sub-indicator"> »</span></a>
+<ul style="display: none; visibility: hidden;">
+<li><a href="https://osu.ppy.sh/p/pp">Performance</a></li>
+<li><a href="https://osu.ppy.sh/p/chart">Charts</a></li>
+<li><a href="https://osu.ppy.sh/p/playerranking">Score</a></li>
+<li><a href="https://osu.ppy.sh/p/countryranking">Countries</a></li>
+<li><a href="https://osu.ppy.sh/p/kudosu">Kudosu</a></li>
+</ul>
+</li>
+<li><a class="sf-with-ul" href="https://osu.ppy.sh/forum/">Community<span class="sf-sub-indicator"> »</span></a>
+<ul style="display: none; visibility: hidden;">
+<li><a href="https://osu.ppy.sh/forum/">Forums</a></li>
+<li><a href="https://osu.ppy.sh/p/support">Supporting osu!</a></li>
+<li><a href="https://osu.ppy.sh/p/live">Live Streams</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="content">
+<div class="content-infoline">
+<form class="inline-form" action="/p/search" id="cse-search-box">
+<div>
+<input name="cx" value="007714945049801807819:fwdivvi5sik" type="hidden">
+<input name="cof" value="FORID:10" type="hidden">
+<input name="ie" value="UTF-8" type="hidden">
+<input style="background: rgb(255, 255, 255) url(&quot;https://cse.google.com/cse/intl/en/images/google_custom_search_watermark.gif&quot;) no-repeat scroll left center;" name="q" size="18" type="text">
+</div>
+<input value="osu.ppy.sh/wiki/Osu_(file_format)" name="siteurl" type="hidden"><input name="ref" type="hidden"><input name="ss" type="hidden"></form>
+<form class="inline-form" onsubmit="return userSearch()">
+<input autocomplete="off" name="user-search" id="user-search" size="10" placeholder="User" type="text">
+</form>
+<form class="inline-form" onsubmit="return beatmapSearch()">
+<input name="beatmap-search" id="beatmap-search" size="10" placeholder="Beatmap" type="text">
+</form>
+</div>
+<div class="content-with-bg">
+ 
+<div id="mw-head" class="noprint">
+ 
+<div id="p-personal" class="">
+<h5>Personal tools</h5>
+<ul>
+<li id="pt-userpage"><a href="https://osu.ppy.sh/wiki/User:SirCmpwn" class="new" title="Your user page [.]" accesskey=".">SirCmpwn</a></li>
+<li id="pt-mytalk"><a href="https://osu.ppy.sh/wiki/User_talk:SirCmpwn" class="new" title="Your talk page [n]" accesskey="n">My talk</a></li>
+<li id="pt-preferences"><a href="https://osu.ppy.sh/wiki/Special:Preferences" title="Your preferences">My preferences</a></li>
+<li id="pt-watchlist"><a href="https://osu.ppy.sh/wiki/Special:Watchlist" title="A list of pages you are monitoring for changes [l]" accesskey="l">My watchlist</a></li>
+<li id="pt-mycontris"><a href="https://osu.ppy.sh/wiki/Special:Contributions/SirCmpwn" title="A list of your contributions [y]" accesskey="y">My contributions</a></li>
+<li id="pt-logout"><a href="https://osu.ppy.sh/wiki/index.php?title=Special:UserLogout&amp;returnto=Osu+%28file+format%29" title="Log out">Log out</a></li>
+</ul>
+</div>
+ 
+<div id="left-navigation">
+ 
+<div id="p-namespaces" class="vectorTabs">
+<h5>Namespaces</h5>
+<ul>
+<li id="ca-nstab-main" class="selected"><span><a href="https://osu.ppy.sh/wiki/Osu_%28file_format%29" title="View the content page [c]" accesskey="c">Page</a></span></li>
+<li id="ca-talk" class="new"><span><a href="https://osu.ppy.sh/wiki/index.php?title=Talk:Osu_%28file_format%29&amp;action=edit&amp;redlink=1" title="Discussion about the content page [t]" accesskey="t">Talk</a></span></li>
+</ul>
+</div>
+ 
+ 
+<div id="p-variants" class="vectorMenu emptyPortlet">
+<h5><span>Variants</span><a href="#"></a></h5>
+<div class="wikimenu">
+<ul>
+</ul>
+</div>
+</div>
+ 
+</div>
+<div id="right-navigation">
+ 
+<div id="p-views" class="vectorTabs">
+<h5>Views</h5>
+<ul>
+<li id="ca-view" class="selected"><span><a href="https://osu.ppy.sh/wiki/Osu_%28file_format%29">Read</a></span></li>
+<li id="ca-edit"><span><a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit" title="You can edit this page. Please use the preview button before saving [e]" accesskey="e">Edit</a></span></li>
+<li id="ca-history" class="collapsible"><span><a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>
+</ul>
+</div>
+ 
+ 
+<div id="p-cactions" class="vectorMenu">
+<h5><span>Actions</span><a href="#"></a></h5>
+<div class="wikimenu">
+<ul>
+<li id="ca-move"><a href="https://osu.ppy.sh/wiki/Special:MovePage/Osu_%28file_format%29" title="Move this page [m]" accesskey="m">Move</a></li>
+<li id="ca-watch"><a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=watch&amp;token=6b127c664382e019df1fcf61193776cf%2B%5C" title="Add this page to your watchlist [w]" accesskey="w">Watch</a></li>
+</ul>
+</div>
+</div>
+ 
+ 
+<div id="p-search">
+<h5><label for="searchInput">Search</label></h5>
+<form action="/wiki/index.php" id="searchform">
+<input name="title" value="Special:Search" type="hidden">
+<input name="search" title="Search osu!wiki [f]" accesskey="f" id="searchInput" type="search"> <input name="go" value="Go" title="Go to a page with this exact name if exists" id="searchGoButton" class="searchButton" type="submit"> <input name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton" type="submit"> </form>
+</div>
+ 
+</div>
+</div>
+ 
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+ 
+<div id="content">
+<a id="top"></a>
+<div class="js-messagebox" id="mw-js-message" style="display:none;"></div>
+ 
+<h1 id="firstHeading" class="firstHeading">Osu (file format)</h1>
+ 
+ 
+<div id="bodyContent">
+ 
+<div id="siteSub">From osu!wiki</div>
+ 
+ 
+<div id="contentSub"></div>
+ 
+ 
+<div id="jump-to-nav">
+Jump to: <a href="#mw-head">navigation</a>,
+<a href="#p-search">search</a>
+</div>
+ 
+ 
+<div dir="ltr" class="mw-content-ltr" lang="en"><p><br>
+</p>
+<table style="background: #fff; border:2px solid #6261ae; font-size:85%; margin: 0.5em 0; -moz-border-radius: 0 0.8em 0.8em 0; -webkit-border-radius: 0 0.8em 0.8em 0; border-radius: 0 0.8em 0.8em 0;" cellspacing="0">
+<tbody><tr>
+<td style="background: #6261ae; color:white; white-space: nowrap; padding: 4px 1em; border-right: 2px solid #6261ae;"> <span class="icon-globe" style="font-size:12px;margin-right:5px;"></span><b>Other Languages</b>
+</td>
+<td style="border: medium none;padding: 0.25em 0.9em;width: 100%;">
+<p><br>
+</p>
+</td></tr></tbody></table>
+<table class="noprint" style="float:right;clear:right;margin-left:0.75em; border:1px solid #AFCFF2;font-size:smaller;background:#F0F8FF; border-radius: 5px;" cellspacing="0">
+<tbody><tr><td style="padding:4px;"><a href="https://osu.ppy.sh/wiki/Category:Short_Links" title="Short link-redirect"><img alt="↱" src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/60px-Gtk-redo-ltr_svg.png" height="17" width="17"></a></td>
+<td style="padding:4px;vertical-align:middle;line-height:1.25em;font-weight:800;">.osu</td></tr>
+</tbody></table>
+<dl><dd><i><b><a href="https://osu.ppy.sh/wiki/Osu_Archive_Formats" title="Osu Archive Formats" class="mw-redirect">Click here to go back to osu! Archive Formats</a></b></i>
+</dd></dl>
+<p><b>.osu</b> is a human-readable file format containing information about a single beatmap.
+</p><p><br>
+</p>
+<table id="toc" class="toc"><tbody><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Format"><span class="tocnumber">1</span> <span class="toctext">Format</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Sections"><span class="tocnumber">2</span> <span class="toctext">Sections</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#General"><span class="tocnumber">2.1</span> <span class="toctext">General</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Editor"><span class="tocnumber">2.2</span> <span class="toctext">Editor</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Metadata"><span class="tocnumber">2.3</span> <span class="toctext">Metadata</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Difficulty"><span class="tocnumber">2.4</span> <span class="toctext">Difficulty</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#Events"><span class="tocnumber">2.5</span> <span class="toctext">Events</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Timing_Points"><span class="tocnumber">2.6</span> <span class="toctext">Timing Points</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#Colours"><span class="tocnumber">2.7</span> <span class="toctext">Colours</span></a></li>
+<li class="toclevel-2 tocsection-10"><a href="#Hit_Objects"><span class="tocnumber">2.8</span> <span class="toctext">Hit Objects</span></a></li>
+</ul>
+</li>
+</ul>
+</td></tr></tbody></table>
+<h1><span class="editsection">[<a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit&amp;section=1" title="Edit section: Format">edit</a>]</span> <span class="mw-headline" id="Format"> Format </span></h1>
+<p>The first line of the file specifies the version of beatmap file.
+Example:
+</p>
+<pre>osu file format v12
+</pre>
+<p>The following lines are separated into multiple sections, indicated by square brackets.
+</p>
+<ul><li> General - Various properties about the beatmap's gameplay.
+</li><li> Editor - Saved settings for mappers while editing beatmaps.
+</li><li> Metadata - Descriptive information about the song and beatmap.
+</li><li> Difficulty - Values defining the difficulty of the beatmap.
+</li><li> Events - A list of storyboard events.
+</li><li> Timing Points - A list of the beatmap's timing points and hitsounds.
+</li><li> Colours - RGB values of the combo colours used.
+</li><li> Hit Objects - A list of the beatmap's hit objects.
+</li></ul>
+<p><br>
+Example:
+</p>
+<pre>[General]
+</pre>
+<h1><span class="editsection">[<a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit&amp;section=2" title="Edit section: Sections">edit</a>]</span> <span class="mw-headline" id="Sections"> Sections </span></h1>
+<h2><span class="editsection">[<a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit&amp;section=3" title="Edit section: General">edit</a>]</span> <span class="mw-headline" id="General"> General </span></h2>
+<p>AudioFilename (String) specifies the location of the audio file relative to the current folder.
+</p>
+<pre>AudioFilename: 03 artcore JINJA.mp3
+</pre>
+<p>AudioLeadIn (Integer, milliseconds) is the amount of time added 
+before the audio file begins playing. Useful for audio files that begin 
+immediately.
+</p>
+<pre>AudioLeadIn: 2000
+</pre>
+<p>PreviewTime (Integer, milliseconds) defines when the audio file should begin playing when selected in the song selection menu.
+</p>
+<pre>PreviewTime: 10013
+</pre>
+<p>Countdown (Boolean) specifies whether or not a countdown occurs before the first hit object appears.
+</p>
+<pre>Countdown: 0
+</pre>
+<p>SampleSet (String) specifies which set of hit sounds will be used throughout the beatmap.
+</p>
+<pre>SampleSet: Soft
+</pre>
+<p>StackLeniency (Float) is how often closely placed hit objects will be stacked together.
+</p>
+<pre>StackLeniency: 0.7
+</pre>
+<p>Mode (Integer) defines the game mode of the beatmap. (0=osu!, 1=Taiko, 2=Catch the Beat, 3=osu!mania)
+</p>
+<pre>Mode: 0
+</pre>
+<p>LetterboxInBreaks (Boolean) specifies whether the letterbox appears during breaks.
+</p>
+<pre>LetterboxInBreaks: 0
+</pre>
+<p>WidescreenStoryboard (Boolean) specifies whether or not the storyboard should be widescreen.
+</p>
+<pre>WidescreenStoryboard: 0
+</pre>
+<h2><span class="editsection">[<a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit&amp;section=4" title="Edit section: Editor">edit</a>]</span> <span class="mw-headline" id="Editor"> Editor </span></h2>
+<p>Bookmarks (Integer List, milliseconds) is a list of comma-separated times of editor bookmarks.
+</p>
+<pre>Bookmarks: 94171
+</pre>
+<p>DistanceSpacing (Float) is a multiplier for the "Distance Snap" feature.
+</p>
+<pre>DistanceSpacing: 1.22
+</pre>
+<p>BeatDivisor (Integer) specifies the beat division for placing objects.
+</p>
+<pre>BeatDivisor: 4
+</pre>
+<p>GridSize (Integer) specifies the size of the grid for the "Grid Snap" feature.
+</p>
+<pre>GridSize: 4
+</pre>
+<p>TimelineZoom (Integer) specifies the zoom in the editor timeline.
+</p>
+<pre>TimelineZoom: 1
+</pre>
+<h2><span class="editsection">[<a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit&amp;section=5" title="Edit section: Metadata">edit</a>]</span> <span class="mw-headline" id="Metadata"> Metadata </span></h2>
+<p>Title (String) is the title of the song limited to ASCII characters.
+</p>
+<pre>Title:artcore JINJA
+</pre>
+<p>TitleUnicode (String) is the title of the song with unicode support. If not present, Title is used.
+</p>
+<pre>TitleUnicode:ã‚¢ãƒ¼ãƒˆã‚³ã‚¢ç¥žç¤¾
+</pre>
+<p>Artist (String) is the name of the song's artist limited to ASCII characters.
+</p>
+<pre>Artist:An
+</pre>
+<p>ArtistUnicode (String) is the name of the song's artist with unicode support. If not present, Artist is used.
+</p>
+<pre>ArtistUnicode:An
+</pre>
+<p>Creator (String) is the username of the mapper.
+</p>
+<pre>Creator:Flower
+</pre>
+<p>Version (String) is the name of the beatmap's difficulty.
+</p>
+<pre>Version:Hard
+</pre>
+<p>Source (String) describes the origin of the song.
+</p>
+<pre>Source:Touhou
+</pre>
+<p>Tags (String List) is a collection of words describing the song. Tags
+ are searchable in both the online listings and in the song selection 
+menu.
+</p>
+<pre>Tags:niiru renka chou ~ ancients Hakurei Reimu Amamiya Yuko
+</pre>
+<p>BeatmapID (Integer) is the ID of the single beatmap.
+</p>
+<pre>BeatmapID:297410
+</pre>
+<p>BeatmapSetID (Integer) is the ID of the beatmap set.
+</p>
+<pre>BeatmapSetID:114987
+</pre>
+<h2><span class="editsection">[<a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit&amp;section=6" title="Edit section: Difficulty">edit</a>]</span> <span class="mw-headline" id="Difficulty"> Difficulty </span></h2>
+<p>HPDrainRate (Float) specifies the HP Drain difficulty.
+</p>
+<pre>HPDrainRate:5
+</pre>
+<p>CircleSize (Float) specifies the size of hit object circles.
+</p>
+<pre>CircleSize:4
+</pre>
+<p>OverallDifficulty (Float) specifies the amount of time allowed to click a hit object on time.
+</p>
+<pre>OverallDifficulty:6
+</pre>
+<p>ApproachRate (Float) specifies the amount of time taken for the approach circle and hit object to appear.
+</p>
+<pre>ApproachRate:7
+</pre>
+<p>SliderMultiplier (Float) specifies a multiplier for the slider velocity. Default value is 1.
+</p>
+<pre>SliderMultiplier:1.3
+</pre>
+<p>SliderTickRate (Float) specifies how often slider ticks appear. Default value is 1.
+</p>
+<pre>SliderTickRate:1
+</pre>
+<h2><span class="editsection">[<a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit&amp;section=7" title="Edit section: Events">edit</a>]</span> <span class="mw-headline" id="Events"> Events </span></h2>
+<p>See <a href="https://osu.ppy.sh/wiki/Storyboard_Scripting" title="Storyboard Scripting">Storyboard Scripting</a>
+</p>
+<h2><span class="editsection">[<a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit&amp;section=8" title="Edit section: Timing Points">edit</a>]</span> <span class="mw-headline" id="Timing_Points"> Timing Points </span></h2>
+<p>Timing Points describe a number of properties regarding offsets, 
+beats per minute and hit sounds.
+Offset (Integer, milliseconds) defines when the Timing Point takes 
+effect.
+Milliseconds per Beat (Float) defines the beats per minute of the song. 
+For certain calculations, it is easier to use milliseconds per beat.
+Meter (Integer) defines the number of beats in a measure.
+Sample Type (Integer) defines the type of hit sound samples that are 
+used.
+Sample Set (Integer) defines the set of hit sounds that are used.
+Volume (Integer) is a value from 0 - 100 that defines the volume of hit 
+sounds.
+Kiai Mode (Boolean) defines whether or not Kiai Time effects are active.
+Inherited (Boolean) defines whether or not the Timing Point is an 
+inherited Timing Point.
+</p>
+<pre>Offset, Milliseconds per Beat, Meter, Sample Type, Sample Set, Volume, Inherited, Kiai Mode
+</pre>
+<p>An inherited Timing Point differs from a Timing point in that the 
+Milliseconds per Beat value is negative, and defines a new Milliseconds 
+per Beat based on the last non-inherited Timing Point. This can be used 
+to change volume without affecting offset timing, or changing slider 
+speeds.
+</p><p>Example of a Timing Point:
+</p>
+<pre>66,315.789473684211,4,2,0,45,1,0
+</pre>
+<p>Example of an inherited Timing Point:
+</p>
+<pre>10171,-100,4,2,0,60,0,1
+</pre>
+<h2><span class="editsection">[<a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit&amp;section=9" title="Edit section: Colours">edit</a>]</span> <span class="mw-headline" id="Colours"> Colours </span></h2>
+<p>Combo# (Integer List) is a list of three numbers, each from 0 - 255 defining an RGB color.
+</p>
+<pre>Combo1&nbsp;: 245,245,245
+</pre>
+<h2><span class="editsection">[<a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;action=edit&amp;section=10" title="Edit section: Hit Objects">edit</a>]</span> <span class="mw-headline" id="Hit_Objects"> Hit Objects </span></h2>
+<p>Hit Circle Syntax:
+</p>
+<pre>x,y,time,type,hitSound,addition
+164,260,2434,1,0,0:0:0:0:
+</pre>
+<p>Slider Syntax:
+</p>
+<pre>x,y,time,type,hitSound,sliderType|curveX:curveY|...,repeat,pixelLength,edgeHitsound,edgeAddition,addition
+424,96,66,2,0,B|380:120|332:96|332:96|304:124,1,130,2|0,0:0|0:0,0:0:0:0:
+</pre>
+<p>Spinner Syntax:
+</p>
+<pre>x,y,time,type,hitSound,endTime,addition
+256,192,730,12,8,3983
+</pre>
+<p>x ranges from 0 to 512 (inclusive) and y ranges from 0 to 384 (inclusive).
+</p><p>NOTE: 'addition' is optional, and defaults to "0:0:0:0:".
+</p>
+ 
+ 
+</div>  
+ 
+<div class="printfooter">
+Retrieved from "<a href="http://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;oldid=22156">http://osu.ppy.sh/wiki/index.php?title=Osu_(file_format)&amp;oldid=22156</a>" </div>
+ 
+ 
+<div id="catlinks" class="catlinks"><div id="mw-normal-catlinks"><a href="https://osu.ppy.sh/wiki/Special:Categories" title="Special:Categories">Category</a>: <ul><li><a href="https://osu.ppy.sh/wiki/Category:File_Formats" title="Category:File Formats">File Formats</a></li></ul></div></div>  
+<div class="visualClear"></div>
+ 
+ 
+</div>
+ 
+</div>
+ 
+ 
+<div id="mw-panel" class="noprint mw-panel">
+ 
+<div class="portal" id="p-Wiki_Navigation">
+<h5>Wiki Navigation</h5>
+<div class="body">
+<ul>
+<li id="n-Home"><a href="https://osu.ppy.sh/wiki/Main_Page">Home</a></li>
+<li id="n-"><a href="https://osu.ppy.sh/wiki/INVALID-TITLE"></a></li>
+<li id="n-currentevents"><a href="https://osu.ppy.sh/wiki/Osu%21:Current_events" title="Find background information on current events">Current events</a></li>
+<li id="n-recentchanges"><a href="https://osu.ppy.sh/wiki/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li>
+<li id="n-randompage"><a href="https://osu.ppy.sh/wiki/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li>
+<li id="n-"><a href="https://osu.ppy.sh/wiki/INVALID-TITLE"></a></li>
+<li id="n-help"><a href="https://osu.ppy.sh/wiki/Help:Contents" title="The place to find out">Help</a></li>
+</ul>
+</div>
+</div>
+ 
+ 
+ 
+ 
+<div class="portal" id="p-tb">
+<h5>Toolbox</h5>
+<div class="body">
+<ul>
+<li id="t-whatlinkshere"><a href="https://osu.ppy.sh/wiki/Special:WhatLinksHere/Osu_%28file_format%29" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li>
+<li id="t-recentchangeslinked"><a href="https://osu.ppy.sh/wiki/Special:RecentChangesLinked/Osu_%28file_format%29" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li>
+<li id="t-upload"><a href="https://osu.ppy.sh/wiki/Special:Upload" title="Upload files [u]" accesskey="u">Upload file</a></li>
+<li id="t-specialpages"><a href="https://osu.ppy.sh/wiki/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li>
+<li><a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;printable=yes" rel="alternate">Printable version</a></li>
+<li id="t-permalink"><a href="https://osu.ppy.sh/wiki/index.php?title=Osu_%28file_format%29&amp;oldid=22156" title="Permanent link to this revision of the page">Permanent link</a></li>
+</ul>
+</div>
+</div>
+ 
+ 
+ 
+</div>
+ 
+<div class="clear"></div>
+<div id="google_translate_element"></div>
+</div>
+</div>
+</div>
+<div class="footer">
+</div>
+</div>
+</div>
+
+<div class="final_footer">
+<div class="footer_columns">
+<div class="centrep" style="opacity: 0.2">ppy powered 2007-2015</div>
+<ul class="footer_column">
+<li class="f_header">General</li>
+<li><a href="https://osu.ppy.sh/">Home</a></li>
+<li><a href="https://osu.ppy.sh/p/changelog">Changelog</a></li>
+<li><a href="https://osu.ppy.sh/p/beatmaplist">Beatmap Listing</a></li>
+<li><a href="https://osu.ppy.sh/p/download">Download osu!</a></li>
+<li><a href="https://osu.ppy.sh/wiki">Wiki</a></li>
+</ul>
+<ul class="footer_column">
+<li class="f_header">Help and Community</li>
+<li><a href="https://osu.ppy.sh/wiki/FAQ">Frequently Asked Questions</a></li>
+<li><a href="https://osu.ppy.sh/forum">Community Forums</a></li>
+<li><a href="https://osu.ppy.sh/p/live">Live Streams</a></li>
+<li><a href="https://osu.ppy.sh/forum/posting.php?mode=post&amp;f=5">Report an Issue</a></li>
+</ul>
+<ul class="footer_column">
+<li class="f_header">Support osu!</li>
+<li><a href="https://osu.ppy.sh/p/support">Supporter Tags</a></li>
+<li><a href="https://osu.ppy.sh/p/market">Merchandise</a></li>
+</ul>
+<ul class="footer_column">
+<li class="f_header">Legal &amp; Status</li>
+<li><a href="https://osu.ppy.sh/p/terms">Terms of Service</a></li>
+<li><a href="https://osu.ppy.sh/p/copyright">Copyright (DMCA)</a></li>
+<li><a href="http://stat.ppy.sh/">Server Status</a></li>
+<li><a href="http://twitter.com/osustatus">@osustatus</a></li>
+</ul>
+<div>Lost? Looking for something? Maybe need some <a href="https://osu.ppy.sh/wiki/Help_Center">help</a>?</div>
+<form action="/p/search" id="cse-search-box">
+<div>
+<input name="cx" value="007714945049801807819:fwdivvi5sik" type="hidden">
+<input name="cof" value="FORID:10" type="hidden">
+<input name="ie" value="UTF-8" type="hidden">
+<input name="q" size="20" class="footer_search" type="text">
+</div>
+</form>
+</div>
+</div>
+<script>var enchant = enchant || []</script>
+<script src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/a.js" async=""></script>
+<div class="enchant-help-center" data-id="791f7b9c"></div>
+
+
+ 
+<script type="text/javascript"> if ( window.isMSIE55 ) fixalpha(); </script>
+ 
+<script src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/load.php"></script>
+<script>if(window.mw){
+	mw.loader.load(["mediawiki.user", "mediawiki.util", "mediawiki.page.ready", "mediawiki.legacy.wikibits", "mediawiki.legacy.ajax", "mediawiki.action.watch.ajax"]);
+}
+</script><script type="text/javascript" src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/load_006.php"></script>
+<script src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/load_003.php"></script>
+<script>if(window.mw){
+	mw.user.options.set({"ccmeonemails":0,"cols":80,"date":"default","diffonly":0,"disablemail":0,"disablesuggest":0,"editfont":"default","editondblclick":0,"editsection":1,"editsectiononrightclick":0,"enotifminoredits":0,"enotifrevealaddr":0,"enotifusertalkpages":1,"enotifwatchlistpages":0,"extendwatchlist":0,"externaldiff":0,"externaleditor":0,"fancysig":0,"forceeditsummary":0,"gender":"unknown","hideminor":0,"hidepatrolled":0,"highlightbroken":1,"imagesize":2,"justify":0,"math":1,"minordefault":0,"newpageshidepatrolled":0,"nocache":0,"noconvertlink":0,"norollbackdiff":0,"numberheadings":0,"previewonfirst":0,"previewontop":1,"quickbar":5,"rcdays":7,"rclimit":50,"rememberpassword":"1","rows":25,"searchlimit":20,"showhiddencats":0,"showjumplinks":1,"shownumberswatching":1,"showtoc":1,"showtoolbar":1,"skin":"vector","stubthreshold":0,"thumbsize":2,"underline":2,"uselivepreview":0,"usenewrc":0,"watchcreations":0,"watchdefault":0,"watchdeletion":0,"watchlistdays":3,"watchlisthideanons":0,
+	"watchlisthidebots":0,"watchlisthideliu":0,"watchlisthideminor":0,"watchlisthideown":0,"watchlisthidepatrolled":0,"watchmoves":0,"wllimit":250,"variant":"en","language":"en","searchNs0":true,"searchNs1":false,"searchNs2":false,"searchNs3":false,"searchNs4":false,"searchNs5":false,"searchNs6":false,"searchNs7":false,"searchNs8":false,"searchNs9":false,"searchNs10":false,"searchNs11":false,"searchNs12":false,"searchNs13":false,"searchNs14":false,"searchNs15":false});;mw.user.tokens.set({"editToken":"7075a6d174caa02e032d8923136ac9d6+\\","watchToken":"de251499a02e16997d50fccffffcc27a+\\"});;mw.loader.state({"user.options":"ready","user.tokens":"ready"});
+	
+	/* cache key: osu_wiki:resourceloader:filter:minify-js:4:f3be3356f76630e4bb917241a00bea85 */
+}
+</script><script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/ga.js" type="text/javascript"></script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4774947-1");
+pageTracker._trackPageview();
+</script> 
+
+
+<iframe src="Osu%20%28file%20format%29%20-%20osu%21wiki_files/frame.htm" style="display: none;"></iframe><style>
+@keyframes enchantHcFrameBounceUp {
+  0% {bottom: -1000px;} 50% {bottom: 40px;} 70% {bottom: -20px;} 100% {bottom: 0px;}
+}
+@-webkit-keyframes enchantHcFrameBounceUp {
+  0% {bottom: -1000px;} 50% {bottom: 40px;} 70% {bottom: -20px;} 100% {bottom: 0px;}
+}
+@-moz-keyframes enchantHcFrameBounceUp {
+  0% {bottom: -1000px;} 50% {bottom: 40px;} 70% {bottom: -20px;} 100% {bottom: 0px;}
+}
+@-ms-keyframes enchantHcFrameBounceUp {
+  0% {bottom: -1000px;} 50% {bottom: 40px;} 70% {bottom: -20px;} 100% {bottom: 0px;}
+}
+
+#enchant-hc-frame.enchant-hc-animate-in {
+  animation: enchantHcFrameBounceUp 0.4s ease-out;
+  -webkit-animation: enchantHcFrameBounceUp 0.4s ease-out;
+  -moz-animation: enchantHcFrameBounceUp 0.4s ease-out;
+  -ms-animation: enchantHcFrameBounceUp 0.4s ease-out;
+}
+
+
+#enchant-hc-trigger svg {
+  opacity: 0.6 !important;
+}
+#enchant-hc-trigger svg:hover {
+  opacity: 1 !important;
+}
+</style><iframe id="enchant-hc-frame" style="border: 0; height: 430px; width: 350px; z-index: 10000; position: fixed; bottom: 0px; right: 20px; right: -10000px; box-shadow: 0px 0px 6px 1px rgba(0,0,0,0.3); background: transparent; border-top-left-radius: 5px; border-top-right-radius: 5px;" src='javascript:document.write("<!DOCTYPE html>");'>
+</iframe><div><a id="enchant-hc-trigger" href="#" style="position: fixed; bottom: 1px; right: 20px; z-index: 10000;">
+  <svg style="height: 45px; width: 45px;" height="45" width="45" version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="-0.9 -0.2 183 183" enable-background="new -0.9 -0.2 183 183" xml:space="preserve">
+      <path fill="#f462a3" d="M18,0C8.1,0,0,8.1,0,18v116.2c0,9.9,8.1,18,18,18h27.1c9.9,0,22.7,6.6,28.4,14.7l6.9,9.7
+        c5.7,8.1,15.1,8.1,20.8,0l6.9-9.7c5.7-8.1,18.5-14.7,28.4-14.7h27.1c9.9,0,18-8.1,18-18V18c0-9.9-8.1-18-18-18H18z"></path>
+      <path fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round" stroke-miterlimit="10" d="M65.2,53.2
+        c5.8-18,30.2-25,45.5-9.9c5.5,5.5,7.1,17-1.5,23.7c-2.5,1.9-19.8,13.2-18.6,23"></path>
+      <path fill="#FFFFFF" d="M102.5,119.8c0,6.1-4.9,11-11,11c-6.1,0-11-4.9-11-11c0-6.1,4.9-11,11-11
+        C97.6,108.8,102.5,113.7,102.5,119.8z"></path>
+  </svg>
+</a></div><div id="AutocompleteContainter_3c8b8" style="position: absolute; z-index: 9999; top: 142.5px; left: 657.8px;"><div class="autocomplete-w1"><div class="autocomplete" id="Autocomplete_3c8b8" style="display:none;"></div></div></div></body></html>

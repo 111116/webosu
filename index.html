@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Osu! Web</title>
+        <style>
+        html, body { width: 100%; height: 100%; padding: 0; margin: 0; overflow: hidden; }
+        </style>
+    </head>
+    <body>
+        <canvas id="main"></canvas>
+        <script src="/scripts/lib/zip.js"></script>
+        <script src="/scripts/lib/zip-fs.js"></script>
+        <script>
+            zip.workerScriptsPath = '/scripts/lib/';
+        </script>
+        <script data-main="/scripts/main" src="/scripts/require.js"></script>
+        <script>
+            require.config({
+                paths: {
+                    underscore: 'lib/underscore'
+                },
+                shim: {
+                    "underscore": {
+                        exports: "_"
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
