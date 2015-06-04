@@ -4,21 +4,22 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
     var NOTE_DISAPPEAR = -0.5 * TIME_CONSTANT;
     var NOTE_DESPAWN = -2 * TIME_CONSTANT;
 
-    function Playback(osu) {
+    function Playback(osu, track) {
         var self = this;
         window.playback = this;
         self.osu = osu;
+        self.track = track;
         self.background = null;
         self.ready = true;
         self.started = false;
         self.upcomingHits = [];
-        self.hits = osu.hitObjects.slice(0);
+        self.hits = self.track.hitObjects.slice(0);
 
         // Load background if possible
-        if (osu.events.length != 0) {
-            if (osu.events[0].length == 5) {
+        if (self.track.events.length != 0) {
+            if (self.track.events[0].length == 5) {
                 self.ready = false;
-                var file = osu.events[0][2];
+                var file = self.track.events[0][2];
                 file = file.substr(1, file.length - 2);
                 osu.zip.getChildByName(file).getBlob("image/jpeg", function(blob) {
                     var uri = URL.createObjectURL(blob);
@@ -34,8 +35,8 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
         }
 
         var futuremost = 0, current = 0;
-        if (osu.hitObjects.length > 0) {
-            futuremost = osu.hitObjects[0].time;
+        if (self.track.hitObjects.length > 0) {
+            futuremost = self.track.hitObjects[0].time;
         }
         this.updateUpcoming = function(timestamp) {
             // Cache the next ten seconds worth of hit objects
@@ -109,10 +110,10 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
 
         this.renderBackground = function(time, context, game) {
             var fade = 0.7;
-            if (osu.general.PreviewTime !== 0 && time < osu.general.PreviewTime) {
-                var diff = osu.general.PreviewTime - time;
-                if (diff < 30000) {
-                    fade = diff / 30000;
+            if (self.track.general.PreviewTime !== 0 && time < self.track.general.PreviewTime) {
+                var diff = self.track.general.PreviewTime - time;
+                if (diff < 3 * TIME_CONSTANT) {
+                    fade = diff / (3 * TIME_CONSTANT);
                     fade -= 0.5;
                     fade = -fade;
                     fade += 0.5;

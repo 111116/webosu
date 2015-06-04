@@ -34,15 +34,15 @@ define(["osu", "scenes/playback"], function(Osu, Playback) {
         var osu = new Osu(window.osz.root);
         window.osu = osu;
         osu.ondecoded = function() {
-            document.title = osu.metadata.Title;
-            stage = osu.metadata.TitleUnicode;
+            document.title = osu.tracks[0].metadata.Title;
+            stage = osu.tracks[0].metadata.TitleUnicode;
         };
         osu.onready = function() {
-            if (osu.general.Mode !== 0) {
+            if (osu.tracks[0].general.Mode !== 0) {
                 stage = "Only osu! mode beatmaps are supported.";
                 return;
             }
-            var playback = new Playback(osu);
+            var playback = new Playback(osu, osu.tracks[0]);
             game.scene = playback.scene;
             playback.start();
         };

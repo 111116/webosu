@@ -1,23 +1,10 @@
 define(["underscore", "osu-audio"], function(_, OsuAudio) {
-    function Osu(zip) {
+    function Track(zip, track) {
         var self = this;
+        this.track = track;
         this.zip = zip;
-        this.song = null;
+
         this.ondecoded = null;
-        this.onready = null;
-
-        this.load = _.bind(function load() {
-            this.osu_raw = _.find(zip.children, function(c) {
-                return c.name.indexOf(".osu") === c.name.length - 4 &&
-                    c.name.indexOf("Another") !== -1;
-            });
-
-            this.osu_raw.getText(function(text) {
-                self.osu = text;
-                console.log("Loaded beatmap text");
-                self.decodeData();
-            });
-        }, this);
 
         this.general = {};
         this.metadata = {};
@@ -26,9 +13,9 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
         this.events = [];
         this.hitObjects = [];
 
-        this.decodeData = _.bind(function decodeData() {
+        this.decode = _.bind(function decode() {
             // Decodes a .osu file
-            var lines = self.osu.replace("\r", "").split("\n");
+            var lines = self.track.replace("\r", "").split("\n");
             if (lines[0] != "osu file format v13") {
                 // TODO: Do we care?
             }
@@ -115,11 +102,45 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
             if (this.ondecoded !== null) {
                 this.ondecoded(this);
             }
-            load_mp3();
         }, this);
+    }
+
+    function Osu(zip) {
+        var self = this;
+        this.zip = zip;
+        this.song = null;
+        this.ondecoded = null;
+        this.onready = null;
+        this.tracks = [];
+
+        var count = 0;
+        this.track_decoded = function() {
+            count++;
+            if (count == self.raw_tracks.length) {
+                if (self.ondecoded !== null) {
+                    self.ondecoded(this);
+                }
+                load_mp3();
+            }
+        };
+
+        this.load = _.bind(function load() {
+            self.raw_tracks = _.filter(zip.children, function(c) {
+                return c.name.indexOf(".osu") === c.name.length - 4;
+            });
+
+            _.each(self.raw_tracks, function(t) {
+                t.getText(function(text) {
+                    var track = new Track(zip, text);
+                    self.tracks.push(track);
+                    track.ondecoded = self.track_decoded;
+                    track.decode();
+                })
+            });
+        });
 
         function load_mp3() {
-            var mp3_raw = self.zip.getChildByName(self.general.AudioFilename);
+            var mp3_raw = self.zip.getChildByName(self.tracks[0].general.AudioFilename);
             mp3_raw.getBlob("audio/mpeg", function(blob) {
                 console.log("Extracted blob");
 
