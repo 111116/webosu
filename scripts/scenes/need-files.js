@@ -38,6 +38,10 @@ define(["osu", "scenes/playback"], function(Osu, Playback) {
             stage = osu.metadata.TitleUnicode;
         };
         osu.onready = function() {
+            if (osu.general.Mode !== 0) {
+                stage = "Only osu! mode beatmaps are supported.";
+                return;
+            }
             var playback = new Playback(osu);
             game.scene = playback.scene;
             playback.start();
