@@ -8,6 +8,8 @@ define([], function() {
             "hitcircle.png",
             "hitcircleoverlay.png",
             "hitcircleselect.png",
+            "menu-button-background.png",
+            "star.png"
         ];
         function loadNext() {
             var xhr = new XMLHttpRequest();

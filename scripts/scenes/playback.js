@@ -126,7 +126,7 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
             context.fillRect(0, 0, game.canvas.width, game.canvas.height);
         }
 
-        this.scene = function(timestamp, context, game) {
+        this.render = function(timestamp, context, game) {
             if (self.background !== null) {
                 context.drawImage(self.background, 0, 0, game.canvas.width, game.canvas.height);
             }

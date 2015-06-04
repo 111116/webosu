@@ -1,4 +1,4 @@
-require(["scenes/need-files", "resources"], function(needFiles, Resources) {
+require(["scenes/need-files", "resources"], function(NeedFiles, Resources) {
     console.log("Starting");
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
@@ -10,7 +10,7 @@ require(["scenes/need-files", "resources"], function(needFiles, Resources) {
     var game = {
         canvas: canvas,
         context: context,
-        scene: needFiles
+        scene: new NeedFiles()
     };
     window.game = game;
 
@@ -19,7 +19,7 @@ require(["scenes/need-files", "resources"], function(needFiles, Resources) {
         canvas.height = window.innerHeight;
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        game.scene(timestamp, context, game);
+        game.scene.render(timestamp, context, game);
 
         window.requestAnimationFrame(gameLoop);
     }
