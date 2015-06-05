@@ -21,6 +21,12 @@ require(["scenes/need-files", "resources"], function(NeedFiles, Resources) {
 
         game.scene.render(timestamp, context, game);
 
+        context.fillStyle = "#F00";
+        var text = "WORK IN PROGRESS";
+        context.font = "20px sans";
+        var metrics = context.measureText(text);
+        context.fillText(text, game.canvas.width / 2 - metrics.width / 2, 20);
+
         window.requestAnimationFrame(gameLoop);
     }
 

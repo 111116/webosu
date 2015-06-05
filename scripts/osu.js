@@ -72,10 +72,10 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             x: (+parts[0]) / 512,
                             y: (+parts[1]) / 384,
                             time: +parts[2],
-                            type: +parts[3]
+                            type: +parts[3],
+                            hitSound: +parts[4]
                         };
                         switch (hit.type) { // TODO: Are there more types?
-                            // TODO: decode type specific properties
                             case 1:
                                 hit.combo = combo;
                                 hit.index = index++;
@@ -85,6 +85,13 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                                 hit.combo = combo;
                                 hit.index = index++;
                                 hit.type = "slider";
+                                var sliderKeys = parts[5].split("|");
+                                hit.sliderType = sliderKeys[0];
+                                hit.keyFrames = [];
+                                for (var j = 1; j < sliderKeys.length; j++) {
+                                    var p = sliderKeys[j].split(":");
+                                    hit.keyFrames.push({ x: (+p[0]) / 512, y: (+p[1]) / 384 });
+                                }
                                 break;
                             case 5:
                                 combo++;
