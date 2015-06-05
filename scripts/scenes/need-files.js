@@ -39,7 +39,7 @@ define(["osu", "scenes/difficulty-select", "underscore"], function(Osu, Difficul
                 stage = osu.tracks[0].metadata.TitleUnicode;
             };
             osu.onready = function() {
-                if (_.some(osu.tracks, function(t) { return t.general.Mode !== 0; })) {
+                if (!_.some(osu.tracks, function(t) { return t.general.Mode === 0; })) {
                     stage = "Only osu! mode beatmaps are supported.";
                     return;
                 }
