@@ -20,7 +20,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 // TODO: Do we care?
             }
             var section = null;
-            var combo = 0;
+            var combo = 0, index = 1;
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i].trim();
                 if (line === "") continue;
@@ -78,14 +78,19 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             // TODO: decode type specific properties
                             case 1:
                                 hit.combo = combo;
+                                hit.index = index++;
                                 hit.type = "circle";
                                 break;
                             case 2:
+                                hit.combo = combo;
+                                hit.index = index++;
                                 hit.type = "slider";
                                 break;
                             case 5:
                                 combo++;
+                                index = 0;
                                 hit.combo = combo;
+                                hit.index = index++;
                                 hit.type = "circle-new-combo";
                                 break;
                             case 12:

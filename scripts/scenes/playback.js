@@ -159,6 +159,7 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
         this.renderHitCircle = function(hit, time, context, game) {
             var diff = hit.time - time;
             var combo = hit.combo % hitCircleImages.length;
+            combo = 0;
             if (diff <= NOTE_APPEAR && diff > 0) {
                 // Figure out alpha
                 var alpha = diff / NOTE_APPEAR;
@@ -180,6 +181,11 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                         hit.x * gfx.width, hit.y * gfx.height,
                         scale, alpha);
                 })();
+                // Draw index
+                if (hit.index <= 9) {
+                    gfx.drawImage(context, Resources["default-" + hit.index + ".png"],
+                        hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
+                }
             } else if (diff > NOTE_DISAPPEAR && diff < 0) {
                 var alpha = diff / NOTE_DISAPPEAR;
                 alpha -= 0.5;
@@ -191,6 +197,10 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                     hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
                 gfx.drawImage(context, hitCircleImages[combo].approachcircle,
                     hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
+                if (hit.index <= 9) {
+                    gfx.drawImage(context, Resources["default-" + hit.index + ".png"],
+                        hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
+                }
             }
         }
 
