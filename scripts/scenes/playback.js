@@ -165,10 +165,10 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                 alpha -= 0.5;
                 alpha = -alpha;
                 alpha += 0.5;
-                gfx.drawImage(context, hitCircleImages[combo].hitcircle,
+                gfx.drawImage(context, Resources["hitcircle.png"],
                     hit.x * gfx.width,
                     hit.y * gfx.height, 1, alpha);
-                gfx.drawImage(context, hitCircleImages[combo].hitcircleoverlay,
+                gfx.drawImage(context, Resources["hitcircleoverlay.png"],
                     hit.x * gfx.width,
                     hit.y * gfx.height, 1, alpha);
                 // Draw approach ring
@@ -177,13 +177,13 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                         var scale = (diff / NOTE_APPEAR * 2) + 1;
                         var width = Resources["approachcircle.png"].width;
                         var height = Resources["approachcircle.png"].height;
-                        gfx.drawImage(context, hitCircleImages[combo].approachcircle,
+                        gfx.drawImage(context, Resources["approachcircle.png"],
                             hit.x * gfx.width, hit.y * gfx.height,
                             scale, alpha);
                     })();
                 }
                 // Draw index
-                if (hit.index <= 9 && hit.index > 0 && false) {
+                if (hit.index <= 9 && hit.index > 0) {
                     gfx.drawImage(context, Resources["default-" + hit.index + ".png"],
                         hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
                 }
@@ -192,15 +192,15 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                 alpha -= 0.5;
                 alpha = -alpha;
                 alpha += 0.5;
-                gfx.drawImage(context, hitCircleImages[combo].hitcircle,
+                gfx.drawImage(context, Resources["hitcircle.png"],
                     hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
-                gfx.drawImage(context, hitCircleImages[combo].hitcircleoverlay,
+                gfx.drawImage(context, Resources["hitcircleoverlay.png"],
                     hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
                 if (hit.index !== -1) {
-                    gfx.drawImage(context, hitCircleImages[combo].approachcircle,
+                    gfx.drawImage(context, Resources["approachcircle.png"],
                         hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
                 }
-                if (hit.index <= 9 && hit.index > 0 && false) {
+                if (hit.index <= 9 && hit.index > 0) {
                     gfx.drawImage(context, Resources["default-" + hit.index + ".png"],
                         hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
                 }
