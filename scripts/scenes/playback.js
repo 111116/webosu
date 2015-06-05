@@ -183,7 +183,7 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                     })();
                 }
                 // Draw index
-                if (hit.index <= 9 && hit.index > 0) {
+                if (hit.index <= 9 && hit.index > 0 && false) {
                     gfx.drawImage(context, Resources["default-" + hit.index + ".png"],
                         hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
                 }
@@ -200,7 +200,7 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                     gfx.drawImage(context, hitCircleImages[combo].approachcircle,
                         hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
                 }
-                if (hit.index <= 9 && hit.index > 0) {
+                if (hit.index <= 9 && hit.index > 0 && false) {
                     gfx.drawImage(context, Resources["default-" + hit.index + ".png"],
                         hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
                 }
