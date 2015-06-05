@@ -69,7 +69,7 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                     hit.x * gfx.width,
                     hit.y * gfx.height, 1, alpha);
                 gfx.drawImage(context, Resources["hitcircleoverlay.png"],
-                    hit.x * gfx.height,
+                    hit.x * gfx.width,
                     hit.y * gfx.height, 1, alpha);
                 // Draw approach ring
                 (function() {
@@ -103,12 +103,21 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                     case "circle-new-combo":
                         self.renderHitCircle(hit, time, context, game);
                         break;
+                    case "slider":
+                        //self.renderSlider(hit, time, context, game); // TODO
+                        break;
+                    case "spinner":
+                        //self.renderSpinner(hit, time, context, game); // TODO
+                        break;
                 }
             }
             context.globalAlpha = 1;
         }
 
         this.renderBackground = function(time, context, game) {
+            if (self.background !== null) {
+                context.drawImage(self.background, 0, 0, game.canvas.width, game.canvas.height);
+            }
             var fade = 0.7;
             if (self.track.general.PreviewTime !== 0 && time < self.track.general.PreviewTime) {
                 var diff = self.track.general.PreviewTime - time;
@@ -127,14 +136,13 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
         }
 
         this.render = function(timestamp, context, game) {
-            if (self.background !== null) {
-                context.drawImage(self.background, 0, 0, game.canvas.width, game.canvas.height);
-            }
             gfx.width = game.canvas.width;
             gfx.height = game.canvas.height;
             if (gfx.width > gfx.height) {
                 gfx.width = gfx.height;
                 gfx.xoffset = (game.canvas.width - gfx.width) / 2;
+                gfx.yoffset = 128;
+                gfx.height = gfx.height - 256;
             } else {
                 // TODO
             }

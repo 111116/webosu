@@ -97,6 +97,9 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 }
             }
             // Make some corrections
+            if (this.general.PreviewTime > this.hitObjects[0].time) {
+                this.general.PreviewTime = 0;
+            }
             this.general.PreviewTime /= 10;
             console.log("osu decoded");
             if (this.ondecoded !== null) {
