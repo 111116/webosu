@@ -9,7 +9,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
         this.general = {};
         this.metadata = {};
         this.difficulty = {};
-        this.colors = {};
+        this.colors = [];
         this.events = [];
         this.hitObjects = [];
 
@@ -20,7 +20,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 // TODO: Do we care?
             }
             var section = null;
-            var combo = 1;
+            var combo = 0;
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i].trim();
                 if (line === "") continue;
@@ -64,7 +64,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                     case "[Colours]":
                         var parts = line.split(":");
                         var value = parts[1].trim();
-                        self.colors[parts[0]] = "rgb(" + value + ")";
+                        self.colors.push(value.split(','));
                         break;
                     case "[HitObjects]":
                         var parts = line.split(",");
@@ -77,16 +77,16 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                         switch (hit.type) { // TODO: Are there more types?
                             // TODO: decode type specific properties
                             case 1:
+                                hit.combo = combo;
                                 hit.type = "circle";
-                                hit.combo = combo++;
                                 break;
                             case 2:
                                 hit.type = "slider";
                                 break;
                             case 5:
+                                combo++;
+                                hit.combo = combo;
                                 hit.type = "circle-new-combo";
-                                hit.combo = 1;
-                                combo = 1;
                                 break;
                             case 12:
                                 hit.type = "spinner";
