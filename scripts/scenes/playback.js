@@ -96,7 +96,7 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
 
         this.renderHitObjects = function(time, context, game) {
             self.updateUpcoming(time);
-            for (var i = 0; i < self.upcomingHits.length; i++) {
+            for (var i = self.upcomingHits.length - 1; i >= 0; i--) {
                 var hit = self.upcomingHits[i];
                 switch (hit.type) {
                     case "circle":
