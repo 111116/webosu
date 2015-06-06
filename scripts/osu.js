@@ -77,10 +77,18 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                         };
                         switch (hit.type) { // TODO: Are there more types?
                             case 1:
+                            case 5:
                             case 21: // Not sure
                             case 37: // Not sure
-                                hit.combo = combo;
-                                hit.index = index++;
+                                if (hit.type == 6) {
+                                    combo++;
+                                    index = 0;
+                                    hit.combo = combo;
+                                    hit.index = index++;
+                                } else {
+                                    hit.combo = combo;
+                                    hit.index = index++;
+                                }
                                 hit.type = "circle";
                                 break;
                             case 2:
@@ -106,13 +114,6 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                                     hit.keyFrames.push({ x: (+p[0]) / 512, y: (+p[1]) / 384 });
                                 }
                                 break;
-                            case 5:
-                                combo++;
-                                index = 0;
-                                hit.combo = combo;
-                                hit.index = index++;
-                                hit.type = "circle-new-combo";
-                                break;
                             case 12:
                                 hit.type = "spinner";
                                 break;
@@ -128,6 +129,14 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
             this.general.PreviewTime /= 10;
             if (this.general.PreviewTime > this.hitObjects[0].time) {
                 this.general.PreviewTime = 0;
+            }
+            if (this.colors.length === 0) {
+                this.colors = [
+                    [96,159,159],
+                    [192,192,192],
+                    [128,255,255],
+                    [139,191,222]
+                ];
             }
             console.log("osu decoded");
             if (this.ondecoded !== null) {
