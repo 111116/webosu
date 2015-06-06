@@ -80,15 +80,15 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             type: +parts[3],
                             hitSound: +parts[4]
                         };
+                        // Handle combos
                         if ((hit.type & HIT_TYPE_NEWCOMBO) > 0) {
                             combo++;
                             index = 0;
-                            hit.combo = combo;
-                            hit.index = index++;
-                        } else {
-                            hit.combo = combo;
-                            hit.index = index++;
                         }
+                        hit.combo = combo;
+                        hit.index = index++;
+
+                        // Decode specific hit object type
                         if ((hit.type & HIT_TYPE_CIRCLE) > 0) {
                             hit.type = "circle";
                         } else if ((hit.type & HIT_TYPE_SLIDER) > 0) {
