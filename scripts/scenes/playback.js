@@ -17,21 +17,19 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
 
         // Load background if possible
         if (self.track.events.length != 0) {
-            if (self.track.events[0].length == 5) {
-                self.ready = false;
-                var file = self.track.events[0][2];
-                file = file.substr(1, file.length - 2);
-                osu.zip.getChildByName(file).getBlob("image/jpeg", function(blob) {
-                    var uri = URL.createObjectURL(blob);
-                    var image = document.createElement("img");
-                    image.src = uri;
-                    self.background = image;
-                    if (self.started) {
-                        self.ready = true;
-                        self.start();
-                    }
-                });
-            }
+            self.ready = false;
+            var file = self.track.events[0][2];
+            file = file.substr(1, file.length - 2);
+            osu.zip.getChildByName(file).getBlob("image/jpeg", function(blob) {
+                var uri = URL.createObjectURL(blob);
+                var image = document.createElement("img");
+                image.src = uri;
+                self.background = image;
+                if (self.started) {
+                    self.ready = true;
+                    self.start();
+                }
+            });
         }
 
         // Render hit circles with this map's combo colors

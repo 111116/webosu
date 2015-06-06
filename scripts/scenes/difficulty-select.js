@@ -7,21 +7,19 @@ define(["osu", "resources", "scenes/playback", "underscore"], function(Osu, Reso
 
         // Load background if possible
         if (self.osu.tracks[0].events.length != 0) {
-            if (self.osu.tracks[0].events[0].length == 5) {
-                self.ready = false;
-                var file = self.osu.tracks[0].events[0][2];
-                file = file.substr(1, file.length - 2);
-                osu.zip.getChildByName(file).getBlob("image/jpeg", function(blob) {
-                    var uri = URL.createObjectURL(blob);
-                    var image = document.createElement("img");
-                    image.src = uri;
-                    self.background = image;
-                    if (self.started) {
-                        self.ready = true;
-                        self.start();
-                    }
-                });
-            }
+            self.ready = false;
+            var file = self.osu.tracks[0].events[0][2];
+            file = file.substr(1, file.length - 2);
+            osu.zip.getChildByName(file).getBlob("image/jpeg", function(blob) {
+                var uri = URL.createObjectURL(blob);
+                var image = document.createElement("img");
+                image.src = uri;
+                self.background = image;
+                if (self.started) {
+                    self.ready = true;
+                    self.start();
+                }
+            });
         }
         
         var disposed = false;
