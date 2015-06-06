@@ -1,4 +1,9 @@
 define(["underscore", "osu-audio"], function(_, OsuAudio) {
+    var HIT_TYPE_CIRCLE = 1,
+        HIT_TYPE_SLIDER = 2,
+        HIT_TYPE_NEWCOMBO = 4,
+        HIT_TYPE_SPINNER = 8;
+
     function Track(zip, track) {
         var self = this;
         this.track = track;
@@ -75,53 +80,30 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             type: +parts[3],
                             hitSound: +parts[4]
                         };
-                        switch (hit.type) { // TODO: Are there more types?
-                            case 1:
-                            case 5:
-                            case 21: // Not sure
-                            case 37: // Not sure
-                            case 69: // Not sure
-                                if (hit.type == 6) {
-                                    combo++;
-                                    index = 0;
-                                    hit.combo = combo;
-                                    hit.index = index++;
-                                } else {
-                                    hit.combo = combo;
-                                    hit.index = index++;
-                                }
-                                hit.type = "circle";
-                                break;
-                            case 2:
-                            case 6: // New combo sliders
-                            case 22: // Not sure
-                            case 38: // Not sure
-                            case 54: // Not sure
-                            case 70: // Not sure
-                                if (hit.type == 6) {
-                                    combo++;
-                                    index = 0;
-                                    hit.combo = combo;
-                                    hit.index = index++;
-                                } else {
-                                    hit.combo = combo;
-                                    hit.index = index++;
-                                }
-                                hit.type = "slider";
-                                var sliderKeys = parts[5].split("|");
-                                hit.sliderType = sliderKeys[0];
-                                hit.keyFrames = [];
-                                for (var j = 1; j < sliderKeys.length; j++) {
-                                    var p = sliderKeys[j].split(":");
-                                    hit.keyFrames.push({ x: (+p[0]) / 512, y: (+p[1]) / 384 });
-                                }
-                                break;
-                            case 12:
-                                hit.type = "spinner";
-                                break;
-                            default:
-                                console.log("Attempted to decode unknown hit object type " + hit.type + ": " + line);
-                                break;
+                        if ((hit.type & HIT_TYPE_NEWCOMBO) > 0) {
+                            combo++;
+                            index = 0;
+                            hit.combo = combo;
+                            hit.index = index++;
+                        } else {
+                            hit.combo = combo;
+                            hit.index = index++;
+                        }
+                        if ((hit.type & HIT_TYPE_CIRCLE) > 0) {
+                            hit.type = "circle";
+                        } else if ((hit.type & HIT_TYPE_SLIDER) > 0) {
+                            hit.type = "slider";
+                            var sliderKeys = parts[5].split("|");
+                            hit.sliderType = sliderKeys[0];
+                            hit.keyFrames = [];
+                            for (var j = 1; j < sliderKeys.length; j++) {
+                                var p = sliderKeys[j].split(":");
+                                hit.keyFrames.push({ x: (+p[0]) / 512, y: (+p[1]) / 384 });
+                            }
+                        } else if ((hit.type & HIT_TYPE_SPINNER) > 0) {
+                            hit.type = "spinner";
+                        } else {
+                            console.log("Attempted to decode unknown hit object type " + hit.type + ": " + line);
                         }
                         self.hitObjects.push(hit);
                         break;
