@@ -4,6 +4,7 @@ define(["osu", "resources", "scenes/playback", "underscore"], function(Osu, Reso
         self.osu = osu;
         self.background = null;
         self.tracks = _.sortBy(osu.tracks, function(t) { return t.difficulty.OverallDifficulty; });
+        self.tracks = _.filter(self.tracks, function(t) { return t.general.Mode === 0; });
 
         // Load background if possible
         if (self.osu.tracks[0].events.length != 0) {
