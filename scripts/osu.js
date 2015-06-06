@@ -103,6 +103,9 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             case 12:
                                 hit.type = "spinner";
                                 break;
+                            default:
+                                console.log("Attempted to decode unknown hit object type " + hit.type + ": " + line);
+                                break;
                         }
                         self.hitObjects.push(hit);
                         break;
