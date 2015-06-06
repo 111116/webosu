@@ -128,6 +128,21 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
 
                 hit.objects.push(reverse);
             }
+            if (hit.repeat > 2) {
+                // Add another reverse symbol
+                var reverse = hit.reverse_b = new PIXI.Sprite(Resources["reversearrow.png"]);
+                reverse.alpha = 0;
+                reverse.anchor.x = reverse.anchor.y = 0.5;
+                reverse.x = gfx.xoffset + hit.x * gfx.width;
+                reverse.y = gfx.yoffset + hit.y * gfx.height;
+                reverse.scale.x = reverse.scale.y = 0.8;
+                reverse.tint = 0;
+                var deltaX = lastFrame.x - hit.x;
+                var deltaY = lastFrame.y - hit.y;
+                reverse.rotation = Math.atan2(deltaY, deltaX);
+
+                hit.objects.push(reverse);
+            }
         }
 
         this.populateHit = function(hit) {
@@ -213,6 +228,9 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
             }
             if (hit.reverse) {
                 hit.reverse.scale.x = hit.reverse.scale.y = 1 + Math.abs(diff % 300) * 0.001;
+            }
+            if (hit.reverse_b) {
+                hit.reverse_b.scale.x = hit.reverse_b.scale.y = 1 + Math.abs(diff % 300) * 0.001;
             }
             _.each(hit.objects, function(o) { o.alpha = alpha; });
         }
