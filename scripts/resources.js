@@ -1,6 +1,6 @@
 define([], function() {
     Resources = {};
-    Resources.load = function() {
+    Resources.loadDefault = function() {
         // Resources we need to do our thing
         var to_load = [
             "approachcircle.png",
@@ -28,10 +28,7 @@ define([], function() {
             xhr.responseType = 'blob';
             to_load.splice(0, 1);
             xhr.onload = function() {
-                var url = URL.createObjectURL(xhr.response);
-                var img = document.createElement('img');
-                img.src = url;
-                Resources[resource] = img;
+                Resources.load(xhr.response, resource);
                 if (to_load.length > 0) {
                     loadNext();
                 }
@@ -39,6 +36,14 @@ define([], function() {
             xhr.send();
         }
         loadNext();
+    };
+    Resources.load = function(blob, name) {
+        if (name.indexOf(".png") === name.length - 4) {
+            var url = URL.createObjectURL(blob);
+            var img = document.createElement('img');
+            img.src = url;
+            Resources[name] = img;
+        }
     };
     return Resources;
 });

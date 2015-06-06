@@ -2,7 +2,7 @@ require(["scenes/need-files", "resources"], function(NeedFiles, Resources) {
     console.log("Starting");
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-    Resources.load();
+    Resources.loadDefault();
 
     var canvas = document.querySelector("canvas");
     var context = canvas.getContext("2d");

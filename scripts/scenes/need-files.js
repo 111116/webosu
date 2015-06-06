@@ -1,4 +1,4 @@
-define(["osu", "scenes/difficulty-select", "underscore"], function(Osu, DifficultySelect, _) {
+define(["osu", "scenes/difficulty-select", "underscore", "resources"], function(Osu, DifficultySelect, _, Resources) {
     function NeedFiles() {
         var stage = "Drag and drop a .osz file here";
         var game = null;
@@ -17,9 +17,7 @@ define(["osu", "scenes/difficulty-select", "underscore"], function(Osu, Difficul
             dragNOP(e);
             var osz_raw = e.dataTransfer.files[0];
             window.osz_raw = osz_raw;
-            if (osz_raw.name.indexOf(".osz") != osz_raw.name.length - 4) {
-                stage = "An actual osz file, please";
-            } else {
+            if (osz_raw.name.indexOf(".osz") === osz_raw.name.length - 4) {
                 stage = "Loading...";
                 var fs = window.osz = new zip.fs.FS();
                 fs.root.importBlob(osz_raw, function() {
@@ -27,6 +25,33 @@ define(["osu", "scenes/difficulty-select", "underscore"], function(Osu, Difficul
                 }, function(err) {
                     stage = "A valid osz file, please";
                 });
+            } else if (osz_raw.name.indexOf(".osk") == osz_raw.name.length - 4) {
+                stage = "Loading skin...";
+                var fs = window.osk = new zip.fs.FS();
+                fs.root.importBlob(osz_raw, function() {
+                    oskLoaded();
+                }, function(err) {
+                    stage = "This is not a valid osk file.";
+                });
+            } else {
+                stage = "An actual osz file, please";
+            }
+        }
+
+        function oskLoaded() {
+            stage = "Loading skin...";
+            for (var i = 0; i < window.osk.root.children.length; i++) {
+                var child = window.osk.root.children[i];
+                (function(child, i) {
+                    var mimetype = "image/png"; // TODO: More kinds of blobs
+                    child.getBlob(mimetype, function(blob) {
+                        console.log("Loaded " + child.name);
+                        Resources.load(blob, child.name);
+                        if (i === window.osk.root.children.length - 1) {
+                            stage = "Skin loaded. Add .osz file.";
+                        }
+                    });
+                })(child, i);
             }
         }
 
