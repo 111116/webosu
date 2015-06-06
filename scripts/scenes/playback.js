@@ -1,12 +1,8 @@
-define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
-    var TIME_CONSTANT = 1000;
-    var NOTE_APPEAR = 0.5 * TIME_CONSTANT;
-    var NOTE_DISAPPEAR = -0.5 * TIME_CONSTANT;
-    var NOTE_DESPAWN = -2 * TIME_CONSTANT;
-
-    function Playback(osu, track) {
+define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
+    function Playback(game, osu, track) {
         var self = this;
         window.playback = this;
+        self.game = game;
         self.osu = osu;
         self.track = track;
         self.background = null;
@@ -15,6 +11,8 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
         self.upcomingHits = [];
         self.hits = self.track.hitObjects.slice(0);
 
+        var gfx = {};
+
         // Load background if possible
         if (self.track.events.length != 0) {
             self.ready = false;
@@ -22,9 +20,13 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
             file = file.substr(1, file.length - 2);
             osu.zip.getChildByName(file).getBlob("image/jpeg", function(blob) {
                 var uri = URL.createObjectURL(blob);
-                var image = document.createElement("img");
-                image.src = uri;
-                self.background = image;
+                var image = PIXI.Texture.fromImage(uri);
+                self.background = new PIXI.Sprite(image);
+                self.background.x = self.background.y = 0;
+                self.background.width = self.game.canvas.width;
+                self.background.height = self.game.canvas.height;
+                self.game.stage.addChild(self.background);
+                self.game.stage.setChildIndex(self.background, 0);
                 if (self.started) {
                     self.ready = true;
                     self.start();
@@ -32,103 +34,100 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
             });
         }
 
-        // Render hit circles with this map's combo colors
-        // http://www.playmycode.com/blog/2011/06/realtime-image-tinting-on-html5-canvas/
-        function generateRGBKs(img) {
-            var w = img.width;
-            var h = img.height;
-            var rgbks = [];
-
-            var canvas = document.createElement("canvas");
-            canvas.width = w;
-            canvas.height = h;
-            
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            
-            var pixels = ctx.getImageData(0, 0, w, h).data;
-
-            // 4 is used to ask for 3 images: red, green, blue and
-            // black in that order.
-            for (var rgbI = 0; rgbI < 4; rgbI++) {
-                var canvas = document.createElement("canvas");
-                canvas.width  = w;
-                canvas.height = h;
-                
-                var ctx = canvas.getContext('2d');
-                ctx.drawImage( img, 0, 0 );
-                var to = ctx.getImageData( 0, 0, w, h );
-                var toData = to.data;
-                
-                for (var i = 0, len = pixels.length; i < len; i += 4) {
-                    toData[i  ] = (rgbI === 0) ? pixels[i  ] : 0;
-                    toData[i+1] = (rgbI === 1) ? pixels[i+1] : 0;
-                    toData[i+2] = (rgbI === 2) ? pixels[i+2] : 0;
-                    toData[i+3] =                pixels[i+3]    ;
-                }
-                
-                ctx.putImageData( to, 0, 0 );
-                
-                // image is _slightly_ faster then canvas for this, so convert
-                var imgComp = new Image();
-                imgComp.src = canvas.toDataURL();
-                
-                rgbks.push(imgComp);
-            }
-
-            return rgbks;
+        var combos = [];
+        for (var i = 0; i < track.colors.length; i++) {
+            var color = track.colors[i];
+            combos.push(((+color[0]) << 16) |
+                        ((+color[1]) << 8) |
+                        ((+color[2]) << 0));
         }
 
-        function generateTintImage(img, rgbks, red, green, blue) {
-            var buff = document.createElement("canvas");
-            buff.width  = img.width;
-            buff.height = img.height;
-            
-            var ctx  = buff.getContext("2d");
-
-            ctx.globalAlpha = 1;
-            ctx.globalCompositeOperation = 'copy';
-            ctx.drawImage( rgbks[3], 0, 0 );
-
-            ctx.globalCompositeOperation = 'lighter';
-            if (red > 0) {
-                ctx.globalAlpha = red   / 255.0;
-                ctx.drawImage(rgbks[0], 0, 0);
-            }
-            if (green > 0) {
-                ctx.globalAlpha = green / 255.0;
-                ctx.drawImage(rgbks[1], 0, 0);
-            }
-            if (blue > 0) {
-                ctx.globalAlpha = blue  / 255.0;
-                ctx.drawImage(rgbks[2], 0, 0);
+        this.createHitCircle = function(hit) {
+            var index = hit.index + 1;
+            var base = new PIXI.Sprite(Resources["hitcircle.png"]);
+            base.anchor.x = base.anchor.y = 0.5;
+            base.x = gfx.xoffset + hit.x * gfx.width;
+            base.y = gfx.yoffset + hit.y * gfx.height;
+            base.alpha = 0;
+            base.tint = combos[hit.combo % combos.length];
+            var overlay = new PIXI.Sprite(Resources["hitcircleoverlay.png"]);
+            overlay.anchor.x = overlay.anchor.y = 0.5;
+            overlay.x = gfx.xoffset + hit.x * gfx.width;
+            overlay.y = gfx.yoffset + hit.y * gfx.height;
+            overlay.alpha = 0;
+            var approach;
+            if (index > 0) { // index == -1 is used for slider ends
+                hit.approach = approach = new PIXI.Sprite(Resources["approachcircle.png"]);
+                approach.alpha = 0;
+                approach.anchor.x = approach.anchor.y = 0.5;
+                approach.x = gfx.xoffset + hit.x * gfx.width;
+                approach.y = gfx.yoffset + hit.y * gfx.height;
+                approach.tint = combos[hit.combo % combos.length];
             }
 
-            var i = document.createElement('img');
-            var u = buff.toDataURL(); // TODO: We could be using toBlob here
-            i.src = u;
-            return i;
+            hit.objects.push(base);
+            hit.objects.push(overlay);
+            if (index > 0) {
+                hit.objects.push(approach);
+            }
+
+            if (index <= 9 && index > 0) {
+                var number = new PIXI.Sprite(Resources["default-" + index + ".png"]);
+                number.alpha = 0;
+                number.anchor.x = number.anchor.y = 0.5;
+                number.x = gfx.xoffset + hit.x * gfx.width;
+                number.y = gfx.yoffset + hit.y * gfx.height;
+                hit.objects.push(number);
+            } else if (index <= 99 && index > 0) {
+                var numberA = new PIXI.Sprite(Resources["default-" + (index % 10) + ".png"]);
+                numberA.alpha = 0;
+                numberA.anchor.x = numberA.anchor.y = 0.5;
+                numberA.x = gfx.xoffset + hit.x * gfx.width + (numberA.width * 0.6) - 6;
+                numberA.y = gfx.yoffset + hit.y * gfx.height;
+                numberA.scale.x = numberA.scale.y = 0.9;
+                hit.objects.push(numberA);
+
+                var numberB = new PIXI.Sprite(Resources["default-" +
+                    ((index - (index % 10)) / 10) + ".png"]);
+                numberB.alpha = 0;
+                numberB.anchor.x = numberB.anchor.y = 0.5;
+                numberB.x = gfx.xoffset + hit.x * gfx.width - (numberB.width * 0.6) - 6;
+                numberB.y = gfx.yoffset + hit.y * gfx.height;
+                numberB.scale.x = numberB.scale.y = 0.9;
+                hit.objects.push(numberB);
+            }
+            // Note: combos > 99 hits are unsupported
         }
-        
-        var hitCircleImages = [];
-        var baseRGBK = [
-            generateRGBKs(Resources["hitcircle.png"]),
-            generateRGBKs(Resources["hitcircleoverlay.png"]),
-            generateRGBKs(Resources["approachcircle.png"])
-        ];
-        for (var i = 0; i < self.track.colors.length; i++) {
-            var color = self.track.colors[i];
-            var hitcircle = generateTintImage(Resources["hitcircle.png"], baseRGBK[0],
-                +color[0], +color[1], +color[2]);
-            var hitcircleoverlay = generateTintImage(Resources["hitcircleoverlay.png"], baseRGBK[1],
-                +color[0], +color[1], +color[2]);
-            var approachcircle = generateTintImage(Resources["approachcircle.png"], baseRGBK[2],
-                +color[0], +color[1], +color[2]);
-            hitCircleImages.push({
-                hitcircle: hitcircle,
-                hitcircleoverlay: hitcircleoverlay,
-                approachcircle: approachcircle,
+
+        this.createSlider = function(hit) {
+            var lastFrame = hit.keyFrames[hit.keyFrames.length - 1];
+            // TODO: Create curve
+            self.createHitCircle({ // Far end
+                time: hit.time,
+                combo: hit.combo,
+                index: -1,
+                x: lastFrame.x,
+                y: lastFrame.y,
+                objects: hit.objects
             });
+            self.createHitCircle(hit); // Near end
+        }
+
+        this.populateHit = function(hit) {
+            // Creates PIXI objects for a given hit
+            hit.objects = [];
+            hit.score = -1;
+            switch (hit.type) {
+                case "circle":
+                    self.createHitCircle(hit);
+                    break;
+                case "slider":
+                    self.createSlider(hit);
+                    break;
+            }
+            for (var i = hit.objects.length - 1; i >= 0; i--) {
+                self.game.stage.addChildAt(hit.objects[i], 1);
+            }
         }
 
         var futuremost = 0, current = 0;
@@ -139,6 +138,7 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
             // Cache the next ten seconds worth of hit objects
             while (current < self.hits.length && futuremost < timestamp + (10 * TIME_CONSTANT)) {
                 var hit = self.hits[current++];
+                self.populateHit(hit);
                 self.upcomingHits.push(hit);
                 if (hit.time > futuremost) {
                     futuremost = hit.time;
@@ -150,163 +150,72 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                 if (diff < NOTE_DESPAWN) {
                     self.upcomingHits.splice(i, 1);
                     i--;
+                    _.each(hit.objects, function(o) { self.game.stage.removeChild(o); o.destroy(); });
                 }
             }
         }
 
-        this.renderHitCircle = function(hit, time, context, game) {
+        this.updateHitCircle = function(hit, time) {
             var diff = hit.time - time;
-            var combo = hit.combo % hitCircleImages.length;
-            if (diff <= NOTE_APPEAR && diff > 0) {
-                // Figure out alpha
-                var alpha = diff / NOTE_APPEAR;
-                alpha -= 0.5;
-                alpha = -alpha;
-                alpha += 0.5;
-                gfx.drawImage(context, Resources["hitcircle.png"],
-                    hit.x * gfx.width,
-                    hit.y * gfx.height, 1, alpha);
-                gfx.drawImage(context, Resources["hitcircleoverlay.png"],
-                    hit.x * gfx.width,
-                    hit.y * gfx.height, 1, alpha);
-                // Draw approach ring
-                if (hit.index !== -1) {
-                    (function() {
-                        var scale = (diff / NOTE_APPEAR * 2) + 1;
-                        var width = Resources["approachcircle.png"].width;
-                        var height = Resources["approachcircle.png"].height;
-                        gfx.drawImage(context, Resources["approachcircle.png"],
-                            hit.x * gfx.width, hit.y * gfx.height,
-                            scale, alpha);
-                    })();
-                }
-                // Draw index
-                var index = hit.index + 1;
-                if (index <= 9 && index > 0) {
-                    gfx.drawImage(context, Resources["default-" + index + ".png"],
-                        hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
-                }
-            } else if (diff > NOTE_DISAPPEAR && diff < 0) {
-                var alpha = diff / NOTE_DISAPPEAR;
-                alpha -= 0.5;
-                alpha = -alpha;
-                alpha += 0.5;
-                gfx.drawImage(context, Resources["hitcircle.png"],
-                    hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
-                gfx.drawImage(context, Resources["hitcircleoverlay.png"],
-                    hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
-                if (hit.index !== -1) {
-                    gfx.drawImage(context, Resources["approachcircle.png"],
-                        hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
-                }
-                var index = hit.index + 1;
-                if (index <= 9 && index > 0) {
-                    gfx.drawImage(context, Resources["default-" + index + ".png"],
-                        hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
-                }
-            }
-        }
-
-        this.renderSlider = function(hit, time, context, game) {
-            var diff = hit.time - time;
-            var combo = hit.combo % hitCircleImages.length;
-            var alpha = null;
-            if (diff <= NOTE_APPEAR && diff > 0) {
-                // Figure out alpha
+            var alpha = 0;
+            if (diff <= NOTE_APPEAR && diff > NOTE_FULL_APPEAR) {
                 alpha = diff / NOTE_APPEAR;
-                alpha -= 0.5;
-                alpha = -alpha;
-                alpha += 0.5;
+                alpha -= 0.5; alpha = -alpha; alpha += 0.5;
+            } else if (diff <= NOTE_FULL_APPEAR && diff > 0) {
+                alpha = 1;
             } else if (diff > NOTE_DISAPPEAR && diff < 0) {
                 alpha = diff / NOTE_DISAPPEAR;
-                alpha -= 0.5;
-                alpha = -alpha;
-                alpha += 0.5;
+                alpha -= 0.5; alpha = -alpha; alpha += 0.5;
+            }
+            if (diff <= NOTE_APPEAR && diff > 0) {
+                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
+                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
             } else {
-                alpha = 0;
+                hit.approach.scale.x = hit.objects[2].scale.y = 1;
             }
-            if (alpha > 0) {
-                // Render curves (TODO: make more sophisticated)
-                // TODO: Go back and forth
-                // TODO: Render ball
-                var lastFrame = hit.keyFrames[hit.keyFrames.length - 1];
-                var color = "rgba(" + track.colors[combo][0] +"," +
-                    track.colors[combo][1] + "," +
-                    track.colors[combo][2] + "," + 1 + ")";
-                context.globalAlpha = alpha;
-                context.strokeStyle = color;
-                context.beginPath();
-                context.moveTo(hit.x * gfx.width + gfx.xoffset, hit.y * gfx.height + gfx.yoffset);
-                var previous = { x: hit.x, y: hit.y };
-                for (var i = 0; i < hit.keyFrames.length; i++) {
-                    var next;
-                    if (i == hit.keyFrames.length - 1) {
-                        next = hit.keyFrames[i];
-                    } else {
-                        next = hit.keyFrames[i + 1];
-                    }
-                    context.quadraticCurveTo(
-                            previous.x * gfx.width + gfx.xoffset,
-                            previous.y * gfx.height + gfx.yoffset,
-                            hit.keyFrames[i].x * gfx.width + gfx.xoffset,
-                            hit.keyFrames[i].y * gfx.height + gfx.yoffset);
-                    previous = hit.keyFrames[i];
-                }
-                context.lineWidth = Resources["hitcircle.png"].width * 0.8;
-                context.stroke();
-                this.renderHitCircle({
-                        time: hit.time,
-                        combo: hit.combo,
-                        index: -1,
-                        x: lastFrame.x,
-                        y: lastFrame.y,
-                        disappear: hit.disappear
-                    }, time, context, game);
-                this.renderHitCircle(hit, time, context, game);
-            }
+            _.each(hit.objects, function(o) { o.alpha = alpha; });
         }
 
-        this.renderHitObjects = function(time, context, game) {
+        this.updateSlider = function(hit, time) {
+            var diff = hit.time - time;
+            var alpha = 0;
+            if (diff <= NOTE_APPEAR && diff > NOTE_FULL_APPEAR) {
+                alpha = diff / NOTE_APPEAR;
+                alpha -= 0.5; alpha = -alpha; alpha += 0.5;
+            } else if (diff <= NOTE_FULL_APPEAR && diff > 0) {
+                alpha = 1;
+            } else if (diff > NOTE_DISAPPEAR && diff < 0) {
+                alpha = diff / NOTE_DISAPPEAR;
+                alpha -= 0.5; alpha = -alpha; alpha += 0.5;
+            }
+            if (diff <= NOTE_APPEAR && diff > 0) {
+                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
+                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
+            } else {
+                hit.approach.scale.x = hit.objects[2].scale.y = 1;
+            }
+            _.each(hit.objects, function(o) { o.alpha = alpha; });
+        }
+
+        this.updateHitObjects = function(time) {
             self.updateUpcoming(time);
             for (var i = self.upcomingHits.length - 1; i >= 0; i--) {
                 var hit = self.upcomingHits[i];
                 switch (hit.type) {
                     case "circle":
-                        self.renderHitCircle(hit, time, context, game);
+                        self.updateHitCircle(hit, time);
                         break;
                     case "slider":
-                        self.renderSlider(hit, time, context, game); // TODO
+                        self.updateSlider(hit, time);
                         break;
                     case "spinner":
-                        //self.renderSpinner(hit, time, context, game); // TODO
+                        //self.updateSpinner(hit, time); // TODO
                         break;
                 }
             }
-            context.globalAlpha = 1;
         }
 
-        this.renderBackground = function(time, context, game) {
-            if (self.background !== null) {
-                context.drawImage(self.background, 0, 0, game.canvas.width, game.canvas.height);
-            }
-            var fade = 0.7;
-            if (self.track.general.PreviewTime !== 0 && time < self.track.general.PreviewTime) {
-                var diff = self.track.general.PreviewTime - time;
-                if (diff < 3 * TIME_CONSTANT) {
-                    fade = diff / (3 * TIME_CONSTANT);
-                    fade -= 0.5;
-                    fade = -fade;
-                    fade += 0.5;
-                    fade *= 0.7;
-                } else {
-                    fade = 0;
-                }
-            }
-            context.fillStyle = "rgba(0,0,0," + fade + ")";
-            context.fillRect(0, 0, game.canvas.width, game.canvas.height);
-        }
-
-        this.render = function(timestamp, context, game) {
+        this.render = function(timestamp) {
             gfx.width = game.canvas.width;
             gfx.height = game.canvas.height;
             if (gfx.width > gfx.height) {
@@ -315,11 +224,14 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                 gfx.yoffset = 128;
                 gfx.height = gfx.height - 256;
             } else {
-                // TODO
+                // TODO: Portrait displays
             }
             var time = osu.audio.getPosition() * TIME_CONSTANT;
-            self.renderBackground(time, context, game);
-            self.renderHitObjects(time, context, game);
+            self.updateHitObjects(time);
+        }
+
+        this.teardown = function() {
+            // TODO
         }
 
         this.start = function() {

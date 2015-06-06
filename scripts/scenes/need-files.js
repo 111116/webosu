@@ -1,7 +1,9 @@
-define(["osu", "scenes/difficulty-select", "underscore", "resources"], function(Osu, DifficultySelect, _, Resources) {
-    function NeedFiles() {
-        var stage = "Drag and drop a .osz file here";
-        var game = null;
+define(["osu", "scenes/difficulty-select", "underscore", "resources", "pixi"],
+function(Osu, DifficultySelect, _, Resources, PIXI) {
+    function NeedFiles(game) {
+        var self = this;
+        this.stage = "Drag and drop a .osz file here";
+        this.game = game;
 
         window.addEventListener('dragenter', dragNOP, false);
         window.addEventListener('dragleave', dragNOP, false);
@@ -18,43 +20,46 @@ define(["osu", "scenes/difficulty-select", "underscore", "resources"], function(
             var osz_raw = e.dataTransfer.files[0];
             window.osz_raw = osz_raw;
             if (osz_raw.name.indexOf(".osz") === osz_raw.name.length - 4) {
-                stage = "Loading...";
+                self.stage = "Loading...";
                 var fs = window.osz = new zip.fs.FS();
                 fs.root.importBlob(osz_raw, function() {
                     oszLoaded();
                 }, function(err) {
-                    stage = "A valid osz file, please";
+                    self.stage = "A valid osz file, please";
                 });
             } else if (osz_raw.name.indexOf(".osk") == osz_raw.name.length - 4) {
-                stage = "Loading skin...";
+                self.stage = "Loading skin...";
                 var fs = window.osk = new zip.fs.FS();
                 fs.root.importBlob(osz_raw, function() {
                     oskLoaded();
                 }, function(err) {
-                    stage = "This is not a valid osk file.";
+                    self.stage = "This is not a valid osk file.";
                 });
             } else {
-                stage = "An actual osz file, please";
+                self.stage = "An actual osz file, please";
             }
         }
 
         function oskLoaded() {
-            stage = "Loading skin...";
-            for (var i = 0; i < window.osk.root.children.length; i++) {
-                var child = window.osk.root.children[i];
+            self.stage = "Loading skin...";
+            var children = window.osk.root.children[0].children;
+            for (var i = 0; i < children.length; i++) {
+                var child = children[i];
                 var total = 0;
                 (function(child, i) {
                     var mimetype = "image/png"; // TODO: More kinds of blobs
-                    child.getBlob(mimetype, function(blob) {
-                        stage = "Loaded " + child.name;
-                        Resources.load(blob, child.name);
-                        total++;
-                        if (total === window.osk.root.children.length) {
-                            stage = "Skin loaded. Add .osz file.";
-                        }
-                    });
+                    if (child.getBlob) {
+                        child.getBlob(mimetype, function(blob) {
+                            Resources.load(blob, child.name);
+                            if (child.name === "cursor.png") {
+                                game.cursor.texture = Resources["cursor.png"];
+                                game.cursorMiddle.visible = false;
+                            }
+                        });
+                    }
                 })(child, i);
             }
+            self.stage = "Drag and drop a .osz file here";
         }
 
         function oszLoaded() {
@@ -64,26 +69,34 @@ define(["osu", "scenes/difficulty-select", "underscore", "resources"], function(
             osu.ondecoded = function() {
                 var title = osu.tracks[0].metadata.TitleUnicode || osu.tracks[0].metadata.Title;
                 document.title = title;
-                stage = title;
+                self.stage = title;
             };
             osu.onready = function() {
                 if (!_.some(osu.tracks, function(t) { return t.general.Mode === 0; })) {
-                    stage = "Only osu! mode beatmaps are supported.";
+                    self.stage = "Only osu! mode beatmaps are supported.";
                     return;
                 }
-                var difficultySelect = new DifficultySelect(osu);
+                self.teardown();
+                var difficultySelect = new DifficultySelect(self.game, osu);
                 difficultySelect.load(game);
                 game.scene = difficultySelect;
             };
             osu.load();
         }
 
-        this.render = function render(timestamp, context, _game) {
-            game = _game;
-            context.font = "18px sans";
-            var metrics = context.measureText(stage);
-            context.fillText(stage, game.canvas.width / 2 -
-                    metrics.width / 2, game.canvas.height / 2);
+        var statusText = new PIXI.Text(self.stage, { font: "18px sans" });
+        statusText.anchor.x = statusText.anchor.y = 0.5;
+        statusText.x = game.canvas.width / 2;
+        statusText.y = game.canvas.height / 2;
+        game.stage.addChild(statusText);
+
+        this.render = function render(timestamp) {
+            statusText.text = self.stage;
+        };
+
+        this.teardown = function() {
+            game.stage.removeChild(statusText);
+            statusText.destroy();
         };
     }
 

@@ -1,4 +1,4 @@
-define([], function() {
+define(["pixi"], function(PIXI) {
     gfx = {
         xoffset: 0,
         yoffset: 0,

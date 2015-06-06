@@ -1,5 +1,6 @@
-define([], function() {
+define(["pixi"], function(PIXI) {
     Resources = {};
+    Resources.oncomplete = function() { }
     Resources.loadDefault = function() {
         // Resources we need to do our thing
         var to_load = [
@@ -33,6 +34,8 @@ define([], function() {
                 Resources.load(xhr.response, resource);
                 if (to_load.length > 0) {
                     loadNext();
+                } else {
+                    Resources.oncomplete();
                 }
             };
             xhr.send();
@@ -42,9 +45,8 @@ define([], function() {
     Resources.load = function(blob, name) {
         if (name.indexOf(".png") === name.length - 4) {
             var url = URL.createObjectURL(blob);
-            var img = document.createElement('img');
-            img.src = url;
-            Resources[name] = img;
+            var texture = PIXI.Texture.fromImage(url);
+            Resources[name] = texture;
         }
     };
     return Resources;
