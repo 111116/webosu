@@ -35,8 +35,9 @@ define(["osu", "scenes/difficulty-select", "underscore"], function(Osu, Difficul
             var osu = new Osu(window.osz.root);
             window.osu = osu;
             osu.ondecoded = function() {
-                document.title = osu.tracks[0].metadata.Title;
-                stage = osu.tracks[0].metadata.TitleUnicode;
+                var title = osu.tracks[0].metadata.TitleUnicode || osu.tracks[0].metadata.Title;
+                document.title = title;
+                stage = title;
             };
             osu.onready = function() {
                 if (!_.some(osu.tracks, function(t) { return t.general.Mode === 0; })) {

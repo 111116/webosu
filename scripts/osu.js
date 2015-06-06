@@ -82,6 +82,8 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                                 hit.type = "circle";
                                 break;
                             case 2:
+                            case 6: // Not sure
+                            case 22: // Also not sure
                                 hit.combo = combo;
                                 hit.index = index++;
                                 hit.type = "slider";
