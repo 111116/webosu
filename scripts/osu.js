@@ -77,13 +77,17 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                         };
                         switch (hit.type) { // TODO: Are there more types?
                             case 1:
+                            case 21: // Not sure
+                            case 37: // Not sure
                                 hit.combo = combo;
                                 hit.index = index++;
                                 hit.type = "circle";
                                 break;
                             case 2:
                             case 6: // Not sure
-                            case 22: // Also not sure
+                            case 22: // Not sure
+                            case 38: // Not sure
+                            case 54: // Not sure
                                 hit.combo = combo;
                                 hit.index = index++;
                                 hit.type = "slider";
