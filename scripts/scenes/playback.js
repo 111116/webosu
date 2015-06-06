@@ -111,6 +111,23 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
                 objects: hit.objects
             });
             self.createHitCircle(hit); // Near end
+            if (hit.repeat !== 1) {
+                // Add reverse symbol
+                var reverse = hit.reverse = new PIXI.Sprite(Resources["reversearrow.png"]);
+                reverse.alpha = 0;
+                reverse.anchor.x = reverse.anchor.y = 0.5;
+                reverse.x = gfx.xoffset + lastFrame.x * gfx.width;
+                reverse.y = gfx.yoffset + lastFrame.y * gfx.height;
+                reverse.scale.x = reverse.scale.y = 0.8;
+                reverse.tint = 0;
+                // This makes the arrow point back towards the start of the slider
+                // TODO: Make it point at the previous keyframe instead
+                var deltaX = lastFrame.x - hit.x;
+                var deltaY = lastFrame.y - hit.y;
+                reverse.rotation = Math.atan2(deltaY, deltaX) + Math.PI;
+
+                hit.objects.push(reverse);
+            }
         }
 
         this.populateHit = function(hit) {
@@ -193,6 +210,9 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
                 hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
             } else {
                 hit.approach.scale.x = hit.objects[2].scale.y = 1;
+            }
+            if (hit.reverse) {
+                hit.reverse.scale.x = hit.reverse.scale.y = 1 + Math.abs(diff % 300) * 0.001;
             }
             _.each(hit.objects, function(o) { o.alpha = alpha; });
         }

@@ -11,6 +11,7 @@ define(["pixi"], function(PIXI) {
             "hitcircle.png",
             "hitcircleoverlay.png",
             "hitcircleselect.png",
+            "reversearrow.png",
             "menu-button-background.png",
             "star.png",
             "default-0.png",

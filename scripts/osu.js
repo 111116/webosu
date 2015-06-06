@@ -100,6 +100,9 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                                 var p = sliderKeys[j].split(":");
                                 hit.keyFrames.push({ x: (+p[0]) / 512, y: (+p[1]) / 384 });
                             }
+                            hit.repeat = +parts[6];
+                            hit.pixelLength = +parts[7];
+                            hit.edgeHitSound = +parts[8];
                         } else if ((hit.type & HIT_TYPE_SPINNER) > 0) {
                             hit.type = "spinner";
                         } else {
