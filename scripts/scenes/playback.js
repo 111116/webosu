@@ -254,7 +254,6 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                 }
                 context.lineWidth = Resources["hitcircle.png"].width * 0.8;
                 context.stroke();
-                this.renderHitCircle(hit, time, context, game);
                 this.renderHitCircle({
                         time: hit.time,
                         combo: hit.combo,
@@ -263,6 +262,7 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                         y: lastFrame.y,
                         disappear: hit.disappear
                     }, time, context, game);
+                this.renderHitCircle(hit, time, context, game);
             }
         }
 
