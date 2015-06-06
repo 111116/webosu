@@ -181,8 +181,9 @@ define(["osu", "resources", "gfx"], function(Osu, Resources, gfx) {
                     })();
                 }
                 // Draw index
-                if (hit.index <= 9 && hit.index > 0) {
-                    gfx.drawImage(context, Resources["default-" + hit.index + ".png"],
+                var index = hit.index + 1;
+                if (index <= 9 && index > 0) {
+                    gfx.drawImage(context, Resources["default-" + index + ".png"],
                         hit.x * gfx.width, hit.y * gfx.height, 1, alpha);
                 }
             } else if (diff > NOTE_DISAPPEAR && diff < 0) {
