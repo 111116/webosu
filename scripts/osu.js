@@ -80,6 +80,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             case 5:
                             case 21: // Not sure
                             case 37: // Not sure
+                            case 69: // Not sure
                                 if (hit.type == 6) {
                                     combo++;
                                     index = 0;
@@ -96,6 +97,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             case 22: // Not sure
                             case 38: // Not sure
                             case 54: // Not sure
+                            case 70: // Not sure
                                 if (hit.type == 6) {
                                     combo++;
                                     index = 0;
