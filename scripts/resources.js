@@ -3,6 +3,8 @@ define([], function() {
     Resources.loadDefault = function() {
         // Resources we need to do our thing
         var to_load = [
+            "cursor.png",
+            "cursormiddle.png",
             "approachcircle.png",
             "cursor.png",
             "hitcircle.png",
@@ -19,7 +21,7 @@ define([], function() {
             "default-6.png",
             "default-7.png",
             "default-8.png",
-            "default-9.png"
+            "default-9.png",
         ];
         function loadNext() {
             var xhr = new XMLHttpRequest();

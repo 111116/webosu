@@ -45,7 +45,7 @@ define(["osu", "scenes/difficulty-select", "underscore", "resources"], function(
                 (function(child, i) {
                     var mimetype = "image/png"; // TODO: More kinds of blobs
                     child.getBlob(mimetype, function(blob) {
-                        console.log("Loaded " + child.name);
+                        stage = "Loaded " + child.name;
                         Resources.load(blob, child.name);
                         if (i === window.osk.root.children.length - 1) {
                             stage = "Skin loaded. Add .osz file.";
