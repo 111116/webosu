@@ -42,12 +42,14 @@ define(["osu", "scenes/difficulty-select", "underscore", "resources"], function(
             stage = "Loading skin...";
             for (var i = 0; i < window.osk.root.children.length; i++) {
                 var child = window.osk.root.children[i];
+                var total = 0;
                 (function(child, i) {
                     var mimetype = "image/png"; // TODO: More kinds of blobs
                     child.getBlob(mimetype, function(blob) {
                         stage = "Loaded " + child.name;
                         Resources.load(blob, child.name);
-                        if (i === window.osk.root.children.length - 1) {
+                        total++;
+                        if (total === window.osk.root.children.length) {
                             stage = "Skin loaded. Add .osz file.";
                         }
                     });
