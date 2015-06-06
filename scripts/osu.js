@@ -84,12 +84,19 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                                 hit.type = "circle";
                                 break;
                             case 2:
-                            case 6: // Not sure
+                            case 6: // New combo sliders
                             case 22: // Not sure
                             case 38: // Not sure
                             case 54: // Not sure
-                                hit.combo = combo;
-                                hit.index = index++;
+                                if (hit.type == 6) {
+                                    combo++;
+                                    index = 0;
+                                    hit.combo = combo;
+                                    hit.index = index++;
+                                } else {
+                                    hit.combo = combo;
+                                    hit.index = index++;
+                                }
                                 hit.type = "slider";
                                 var sliderKeys = parts[5].split("|");
                                 hit.sliderType = sliderKeys[0];
