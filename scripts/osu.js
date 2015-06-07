@@ -25,7 +25,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 // TODO: Do we care?
             }
             var section = null;
-            var combo = 0, index = 1;
+            var combo = 0, index = 0;
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i].trim();
                 if (line === "") continue;
