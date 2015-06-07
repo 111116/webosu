@@ -23,6 +23,17 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
             // TODO: Visualization
         });
 
+        window.addEventListener("keyup", function(e) {
+            if (e.keyCode === 32) {
+                if (self.osu.audio.playing) {
+                    self.osu.audio.pause();
+                } else {
+                    self.osu.audio.play();
+                }
+            }
+            // TODO: Visualization
+        });
+
         var gfx = {};
         gfx.width = game.canvas.width;
         gfx.height = game.canvas.height;
