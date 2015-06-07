@@ -29,6 +29,8 @@ define([], function() {
         self.position = 0;
         self.playing = false;
         self.audio = new AudioContext();
+        self.gain = self.audio.createGain();
+        self.gain.connect(self.audio.destination);
 
         function decode(node) {
             self.audio.decodeAudioData(node.buf, function(decoded) {
@@ -58,7 +60,7 @@ define([], function() {
         this.play = function play() {
             self.source = self.audio.createBufferSource();
             self.source.buffer = self.decoded;
-            self.source.connect(self.audio.destination);
+            self.source.connect(self.gain);
             self.started = self.audio.currentTime;
             self.source.start(self.audio.currentTime, self.position);
             self.playing = true;

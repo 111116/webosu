@@ -12,6 +12,17 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
         self.upcomingHits = [];
         self.hits = self.track.hitObjects.slice(0);
 
+        self.game.canvas.addEventListener('wheel', function(e) {
+            self.osu.audio.gain.gain.value -= e.deltaY * 0.01;
+            if (self.osu.audio.gain.gain.value < 0) {
+                self.osu.audio.gain.gain.value = 0;
+            } 
+            if (self.osu.audio.gain.gain.value > 1) {
+                self.osu.audio.gain.gain.value = 1;
+            }
+            // TODO: Visualization
+        });
+
         var gfx = {};
         gfx.width = game.canvas.width;
         gfx.height = game.canvas.height;
