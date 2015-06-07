@@ -27,6 +27,9 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
         if (self.track.events.length != 0) {
             self.ready = false;
             var file = self.track.events[0][2];
+            if (track.events[0][0] === "Video") {
+                file = self.track.events[1][2];
+            }
             file = file.substr(1, file.length - 2);
             osu.zip.getChildByName(file).getBlob("image/jpeg", function(blob) {
                 var uri = URL.createObjectURL(blob);
@@ -150,6 +153,7 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
                 var deltaX = lastFrame.x - hit.x;
                 var deltaY = lastFrame.y - hit.y;
                 reverse.rotation = Math.atan2(deltaY, deltaX);
+                reverse.visible = false; // Only visible when it's the next end to hit
 
                 hit.objects.push(reverse);
             }
