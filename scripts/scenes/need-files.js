@@ -2,7 +2,7 @@ define(["osu", "scenes/difficulty-select", "underscore", "resources", "pixi"],
 function(Osu, DifficultySelect, _, Resources, PIXI) {
     function NeedFiles(game) {
         var self = this;
-        this.stage = "Drag and drop a .osz file here";
+        this.stage = "Drag and drop a .osz file here\nDrag and drop a .osk file to apply a skin first";
         this.game = game;
 
         window.addEventListener('dragenter', dragNOP, false);
@@ -84,7 +84,7 @@ function(Osu, DifficultySelect, _, Resources, PIXI) {
             osu.load();
         }
 
-        var statusText = new PIXI.Text(self.stage, { font: "18px sans" });
+        var statusText = new PIXI.Text(self.stage, { font: "18px sans", align: "center" });
         statusText.anchor.x = statusText.anchor.y = 0.5;
         statusText.x = game.canvas.width / 2;
         statusText.y = game.canvas.height / 2;
