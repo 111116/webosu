@@ -11,6 +11,9 @@ define(["osu", "resources", "scenes/playback", "underscore", "pixi"], function(O
         if (self.osu.tracks[0].events.length != 0) {
             self.ready = false;
             var file = self.osu.tracks[0].events[0][2];
+            if (self.osu.tracks[0].events[0][0] === "Video") {
+                file = self.osu.tracks[0].events[1][2];
+            }
             file = file.substr(1, file.length - 2);
             osu.zip.getChildByName(file).getBlob("image/jpeg", function(blob) {
                 var uri = URL.createObjectURL(blob);

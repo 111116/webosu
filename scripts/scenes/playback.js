@@ -6,6 +6,7 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
         self.osu = osu;
         self.track = track;
         self.background = null;
+        self.backgroundOverlay = null;
         self.ready = true;
         self.started = false;
         self.upcomingHits = [];
@@ -24,6 +25,12 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
         }
 
         // Load background if possible
+        self.backgroundOverlay = new PIXI.Graphics();
+        self.backgroundOverlay.alpha = 0;
+        self.backgroundOverlay.beginFill(0);
+        self.backgroundOverlay.drawRect(0, 0, self.game.canvas.width, self.game.canvas.height);
+        self.backgroundOverlay.endFill();
+        self.game.stage.addChild(self.backgroundOverlay);
         if (self.track.events.length != 0) {
             self.ready = false;
             var file = self.track.events[0][2];
@@ -40,6 +47,7 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
                 self.background.height = self.game.canvas.height;
                 self.game.stage.addChild(self.background);
                 self.game.stage.setChildIndex(self.background, 0);
+                self.game.stage.setChildIndex(self.backgroundOverlay, 1);
                 if (self.started) {
                     self.ready = true;
                     self.start();
@@ -186,7 +194,7 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
             while (current < self.hits.length && futuremost < timestamp + (10 * TIME_CONSTANT)) {
                 var hit = self.hits[current++];
                 for (var i = hit.objects.length - 1; i >= 0; i--) {
-                    self.game.stage.addChildAt(hit.objects[i], 1);
+                    self.game.stage.addChildAt(hit.objects[i], 2);
                 }
                 self.upcomingHits.push(hit);
                 if (hit.time > futuremost) {
@@ -272,6 +280,20 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
 
         this.render = function(timestamp) {
             var time = osu.audio.getPosition() * TIME_CONSTANT;
+            var fade = 0.7;
+            if (self.track.general.PreviewTime !== 0 && time < self.track.general.PreviewTime) {
+                var diff = self.track.general.PreviewTime - time;
+                if (diff < 3 * TIME_CONSTANT) {
+                    fade = diff / (3 * TIME_CONSTANT);
+                    fade -= 0.5;
+                    fade = -fade;
+                    fade += 0.5;
+                    fade *= 0.7;
+                } else {
+                    fade = 0;
+                }
+            }
+            self.backgroundOverlay.alpha = fade;
             self.updateHitObjects(time);
         }
 
