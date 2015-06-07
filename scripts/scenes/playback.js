@@ -12,6 +12,16 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
         self.hits = self.track.hitObjects.slice(0);
 
         var gfx = {};
+        gfx.width = game.canvas.width;
+        gfx.height = game.canvas.height;
+        if (gfx.width > gfx.height) {
+            gfx.width = gfx.height;
+            gfx.xoffset = (game.canvas.width - gfx.width) / 2;
+            gfx.yoffset = 128;
+            gfx.height = gfx.height - 256;
+        } else {
+            // TODO: Portrait displays
+        }
 
         // Load background if possible
         if (self.track.events.length != 0) {
@@ -157,9 +167,10 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
                     self.createSlider(hit);
                     break;
             }
-            for (var i = hit.objects.length - 1; i >= 0; i--) {
-                self.game.stage.addChildAt(hit.objects[i], 1);
-            }
+        }
+
+        for (var i = 0; i < this.hits.length; i++) {
+            this.populateHit(this.hits[i]); // Prepare sprites and such
         }
 
         var futuremost = 0, current = 0;
@@ -170,7 +181,9 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
             // Cache the next ten seconds worth of hit objects
             while (current < self.hits.length && futuremost < timestamp + (10 * TIME_CONSTANT)) {
                 var hit = self.hits[current++];
-                self.populateHit(hit);
+                for (var i = hit.objects.length - 1; i >= 0; i--) {
+                    self.game.stage.addChildAt(hit.objects[i], 1);
+                }
                 self.upcomingHits.push(hit);
                 if (hit.time > futuremost) {
                     futuremost = hit.time;
@@ -254,16 +267,6 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
         }
 
         this.render = function(timestamp) {
-            gfx.width = game.canvas.width;
-            gfx.height = game.canvas.height;
-            if (gfx.width > gfx.height) {
-                gfx.width = gfx.height;
-                gfx.xoffset = (game.canvas.width - gfx.width) / 2;
-                gfx.yoffset = 128;
-                gfx.height = gfx.height - 256;
-            } else {
-                // TODO: Portrait displays
-            }
             var time = osu.audio.getPosition() * TIME_CONSTANT;
             self.updateHitObjects(time);
         }
