@@ -125,6 +125,11 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                     [139,191,222]
                 ];
             }
+            if (this.general.AudioLeadIn !== 0) {
+                for (var i = 0; i < this.hitObjects.length; i++) {
+                    this.hitObjects[i].time += this.general.AudioLeadIn;
+                }
+            }
             console.log("osu decoded");
             if (this.ondecoded !== null) {
                 this.ondecoded(this);
