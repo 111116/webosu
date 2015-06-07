@@ -91,7 +91,9 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                         // Decode specific hit object type
                         if ((hit.type & HIT_TYPE_CIRCLE) > 0) {
                             hit.type = "circle";
-                            hit.addition = parts[5].split(":");
+                            if (parts.length >= 5) {
+                                hit.addition = parts[5].split(":");
+                            }
                         } else if ((hit.type & HIT_TYPE_SLIDER) > 0) {
                             hit.type = "slider";
                             var sliderKeys = parts[5].split("|");
