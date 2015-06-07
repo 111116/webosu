@@ -37,21 +37,21 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 }
                 switch (section) {
                     case "[General]":
-                        var parts = line.split(":");
-                        value = parts[1].trim();
+                        var key = line.substr(0, line.indexOf(":"));
+                        var value = line.substr(line.indexOf(":") + 1).trim();
                         if (isNaN(value)) {
-                            self.general[parts[0]] = value;
+                            self.general[key] = value;
                         } else {
-                            self.general[parts[0]] = (+value);
+                            self.general[key] = (+value);
                         }
                         break;
                     case "[Metadata]":
-                        var parts = line.split(":");
-                        var value = parts[1].trim();
+                        var key = line.substr(0, line.indexOf(":"));
+                        var value = line.substr(line.indexOf(":") + 1).trim();
                         if (isNaN(value)) {
-                            self.metadata[parts[0]] = value;
+                            self.metadata[key] = value;
                         } else {
-                            self.metadata[parts[0]] = (+value);
+                            self.metadata[key] = (+value);
                         }
                         break;
                     case "[Events]":
