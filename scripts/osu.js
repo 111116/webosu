@@ -173,7 +173,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
         });
 
         function load_mp3() {
-            var mp3_raw = self.zip.getChildByName(self.tracks[0].general.AudioFilename);
+            var mp3_raw = _.find(self.zip.children, function(c) { return c.name.toLowerCase() === self.tracks[0].general.AudioFilename.toLowerCase(); });
             mp3_raw.getBlob("audio/mpeg", function(blob) {
                 console.log("Extracted blob");
 
