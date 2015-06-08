@@ -98,14 +98,16 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             hit.type = "slider";
                             var sliderKeys = parts[5].split("|");
                             hit.sliderType = sliderKeys[0];
-                            hit.keyFrames = [];
+                            hit.keyframes = [];
                             for (var j = 1; j < sliderKeys.length; j++) {
                                 var p = sliderKeys[j].split(":");
-                                hit.keyFrames.push({ x: (+p[0]) / 512, y: (+p[1]) / 384 });
+                                hit.keyframes.push({ x: (+p[0]) / 512, y: (+p[1]) / 384 });
                             }
                             hit.repeat = +parts[6];
                             hit.pixelLength = +parts[7];
-                            hit.edgeHitSound = +parts[8];
+                            if (parts.length > 8) {
+                                hit.edgeHitSound = +parts[8];
+                            }
                         } else if ((hit.type & HIT_TYPE_SPINNER) > 0) {
                             hit.type = "spinner";
                         } else {

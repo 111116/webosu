@@ -1,10 +1,14 @@
-require(["scenes/need-files", "gfx", "resources", "pixi"], function(NeedFiles, gfx, Resources, PIXI) {
+require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resources, PIXI) {
     // Global constants
     window.TIME_CONSTANT = 1000;
     window.NOTE_APPEAR = 0.5 * TIME_CONSTANT;
     window.NOTE_FULL_APPEAR = 0.4 * TIME_CONSTANT;
     window.NOTE_DISAPPEAR = -0.2 * TIME_CONSTANT;
     window.NOTE_DESPAWN = -2 * TIME_CONSTANT;
+    window.SLIDER_LINEAR = "L";
+    window.SLIDER_CATMULL = "C";
+    window.SLIDER_BEZIER = "B";
+    window.SLIDER_PASSTHROUGH = "P";
 
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 

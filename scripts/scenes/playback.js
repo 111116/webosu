@@ -143,7 +143,7 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
         }
 
         this.createSlider = function(hit) {
-            var lastFrame = hit.keyFrames[hit.keyFrames.length - 1];
+            var lastFrame = hit.keyframes[hit.keyframes.length - 1];
             // TODO: Create curve
             self.createHitCircle({ // Far end
                 time: hit.time,
