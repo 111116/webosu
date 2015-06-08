@@ -1,6 +1,6 @@
 var CURVE_POINTS_SEPERATION = 5;
 
-define(["Curve", function(Curve) {
+define(["curves/Curve"], function(Curve) {
     // Adapted from EqualDistanceMultiCurve.java from github://itdelatrisu/opsu
     function EqualDistanceMultiCurve(hitObject) {
         Curve.apply(this, arguments);
@@ -13,35 +13,35 @@ define(["Curve", function(Curve) {
         this.curve = [];
 
         var distanceAt = 0;
-        var currentPoint = 0;
-        var currentCurveIndex = 0;
-        var currentCurve = curves[0];
-        var lastCurve = currentCurve.curve[0];
+        var curPoint = 0;
+        var curCurveIndex = 0;
+        var curCurve = curves[0];
+        var lastCurve = curCurve.curve[0];
         var lastDistanceAt = 0;
 
-        var pixelLength = this.hitObject.pixelLength / 384;
+        var pixelLength = this.hitObject.pixelLength / 384; // Scaled to 0...1
         for (var i = 0; i < this.ncurve + 1; i++) {
             var prefDistance = Math.floor(i * pixelLength / this.ncurve);
             while (distanceAt < prefDistance) {
                 lastDistanceAt = distanceAt;
-                lastCurve = currentCurve.curve[currentPoint];
-                currentPoint++;
+                lastCurve = curCurve.curve[curPoint];
+                curPoint++;
 
-                if (currentPoint >= currentCurve.curve.length) {
-                    if (currentCurveIndex < curves.length) {
-                        currentCurve = curves[++currentCurveIndex];
-                        currentPoint = 0;
+                if (curPoint >= curCurve.curve.length) {
+                    if (curCurveIndex < curves.length) {
+                        curCurve = curves[++curCurveIndex];
+                        curPoint = 0;
                     } else {
-                        currentPoint = currentCurve.curve.length - 1;
+                        curPoint = curCurve.curve.length - 1;
                         if (lastDistanceAt === distanceAt) {
                             // out of points even though the preferred distance hasn't been reached
                             break;
                         }
                     }
                 }
-                distanceAt += currentCurve.curveDistances[currentPoint];
+                distanceAt += curCurve.curveDistances[curPoint];
             }
-            var thisCurve = currentCurve.curve[currentPoint];
+            var thisCurve = curCurve.curve[curPoint];
 
             // interpolate the point between the two closest distances
             if (distanceAt - lastDistanceAt > 1) {

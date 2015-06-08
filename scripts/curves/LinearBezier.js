@@ -1,4 +1,4 @@
-define(["underscore", "EqualDistanceMultiCurve", "Bezier2"],
+define(["underscore", "curves/EqualDistanceMultiCurve", "curves/Bezier2"],
 function(_, EqualDistanceMultiCurve, Bezier2) {
     // Adapted from LinearBezier.java from github://itdelatrisu/opsu
     function LinearBeizer(hit, line) {
@@ -32,6 +32,6 @@ function(_, EqualDistanceMultiCurve, Bezier2) {
         }
         this.init(curves);
     }
-    _.extend(LinearBeizer.prototype, Curve.prototype);
+    _.extend(LinearBeizer.prototype, EqualDistanceMultiCurve.prototype);
     return LinearBeizer;
 });

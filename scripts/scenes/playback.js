@@ -1,4 +1,4 @@
-define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
+define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resources, PIXI, LinearBezier) {
     function Playback(game, osu, track) {
         var self = this;
         window.playback = this;
@@ -144,7 +144,8 @@ define(["osu", "resources", "pixi"], function(Osu, Resources, PIXI) {
 
         this.createSlider = function(hit) {
             var lastFrame = hit.keyframes[hit.keyframes.length - 1];
-            // TODO: Create curve
+            // TODO: Other sorts of curves besides LINEAR and BEZIER
+            var curve = new LinearBezier(hit, hit.type === SLIDER_LINEAR);
             self.createHitCircle({ // Far end
                 time: hit.time,
                 combo: hit.combo,
