@@ -284,10 +284,14 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
         this.updateSlider = function(hit, time) {
             var diff = hit.time - time;
             var alpha = 0;
+            // Different alpha stages:
+            //  Fade in: between appear and full_appear
+            //  Solid: between full_appear and end of slider
+            //  Fade out: between end of slider and disappear - end of slider
             if (diff <= NOTE_APPEAR && diff > NOTE_FULL_APPEAR) {
                 alpha = diff / NOTE_APPEAR;
                 alpha -= 0.5; alpha = -alpha; alpha += 0.5;
-            } else if (diff <= NOTE_FULL_APPEAR && diff > 0) {
+            } else if (diff <= NOTE_FULL_APPEAR && diff > -hit.sliderTimeTotal) {
                 alpha = 1;
             } else if (diff > NOTE_DISAPPEAR - hit.sliderTimeTotal && diff < 0) {
                 alpha = diff / (NOTE_DISAPPEAR - hit.sliderTimeTotal);
