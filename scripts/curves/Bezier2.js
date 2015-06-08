@@ -1,7 +1,7 @@
 define(["underscore", "curves/CurveType"], function(_, CurveType) {
     // Adapted from Bezier2.java from github://itdelatrisu/opsu
     function Bezier2(points) {
-        CurveType.apply(this);
+        CurveType.call(this);
 
         this.points = points;
 
@@ -18,13 +18,13 @@ define(["underscore", "curves/CurveType"], function(_, CurveType) {
     // Instance methods
     Bezier2.prototype.pointAt = function(t) {
         var c = { x: 0, y: 0 };
-		var n = this.points.length - 1;
-		for (var i = 0; i <= n; i++) {
-			var b = Bezier2.bernstein(i, n, t);
-			c.x += this.points[i].x * b;
-			c.y += this.points[i].y * b;
-		}
-		return c;
+        var n = this.points.length - 1;
+        for (var i = 0; i <= n; i++) {
+            var b = Bezier2.bernstein(i, n, t);
+            c.x += this.points[i].x * b;
+            c.y += this.points[i].y * b;
+        }
+        return c;
     }
     // Static methods
     Bezier2.bernstein = function bernstein(i, n, t) {

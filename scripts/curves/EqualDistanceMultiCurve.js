@@ -2,8 +2,8 @@ var CURVE_POINTS_SEPERATION = 5;
 
 define(["curves/Curve"], function(Curve) {
     // Adapted from EqualDistanceMultiCurve.java from github://itdelatrisu/opsu
-    function EqualDistanceMultiCurve(hitObject) {
-        Curve.apply(this, arguments);
+    function EqualDistanceMultiCurve(hit) {
+        Curve.call(this, hit);
         this.ncurve = 0;
         this.startAngle = 0;
         this.endAngle = 0;
@@ -19,7 +19,7 @@ define(["curves/Curve"], function(Curve) {
         var lastCurve = curCurve.curve[0];
         var lastDistanceAt = 0;
 
-        var pixelLength = this.hitObject.pixelLength / 384; // Scaled to 0...1
+        var pixelLength = this.hitObject.pixelLength; // Scaled to 0...1
         for (var i = 0; i < this.ncurve + 1; i++) {
             var prefDistance = Math.floor(i * pixelLength / this.ncurve);
             while (distanceAt < prefDistance) {
@@ -27,31 +27,32 @@ define(["curves/Curve"], function(Curve) {
                 lastCurve = curCurve.curve[curPoint];
                 curPoint++;
 
-                if (curPoint >= curCurve.curve.length) {
-                    if (curCurveIndex < curves.length) {
-                        curCurve = curves[++curCurveIndex];
+                if (curPoint >= curCurve.ncurve) {
+                    if (curCurveIndex < curves.length - 1) {
+                        curCurveIndex++;
+                        curCurve = curves[curCurveIndex];
                         curPoint = 0;
                     } else {
-                        curPoint = curCurve.curve.length - 1;
+                        curPoint = curCurve.ncurve - 1;
                         if (lastDistanceAt === distanceAt) {
                             // out of points even though the preferred distance hasn't been reached
                             break;
                         }
                     }
                 }
-                distanceAt += curCurve.curveDistances[curPoint];
+                distanceAt += Math.floor(curCurve.curveDistance[curPoint] * 384);
             }
             var thisCurve = curCurve.curve[curPoint];
 
             // interpolate the point between the two closest distances
             if (distanceAt - lastDistanceAt > 1) {
                 var t = (prefDistance - lastDistanceAt) / (distanceAt - lastDistanceAt);
-                this.curve.push({
+                this.curve[i] = {
                     x: Curve.lerp(lastCurve.x, thisCurve.x, t),
                     y: Curve.lerp(lastCurve.y, thisCurve.y, t)
-                });
+                };
             } else {
-                this.curve.push(thisCurve);
+                this.curve[i] = thisCurve;
             }
         }
     }

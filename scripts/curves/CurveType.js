@@ -13,7 +13,7 @@ define([], function() {
         // Subdivide the curve
         this.ncurve = Math.floor(approxLength / 4) + 2;
         for (var i = 0; i < this.ncurve; i++) {
-            curve.push(this.pointAt(i / (this.ncurve - 1)));
+            this.curve.push(this.pointAt(i / (this.ncurve - 1)));
         }
         // Find distance of each point from the previous point
         for (var i = 0; i < this.ncurve; i++) {

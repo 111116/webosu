@@ -145,7 +145,18 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
         this.createSlider = function(hit) {
             var lastFrame = hit.keyframes[hit.keyframes.length - 1];
             // TODO: Other sorts of curves besides LINEAR and BEZIER
-            var curve = new LinearBezier(hit, hit.type === SLIDER_LINEAR);
+            // TODO: Something other than shit peppysliders
+            hit.curve = new LinearBezier(hit, hit.type === SLIDER_LINEAR);
+            for (var i = 0; i < hit.curve.curve.length; i++) {
+                var c = hit.curve.curve[i];
+                var base = new PIXI.Sprite(Resources["hitcircle.png"]);
+                base.anchor.x = base.anchor.y = 0.5;
+                base.x = gfx.xoffset + c.x * gfx.width;
+                base.y = gfx.yoffset + c.y * gfx.height;
+                base.alpha = 0;
+                base.tint = combos[hit.combo % combos.length];
+                hit.objects.push(base);
+            }
             self.createHitCircle({ // Far end
                 time: hit.time,
                 combo: hit.combo,
