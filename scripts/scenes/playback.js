@@ -144,6 +144,16 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
 
         this.createSlider = function(hit) {
             var lastFrame = hit.keyframes[hit.keyframes.length - 1];
+            var timing = track.timingPoints[0];
+            for (var i = 1; i < track.timingPoints.length; i++) {
+                var t = track.timingPoints[i];
+                if (t.offset < hit.time) {
+                    break;
+                }
+                timing = t;
+            }
+            hit.sliderTime = timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
+            hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
             // TODO: Other sorts of curves besides LINEAR and BEZIER
             // TODO: Something other than shit peppysliders
             hit.curve = new LinearBezier(hit, hit.type === SLIDER_LINEAR);
@@ -238,7 +248,11 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
             for (var i = 0; i < self.upcomingHits.length; i++) {
                 var hit = self.upcomingHits[i];
                 var diff = hit.time - timestamp;
-                if (diff < NOTE_DESPAWN) {
+                var despawn = NOTE_DESPAWN;
+                if (hit.type === "slider") {
+                    despawn -= hit.sliderTimeTotal;
+                }
+                if (diff < despawn) {
                     self.upcomingHits.splice(i, 1);
                     i--;
                     _.each(hit.objects, function(o) { self.game.stage.removeChild(o); o.destroy(); });
@@ -275,8 +289,8 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
                 alpha -= 0.5; alpha = -alpha; alpha += 0.5;
             } else if (diff <= NOTE_FULL_APPEAR && diff > 0) {
                 alpha = 1;
-            } else if (diff > NOTE_DISAPPEAR && diff < 0) {
-                alpha = diff / NOTE_DISAPPEAR;
+            } else if (diff > NOTE_DISAPPEAR - hit.sliderTimeTotal && diff < 0) {
+                alpha = diff / (NOTE_DISAPPEAR - hit.sliderTimeTotal);
                 alpha -= 0.5; alpha = -alpha; alpha += 0.5;
             }
             if (diff <= NOTE_APPEAR && diff > 0) {
@@ -340,7 +354,9 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
             if (!self.ready) {
                 return;
             }
-            self.osu.audio.play();
+            setTimeout(function() {
+                self.osu.audio.play();
+            }, 1000);
         };
     }
     

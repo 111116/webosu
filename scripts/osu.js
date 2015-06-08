@@ -16,6 +16,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
         this.difficulty = {};
         this.colors = [];
         this.events = [];
+        this.timingPoints = [];
         this.hitObjects = [];
 
         this.decode = _.bind(function decode() {
@@ -65,6 +66,23 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                         } else {
                             self.difficulty[parts[0]] = (+value);
                         }
+                        break;
+                    case "[TimingPoints]":
+                        var parts = line.split(",");
+                        var t = {
+                            offset: +parts[0],
+                            millisecondsPerBeat: +parts[1],
+                            meter: +parts[2],
+                            sampleType: +parts[3],
+                            sampleSet: +parts[4],
+                            volume: +parts[5],
+                            inherited: +parts[6],
+                            kaiMode: +parts[7]
+                        };
+                        if (t.millisecondsPerBeat < 0) {
+                            t.inherited = 1;
+                        }
+                        this.timingPoints.push(t);
                         break;
                     case "[Colours]":
                         var parts = line.split(":");
@@ -133,6 +151,17 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
             if (this.general.AudioLeadIn !== 0) {
                 for (var i = 0; i < this.hitObjects.length; i++) {
                     this.hitObjects[i].time -= this.general.AudioLeadIn / 10;
+                }
+            }
+            // Why do inherited timing points even exist, this is stupid
+            var last = this.timingPoints[0]
+            for (var i = 1; i < this.timingPoints.length; i++) {
+                var point = this.timingPoints[i];
+                if (point.inherited === 1) {
+                    point.inherited = 0;
+                    point.millisecondsPerBeat += last.millisecondsPerBeat;
+                } else {
+                    last = point;
                 }
             }
             console.log("osu decoded");
