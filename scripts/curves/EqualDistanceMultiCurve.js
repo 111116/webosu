@@ -9,7 +9,7 @@ define(["curves/Curve"], function(Curve) {
         this.endAngle = 0;
     }
     EqualDistanceMultiCurve.prototype.init = function init(curves) {
-        this.ncurve = this.hitObject.pixelLength / CURVE_POINTS_SEPERATION;
+        this.ncurve = Math.floor(this.hitObject.pixelLength / CURVE_POINTS_SEPERATION);
         this.curve = [];
 
         var distanceAt = 0;
@@ -54,6 +54,21 @@ define(["curves/Curve"], function(Curve) {
             } else {
                 this.curve[i] = thisCurve;
             }
+        }
+    }
+    EqualDistanceMultiCurve.prototype.pointAt = function pointAt(t) {
+        var indexF = t * this.ncurve;
+        var index = Math.floor(indexF);
+        if (index >= this.ncurve) {
+            return this.curve[this.ncurve - 1];
+        } else {
+            var poi = this.curve[index];
+            var poi2 = this.curve[index + 1];
+            var t2 = indexF - index;
+            return {
+                x: Curve.lerp(poi.x, poi2.x, t2),
+                y: Curve.lerp(poi.y, poi2.y, t2)
+            };
         }
     }
     return EqualDistanceMultiCurve;

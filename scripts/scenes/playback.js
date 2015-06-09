@@ -176,6 +176,22 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
                 objects: hit.objects
             });
             self.createHitCircle(hit); // Near end
+            // Add follow circle
+            var follow = hit.follow = new PIXI.Sprite(Resources["sliderfollowcircle.png"]);
+            follow.visible = false;
+            follow.alpha = 0;
+            follow.anchor.x = follow.anchor.y = 0.5;
+            follow.manualAlpha = true;
+            hit.objects.push(follow);
+            // Add follow ball
+            var ball = hit.ball = new PIXI.Sprite(Resources["sliderb0.png"]);
+            ball.visible = false;
+            ball.alpha = 0;
+            ball.anchor.x = ball.anchor.y = 0.5;
+            ball.tint = 0;
+            ball.manualAlpha = true;
+            hit.objects.push(ball);
+
             if (hit.repeat !== 1) {
                 // Add reverse symbol
                 var reverse = hit.reverse = new PIXI.Sprite(Resources["reversearrow.png"]);
@@ -284,32 +300,64 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
         this.updateSlider = function(hit, time) {
             var diff = hit.time - time;
             var alpha = 0;
-            // Different alpha stages:
-            //  Fade in: between appear and full_appear
-            //  Solid: between full_appear and end of slider
-            //  Fade out: between end of slider and disappear - end of slider
             if (diff <= NOTE_APPEAR && diff > NOTE_FULL_APPEAR) {
+                // Fade in (before hit)
                 alpha = diff / NOTE_APPEAR;
                 alpha -= 0.5; alpha = -alpha; alpha += 0.5;
+
+                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
+                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
             } else if (diff <= NOTE_FULL_APPEAR && diff > -hit.sliderTimeTotal) {
+                // During slide
                 alpha = 1;
             } else if (diff > NOTE_DISAPPEAR - hit.sliderTimeTotal && diff < 0) {
+                // Fade out (after slide)
                 alpha = diff / (NOTE_DISAPPEAR - hit.sliderTimeTotal);
                 alpha -= 0.5; alpha = -alpha; alpha += 0.5;
             }
-            if (diff <= NOTE_APPEAR && diff > 0) {
+
+            // Update approach circle
+            if (diff >= 0) {
                 hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
                 hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
-            } else {
-                hit.approach.scale.x = hit.objects[2].scale.y = 1;
+            } else if (diff > NOTE_DISAPPEAR - hit.sliderTimeTotal) {
+                hit.approach.visible = false;
+                hit.follow.visible = true;
+                hit.follow.alpha = 1;
+                hit.ball.visible = true;
+                hit.ball.alpha = 1;
+
+                // Update ball and follow circle
+                var t = -diff / hit.sliderTimeTotal;
+                var at = hit.curve.pointAt(t);
+                var at_next = hit.curve.pointAt(t + 0.01);
+                hit.follow.x = at.x * gfx.width + gfx.xoffset;
+                hit.follow.y = at.y * gfx.height + gfx.yoffset;
+                hit.ball.x = at.x * gfx.width + gfx.xoffset;
+                hit.ball.y = at.y * gfx.height + gfx.yoffset;
+                var deltaX = at.x - at_next.x;
+                var deltaY = at.y - at_next.y;
+                if (at.x !== at_next.x || at.y !== at_next.y) {
+                    hit.ball.rotation = Math.atan2(deltaY, deltaX) + Math.PI;
+                }
+
+                if (diff > -hit.sliderTimeTotal) {
+                    var index = Math.floor(t * hit.sliderTime * 60 / 1000) % 10;
+                    hit.ball.texture = Resources["sliderb" + index + ".png"];
+                }
             }
+
             if (hit.reverse) {
                 hit.reverse.scale.x = hit.reverse.scale.y = 1 + Math.abs(diff % 300) * 0.001;
             }
             if (hit.reverse_b) {
                 hit.reverse_b.scale.x = hit.reverse_b.scale.y = 1 + Math.abs(diff % 300) * 0.001;
             }
-            _.each(hit.objects, function(o) { o.alpha = alpha; });
+            _.each(hit.objects, function(o) {
+                if (_.isUndefined(o._manualAlpha)) {
+                    o.alpha = alpha;
+                }
+            });
         }
 
         this.updateHitObjects = function(time) {
@@ -346,7 +394,9 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
                 }
             }
             self.backgroundOverlay.alpha = fade;
-            self.updateHitObjects(time);
+            if (time !== 0) {
+                self.updateHitObjects(time);
+            }
         }
 
         this.teardown = function() {
