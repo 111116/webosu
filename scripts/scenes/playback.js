@@ -327,8 +327,20 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
                 hit.ball.visible = true;
                 hit.ball.alpha = 1;
 
+                var t;
+                if (hit.repeat > 1) {
+                    hit.currentRepeat = Math.ceil(diff / hit.sliderTimeTotal * hit.repeat);
+                    if (hit.currentRepeat % 2 == 0) {
+                        t = -diff / hit.sliderTimeTotal * hit.repeat;
+                    } else {
+                        t = diff / hit.sliderTimeTotal * hit.repeat;
+                    }
+                    t = t - Math.floor(t);
+                } else {
+                    t = -diff / hit.sliderTimeTotal;
+                }
+
                 // Update ball and follow circle
-                var t = -diff / hit.sliderTimeTotal;
                 var at = hit.curve.pointAt(t);
                 var at_next = hit.curve.pointAt(t + 0.01);
                 hit.follow.x = at.x * gfx.width + gfx.xoffset;
