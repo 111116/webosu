@@ -192,7 +192,7 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
             ball.manualAlpha = true;
             hit.objects.push(ball);
 
-            if (hit.repeat !== 1) {
+            if (hit.repeat > 1) {
                 // Add reverse symbol
                 var reverse = hit.reverse = new PIXI.Sprite(Resources["reversearrow.png"]);
                 reverse.alpha = 0;
@@ -334,7 +334,6 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
 
                 if (hit.currentRepeat > 1) {
                    // TODO Hide combo number of first hit circle
-                   hit.combo.visible = false;
                 }
 
                 var t = -diff / hit.sliderTimeTotal * hit.repeat;
@@ -362,6 +361,24 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
                     var index = Math.floor(t * hit.sliderTime * 60 / 1000) % 10;
                     hit.ball.texture = Resources["sliderb" + index + ".png"];
                 }
+
+                if (hit.currentRepeat) {
+                    // Update position of reverse symbol
+                    if (hit.currentRepeat % 2 == 0 && hit.currentRepeat < hit.repeat) {
+                        // Reverse symbol is on start
+                        hit.reverse.visible = false;
+                        if (hit.reverse_b) {hit.reverse_b.visible = true;}
+                    } else if (hit.currentRepeat % 2 == 1 && hit.currentRepeat < hit.repeat) {
+                        // Reverse symbol is on end
+                        hit.reverse.visible = true;
+                        if (hit.reverse_b) {hit.reverse_b.visible = true;}
+                    } else {
+                        // Last slide
+                        hit.reverse.visible = false;
+                        if (hit.reverse_b) {hit.reverse_b.visible = true;}
+                    }
+                }
+
             }
 
             if (hit.reverse) {
@@ -370,6 +387,7 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
             if (hit.reverse_b) {
                 hit.reverse_b.scale.x = hit.reverse_b.scale.y = 1 + Math.abs(diff % 300) * 0.001;
             }
+
             _.each(hit.objects, function(o) {
                 if (_.isUndefined(o._manualAlpha)) {
                     o.alpha = alpha;
