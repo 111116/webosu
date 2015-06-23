@@ -316,28 +316,33 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
                 alpha -= 0.5; alpha = -alpha; alpha += 0.5;
             }
 
-            // Update approach circle
             if (diff >= 0) {
+                // Update approach circle
                 hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
                 hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
             } else if (diff > NOTE_DISAPPEAR - hit.sliderTimeTotal) {
+                // Update slider ball and reverse symbols
                 hit.approach.visible = false;
                 hit.follow.visible = true;
                 hit.follow.alpha = 1;
                 hit.ball.visible = true;
                 hit.ball.alpha = 1;
 
-                var t;
                 if (hit.repeat > 1) {
-                    hit.currentRepeat = Math.ceil(diff / hit.sliderTimeTotal * hit.repeat);
+                    hit.currentRepeat = Math.ceil(-diff / hit.sliderTimeTotal * hit.repeat);
+                }
+
+                if (hit.currentRepeat > 1) {
+                   // TODO Hide combo number of first hit circle
+                   hit.combo.visible = false;
+                }
+
+                var t = -diff / hit.sliderTimeTotal * hit.repeat;
+                if (hit.repeat > 1) {
                     if (hit.currentRepeat % 2 == 0) {
-                        t = -diff / hit.sliderTimeTotal * hit.repeat;
-                    } else {
-                        t = diff / hit.sliderTimeTotal * hit.repeat;
+                        t = -t
                     }
                     t = t - Math.floor(t);
-                } else {
-                    t = -diff / hit.sliderTimeTotal;
                 }
 
                 // Update ball and follow circle
