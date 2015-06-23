@@ -40,6 +40,7 @@ define(["pixi"], function(PIXI) {
         }
         loadNext();
     };
+
     Resources.load = function(blob, name) {
         if (name.indexOf(".png") === name.length - 4) {
             var url = URL.createObjectURL(blob);
@@ -47,5 +48,6 @@ define(["pixi"], function(PIXI) {
             Resources[name] = texture;
         }
     };
+
     return Resources;
 });

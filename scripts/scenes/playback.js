@@ -192,7 +192,7 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
             ball.manualAlpha = true;
             hit.objects.push(ball);
 
-            if (hit.repeat !== 1) {
+            if (hit.repeat > 1) {
                 // Add reverse symbol
                 var reverse = hit.reverse = new PIXI.Sprite(Resources["reversearrow.png"]);
                 reverse.alpha = 0;
@@ -316,19 +316,35 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
                 alpha -= 0.5; alpha = -alpha; alpha += 0.5;
             }
 
-            // Update approach circle
             if (diff >= 0) {
+                // Update approach circle
                 hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
                 hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
             } else if (diff > NOTE_DISAPPEAR - hit.sliderTimeTotal) {
+                // Update slider ball and reverse symbols
                 hit.approach.visible = false;
                 hit.follow.visible = true;
                 hit.follow.alpha = 1;
                 hit.ball.visible = true;
                 hit.ball.alpha = 1;
 
+                if (hit.repeat > 1) {
+                    hit.currentRepeat = Math.ceil(-diff / hit.sliderTimeTotal * hit.repeat);
+                }
+
+                if (hit.currentRepeat > 1) {
+                   // TODO Hide combo number of first hit circle
+                }
+
+                var t = -diff / hit.sliderTimeTotal * hit.repeat;
+                if (hit.repeat > 1) {
+                    if (hit.currentRepeat % 2 == 0) {
+                        t = -t
+                    }
+                    t = t - Math.floor(t);
+                }
+
                 // Update ball and follow circle
-                var t = -diff / hit.sliderTimeTotal;
                 var at = hit.curve.pointAt(t);
                 var at_next = hit.curve.pointAt(t + 0.01);
                 hit.follow.x = at.x * gfx.width + gfx.xoffset;
@@ -345,6 +361,24 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
                     var index = Math.floor(t * hit.sliderTime * 60 / 1000) % 10;
                     hit.ball.texture = Resources["sliderb" + index + ".png"];
                 }
+
+                if (hit.currentRepeat) {
+                    // Update position of reverse symbol
+                    if (hit.currentRepeat % 2 == 0 && hit.currentRepeat < hit.repeat) {
+                        // Reverse symbol is on start
+                        hit.reverse.visible = false;
+                        if (hit.reverse_b) {hit.reverse_b.visible = true;}
+                    } else if (hit.currentRepeat % 2 == 1 && hit.currentRepeat < hit.repeat) {
+                        // Reverse symbol is on end
+                        hit.reverse.visible = true;
+                        if (hit.reverse_b) {hit.reverse_b.visible = true;}
+                    } else {
+                        // Last slide
+                        hit.reverse.visible = false;
+                        if (hit.reverse_b) {hit.reverse_b.visible = true;}
+                    }
+                }
+
             }
 
             if (hit.reverse) {
@@ -353,6 +387,7 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
             if (hit.reverse_b) {
                 hit.reverse_b.scale.x = hit.reverse_b.scale.y = 1 + Math.abs(diff % 300) * 0.001;
             }
+
             _.each(hit.objects, function(o) {
                 if (_.isUndefined(o._manualAlpha)) {
                     o.alpha = alpha;

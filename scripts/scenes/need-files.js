@@ -17,26 +17,25 @@ function(Osu, DifficultySelect, _, Resources, PIXI) {
 
         function handleDragDrop(e) {
             dragNOP(e);
-            var osz_raw = e.dataTransfer.files[0];
-            window.osz_raw = osz_raw;
-            if (osz_raw.name.indexOf(".osz") === osz_raw.name.length - 4) {
-                self.stage = "Loading...";
+            var raw_file = e.dataTransfer.files[0];
+            if (raw_file.name.indexOf(".osz") === raw_file.name.length - 4) {
+                self.stage = "Loading map...";
                 var fs = window.osz = new zip.fs.FS();
-                fs.root.importBlob(osz_raw, function() {
+                fs.root.importBlob(raw_file, function() {
                     oszLoaded();
                 }, function(err) {
                     self.stage = "A valid osz file, please";
                 });
-            } else if (osz_raw.name.indexOf(".osk") == osz_raw.name.length - 4) {
+            } else if (raw_file.name.indexOf(".osk") == raw_file.name.length - 4) {
                 self.stage = "Loading skin...";
                 var fs = window.osk = new zip.fs.FS();
-                fs.root.importBlob(osz_raw, function() {
+                fs.root.importBlob(raw_file, function() {
                     oskLoaded();
                 }, function(err) {
                     self.stage = "This is not a valid osk file.";
                 });
             } else {
-                self.stage = "An actual osz file, please";
+                self.stage = "An actual osz or osk file, please";
             }
         }
 
