@@ -21,19 +21,17 @@ function(Osu, DifficultySelect, _, Resources, PIXI) {
             if (raw_file.name.indexOf(".osz") === raw_file.name.length - 4) {
                 self.stage = "Loading map...";
                 var fs = window.osz = new zip.fs.FS();
-                fs.root.importBlob(raw_file, function() {
-                    oszLoaded();
-                }, function(err) {
-                    self.stage = "A valid osz file, please";
-                });
-            } else if (raw_file.name.indexOf(".osk") == raw_file.name.length - 4) {
+                fs.root.importBlob(osz_raw, oszLoaded,
+                    function(err) {
+                        self.stage = "A valid osz file, please";
+                    });
+            } else if (osz_raw.name.indexOf(".osk") == osz_raw.name.length - 4) {
                 self.stage = "Loading skin...";
                 var fs = window.osk = new zip.fs.FS();
-                fs.root.importBlob(raw_file, function() {
-                    oskLoaded();
-                }, function(err) {
-                    self.stage = "This is not a valid osk file.";
-                });
+                fs.root.importBlob(osz_raw, oskLoaded,
+                    function(err) {
+                        self.stage = "This is not a valid osk file.";
+                    });
             } else {
                 self.stage = "An actual osz or osk file, please";
             }
@@ -79,6 +77,9 @@ function(Osu, DifficultySelect, _, Resources, PIXI) {
                 var difficultySelect = new DifficultySelect(self.game, osu);
                 difficultySelect.load(game);
                 game.scene = difficultySelect;
+            };
+            osu.onerror = function(error) {
+                self.stage = error;
             };
             osu.load();
         }
