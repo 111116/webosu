@@ -195,14 +195,18 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 return c.name.indexOf(".osu") === c.name.length - 4;
             });
 
-            _.each(self.raw_tracks, function(t) {
-                t.getText(function(text) {
-                    var track = new Track(zip, text);
-                    self.tracks.push(track);
-                    track.ondecoded = self.track_decoded;
-                    track.decode();
-                })
-            });
+            if (_.isEmpty(self.raw_tracks)) {
+                self.onerror("No .osu files found!");
+            } else {
+                _.each(self.raw_tracks, function (t) {
+                    t.getText(function (text) {
+                        var track = new Track(zip, text);
+                        self.tracks.push(track);
+                        track.ondecoded = self.track_decoded;
+                        track.decode();
+                    })
+                });
+            }
         });
 
         function load_mp3() {
