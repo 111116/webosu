@@ -21,14 +21,14 @@ function(Osu, DifficultySelect, _, Resources, PIXI) {
             if (raw_file.name.indexOf(".osz") === raw_file.name.length - 4) {
                 self.stage = "Loading map...";
                 var fs = window.osz = new zip.fs.FS();
-                fs.root.importBlob(osz_raw, oszLoaded,
+                fs.root.importBlob(raw_file, oszLoaded,
                     function(err) {
                         self.stage = "A valid osz file, please";
                     });
-            } else if (osz_raw.name.indexOf(".osk") == osz_raw.name.length - 4) {
+            } else if (raw_file.name.indexOf(".osk") == raw_file.name.length - 4) {
                 self.stage = "Loading skin...";
                 var fs = window.osk = new zip.fs.FS();
-                fs.root.importBlob(osz_raw, oskLoaded,
+                fs.root.importBlob(raw_file, oskLoaded,
                     function(err) {
                         self.stage = "This is not a valid osk file.";
                     });
