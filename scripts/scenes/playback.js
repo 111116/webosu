@@ -60,21 +60,24 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
                 file = self.track.events[1][2];
             }
             file = file.substr(1, file.length - 2);
-            osu.zip.getChildByName(file).getBlob("image/jpeg", function(blob) {
-                var uri = URL.createObjectURL(blob);
-                var image = PIXI.Texture.fromImage(uri);
-                self.background = new PIXI.Sprite(image);
-                self.background.x = self.background.y = 0;
-                self.background.width = self.game.canvas.width;
-                self.background.height = self.game.canvas.height;
-                self.game.stage.addChild(self.background);
-                self.game.stage.setChildIndex(self.background, 0);
-                self.game.stage.setChildIndex(self.backgroundOverlay, 1);
-                if (self.started) {
+            entry = osu.zip.getChildByName(file);
+            if (entry) {
+                entry.getBlob("image/jpeg", function (blob) {
+                    var uri = URL.createObjectURL(blob);
+                    var image = PIXI.Texture.fromImage(uri);
+                    self.background = new PIXI.Sprite(image);
+                    self.background.x = self.background.y = 0;
+                    self.background.width = self.game.canvas.width;
+                    self.background.height = self.game.canvas.height;
+                    self.game.stage.addChild(self.background);
+                    self.game.stage.setChildIndex(self.background, 0);
+                    self.game.stage.setChildIndex(self.backgroundOverlay, 1);
                     self.ready = true;
                     self.start();
-                }
-            });
+                });
+            } else  {
+                self.ready = true;
+            }
         }
 
         var combos = [];
@@ -412,6 +415,8 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
                 self.osu.audio.play();
             }, 1000);
         };
+
+        self.start();
     }
     
     return Playback;
