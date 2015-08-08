@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, request, Response, redirect, url_for, send_file
-from flask.ext.cors import CORS
 from functools import wraps
 from http.cookiejar import CookieJar
 
@@ -28,7 +27,6 @@ def login():
 login()
 
 app = Flask(__name__)
-CORS(app)
 
 def json_output(f):
     @wraps(f)
