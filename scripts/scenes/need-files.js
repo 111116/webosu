@@ -8,7 +8,7 @@ function(Osu, DifficultySelect, Hash, _, Resources, PIXI) {
         if (Hash.set()) {
             this.stage = "Downloading beatmap...";
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", "http://osu.sircmpwn.com/api/beatmap/" + Hash.set());
+            xhr.open("GET", "http://irc.sircmpwn.com/api/beatmap/" + Hash.set());
             xhr.responseType = 'arraybuffer';
             xhr.onload = function() {
                 var view = new DataView(xhr.response);
