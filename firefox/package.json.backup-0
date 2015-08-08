@@ -1,0 +1,13 @@
+{
+    "license": "MIT", 
+    "description": "Adds links to osu.ppy.sh to preview beatmaps", 
+    "engines": {
+        "firefox": ">=38.0a1", 
+        "fennec": ">=38.0a1"
+    }, 
+    "author": "Drew DeVault <sir@cmpwn.com>", 
+    "title": "osu!web", 
+    "version": "0.0.1", 
+    "main": "index.js", 
+    "name": "osuweb"
+}

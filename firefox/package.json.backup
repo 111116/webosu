@@ -1,0 +1,13 @@
+{
+  "title": "osu!web",
+  "name": "firefox",
+  "version": "0.0.1",
+  "description": "Adds links to osu.ppy.sh to preview beatmaps",
+  "main": "index.js",
+  "author": "Drew DeVault <sir@cmpwn.com>",
+  "engines": {
+    "firefox": ">=38.0a1",
+    "fennec": ">=38.0a1"
+  },
+  "license": "MIT"
+}
