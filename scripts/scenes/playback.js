@@ -438,7 +438,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier"], function(Osu
             self.backgroundOverlay.alpha = fade;
             if (time !== 0) {
                 self.updateHitObjects(time);
-                if (self.osu.audio.playing || false) { // TODO: Better way of updating this
+                if (self.osu.audio.playing && false) { // TODO: Better way of updating this
                     Hash.timestamp(Math.floor(time));
                 }
             }
