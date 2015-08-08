@@ -1,9 +1,22 @@
-define(["osu", "scenes/difficulty-select", "underscore", "resources", "pixi"],
-function(Osu, DifficultySelect, _, Resources, PIXI) {
+define(["osu", "scenes/difficulty-select", "hash", "underscore", "resources", "pixi"],
+function(Osu, DifficultySelect, Hash, _, Resources, PIXI) {
     function NeedFiles(game) {
         var self = this;
         this.stage = "Drag and drop a .osz file here\nDrag and drop a .osk file to apply a skin first";
         this.game = game;
+
+        if (Hash.set()) {
+            this.stage = "Downloading beatmap...";
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://osu.sircmpwn.com/api/beatmap/" + Hash.set());
+            xhr.responseType = 'arraybuffer';
+            xhr.onload = function() {
+                var view = new DataView(xhr.response);
+                var blob = new Blob([view]);
+                loadMap(blob);
+            };
+            xhr.send();
+        }
 
         window.addEventListener('dragenter', dragNOP, false);
         window.addEventListener('dragleave', dragNOP, false);
@@ -15,16 +28,20 @@ function(Osu, DifficultySelect, _, Resources, PIXI) {
             e.preventDefault();
         }
 
+        function loadMap(data) {
+            self.stage = "Loading map...";
+            var fs = window.osz = new zip.fs.FS();
+            fs.root.importBlob(data, oszLoaded,
+                function(err) {
+                    self.stage = "A valid osz file, please";
+                });
+        }
+
         function handleDragDrop(e) {
             dragNOP(e);
             var raw_file = e.dataTransfer.files[0];
             if (raw_file.name.indexOf(".osz") === raw_file.name.length - 4) {
-                self.stage = "Loading map...";
-                var fs = window.osz = new zip.fs.FS();
-                fs.root.importBlob(raw_file, oszLoaded,
-                    function(err) {
-                        self.stage = "A valid osz file, please";
-                    });
+                loadMap(raw_file);
             } else if (raw_file.name.indexOf(".osk") == raw_file.name.length - 4) {
                 self.stage = "Loading skin...";
                 var fs = window.osk = new zip.fs.FS();
@@ -74,8 +91,9 @@ function(Osu, DifficultySelect, _, Resources, PIXI) {
                     return;
                 }
                 self.teardown();
+                console.log(osu.tracks[0].metadata);
+                Hash.set(osu.tracks[0].metadata.BeatmapSetID);
                 var difficultySelect = new DifficultySelect(self.game, osu);
-                difficultySelect.load(game);
                 game.scene = difficultySelect;
             };
             osu.onerror = function(error) {

@@ -1,4 +1,4 @@
-define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resources, PIXI, LinearBezier) {
+define(["osu", "resources", "hash", "pixi", "curves/LinearBezier"], function(Osu, Resources, Hash, PIXI, LinearBezier) {
     function Playback(game, osu, track) {
         var self = this;
         window.playback = this;
@@ -11,6 +11,10 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
         self.started = false;
         self.upcomingHits = [];
         self.hits = self.track.hitObjects.slice(0);
+        self.offset = 0;
+        if (Hash.timestamp()) {
+            self.offset = +Hash.timestamp();
+        }
 
         self.game.canvas.addEventListener('wheel', function(e) {
             self.osu.audio.gain.gain.value -= e.deltaY * 0.01;
@@ -417,7 +421,7 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
         }
 
         this.render = function(timestamp) {
-            var time = osu.audio.getPosition() * TIME_CONSTANT;
+            var time = osu.audio.getPosition() * TIME_CONSTANT + self.offset;
             var fade = 0.7;
             if (self.track.general.PreviewTime !== 0 && time < self.track.general.PreviewTime) {
                 var diff = self.track.general.PreviewTime - time;
@@ -434,6 +438,9 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
             self.backgroundOverlay.alpha = fade;
             if (time !== 0) {
                 self.updateHitObjects(time);
+                if (self.osu.audio.playing || false) { // TODO: Better way of updating this
+                    Hash.timestamp(Math.floor(time));
+                }
             }
         }
 
@@ -447,7 +454,7 @@ define(["osu", "resources", "pixi", "curves/LinearBezier"], function(Osu, Resour
                 return;
             }
             setTimeout(function() {
-                self.osu.audio.play();
+                self.osu.audio.play(self.offset);
             }, 1000);
         };
 

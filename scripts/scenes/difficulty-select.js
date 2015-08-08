@@ -1,4 +1,4 @@
-define(["osu", "resources", "scenes/playback", "underscore", "pixi"], function(Osu, Resources, Playback, _, PIXI) {
+define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], function(Osu, Resources, Playback, Hash, _, PIXI) {
     function DifficultySelect(game, osu) {
         var self = this;
         self.osu = osu;
@@ -41,17 +41,16 @@ define(["osu", "resources", "scenes/playback", "underscore", "pixi"], function(O
                         e.clientY > y && e.clientY < y + menu.height) {
                     self.teardown();
                     disposed = true;
+                    Hash.beatmap(self.tracks[i].metadata.BeatmapID);
                     var playback = new Playback(self.game, self.osu, self.tracks[i]);
-                    game.scene = playback;
+                    self.game.scene = playback;
                     playback.start();
                     return;
                 }
             }
         }
 
-        this.load = function(game) {
-            game.canvas.addEventListener('click', self.click);
-        }
+        game.canvas.addEventListener('click', self.click);
 
         var tracks = [];
         for (var i = 0; i < self.tracks.length; i++) {
@@ -69,7 +68,17 @@ define(["osu", "resources", "scenes/playback", "underscore", "pixi"], function(O
         }
 
         this.render = function(time) {
-            // nop
+            if (!disposed && Hash.beatmap()) {
+                disposed = true;
+                setTimeout(function() {
+                    self.teardown();
+                    var playback = new Playback(self.game, self.osu, _.find(self.tracks, function(t) {
+                        return t.metadata.BeatmapID === +Hash.beatmap();
+                    }));
+                    self.game.scene = playback;
+                    playback.start();
+                }, 100);
+            }
         }
         
         this.teardown = function() {

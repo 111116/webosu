@@ -57,12 +57,16 @@ define([], function() {
             }
         };
 
-        this.play = function play() {
+        this.play = function play(offset) {
             self.source = self.audio.createBufferSource();
             self.source.buffer = self.decoded;
             self.source.connect(self.gain);
             self.started = self.audio.currentTime;
-            self.source.start(self.audio.currentTime, self.position);
+            if (typeof offset !== "undefined") {
+                self.source.start(self.audio.currentTime, offset / 1000);
+            } else {
+                self.source.start(self.audio.currentTime, self.position);
+            }
             self.playing = true;
         };
     
