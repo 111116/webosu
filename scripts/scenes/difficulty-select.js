@@ -70,14 +70,14 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
         this.render = function(time) {
             if (!disposed && Hash.beatmap()) {
                 disposed = true;
+                self.teardown();
                 setTimeout(function() {
-                    self.teardown();
                     var playback = new Playback(self.game, self.osu, _.find(self.tracks, function(t) {
                         return t.metadata.BeatmapID === +Hash.beatmap();
                     }));
                     self.game.scene = playback;
                     playback.start();
-                }, 100);
+                }, 1000);
             }
         }
         
