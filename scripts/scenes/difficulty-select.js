@@ -71,10 +71,11 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
             if (!disposed && Hash.beatmap()) {
                 disposed = true;
                 self.teardown();
+                var playback = new Playback(self.game, self.osu, _.find(self.tracks, function(t) {
+                    return t.metadata.BeatmapID === +Hash.beatmap();
+                }));
+                self.game.scene = playback;
                 setTimeout(function() {
-                    var playback = new Playback(self.game, self.osu, _.find(self.tracks, function(t) {
-                        return t.metadata.BeatmapID === +Hash.beatmap();
-                    }));
                     self.game.scene = playback;
                     playback.start();
                 }, 1000);
