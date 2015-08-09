@@ -18,6 +18,9 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
             entry = osu.zip.getChildByName(file);
             if (entry) {
                 entry.getBlob("image/jpeg", function (blob) {
+                    if (disposed) {
+                        return;
+                    }
                     var uri = URL.createObjectURL(blob);
                     var texture = PIXI.Texture.fromImage(uri);
                     self.background = new PIXI.Sprite(texture);
@@ -75,10 +78,7 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
                     return t.metadata.BeatmapID === +Hash.beatmap();
                 }));
                 self.game.scene = playback;
-                setTimeout(function() {
-                    self.game.scene = playback;
-                    playback.start();
-                }, 1000);
+                playback.start();
             }
         }
         
