@@ -1,6 +1,7 @@
 require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resources, PIXI) {
     // Global constants
     window.TIME_CONSTANT = 1000;
+    window.TIME_ALLOWED = 0.2 * TIME_CONSTANT;
     window.NOTE_APPEAR = 0.5 * TIME_CONSTANT;
     window.NOTE_FULL_APPEAR = 0.4 * TIME_CONSTANT;
     window.NOTE_DISAPPEAR = -0.2 * TIME_CONSTANT;
@@ -9,6 +10,24 @@ require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resource
     window.SLIDER_CATMULL = "C";
     window.SLIDER_BEZIER = "B";
     window.SLIDER_PASSTHROUGH = "P";
+    window.SOUND_HIT = new Audio('skin/normal-hitnormal.wav');
+    window.SOUND_AWESOME = new Audio('skin/spinnerbonus.wav');
+    window.osuTextures = {
+      'hit0': PIXI.Texture.fromImage('skin/hit0.png'),
+      'hit50': PIXI.Texture.fromImage('skin/hit50.png'),
+      'hit100': PIXI.Texture.fromImage('skin/hit100.png'),
+      'hit300': PIXI.Texture.fromImage('skin/hit300.png'),
+      'score0': PIXI.Texture.fromImage('skin/score-0.png'),
+      'score1': PIXI.Texture.fromImage('skin/score-1.png'),
+      'score2': PIXI.Texture.fromImage('skin/score-2.png'),
+      'score3': PIXI.Texture.fromImage('skin/score-3.png'),
+      'score4': PIXI.Texture.fromImage('skin/score-4.png'),
+      'score5': PIXI.Texture.fromImage('skin/score-5.png'),
+      'score6': PIXI.Texture.fromImage('skin/score-6.png'),
+      'score7': PIXI.Texture.fromImage('skin/score-7.png'),
+      'score8': PIXI.Texture.fromImage('skin/score-8.png'),
+      'score9': PIXI.Texture.fromImage('skin/score-9.png')
+    }; 
 
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
@@ -30,7 +49,13 @@ require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resource
         mouseX: 0,
         mouseY: 0,
         click: 100,
-        lastFrameTime: -1
+        lastFrameTime: -1,
+        finished : false,
+        score: {
+          nbClicks: 0,
+          goodClicks: 0,
+          points: 0
+        }
     };
     window.game = game;
 

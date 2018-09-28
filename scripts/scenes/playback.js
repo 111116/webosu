@@ -1,5 +1,7 @@
-define(["osu", "resources", "hash", "pixi", "curves/LinearBezier"], function(Osu, Resources, Hash, PIXI, LinearBezier) {
+define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerActions"], function(Osu, Resources, Hash, PIXI, LinearBezier, setPlayerActions) {
     function Playback(game, osu, track) {
+        var scoreCharWidth = 35;
+        var scoreCharHeight = 45;
         var self = this;
         window.playback = this;
         self.game = game;
@@ -15,6 +17,8 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier"], function(Osu
         if (Hash.timestamp()) {
             self.offset = +Hash.timestamp();
         }
+
+        setPlayerActions(self);
 
         self.game.canvas.addEventListener('wheel', function(e) {
             self.osu.audio.gain.gain.value -= e.deltaY * 0.01;
@@ -92,12 +96,89 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier"], function(Osu
                         ((+color[2]) << 0));
         }
 
+      //XXX doesn't work ...
+        // function makeScoreNumberObject(position){
+        //   var num = new PIXI.Sprite(osuTextures['score0']);
+        //   num.anchor.x = num.anchor.y = 0.5;
+        //   num.x = game.canvas.width - (position * scoreCharWidth);
+        //   num.y = scoreCharHeight;
+        //   self.game.stage.addChild(num);
+        //   return num;
+        // }
+        // self.scoreView = {
+          // score1: makeScoreNumberObject(1),
+          // score10: makeScoreNumberObject(2),
+          // score100: makeScoreNumberObject(3),
+          // score1000: makeScoreNumberObject(4),
+          // score10000: makeScoreNumberObject(5)
+        // };
+
+          var num1 = new PIXI.Sprite(osuTextures['score0']);
+          num1.anchor.x = num1.anchor.y = 0.5;
+          num1.x = game.canvas.width - (1 * scoreCharWidth);
+          num1.y = scoreCharHeight;
+          self.game.stage.addChild(num1);
+
+          var num2 = new PIXI.Sprite(osuTextures['score0']);
+          num2.anchor.x = num2.anchor.y = 0.5;
+          num2.x = game.canvas.width - (2 * scoreCharWidth);
+          num2.y = scoreCharHeight;
+          self.game.stage.addChild(num2);
+
+          var num3 = new PIXI.Sprite(osuTextures['score0']);
+          num3.anchor.x = num3.anchor.y = 0.5;
+          num3.x = game.canvas.width - (3 * scoreCharWidth);
+          num3.y = scoreCharHeight;
+          self.game.stage.addChild(num3);
+
+          var num4 = new PIXI.Sprite(osuTextures['score0']);
+          num4.anchor.x = num4.anchor.y = 0.5;
+          num4.x = game.canvas.width - (4 * scoreCharWidth);
+          num4.y = scoreCharHeight;
+          self.game.stage.addChild(num4);
+
+          var num5 = new PIXI.Sprite(osuTextures['score0']);
+          num5.anchor.x = num5.anchor.y = 0.5;
+          num5.x = game.canvas.width - (5 * scoreCharWidth);
+          num5.y = scoreCharHeight;
+          self.game.stage.addChild(num5);
+
+        self.scoreView = {
+          score1: num1,
+          score10: num2,
+          score100: num3,
+          score1000: num4,
+          score10000: num5
+        };
+
+        this.updateScoreView = function(){
+          var numbers = self.game.score.points.toString().split('').reverse();
+          var len = numbers.length;
+          if (len > 0){
+            self.scoreView.score1.texture = osuTextures["score" + numbers[0]];
+          }
+          if (len > 1){
+            self.scoreView.score10.texture = osuTextures["score" + numbers[1]];
+          }
+          if (len > 2){
+            self.scoreView.score100.texture = osuTextures["score" + numbers[2]];
+          }
+          if (len > 3){
+            self.scoreView.score1000.texture = osuTextures["score" + numbers[3]];
+          }
+          if (len > 4){
+            self.scoreView.score10000.texture = osuTextures["score" + numbers[4]];
+          }
+        }
+
         this.createHitCircle = function(hit) {
             var index = hit.index + 1;
             var base = new PIXI.Sprite(Resources["hitcircle.png"]);
             base.anchor.x = base.anchor.y = 0.5;
             base.x = gfx.xoffset + hit.x * gfx.width;
             base.y = gfx.yoffset + hit.y * gfx.height;
+            hit.basex = base.x;
+            hit.basey = base.y;
             base.alpha = 0;
             base.tint = combos[hit.combo % combos.length];
             var overlay = new PIXI.Sprite(Resources["hitcircleoverlay.png"]);
@@ -113,6 +194,14 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier"], function(Osu
                 approach.x = gfx.xoffset + hit.x * gfx.width;
                 approach.y = gfx.yoffset + hit.y * gfx.height;
                 approach.tint = combos[hit.combo % combos.length];
+            }
+
+            if (!hit.objectWin){
+              hit.objectWin = new PIXI.Sprite(osuTextures.hit0);
+              hit.objectWin.anchor.x = hit.objectWin.anchor.y = 0.5;
+              hit.objectWin.x = gfx.xoffset + hit.x * gfx.width;
+              hit.objectWin.y = gfx.yoffset + hit.y * gfx.height;
+              hit.objectWin.alpha = 0;
             }
 
             hit.objects.push(base);
@@ -148,6 +237,20 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier"], function(Osu
             }
             // Note: combos > 99 hits are unsupported
         }
+
+        this.hitSuccess = function hitSuccess(hit, points){
+          if (points > 200){
+            SOUND_AWESOME.play();
+          } else {
+            SOUND_HIT.play();
+          }
+          hit.score = points;
+          self.game.score.points += points;
+          self.game.score.goodClicks += 1;
+          self.updateScoreView();
+          hit.objectWin.texture = osuTextures["hit" + points];
+        };
+
 
         this.createSlider = function(hit) {
             var lastFrame = hit.keyframes[hit.keyframes.length - 1];
@@ -260,6 +363,9 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier"], function(Osu
             // Cache the next ten seconds worth of hit objects
             while (current < self.hits.length && futuremost < timestamp + (10 * TIME_CONSTANT)) {
                 var hit = self.hits[current++];
+                if (hit.objectWin){
+                  self.game.stage.addChildAt(hit.objectWin, 2);
+                }
                 for (var i = hit.objects.length - 1; i >= 0; i--) {
                     self.game.stage.addChildAt(hit.objects[i], 2);
                 }
@@ -279,6 +385,9 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier"], function(Osu
                     self.upcomingHits.splice(i, 1);
                     i--;
                     _.each(hit.objects, function(o) { self.game.stage.removeChild(o); o.destroy(); });
+                    if (hit.objectWin){
+                      self.game.stage.removeChild(hit.objectWin); hit.objectWin.destroy();
+                    }
                 }
             }
         }
@@ -300,6 +409,16 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier"], function(Osu
                 hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
             } else {
                 hit.approach.scale.x = hit.objects[2].scale.y = 1;
+            }
+            if (hit.score > 0 || time > hit.time + TIME_ALLOWED ){
+              hit.objectWin.alpha = 1 + (time - hit.time)/NOTE_DESPAWN;
+              hit.objectWin.scale.x = 3 * hit.objectWin.alpha;
+              hit.objectWin.scale.y = 3 * hit.objectWin.alpha;
+              if (hit.score > 0){
+                // hit.objectWin.y = hit.approach.y - (1 - hit.objectWin.alpha) * gfx.height;
+              } else{
+                hit.objectWin.y = hit.approach.y + (1 - hit.objectWin.alpha) * gfx.height;
+              }
             }
             _.each(hit.objects, function(o) { o.alpha = alpha; });
         }
@@ -393,6 +512,16 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier"], function(Osu
             }
             if (hit.reverse_b) {
                 hit.reverse_b.scale.x = hit.reverse_b.scale.y = 1 + Math.abs(diff % 300) * 0.001;
+            }
+            if (hit.score > 0 || time > hit.time + hit.sliderTimeTotal + TIME_ALLOWED ){
+              hit.objectWin.alpha = 1 + (time - hit.time)/NOTE_DESPAWN;
+              hit.objectWin.scale.x = 3 * hit.objectWin.alpha;
+              hit.objectWin.scale.y = 3 * hit.objectWin.alpha;
+              if (hit.score > 0){
+                // hit.objectWin.y = hit.approach.y - (1 - hit.objectWin.alpha) * gfx.height;
+              } else{
+                hit.objectWin.y = hit.approach.y + (1 - hit.objectWin.alpha) * gfx.height;
+              }
             }
 
             _.each(hit.objects, function(o) {
