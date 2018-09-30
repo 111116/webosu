@@ -21,6 +21,9 @@ define(["pixi"], function(PIXI) {
             "default-0.png", "default-1.png", "default-2.png", "default-3.png",
             "default-4.png", "default-5.png", "default-6.png", "default-7.png",
             "default-8.png", "default-9.png",
+            "score-0.png", "score-1.png", "score-2.png", "score-3.png",
+            "score-4.png", "score-5.png", "score-6.png", "score-7.png",
+            "score-8.png", "score-9.png",
         ];
         function loadNext() {
             var xhr = new XMLHttpRequest();
