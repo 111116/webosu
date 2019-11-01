@@ -483,7 +483,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                     hit.ball.rotation = Math.atan2(deltaY, deltaX) + Math.PI;
                 }
 
-                // disable sliderball rolling
+                // sliderball rolling
                 // if (diff > -hit.sliderTimeTotal) {
                 //     var index = Math.floor(t * hit.sliderTime * 60 / 1000) % 10;
                 //     hit.ball.texture = Resources["sliderb" + index + ".png"];
