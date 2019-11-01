@@ -65,7 +65,6 @@ define([], function() {
     playback.game.canvas.addEventListener("mousedown", function(e) {
         e.preventDefault();
         e.stopPropagation(); // we don't want the main rpgmaker canvas to receive mouse events
-        playback.game.cursorScale = 151;
         playback.game.score.nbClicks += 1;
         var clickInfos = {
           'x': e.clientX,
@@ -77,7 +76,6 @@ define([], function() {
     playback.game.canvas.addEventListener("dblclick", function(e) {
         e.preventDefault();
         e.stopPropagation(); // we don't want the main rpgmaker canvas to receive mouse events
-        playback.game.cursorScale = 151;
         playback.game.score.nbClicks += 1;
         var clickInfos = {
           'x': e.clientX,
@@ -89,7 +87,6 @@ define([], function() {
     playback.game.canvas.addEventListener("mouseup", function(e) {
         e.preventDefault();
         e.stopPropagation();
-        playback.game.cursorScale = 150;
         if (currentSlider){
           var clickInfos = {
             'x': e.clientX,
