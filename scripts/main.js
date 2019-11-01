@@ -27,7 +27,7 @@ require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resource
       'score7': PIXI.Texture.fromImage('skin/score-7.png'),
       'score8': PIXI.Texture.fromImage('skin/score-8.png'),
       'score9': PIXI.Texture.fromImage('skin/score-9.png')
-    }; 
+    };
 
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
@@ -96,7 +96,6 @@ require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resource
     game.stage = new PIXI.Container();
 
     game.cursor = null;
-    game.cursorMiddle = null;
 
     var statusText = new PIXI.Text("Loading...", { font: "24px sans" });
     statusText.anchor.x = statusText.anchor.y = 0.5;
@@ -112,11 +111,8 @@ require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resource
 
     Resources.oncomplete = function() {
         game.cursor = new PIXI.Sprite(Resources["cursor.png"]);
-        game.cursorMiddle = new PIXI.Sprite(Resources["cursormiddle.png"]);
         game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
-        game.cursorMiddle.anchor.x = game.cursorMiddle.anchor.y = 0.5;
         game.stage.addChild(game.cursor);
-        game.stage.addChild(game.cursorMiddle);
         game.stage.removeChild(statusText);
         game.scene = new NeedFiles(game);
     };
@@ -125,12 +121,10 @@ require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resource
     function gameLoop(timestamp) {
         var timediff = timestamp - game.lastFrameTime;
 
-        if (game.cursor && game.cursorMiddle) {
+        if (game.cursor) {
             // Handle cursor
             game.cursor.x = game.mouseX;
             game.cursor.y = game.mouseY;
-            game.cursorMiddle.x = game.mouseX;
-            game.cursorMiddle.y = game.mouseY;
             if (game.click > 100 && game.click <= 150) {
                 game.click -= timediff * 0.2;
             }
@@ -138,9 +132,7 @@ require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resource
                 game.click = 100;
             }
             game.cursor.scale.x = game.cursor.scale.y = (game.click / 100);
-            game.cursor.rotation += timediff * 0.001;
             game.cursor.bringToFront();
-            game.cursorMiddle.bringToFront();
         }
 
         if (game.scene) {

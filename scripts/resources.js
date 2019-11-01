@@ -5,9 +5,7 @@ define(["pixi"], function(PIXI) {
         // Resources we need to do our thing
         var to_load = [
             "cursor.png",
-            "cursormiddle.png",
             "approachcircle.png",
-            "cursor.png",
             "hitcircle.png",
             "hitcircleoverlay.png",
             "hitcircleselect.png",
