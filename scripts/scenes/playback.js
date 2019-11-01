@@ -239,11 +239,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
         }
 
         this.hitSuccess = function hitSuccess(hit, points){
-          if (points > 200){
-            SOUND_AWESOME.play();
-          } else {
-            SOUND_HIT.play();
-          }
+          SOUND_HIT.play();
           hit.score = points;
           self.game.score.points += points;
           self.game.score.goodClicks += 1;

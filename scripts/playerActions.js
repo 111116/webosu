@@ -1,5 +1,6 @@
 define([], function() {
   var TIME_ALLOWED = 200; // 0.2s
+  var TIME_ALLOWED_300 = 100; // 0.1s
   var POSITION_ALLOWED = 60; //60px = circle radius
   var currentSlider = null;
 
@@ -10,7 +11,7 @@ define([], function() {
         case "circle":
           var points = 50;
           var diff = click.time - good.time;
-          if (diff < 100) points = 100;
+          if (Math.abs(diff) < TIME_ALLOWED_300) points = 300;
           playback.hitSuccess(good, points);
           break;
         case "slider":
@@ -34,7 +35,9 @@ define([], function() {
 
   var checkEndSlider = function checkEndSlider(click){
     if (Math.abs(click.time - currentSlider.time - currentSlider.sliderTimeTotal) < TIME_ALLOWED){
-      var points = 300;
+      var points = 50;
+      if (Math.abs(click.time - currentSlider.time) < TIME_ALLOWED_300)
+        points = 300;
       playback.hitSuccess(currentSlider, points);
     }
   };
