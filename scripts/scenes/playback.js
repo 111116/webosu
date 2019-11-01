@@ -294,11 +294,11 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
             follow.manualAlpha = true;
             hit.objects.push(follow);
             // Add follow ball
-            var ball = hit.ball = new PIXI.Sprite(Resources["sliderb0.png"]);
+            var ball = hit.ball = new PIXI.Sprite(Resources["sliderb.png"]);
             ball.visible = false;
             ball.alpha = 0;
             ball.anchor.x = ball.anchor.y = 0.5;
-            ball.tint = 0;
+            ball.tint = (255<<16)+(255<<8)+255;
             ball.manualAlpha = true;
             hit.objects.push(ball);
 
@@ -483,10 +483,11 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                     hit.ball.rotation = Math.atan2(deltaY, deltaX) + Math.PI;
                 }
 
-                if (diff > -hit.sliderTimeTotal) {
-                    var index = Math.floor(t * hit.sliderTime * 60 / 1000) % 10;
-                    hit.ball.texture = Resources["sliderb" + index + ".png"];
-                }
+                // disable sliderball rolling
+                // if (diff > -hit.sliderTimeTotal) {
+                //     var index = Math.floor(t * hit.sliderTime * 60 / 1000) % 10;
+                //     hit.ball.texture = Resources["sliderb" + index + ".png"];
+                // }
 
                 if (hit.currentRepeat) {
                     // Update position of reverse symbol
