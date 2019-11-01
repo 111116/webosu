@@ -408,12 +408,12 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
             }
             if (hit.score > 0 || time > hit.time + TIME_ALLOWED ){
               hit.objectWin.alpha = 1 + (time - hit.time)/NOTE_DESPAWN;
-              hit.objectWin.scale.x = 3 * hit.objectWin.alpha;
-              hit.objectWin.scale.y = 3 * hit.objectWin.alpha;
+              hit.objectWin.scale.x = 1.2 * hit.objectWin.alpha;
+              hit.objectWin.scale.y = 1.2 * hit.objectWin.alpha;
               if (hit.score > 0){
                 // hit.objectWin.y = hit.approach.y - (1 - hit.objectWin.alpha) * gfx.height;
               } else{
-                hit.objectWin.y = hit.approach.y + (1 - hit.objectWin.alpha) * gfx.height;
+                hit.objectWin.y = hit.approach.y + 0.3 * (1 - hit.objectWin.alpha) * gfx.height;
               }
             }
             _.each(hit.objects, function(o) { o.alpha = alpha; });
@@ -512,8 +512,8 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
             }
             if (hit.score > 0 || time > hit.time + hit.sliderTimeTotal + TIME_ALLOWED ){
               hit.objectWin.alpha = 1 + (time - hit.time)/NOTE_DESPAWN;
-              hit.objectWin.scale.x = 3 * hit.objectWin.alpha;
-              hit.objectWin.scale.y = 3 * hit.objectWin.alpha;
+              hit.objectWin.scale.x = 1.2 * hit.objectWin.alpha;
+              hit.objectWin.scale.y = 1.2 * hit.objectWin.alpha;
               if (hit.score > 0){
                 // hit.objectWin.y = hit.approach.y - (1 - hit.objectWin.alpha) * gfx.height;
               } else{
