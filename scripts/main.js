@@ -48,7 +48,6 @@ require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resource
         scene: null,
         mouseX: 0,
         mouseY: 0,
-        click: 100,
         lastFrameTime: -1,
         finished : false,
         score: {
@@ -63,14 +62,12 @@ require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resource
         if (e.keyCode === 70 || e.keyCode === 68 // fd
             || e.keyCode === 90 || e.keyCode === 88 // zx
             ) {
-            game.click = 151;
         }
     });
     window.addEventListener("keyup", function(e) {
         if (e.keyCode === 70 || e.keyCode === 68 // fd
             || e.keyCode === 90 || e.keyCode === 88 // zx
             ) {
-            game.click = 150;
         }
     });
     canvas.addEventListener("mousemove", function(e) {
@@ -79,10 +76,8 @@ require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resource
     });
     canvas.addEventListener("mousedown", function(e) {
         e.preventDefault();
-        game.click = 151;
     });
     canvas.addEventListener("mouseup", function(e) {
-        game.click = 150;
     });
     document.addEventListener("contextmenu", function(e) {
         e.preventDefault();
@@ -125,13 +120,7 @@ require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resource
             // Handle cursor
             game.cursor.x = game.mouseX;
             game.cursor.y = game.mouseY;
-            if (game.click > 100 && game.click <= 150) {
-                game.click -= timediff * 0.2;
-            }
-            if (game.click < 100) {
-                game.click = 100;
-            }
-            game.cursor.scale.x = game.cursor.scale.y = (game.click / 100);
+            game.cursor.scale.x = game.cursor.scale.y = 1.3;
             game.cursor.bringToFront();
         }
 
