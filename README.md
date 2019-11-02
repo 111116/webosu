@@ -1,5 +1,29 @@
+# osu! web
+
+osu! that can be played in a browser
+
+(under development)
+
 ## 架构
 
+main.js
+	set constants & load resources, setup env
+
+need-files.js
+	handles osz/osk file drag-drop
+
+osu.js
+	load from .osu file
+
+
+流程：
+
+main -> need-files -> difficulty-select -> playback
+
+
+## NOTES
+
+currently using sound.js for hitsound, but not music.
 
 
 ## TODO
@@ -12,7 +36,7 @@
 
 std mode only, no mods or skins
 
-## notes (from ddevault/osuweb)
+## notes from ddevault/osuweb
 
 For getting replays
 
