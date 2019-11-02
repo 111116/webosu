@@ -10,8 +10,8 @@ require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles,
     window.SLIDER_CATMULL = "C";
     window.SLIDER_BEZIER = "B";
     window.SLIDER_PASSTHROUGH = "P";
-    window.SOUND_HIT = new Audio('skin/normal-hitnormal.wav');
-    window.SOUND_AWESOME = new Audio('skin/spinnerbonus.wav');
+    sounds.load(['skin/normal-hitnormal.wav']);
+    sounds.whenLoaded = function(){ window.SOUND_HIT = sounds['skin/normal-hitnormal.wav']; }
     window.osuTextures = {
       'hit0': PIXI.Texture.fromImage('skin/hit0.png'),
       'hit50': PIXI.Texture.fromImage('skin/hit50.png'),
