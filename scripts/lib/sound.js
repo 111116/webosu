@@ -487,6 +487,10 @@ function makeSound(source, loadHandler, shouldLoadSound, xhr, failHandler) {
     }
   };
 
+  o.getPosition = function() {
+    return actx.currentTime - o.startTime + o.startOffset;
+  };
+
   o.restart = function () {
     //Stop the sound if it's playing, reset the start and offset times,
     //then call the `play` method again.
