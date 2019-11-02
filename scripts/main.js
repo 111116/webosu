@@ -1,4 +1,4 @@
-require(["scenes/need-files", "resources", "pixi"], function(NeedFiles, Resources, PIXI) {
+require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles, Resources, PIXI, sound) {
     // Global constants
     window.TIME_CONSTANT = 1000;
     window.TIME_ALLOWED = 0.2 * TIME_CONSTANT;
