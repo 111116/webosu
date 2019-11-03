@@ -92,13 +92,13 @@ require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles,
 
     game.cursor = null;
 
-    var statusText = new PIXI.Text("Loading...", { font: "24px sans" });
+    var statusText = new PIXI.Text("Loading...", { font: "24px sans-serif" });
     statusText.anchor.x = statusText.anchor.y = 0.5;
     statusText.x = game.canvas.width / 2;
     statusText.y = game.canvas.height / 2;
     game.stage.addChild(statusText);
 
-    var wipText = new PIXI.Text("WORK IN PROGRESS", { font: "24px sans", fill: 0xFF0000 });
+    var wipText = new PIXI.Text("WORK IN PROGRESS", { font: "24px sans-serif", fill: 0xFF0000 });
     wipText.anchor.x = 0.5;
     wipText.x = game.canvas.width / 2;
     wipText.y = 0;

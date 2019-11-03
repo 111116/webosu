@@ -60,7 +60,8 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
             var track = self.tracks[i];
             var sprite = new PIXI.Sprite(Resources["menu-button-background.png"]);
             var leftEdge = game.canvas.width / 2 - sprite.width / 2;
-            var text = new PIXI.Text(track.metadata.Version, { font: "20px sans" });
+            var titletext = track.metadata.Artist + " - " + track.metadata.Title + " / " + track.metadata.Version;
+            var text = new PIXI.Text(titletext, { font: "20px sans-serif" });
             sprite.x = leftEdge;
             sprite.y = i * (sprite.height + 10) + 10 + 30 + 20;
             text.x = leftEdge + 20;
