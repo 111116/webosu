@@ -262,7 +262,17 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
             hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
             // TODO: Other sorts of curves besides LINEAR and BEZIER
             // TODO: Something other than shit peppysliders
+            // drawing slider edge workaround
             hit.curve = new LinearBezier(hit, hit.type === SLIDER_LINEAR);
+            for (var i = 0; i < hit.curve.curve.length; i++) {
+                var c = hit.curve.curve[i];
+                var underlay = new PIXI.Sprite(Resources["slideredge.png"]);
+                underlay.anchor.x = underlay.anchor.y = 0.5;
+                underlay.x = gfx.xoffset + c.x * gfx.width;
+                underlay.y = gfx.yoffset + c.y * gfx.height;
+                underlay.alpha = 0;
+                hit.objects.push(underlay);
+            }
             for (var i = 0; i < hit.curve.curve.length; i++) {
                 var c = hit.curve.curve[i];
                 var base = new PIXI.Sprite(Resources["hitcircle.png"]);
@@ -273,14 +283,6 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                 base.tint = combos[hit.combo % combos.length];
                 hit.objects.push(base);
             }
-            self.createHitCircle({ // Far end
-                time: hit.time,
-                combo: hit.combo,
-                index: -1,
-                x: lastFrame.x,
-                y: lastFrame.y,
-                objects: hit.objects
-            });
             self.createHitCircle(hit); // Near end
             // Add follow circle
             var follow = hit.follow = new PIXI.Sprite(Resources["sliderfollowcircle.png"]);
