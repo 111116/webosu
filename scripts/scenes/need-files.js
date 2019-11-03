@@ -82,7 +82,7 @@ function(Osu, DifficultySelect, Hash, _, Resources, PIXI) {
             window.osu = osu;
             osu.ondecoded = function() {
                 var title = osu.tracks[0].metadata.TitleUnicode || osu.tracks[0].metadata.Title;
-                document.title = title;
+                document.title = "osu! - " + title;
                 self.stage = title;
             };
             osu.onready = function() {
