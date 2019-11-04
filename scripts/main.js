@@ -1,4 +1,16 @@
 require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles, Resources, PIXI, sound) {
+    
+    let app = new PIXI.Application({
+        width: window.innerWidth,
+        height: window.innerHeight,
+        resolution: window.devicePixelRatio || 1,
+        autoResize: true,
+    });
+    document.body.appendChild(app.view);
+    
+    app.renderer.autoResize = true;
+    app.renderer.backgroundColor = 0xFFFFFF;
+
     // Global constants
     window.TIME_CONSTANT = 1000;
     window.TIME_ALLOWED = 0.2 * TIME_CONSTANT;
@@ -39,11 +51,8 @@ require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles,
         }
     }
 
-    var canvas = document.querySelector("canvas");
-
     var game = {
-        canvas: canvas,
-        renderer: null,
+        window: window,
         stage: null,
         scene: null,
         mouseX: 0,
@@ -70,37 +79,28 @@ require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles,
             ) {
         }
     });
-    canvas.addEventListener("mousemove", function(e) {
+    window.addEventListener("mousemove", function(e) {
         game.mouseX = e.clientX;
         game.mouseY = e.clientY;
-    });
-    canvas.addEventListener("mousedown", function(e) {
-        e.preventDefault();
-    });
-    canvas.addEventListener("mouseup", function(e) {
     });
     document.addEventListener("contextmenu", function(e) {
         e.preventDefault();
         return false;
     });
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    game.renderer = PIXI.autoDetectRenderer(canvas.width, canvas.height,
-        { view: canvas, backgroundColor: 0xFFFFFF });
     game.stage = new PIXI.Container();
 
     game.cursor = null;
 
     var statusText = new PIXI.Text("Loading...", { font: "24px sans-serif" });
     statusText.anchor.x = statusText.anchor.y = 0.5;
-    statusText.x = game.canvas.width / 2;
-    statusText.y = game.canvas.height / 2;
+    statusText.x = window.innerWidth / 2;
+    statusText.y = window.innerHeight / 2;
     game.stage.addChild(statusText);
 
     var wipText = new PIXI.Text("WORK IN PROGRESS", { font: "24px sans-serif", fill: 0xFF0000 });
     wipText.anchor.x = 0.5;
-    wipText.x = game.canvas.width / 2;
+    wipText.x = window.innerWidth / 2;
     wipText.y = 0;
     game.stage.addChild(wipText);
 
@@ -129,7 +129,7 @@ require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles,
         }
 
         wipText.bringToFront();
-        game.renderer.render(game.stage);
+        app.renderer.render(game.stage);
         game.lastFrameTime = timestamp;
 
         window.requestAnimationFrame(gameLoop);

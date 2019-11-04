@@ -12,7 +12,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
         self.ready = true;
         self.started = false;
         self.upcomingHits = [];
-        self.hits = self.track.hitObjects.slice(0);
+        self.hits = self.track.hitObjects.slice(0); // what does this do?
         self.offset = 0;
         if (Hash.timestamp()) {
             self.offset = +Hash.timestamp();
@@ -20,7 +20,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
 
         setPlayerActions(self);
 
-        self.game.canvas.addEventListener('wheel', function(e) {
+        self.game.window.addEventListener('wheel', function(e) {
             self.osu.audio.gain.gain.value -= e.deltaY * 0.01;
             if (self.osu.audio.gain.gain.value < 0) {
                 self.osu.audio.gain.gain.value = 0;
@@ -43,11 +43,11 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
         });
 
         var gfx = {};
-        gfx.width = game.canvas.width;
-        gfx.height = game.canvas.height;
+        gfx.width = game.window.innerWidth;
+        gfx.height = game.window.innerHeight;
         if (gfx.width > gfx.height) {
             gfx.width = gfx.height;
-            gfx.xoffset = (game.canvas.width - gfx.width) / 2;
+            gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
             gfx.yoffset = 128;
             gfx.height = gfx.height - 256;
         } else {
@@ -58,7 +58,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
         self.backgroundOverlay = new PIXI.Graphics();
         self.backgroundOverlay.alpha = 0;
         self.backgroundOverlay.beginFill(0);
-        self.backgroundOverlay.drawRect(0, 0, self.game.canvas.width, self.game.canvas.height);
+        self.backgroundOverlay.drawRect(0, 0, self.game.window.innerWidth, self.game.window.innerHeight);
         self.backgroundOverlay.endFill();
         self.game.stage.addChild(self.backgroundOverlay);
         if (self.track.events.length != 0) {
@@ -75,8 +75,8 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                     var image = PIXI.Texture.fromImage(uri);
                     self.background = new PIXI.Sprite(image);
                     self.background.x = self.background.y = 0;
-                    self.background.width = self.game.canvas.width;
-                    self.background.height = self.game.canvas.height;
+                    self.background.width = self.game.window.innerWidth;
+                    self.background.height = self.game.window.innerHeight;
                     self.game.stage.addChild(self.background);
                     self.game.stage.setChildIndex(self.background, 0);
                     self.game.stage.setChildIndex(self.backgroundOverlay, 1);
@@ -115,31 +115,31 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
 
           var num1 = new PIXI.Sprite(osuTextures['score0']);
           num1.anchor.x = num1.anchor.y = 0.5;
-          num1.x = game.canvas.width - (1 * scoreCharWidth);
+          num1.x = game.window.innerWidth - (1 * scoreCharWidth);
           num1.y = scoreCharHeight;
           self.game.stage.addChild(num1);
 
           var num2 = new PIXI.Sprite(osuTextures['score0']);
           num2.anchor.x = num2.anchor.y = 0.5;
-          num2.x = game.canvas.width - (2 * scoreCharWidth);
+          num2.x = game.window.innerWidth - (2 * scoreCharWidth);
           num2.y = scoreCharHeight;
           self.game.stage.addChild(num2);
 
           var num3 = new PIXI.Sprite(osuTextures['score0']);
           num3.anchor.x = num3.anchor.y = 0.5;
-          num3.x = game.canvas.width - (3 * scoreCharWidth);
+          num3.x = game.window.innerWidth - (3 * scoreCharWidth);
           num3.y = scoreCharHeight;
           self.game.stage.addChild(num3);
 
           var num4 = new PIXI.Sprite(osuTextures['score0']);
           num4.anchor.x = num4.anchor.y = 0.5;
-          num4.x = game.canvas.width - (4 * scoreCharWidth);
+          num4.x = game.window.innerWidth - (4 * scoreCharWidth);
           num4.y = scoreCharHeight;
           self.game.stage.addChild(num4);
 
           var num5 = new PIXI.Sprite(osuTextures['score0']);
           num5.anchor.x = num5.anchor.y = 0.5;
-          num5.x = game.canvas.width - (5 * scoreCharWidth);
+          num5.x = game.window.innerWidth - (5 * scoreCharWidth);
           num5.y = scoreCharHeight;
           self.game.stage.addChild(num5);
 

@@ -53,7 +53,7 @@ define([], function() {
   }
 
   var playerActions = function(playback){
-    playback.game.canvas.addEventListener("mousemove", function(e) {
+    playback.game.window.addEventListener("mousemove", function(e) {
         playback.game.mouseX = e.clientX;
         playback.game.mouseY = e.clientY;
         if (currentSlider){
@@ -65,7 +65,7 @@ define([], function() {
           checkInSlider(clickInfos);
         }
     });
-    playback.game.canvas.addEventListener("mousedown", function(e) {
+    playback.game.window.addEventListener("mousedown", function(e) {
         e.preventDefault();
         e.stopPropagation(); // we don't want the main rpgmaker canvas to receive mouse events
         playback.game.score.nbClicks += 1;
@@ -76,7 +76,7 @@ define([], function() {
         };
         checkHit(playback.upcomingHits, clickInfos);
     });
-    playback.game.canvas.addEventListener("dblclick", function(e) {
+    playback.game.window.addEventListener("dblclick", function(e) {
         e.preventDefault();
         e.stopPropagation(); // we don't want the main rpgmaker canvas to receive mouse events
         playback.game.score.nbClicks += 1;
@@ -87,7 +87,7 @@ define([], function() {
         };
         checkHit(playback.upcomingHits, clickInfos);
     });
-    playback.game.canvas.addEventListener("mouseup", function(e) {
+    playback.game.window.addEventListener("mouseup", function(e) {
         e.preventDefault();
         e.stopPropagation();
         if (currentSlider){
