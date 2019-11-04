@@ -120,7 +120,7 @@ require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles,
             // Handle cursor
             game.cursor.x = game.mouseX;
             game.cursor.y = game.mouseY;
-            game.cursor.scale.x = game.cursor.scale.y = 1.3;
+            game.cursor.scale.x = game.cursor.scale.y = 0.8;
             game.cursor.bringToFront();
         }
 
