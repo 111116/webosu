@@ -57,6 +57,7 @@ function() {
         var step = hit.pixelLength / CURVE_POINTS_SEPERATION;
         var curve = new Array(Math.floor(step) + 1);
         pointAt = function(t) {
+            if (t > 1) t = 1;
             var ang = lerp(startAng, endAng, t);
             return {
                 x: Math.cos(ang) * radius + circleCenter.x,
