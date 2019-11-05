@@ -476,7 +476,10 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                    // TODO Hide combo number of first hit circle
                 }
 
-                var t = -diff / hit.sliderTimeTotal * hit.repeat;
+                // t: position relative to slider duration (0..1)
+                var t = -diff / hit.sliderTime;
+                if (t > hit.repeat)
+                    t = hit.repeat;
                 if (hit.repeat > 1) {
                     if (hit.currentRepeat % 2 == 0) {
                         t = -t
@@ -486,16 +489,10 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
 
                 // Update ball and follow circle
                 var at = hit.curve.pointAt(t);
-                var at_next = hit.curve.pointAt(t + 0.01);
                 hit.follow.x = at.x * gfx.width + gfx.xoffset;
                 hit.follow.y = at.y * gfx.height + gfx.yoffset;
                 hit.ball.x = at.x * gfx.width + gfx.xoffset;
                 hit.ball.y = at.y * gfx.height + gfx.yoffset;
-                var deltaX = at.x - at_next.x;
-                var deltaY = at.y - at_next.y;
-                if (at.x !== at_next.x || at.y !== at_next.y) {
-                    hit.ball.rotation = Math.atan2(deltaY, deltaX) + Math.PI;
-                }
 
                 // sliderball rolling
                 // if (diff > -hit.sliderTimeTotal) {
