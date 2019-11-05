@@ -57,6 +57,16 @@ define([], function() {
   }
 
   var playerActions = function(playback){
+    playback.game.updatePlayerActions = function(time){
+      if (currentSlider){
+          var clickInfos = {
+            'x': playback.game.mouseX,
+            'y': playback.game.mouseY,
+            'time': time
+          };
+          checkInSlider(clickInfos);
+        }
+    };
     playback.game.window.addEventListener("mousemove", function(e) {
         playback.game.mouseX = e.clientX;
         playback.game.mouseY = e.clientY;

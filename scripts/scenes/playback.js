@@ -580,6 +580,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
             self.backgroundOverlay.alpha = fade;
             if (time !== 0) {
                 self.updateHitObjects(time);
+                self.game.updatePlayerActions(time);
                 if (self.osu.audio.playing && false) { // TODO: Better way of updating this
                     Hash.timestamp(Math.floor(time));
                 }
