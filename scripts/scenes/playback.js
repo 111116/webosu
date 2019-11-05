@@ -1,4 +1,5 @@
-define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerActions"], function(Osu, Resources, Hash, PIXI, LinearBezier, setPlayerActions) {
+define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions"],
+function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActions) {
     function Playback(game, osu, track) {
         var scoreCharWidth = 35;
         var scoreCharHeight = 45;
@@ -262,8 +263,22 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
             hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
             // TODO: Other sorts of curves besides LINEAR and BEZIER
             // TODO: Something other than shit peppysliders
-            // drawing slider edge workaround
-            hit.curve = new LinearBezier(hit, hit.type === SLIDER_LINEAR);
+
+            // get slider curve
+            if (hit.sliderType === SLIDER_PERFECT_CURVE && hit.keyframes.length == 2) {
+                // handle straight P slider
+                // Vec2f nora = new Vec2f(sliderX[0] - x, sliderY[0] - y).nor();
+                // Vec2f norb = new Vec2f(sliderX[0] - sliderX[1], sliderY[0] - sliderY[1]).nor();
+                // if (Math.abs(norb.x * nora.y - norb.y * nora.x) < 0.00001)
+                //     return new LinearBezier(this, false, scaled);  // vectors parallel, use linear bezier instead
+                // else
+                console.log("use perfect curve");
+                hit.curve = new CircumscribedCircle(hit);
+            }
+            else
+                hit.curve = new LinearBezier(hit, hit.sliderType === SLIDER_LINEAR);
+
+            // drawing slider edge under slider body
             for (var i = 0; i < hit.curve.curve.length; i++) {
                 var c = hit.curve.curve[i];
                 var underlay = new PIXI.Sprite(Resources["slideredge.png"]);
@@ -273,6 +288,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                 underlay.alpha = 0;
                 hit.objects.push(underlay);
             }
+
             for (var i = 0; i < hit.curve.curve.length; i++) {
                 var c = hit.curve.curve[i];
                 var base = new PIXI.Sprite(Resources["hitcircle.png"]);

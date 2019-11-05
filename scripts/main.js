@@ -21,7 +21,7 @@ require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles,
     window.SLIDER_LINEAR = "L";
     window.SLIDER_CATMULL = "C";
     window.SLIDER_BEZIER = "B";
-    window.SLIDER_PASSTHROUGH = "P";
+    window.SLIDER_PERFECT_CURVE = "P";
     sounds.load(['skin/normal-hitnormal.wav']);
     sounds.whenLoaded = function(){ window.SOUND_HIT = sounds['skin/normal-hitnormal.wav']; }
     window.osuTextures = {
