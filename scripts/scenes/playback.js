@@ -172,7 +172,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
           }
         }
 
-        this.createHitCircle = function(hit) {
+        this.createHitCircle = function(hit, objects = hit.objects) {
             var index = hit.index + 1;
             var base = new PIXI.Sprite(Resources["hitcircle.png"]);
             base.anchor.x = base.anchor.y = 0.5;
@@ -205,10 +205,10 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
               hit.objectWin.alpha = 0;
             }
 
-            hit.objects.push(base);
-            hit.objects.push(overlay);
+            objects.push(base);
+            objects.push(overlay);
             if (index > 0) {
-                hit.objects.push(approach);
+                objects.push(approach);
             }
 
             if (index <= 9 && index > 0) {
@@ -217,7 +217,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 number.anchor.x = number.anchor.y = 0.5;
                 number.x = gfx.xoffset + hit.x * gfx.width;
                 number.y = gfx.yoffset + hit.y * gfx.height;
-                hit.objects.push(number);
+                objects.push(number);
             } else if (index <= 99 && index > 0) {
                 var numberA = new PIXI.Sprite(Resources["default-" + (index % 10) + ".png"]);
                 numberA.alpha = 0;
@@ -225,7 +225,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 numberA.x = gfx.xoffset + hit.x * gfx.width + (numberA.width * 0.6) - 6;
                 numberA.y = gfx.yoffset + hit.y * gfx.height;
                 numberA.scale.x = numberA.scale.y = 0.9;
-                hit.objects.push(numberA);
+                objects.push(numberA);
 
                 var numberB = new PIXI.Sprite(Resources["default-" +
                     ((index - (index % 10)) / 10) + ".png"]);
@@ -234,7 +234,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 numberB.x = gfx.xoffset + hit.x * gfx.width - (numberB.width * 0.6) - 6;
                 numberB.y = gfx.yoffset + hit.y * gfx.height;
                 numberB.scale.x = numberB.scale.y = 0.9;
-                hit.objects.push(numberB);
+                objects.push(numberB);
             }
             // Note: combos > 99 hits are unsupported
         }
@@ -299,7 +299,9 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 base.tint = combos[hit.combo % combos.length];
                 hit.objects.push(base);
             }
-            self.createHitCircle(hit); // Near end
+            hit.hitcircleObjects = new Array();
+            self.createHitCircle(hit, hit.hitcircleObjects); // Near end
+            _.each(hit.hitcircleObjects, function(o){hit.objects.push(o);});
             // Add follow circle
             var follow = hit.follow = new PIXI.Sprite(Resources["sliderfollowcircle.png"]);
             follow.visible = false;
@@ -467,6 +469,8 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 hit.follow.alpha = 1;
                 hit.ball.visible = true;
                 hit.ball.alpha = 1;
+                // hide hit circle
+                _.each(hit.hitcircleObjects, function(o){o.visible = false;});
 
                 if (hit.repeat > 1) {
                     hit.currentRepeat = Math.ceil(-diff / hit.sliderTimeTotal * hit.repeat);
