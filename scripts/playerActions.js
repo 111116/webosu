@@ -18,6 +18,11 @@ define([], function() {
           playback.hitSuccess(good, points);
           break;
         case "slider":
+          var points = 50;
+          var diff = click.time - good.time;
+          if (Math.abs(diff) < TIME_ALLOWED_100) points = 100;
+          if (Math.abs(diff) < TIME_ALLOWED_300) points = 300;
+          playback.hitSuccess(good, points);
           currentSlider = good;
           break;
         case "spinner":
