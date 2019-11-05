@@ -323,8 +323,8 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 reverse.anchor.x = reverse.anchor.y = 0.5;
                 reverse.x = gfx.xoffset + lastFrame.x * gfx.width;
                 reverse.y = gfx.yoffset + lastFrame.y * gfx.height;
-                reverse.scale.x = reverse.scale.y = 0.8;
-                reverse.tint = 0;
+                reverse.scale.x = reverse.scale.y = 1;
+                reverse.tint = (255<<16)+(255<<8)+255;
                 // This makes the arrow point back towards the start of the slider
                 // TODO: Make it point at the previous keyframe instead
                 var deltaX = lastFrame.x - hit.x;
@@ -340,7 +340,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 reverse.anchor.x = reverse.anchor.y = 0.5;
                 reverse.x = gfx.xoffset + hit.x * gfx.width;
                 reverse.y = gfx.yoffset + hit.y * gfx.height;
-                reverse.scale.x = reverse.scale.y = 0.8;
+                reverse.scale.x = reverse.scale.y = 1;
                 reverse.tint = 0;
                 var deltaX = lastFrame.x - hit.x;
                 var deltaY = lastFrame.y - hit.y;
@@ -519,9 +519,6 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
 
             }
 
-            if (hit.reverse) {
-                hit.reverse.scale.x = hit.reverse.scale.y = 1 + Math.abs(diff % 300) * 0.001;
-            }
             if (hit.reverse_b) {
                 hit.reverse_b.scale.x = hit.reverse_b.scale.y = 1 + Math.abs(diff % 300) * 0.001;
             }
