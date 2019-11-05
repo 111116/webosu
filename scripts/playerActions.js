@@ -1,6 +1,8 @@
 define([], function() {
-  var TIME_ALLOWED = 200; // 0.2s
-  var TIME_ALLOWED_300 = 100; // 0.1s
+  var TIME_ALLOWED = 200; // 200 ms
+  var TIME_ALLOWED_100 = 140;
+  var TIME_ALLOWED_300 = 80;
+  // TODO: support OD
   var POSITION_ALLOWED = 60; //60px = circle radius
   var currentSlider = null;
 
@@ -11,10 +13,16 @@ define([], function() {
         case "circle":
           var points = 50;
           var diff = click.time - good.time;
+          if (Math.abs(diff) < TIME_ALLOWED_100) points = 100;
           if (Math.abs(diff) < TIME_ALLOWED_300) points = 300;
           playback.hitSuccess(good, points);
           break;
         case "slider":
+          var points = 50;
+          var diff = click.time - good.time;
+          if (Math.abs(diff) < TIME_ALLOWED_100) points = 100;
+          if (Math.abs(diff) < TIME_ALLOWED_300) points = 300;
+          playback.hitSuccess(good, points);
           currentSlider = good;
           break;
         case "spinner":
@@ -25,9 +33,9 @@ define([], function() {
   };
 
   var checkInSlider = function checkInSlider(click){
-    // var inSlider = true;
-    var inSlider = Math.abs(click.x - currentSlider.ball.x) < 2 * POSITION_ALLOWED 
-                && Math.abs(click.y - currentSlider.ball.y) < 2 * POSITION_ALLOWED ;
+    var dx = click.x - currentSlider.ball.x;
+    var dy = click.y - currentSlider.ball.y;
+    var inSlider = dx*dx + dy*dy < 4 * POSITION_ALLOWED * POSITION_ALLOWED;
     if (!inSlider){
       currentSlider = null;
     }
@@ -44,15 +52,26 @@ define([], function() {
 
   var inUpcoming = function (click){
     return function (hit){
+      var dx = click.x - hit.basex;
+      var dy = click.y - hit.basey;
       return ( 
-        hit.score < 0 
-        && Math.abs(click.x - hit.basex) < POSITION_ALLOWED 
-        && Math.abs(click.y - hit.basey) < POSITION_ALLOWED 
+        hit.score < 0
+        && dx*dx + dy*dy < POSITION_ALLOWED * POSITION_ALLOWED 
         && Math.abs(click.time - hit.time) < TIME_ALLOWED);
       }
   }
 
   var playerActions = function(playback){
+    playback.game.updatePlayerActions = function(time){
+      if (currentSlider){
+          var clickInfos = {
+            'x': playback.game.mouseX,
+            'y': playback.game.mouseY,
+            'time': time
+          };
+          checkInSlider(clickInfos);
+        }
+    };
     playback.game.window.addEventListener("mousemove", function(e) {
         playback.game.mouseX = e.clientX;
         playback.game.mouseY = e.clientY;

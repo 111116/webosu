@@ -1,4 +1,5 @@
-define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerActions"], function(Osu, Resources, Hash, PIXI, LinearBezier, setPlayerActions) {
+define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions"],
+function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActions) {
     function Playback(game, osu, track) {
         var scoreCharWidth = 35;
         var scoreCharHeight = 45;
@@ -171,7 +172,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
           }
         }
 
-        this.createHitCircle = function(hit) {
+        this.createHitCircle = function(hit, objects = hit.objects) {
             var index = hit.index + 1;
             var base = new PIXI.Sprite(Resources["hitcircle.png"]);
             base.anchor.x = base.anchor.y = 0.5;
@@ -204,10 +205,10 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
               hit.objectWin.alpha = 0;
             }
 
-            hit.objects.push(base);
-            hit.objects.push(overlay);
+            objects.push(base);
+            objects.push(overlay);
             if (index > 0) {
-                hit.objects.push(approach);
+                objects.push(approach);
             }
 
             if (index <= 9 && index > 0) {
@@ -216,7 +217,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                 number.anchor.x = number.anchor.y = 0.5;
                 number.x = gfx.xoffset + hit.x * gfx.width;
                 number.y = gfx.yoffset + hit.y * gfx.height;
-                hit.objects.push(number);
+                objects.push(number);
             } else if (index <= 99 && index > 0) {
                 var numberA = new PIXI.Sprite(Resources["default-" + (index % 10) + ".png"]);
                 numberA.alpha = 0;
@@ -224,7 +225,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                 numberA.x = gfx.xoffset + hit.x * gfx.width + (numberA.width * 0.6) - 6;
                 numberA.y = gfx.yoffset + hit.y * gfx.height;
                 numberA.scale.x = numberA.scale.y = 0.9;
-                hit.objects.push(numberA);
+                objects.push(numberA);
 
                 var numberB = new PIXI.Sprite(Resources["default-" +
                     ((index - (index % 10)) / 10) + ".png"]);
@@ -233,7 +234,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                 numberB.x = gfx.xoffset + hit.x * gfx.width - (numberB.width * 0.6) - 6;
                 numberB.y = gfx.yoffset + hit.y * gfx.height;
                 numberB.scale.x = numberB.scale.y = 0.9;
-                hit.objects.push(numberB);
+                objects.push(numberB);
             }
             // Note: combos > 99 hits are unsupported
         }
@@ -262,8 +263,22 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
             hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
             // TODO: Other sorts of curves besides LINEAR and BEZIER
             // TODO: Something other than shit peppysliders
-            // drawing slider edge workaround
-            hit.curve = new LinearBezier(hit, hit.type === SLIDER_LINEAR);
+
+            // get slider curve
+            if (hit.sliderType === SLIDER_PERFECT_CURVE && hit.keyframes.length == 2) {
+                // handle straight P slider
+                // Vec2f nora = new Vec2f(sliderX[0] - x, sliderY[0] - y).nor();
+                // Vec2f norb = new Vec2f(sliderX[0] - sliderX[1], sliderY[0] - sliderY[1]).nor();
+                // if (Math.abs(norb.x * nora.y - norb.y * nora.x) < 0.00001)
+                //     return new LinearBezier(this, false, scaled);  // vectors parallel, use linear bezier instead
+                // else
+                console.log("use perfect curve");
+                hit.curve = new CircumscribedCircle(hit, gfx.width / gfx.height);
+            }
+            else
+                hit.curve = new LinearBezier(hit, hit.sliderType === SLIDER_LINEAR);
+
+            // drawing slider edge under slider body
             for (var i = 0; i < hit.curve.curve.length; i++) {
                 var c = hit.curve.curve[i];
                 var underlay = new PIXI.Sprite(Resources["slideredge.png"]);
@@ -273,6 +288,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                 underlay.alpha = 0;
                 hit.objects.push(underlay);
             }
+
             for (var i = 0; i < hit.curve.curve.length; i++) {
                 var c = hit.curve.curve[i];
                 var base = new PIXI.Sprite(Resources["hitcircle.png"]);
@@ -283,7 +299,9 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                 base.tint = combos[hit.combo % combos.length];
                 hit.objects.push(base);
             }
-            self.createHitCircle(hit); // Near end
+            hit.hitcircleObjects = new Array();
+            self.createHitCircle(hit, hit.hitcircleObjects); // Near end
+            _.each(hit.hitcircleObjects, function(o){hit.objects.push(o);});
             // Add follow circle
             var follow = hit.follow = new PIXI.Sprite(Resources["sliderfollowcircle.png"]);
             follow.visible = false;
@@ -307,8 +325,8 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                 reverse.anchor.x = reverse.anchor.y = 0.5;
                 reverse.x = gfx.xoffset + lastFrame.x * gfx.width;
                 reverse.y = gfx.yoffset + lastFrame.y * gfx.height;
-                reverse.scale.x = reverse.scale.y = 0.8;
-                reverse.tint = 0;
+                reverse.scale.x = reverse.scale.y = 1;
+                reverse.tint = (255<<16)+(255<<8)+255;
                 // This makes the arrow point back towards the start of the slider
                 // TODO: Make it point at the previous keyframe instead
                 var deltaX = lastFrame.x - hit.x;
@@ -324,7 +342,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                 reverse.anchor.x = reverse.anchor.y = 0.5;
                 reverse.x = gfx.xoffset + hit.x * gfx.width;
                 reverse.y = gfx.yoffset + hit.y * gfx.height;
-                reverse.scale.x = reverse.scale.y = 0.8;
+                reverse.scale.x = reverse.scale.y = 1;
                 reverse.tint = 0;
                 var deltaX = lastFrame.x - hit.x;
                 var deltaY = lastFrame.y - hit.y;
@@ -451,6 +469,8 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                 hit.follow.alpha = 1;
                 hit.ball.visible = true;
                 hit.ball.alpha = 1;
+                // hide hit circle
+                _.each(hit.hitcircleObjects, function(o){o.visible = false;});
 
                 if (hit.repeat > 1) {
                     hit.currentRepeat = Math.ceil(-diff / hit.sliderTimeTotal * hit.repeat);
@@ -460,7 +480,10 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
                    // TODO Hide combo number of first hit circle
                 }
 
-                var t = -diff / hit.sliderTimeTotal * hit.repeat;
+                // t: position relative to slider duration (0..1)
+                var t = -diff / hit.sliderTime;
+                if (t > hit.repeat)
+                    t = hit.repeat;
                 if (hit.repeat > 1) {
                     if (hit.currentRepeat % 2 == 0) {
                         t = -t
@@ -470,16 +493,10 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
 
                 // Update ball and follow circle
                 var at = hit.curve.pointAt(t);
-                var at_next = hit.curve.pointAt(t + 0.01);
                 hit.follow.x = at.x * gfx.width + gfx.xoffset;
                 hit.follow.y = at.y * gfx.height + gfx.yoffset;
                 hit.ball.x = at.x * gfx.width + gfx.xoffset;
                 hit.ball.y = at.y * gfx.height + gfx.yoffset;
-                var deltaX = at.x - at_next.x;
-                var deltaY = at.y - at_next.y;
-                if (at.x !== at_next.x || at.y !== at_next.y) {
-                    hit.ball.rotation = Math.atan2(deltaY, deltaX) + Math.PI;
-                }
 
                 // sliderball rolling
                 // if (diff > -hit.sliderTimeTotal) {
@@ -506,9 +523,6 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
 
             }
 
-            if (hit.reverse) {
-                hit.reverse.scale.x = hit.reverse.scale.y = 1 + Math.abs(diff % 300) * 0.001;
-            }
             if (hit.reverse_b) {
                 hit.reverse_b.scale.x = hit.reverse_b.scale.y = 1 + Math.abs(diff % 300) * 0.001;
             }
@@ -566,6 +580,7 @@ define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "playerAction
             self.backgroundOverlay.alpha = fade;
             if (time !== 0) {
                 self.updateHitObjects(time);
+                self.game.updatePlayerActions(time);
                 if (self.osu.audio.playing && false) { // TODO: Better way of updating this
                     Hash.timestamp(Math.floor(time));
                 }
