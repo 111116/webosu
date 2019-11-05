@@ -1,6 +1,8 @@
 define([], function() {
-  var TIME_ALLOWED = 200; // 0.2s
-  var TIME_ALLOWED_300 = 100; // 0.1s
+  var TIME_ALLOWED = 200; // 200 ms
+  var TIME_ALLOWED_100 = 140;
+  var TIME_ALLOWED_300 = 80;
+  // TODO: support OD
   var POSITION_ALLOWED = 60; //60px = circle radius
   var currentSlider = null;
 
@@ -11,6 +13,7 @@ define([], function() {
         case "circle":
           var points = 50;
           var diff = click.time - good.time;
+          if (Math.abs(diff) < TIME_ALLOWED_100) points = 100;
           if (Math.abs(diff) < TIME_ALLOWED_300) points = 300;
           playback.hitSuccess(good, points);
           break;
