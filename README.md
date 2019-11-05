@@ -6,14 +6,20 @@ osu! that can be played in a browser
 
 ## 架构
 
-main.js
+`main.js`
 	set constants & load resources, setup env
 
-need-files.js
+`need-files.js`
 	handles osz/osk file drag-drop
 
-osu.js
+`osu.js`
 	load from .osu file
+	
+`playback.js`
+	draw shapes in realtime. Gaming mainly happens here. 
+	
+`playerActions.js`
+	check hits, called by playback.js
 
 
 流程：
@@ -24,6 +30,8 @@ main -> need-files -> difficulty-select -> playback
 ## NOTES
 
 currently using sound.js for hitsound, but not music.
+
+don't know what `firefox` and `api` is for...
 
 
 ## TODO
@@ -38,7 +46,15 @@ std mode only, no mods or skins
 
 ## Current functions
 
-scrolling during gameplay: enabled
+- scrolling during gameplay: enabled
+- keyboard button: unsupported
+- Hit circle: supported
+- Slider: partially supported
+- Spinner: not sure
+- hitsound: partially supported
+- CS, AR, OD: unsupported
+- beatmap hitsound: unsupported
+- beatmap skin: unsupported
 
 ## notes from ddevault/osuweb
 
