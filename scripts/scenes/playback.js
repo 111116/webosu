@@ -273,7 +273,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 //     return new LinearBezier(this, false, scaled);  // vectors parallel, use linear bezier instead
                 // else
                 console.log("use perfect curve");
-                hit.curve = new CircumscribedCircle(hit);
+                hit.curve = new CircumscribedCircle(hit, gfx.width / gfx.height);
             }
             else
                 hit.curve = new LinearBezier(hit, hit.sliderType === SLIDER_LINEAR);

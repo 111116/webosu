@@ -2,12 +2,16 @@
 define([],
 function() {
     // Adapted from CircumscribedCircle.java @ github.com/itdelatrisu/opsu
-    function CircumscribedCircle(hit, line) {
+    function CircumscribedCircle(hit, xscale) {
 
-        var arcs = [];
         var start = { x: hit.x, y: hit.y };
-        var mid = hit.keyframes[0];
-        var end = hit.keyframes[1];
+        var mid = { x: hit.keyframes[0].x, y: hit.keyframes[0].y };
+        var end = { x: hit.keyframes[1].x, y: hit.keyframes[1].y };
+
+        // fix distortion due to aspect ratio
+        start.x *= xscale;
+        mid.x *= xscale;
+        end.x *= xscale;
 
         // find the circle center
         var mida = vecmid(start, mid);
@@ -60,7 +64,7 @@ function() {
             if (t > 1) t = 1;
             var ang = lerp(startAng, endAng, t);
             return {
-                x: Math.cos(ang) * radius + circleCenter.x,
+                x: (Math.cos(ang) * radius + circleCenter.x) / xscale,
                 y: Math.sin(ang) * radius + circleCenter.y
             };
         };
