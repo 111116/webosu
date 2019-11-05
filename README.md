@@ -4,7 +4,7 @@ osu! that can be played in a browser
 
 (under development)
 
-## 架构
+## Architecture
 
 `main.js`
 	set constants & load resources, setup env
@@ -22,9 +22,9 @@ osu! that can be played in a browser
 	check hits, called by playback.js
 
 
-流程：
+#### Execution sequence:
 
-main -> need-files -> difficulty-select -> playback
+	main -> need-files -> difficulty-select -> playback
 
 
 ## NOTES
@@ -36,13 +36,17 @@ don't know what `firefox` and `api` is for...
 
 ## TODO
 
-先优化游戏核心体验（画面质量，判定，延迟）
+First I'll work on core gaming experience, including:
 
-再加入准确率，生命值，死亡
+- corrent rendering of hit circles, sliders and spinners
+- accurate music & hitsounds
+- accurate hit grading
 
-界面最后再做
+Latency should be adjustable.
 
-std mode only, no mods or skins
+Scoring, deaths, skins and mods might be implemented later on, depending on code complexity.
+
+Modes other than STD (osu) will not be implemented.
 
 ## Current functions
 
