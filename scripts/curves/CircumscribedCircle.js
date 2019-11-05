@@ -25,9 +25,6 @@ function() {
         var midAng   = Math.atan2(midAngPoint.y, midAngPoint.x);
         var endAng   = Math.atan2(endAngPoint.y, endAngPoint.x);
 
-
-        console.log(startAng, endAng, midAng);
-
         const TWO_PI = Math.PI * 2;
         const HALF_PI = Math.PI / 2;
 
@@ -48,12 +45,9 @@ function() {
         // find an angle with an arc length of pixelLength along this circle
         var radius = veclen(startAngPoint);
         var arcAng = Math.abs(startAng - endAng);
-        console.log("Arc", arcAng);
 
         // now use it for our new end angle
         endAng = (endAng > startAng) ? startAng + arcAng : startAng - arcAng;
-
-        console.log(startAng, endAng);
 
         // finds the angles to draw for repeats
         var drawEndAngle   = ((endAng   + (startAng > endAng ? HALF_PI : -HALF_PI)) * 180 / Math.PI);
@@ -61,11 +55,7 @@ function() {
 
         // calculate points
         var step = hit.pixelLength / CURVE_POINTS_SEPERATION;
-        var curve = new Array(step + 1);
-        console.log(circleCenter);
-        console.log(startAng);
-        console.log(endAng);
-        console.log(radius);
+        var curve = new Array(Math.floor(step) + 1);
         pointAt = function(t) {
             var ang = lerp(startAng, endAng, t);
             return {
