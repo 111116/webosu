@@ -6,6 +6,7 @@ require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles,
         resolution: window.devicePixelRatio || 1,
         autoResize: true,
     });
+	document.body.removeChild(document.getElementById("title"));
     document.body.appendChild(app.view);
     
     app.renderer.autoResize = true;
@@ -93,7 +94,7 @@ require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles,
 
     game.cursor = null;
 
-    var statusText = new PIXI.Text("Loading...", { font: "24px sans-serif" });
+    var statusText = new PIXI.Text("Loading resources...", { font: "24px sans-serif" });
     statusText.anchor.x = statusText.anchor.y = 0.5;
     statusText.x = window.innerWidth / 2;
     statusText.y = window.innerHeight / 2;
