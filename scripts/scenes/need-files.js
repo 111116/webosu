@@ -104,8 +104,8 @@ function(Osu, DifficultySelect, Hash, _, Resources, PIXI) {
 
         var statusText = new PIXI.Text(self.stage, { font: "18px sans-serif", align: "center" });
         statusText.anchor.x = statusText.anchor.y = 0.5;
-        statusText.x = game.canvas.width / 2;
-        statusText.y = game.canvas.height / 2;
+        statusText.x = game.window.innerWidth / 2;
+        statusText.y = game.window.innerHeight / 2;
         game.stage.addChild(statusText);
 
         this.render = function render(timestamp) {

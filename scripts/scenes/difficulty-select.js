@@ -25,8 +25,8 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
                     var texture = PIXI.Texture.fromImage(uri);
                     self.background = new PIXI.Sprite(texture);
                     self.background.x = self.background.y = 0;
-                    self.background.width = self.game.canvas.width;
-                    self.background.height = self.game.canvas.height;
+                    self.background.width = self.game.window.innerWidth;
+                    self.background.height = self.game.window.innerHeight;
                     self.game.stage.addChild(self.background);
                     self.game.stage.setChildIndex(self.background, 0);
                 });
@@ -38,7 +38,7 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
             if (disposed) return;
             for (var i = 0; i < self.tracks.length; i++) {
                 var menu = Resources["menu-button-background.png"];
-                var x = game.canvas.width / 2 - menu.width / 2;
+                var x = game.window.innerWidth / 2 - menu.width / 2;
                 var y = (i * (menu.height + 10)) + 10 + 30 + 20;
                 if (e.clientX > x && e.clientX < x + menu.width &&
                         e.clientY > y && e.clientY < y + menu.height) {
@@ -53,13 +53,13 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
             }
         }
 
-        game.canvas.addEventListener('click', self.click);
+        game.window.addEventListener('click', self.click);
 
         var tracks = [];
         for (var i = 0; i < self.tracks.length; i++) {
             var track = self.tracks[i];
             var sprite = new PIXI.Sprite(Resources["menu-button-background.png"]);
-            var leftEdge = game.canvas.width / 2 - sprite.width / 2;
+            var leftEdge = game.window.innerWidth / 2 - sprite.width / 2;
             var titletext = track.metadata.Artist + " - " + track.metadata.Title + " / " + track.metadata.Version;
             var text = new PIXI.Text(titletext, { font: "20px sans-serif" });
             sprite.x = leftEdge;
