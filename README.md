@@ -36,6 +36,10 @@ currently using sound.js for hitsound, but not music.
 
 std mode only, no mods or skins
 
+## Current functions
+
+scrolling during gameplay: enabled
+
 ## notes from ddevault/osuweb
 
 For getting replays
