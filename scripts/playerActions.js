@@ -25,9 +25,9 @@ define([], function() {
   };
 
   var checkInSlider = function checkInSlider(click){
-    // var inSlider = true;
-    var inSlider = Math.abs(click.x - currentSlider.ball.x) < 2 * POSITION_ALLOWED 
-                && Math.abs(click.y - currentSlider.ball.y) < 2 * POSITION_ALLOWED ;
+    var dx = click.x - currentSlider.ball.x;
+    var dy = click.y - currentSlider.ball.y;
+    var inSlider = dx*dx + dy*dy < 4 * POSITION_ALLOWED * POSITION_ALLOWED;
     if (!inSlider){
       currentSlider = null;
     }
@@ -44,10 +44,11 @@ define([], function() {
 
   var inUpcoming = function (click){
     return function (hit){
+      var dx = click.x - hit.basex;
+      var dy = click.y - hit.basey;
       return ( 
-        hit.score < 0 
-        && Math.abs(click.x - hit.basex) < POSITION_ALLOWED 
-        && Math.abs(click.y - hit.basey) < POSITION_ALLOWED 
+        hit.score < 0
+        && dx*dx + dy*dy < POSITION_ALLOWED * POSITION_ALLOWED 
         && Math.abs(click.time - hit.time) < TIME_ALLOWED);
       }
   }
