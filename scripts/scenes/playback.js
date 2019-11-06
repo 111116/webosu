@@ -239,8 +239,7 @@ function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActi
             // Note: combos > 99 hits are unsupported
         }
 
-        this.hitSuccess = function hitSuccess(hit, points){
-            // play hitsound
+        this.playHitsound = function playHitsound(hit, id) {
             if (hit.type == 'circle')
             {
                 var toplay = hit.hitSound;
@@ -251,19 +250,22 @@ function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActi
             }
             if (hit.type == 'slider')
             {
-                var toplay = hit.edgeHitsounds[0];
+                var toplay = hit.edgeHitsounds[id];
                 var sampleSet = self.game.sampleSet;
                 var additionSet = self.game.sampleSet;
-                if (hit.edgeAdditions[0].sampleSet != 0)
-                    sampleSet = hit.edgeAdditions[0].sampleSet;
-                if (hit.edgeAdditions[0].additionSet != 0)
-                    additionSet = hit.edgeAdditions[0].additionSet;
+                if (hit.edgeAdditions[id].sampleSet != 0)
+                    sampleSet = hit.edgeAdditions[id].sampleSet;
+                if (hit.edgeAdditions[id].additionSet != 0)
+                    additionSet = hit.edgeAdditions[id].additionSet;
 
                 self.game.sample[sampleSet].hitnormal.play(); // The normal sound is always played
                 if (toplay & 2) self.game.sample[additionSet].hitwhistle.play();
                 if (toplay & 4) self.game.sample[additionSet].hitfinish.play();
-                if (toplay & 8) self.game.sample[additionSet].hitcglap.play();
+                if (toplay & 8) self.game.sample[additionSet].hitclap.play();
             }
+        };
+        this.hitSuccess = function hitSuccess(hit, points){
+            self.playHitsound(hit, 0);
             hit.score = points;
             self.game.score.points += points;
             self.game.score.goodClicks += 1;
@@ -282,6 +284,7 @@ function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActi
                 }
                 timing = t;
             }
+            hit.lastrep = 0; // for hitsound counting
             hit.sliderTime = timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
             hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
             // TODO: Other sorts of curves besides LINEAR and BEZIER
@@ -505,6 +508,12 @@ function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActi
 
                 // t: position relative to slider duration (0..1)
                 var t = -diff / hit.sliderTime;
+                if (Math.floor(t) > hit.lastrep)
+                {
+                    hit.lastrep = Math.floor(t);
+                    if (hit.lastrep > 0 && hit.lastrep <= hit.repeat)
+                        self.playHitsound(hit, hit.lastrep);
+                }
                 if (t > hit.repeat)
                     t = hit.repeat;
                 if (hit.repeat > 1) {
