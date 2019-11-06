@@ -46,7 +46,6 @@ define(["osu", "skin", "scenes/playback", "hash", "underscore", "pixi"], functio
                     self.teardown();
                     disposed = true;
                     Hash.beatmap(self.tracks[i].metadata.BeatmapID);
-                    var playback = new Playback(self.game, self.osu, self.tracks[i]);
 
                     // load hitsound set
                     // TODO: add loading hint
@@ -71,6 +70,9 @@ define(["osu", "skin", "scenes/playback", "hash", "underscore", "pixi"], functio
                         // game.sliderNormal = sounds['hitsounds/' + sampleset + '-sliderslide.mp3'];
                         // game.sliderWhistle = sounds['hitsounds/' + sampleset + '-sliderwhistle.mp3'];
                         // game.sliderTick = sounds['hitsounds/' + sampleset + '-slidertick.mp3'];
+                        
+                        // start playback
+                        var playback = new Playback(self.game, self.osu, self.tracks[i]);
                         game.scene = playback;
                         playback.start();
                     };
