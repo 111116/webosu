@@ -279,10 +279,9 @@ function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActi
             var timing = track.timingPoints[0];
             for (var i = 1; i < track.timingPoints.length; i++) {
                 var t = track.timingPoints[i];
-                if (t.offset < hit.time) { // FIXME: questionable code
-                    break;
+                if (t.offset < hit.time) {
+                    timing = t;
                 }
-                timing = t;
             }
             hit.lastrep = 0; // for hitsound counting
             hit.sliderTime = timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
