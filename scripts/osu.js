@@ -179,7 +179,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 var point = this.timingPoints[i];
                 if (point.inherited === 1) {
                     point.inherited = 0;
-                    point.millisecondsPerBeat += last.millisecondsPerBeat;
+                    point.millisecondsPerBeat *= -0.01 * last.millisecondsPerBeat;
                 } else {
                     last = point;
                 }

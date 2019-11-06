@@ -279,7 +279,7 @@ function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActi
             var timing = track.timingPoints[0];
             for (var i = 1; i < track.timingPoints.length; i++) {
                 var t = track.timingPoints[i];
-                if (t.offset < hit.time) {
+                if (t.offset < hit.time) { // FIXME: questionable code
                     break;
                 }
                 timing = t;
