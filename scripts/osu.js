@@ -134,15 +134,16 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
 
                             hit.edgeAdditions = new Array();
                             for (var wdnmd=0; wdnmd<hit.repeat+1; wdnmd++)
-                                hit.edgeAdditions.push(0);
+                                hit.edgeAdditions.push({
+                                    sampleSet: 0,
+                                    additionSet: 0
+                                });
                             if (parts.length > 9) {
                                 var additions = parts[9].split("|");
                                 for (var wdnmd=0; wdnmd<additions.length; wdnmd++) {
                                     var sets = additions[wdnmd].split(":");
-                                    hit.edgeAdditions[wdnmd] = {
-                                        sampleSet: +sets[0],
-                                        additionSet: +sets[1]
-                                    };
+                                    hit.edgeAdditions[wdnmd].sampleSet = +sets[0];
+                                    hit.edgeAdditions[wdnmd].additionSet = +sets[1]
                                 }
                             }
                             // TODO parse extras
