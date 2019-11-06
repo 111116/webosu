@@ -1,9 +1,9 @@
 define(["pixi"], function(PIXI) {
-    Resources = {};
-    Resources.oncomplete = function() { }
-    Resources.loadDefault = function() {
-        // Resources we need to do our thing
-        var to_load = [
+    Skin = {};
+    Skin.oncomplete = function() { }
+    Skin.loadDefault = function() {
+        // Skin we need to do our thing
+        var skinResource = [
             "cursor.png",
             "approachcircle.png",
             "hitcircle.png",
@@ -22,16 +22,16 @@ define(["pixi"], function(PIXI) {
         ];
         function loadNext() {
             var xhr = new XMLHttpRequest();
-            var resource = to_load[0];
+            var resource = skinResource[0];
             xhr.open("GET", "skin/" + resource);
             xhr.responseType = 'blob';
-            to_load.splice(0, 1);
+            skinResource.splice(0, 1);
             xhr.onload = function() {
-                Resources.load(xhr.response, resource);
-                if (to_load.length > 0) {
+                Skin.load(xhr.response, resource);
+                if (skinResource.length > 0) {
                     loadNext();
                 } else {
-                    Resources.oncomplete();
+                    Skin.oncomplete();
                 }
             };
             xhr.send();
@@ -39,13 +39,13 @@ define(["pixi"], function(PIXI) {
         loadNext();
     };
 
-    Resources.load = function(blob, name) {
+    Skin.load = function(blob, name) {
         if (name.indexOf(".png") === name.length - 4) {
             var url = URL.createObjectURL(blob);
             var texture = PIXI.Texture.fromImage(url);
-            Resources[name] = texture;
+            Skin[name] = texture;
         }
     };
 
-    return Resources;
+    return Skin;
 });

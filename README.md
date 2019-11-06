@@ -55,10 +55,22 @@ Modes other than STD (osu) will not be implemented.
 - Hit circle: supported
 - Slider: partially supported
 - Spinner: not sure
-- hitsound: partially supported
 - CS, AR, OD: unsupported
 - beatmap hitsound: unsupported
 - beatmap skin: unsupported
+
+#### Hit sounds
+
+currently using lazer hit sounds.
+
+- beatmap general sampleset: yes
+- edgeAdditions: yes
+- slider reverse & end: no
+- slider tick: no
+- extra field: no
+- timing point: no
+- beatmap hitsounds: no
+
 
 ## notes from ddevault/osuweb
 

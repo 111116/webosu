@@ -1,5 +1,5 @@
-define(["osu", "resources", "hash", "pixi", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions"],
-function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActions) {
+define(["osu", "skin", "hash", "pixi", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions"],
+function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActions) {
     function Playback(game, osu, track) {
         var scoreCharWidth = 35;
         var scoreCharHeight = 45;
@@ -174,7 +174,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
 
         this.createHitCircle = function(hit, objects = hit.objects) {
             var index = hit.index + 1;
-            var base = new PIXI.Sprite(Resources["hitcircle.png"]);
+            var base = new PIXI.Sprite(Skin["hitcircle.png"]);
             base.anchor.x = base.anchor.y = 0.5;
             base.x = gfx.xoffset + hit.x * gfx.width;
             base.y = gfx.yoffset + hit.y * gfx.height;
@@ -182,14 +182,14 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
             hit.basey = base.y;
             base.alpha = 0;
             base.tint = combos[hit.combo % combos.length];
-            var overlay = new PIXI.Sprite(Resources["hitcircleoverlay.png"]);
+            var overlay = new PIXI.Sprite(Skin["hitcircleoverlay.png"]);
             overlay.anchor.x = overlay.anchor.y = 0.5;
             overlay.x = gfx.xoffset + hit.x * gfx.width;
             overlay.y = gfx.yoffset + hit.y * gfx.height;
             overlay.alpha = 0;
             var approach;
             if (index > 0) { // index == -1 is used for slider ends
-                hit.approach = approach = new PIXI.Sprite(Resources["approachcircle.png"]);
+                hit.approach = approach = new PIXI.Sprite(Skin["approachcircle.png"]);
                 approach.alpha = 0;
                 approach.anchor.x = approach.anchor.y = 0.5;
                 approach.x = gfx.xoffset + hit.x * gfx.width;
@@ -212,14 +212,14 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
             }
 
             if (index <= 9 && index > 0) {
-                var number = new PIXI.Sprite(Resources["default-" + index + ".png"]);
+                var number = new PIXI.Sprite(Skin["default-" + index + ".png"]);
                 number.alpha = 0;
                 number.anchor.x = number.anchor.y = 0.5;
                 number.x = gfx.xoffset + hit.x * gfx.width;
                 number.y = gfx.yoffset + hit.y * gfx.height;
                 objects.push(number);
             } else if (index <= 99 && index > 0) {
-                var numberA = new PIXI.Sprite(Resources["default-" + (index % 10) + ".png"]);
+                var numberA = new PIXI.Sprite(Skin["default-" + (index % 10) + ".png"]);
                 numberA.alpha = 0;
                 numberA.anchor.x = numberA.anchor.y = 0.5;
                 numberA.x = gfx.xoffset + hit.x * gfx.width + (numberA.width * 0.6) - 6;
@@ -227,7 +227,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 numberA.scale.x = numberA.scale.y = 0.9;
                 objects.push(numberA);
 
-                var numberB = new PIXI.Sprite(Resources["default-" +
+                var numberB = new PIXI.Sprite(Skin["default-" +
                     ((index - (index % 10)) / 10) + ".png"]);
                 numberB.alpha = 0;
                 numberB.anchor.x = numberB.anchor.y = 0.5;
@@ -239,13 +239,38 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
             // Note: combos > 99 hits are unsupported
         }
 
+        this.playHitsound = function playHitsound(hit, id) {
+            if (hit.type == 'circle')
+            {
+                var toplay = hit.hitSound;
+                self.game.sample[self.game.sampleSet].hitnormal.play(); // The normal sound is always played
+                if (toplay & 2) self.game.sample[self.game.sampleSet].hitwhistle.play();
+                if (toplay & 4) self.game.sample[self.game.sampleSet].hitfinish.play();
+                if (toplay & 8) self.game.sample[self.game.sampleSet].hitclap.play();
+            }
+            if (hit.type == 'slider')
+            {
+                var toplay = hit.edgeHitsounds[id];
+                var sampleSet = self.game.sampleSet;
+                var additionSet = self.game.sampleSet;
+                if (hit.edgeAdditions[id].sampleSet != 0)
+                    sampleSet = hit.edgeAdditions[id].sampleSet;
+                if (hit.edgeAdditions[id].additionSet != 0)
+                    additionSet = hit.edgeAdditions[id].additionSet;
+
+                self.game.sample[sampleSet].hitnormal.play(); // The normal sound is always played
+                if (toplay & 2) self.game.sample[additionSet].hitwhistle.play();
+                if (toplay & 4) self.game.sample[additionSet].hitfinish.play();
+                if (toplay & 8) self.game.sample[additionSet].hitclap.play();
+            }
+        };
         this.hitSuccess = function hitSuccess(hit, points){
-          SOUND_HIT.play();
-          hit.score = points;
-          self.game.score.points += points;
-          self.game.score.goodClicks += 1;
-          self.updateScoreView();
-          hit.objectWin.texture = osuTextures["hit" + points];
+            self.playHitsound(hit, 0);
+            hit.score = points;
+            self.game.score.points += points;
+            self.game.score.goodClicks += 1;
+            self.updateScoreView();
+            hit.objectWin.texture = osuTextures["hit" + points];
         };
 
 
@@ -259,6 +284,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 }
                 timing = t;
             }
+            hit.lastrep = 0; // for hitsound counting
             hit.sliderTime = timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
             hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
             // TODO: Other sorts of curves besides LINEAR and BEZIER
@@ -280,7 +306,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
             // drawing slider edge under slider body
             for (var i = 0; i < hit.curve.curve.length; i++) {
                 var c = hit.curve.curve[i];
-                var underlay = new PIXI.Sprite(Resources["slideredge.png"]);
+                var underlay = new PIXI.Sprite(Skin["slideredge.png"]);
                 underlay.anchor.x = underlay.anchor.y = 0.5;
                 underlay.x = gfx.xoffset + c.x * gfx.width;
                 underlay.y = gfx.yoffset + c.y * gfx.height;
@@ -290,7 +316,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
 
             for (var i = 0; i < hit.curve.curve.length; i++) {
                 var c = hit.curve.curve[i];
-                var base = new PIXI.Sprite(Resources["hitcircle.png"]);
+                var base = new PIXI.Sprite(Skin["hitcircle.png"]);
                 base.anchor.x = base.anchor.y = 0.5;
                 base.x = gfx.xoffset + c.x * gfx.width;
                 base.y = gfx.yoffset + c.y * gfx.height;
@@ -302,14 +328,14 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
             self.createHitCircle(hit, hit.hitcircleObjects); // Near end
             _.each(hit.hitcircleObjects, function(o){hit.objects.push(o);});
             // Add follow circle
-            var follow = hit.follow = new PIXI.Sprite(Resources["sliderfollowcircle.png"]);
+            var follow = hit.follow = new PIXI.Sprite(Skin["sliderfollowcircle.png"]);
             follow.visible = false;
             follow.alpha = 0;
             follow.anchor.x = follow.anchor.y = 0.5;
             follow.manualAlpha = true;
             hit.objects.push(follow);
             // Add follow ball
-            var ball = hit.ball = new PIXI.Sprite(Resources["sliderb.png"]);
+            var ball = hit.ball = new PIXI.Sprite(Skin["sliderb.png"]);
             ball.visible = false;
             ball.alpha = 0;
             ball.anchor.x = ball.anchor.y = 0.5;
@@ -319,7 +345,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
 
             if (hit.repeat > 1) {
                 // Add reverse symbol
-                var reverse = hit.reverse = new PIXI.Sprite(Resources["reversearrow.png"]);
+                var reverse = hit.reverse = new PIXI.Sprite(Skin["reversearrow.png"]);
                 reverse.alpha = 0;
                 reverse.anchor.x = reverse.anchor.y = 0.5;
                 reverse.x = gfx.xoffset + lastFrame.x * gfx.width;
@@ -336,7 +362,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
             }
             if (hit.repeat > 2) {
                 // Add another reverse symbol
-                var reverse = hit.reverse_b = new PIXI.Sprite(Resources["reversearrow.png"]);
+                var reverse = hit.reverse_b = new PIXI.Sprite(Skin["reversearrow.png"]);
                 reverse.alpha = 0;
                 reverse.anchor.x = reverse.anchor.y = 0.5;
                 reverse.x = gfx.xoffset + hit.x * gfx.width;
@@ -481,6 +507,12 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
 
                 // t: position relative to slider duration (0..1)
                 var t = -diff / hit.sliderTime;
+                if (Math.floor(t) > hit.lastrep)
+                {
+                    hit.lastrep = Math.floor(t);
+                    if (hit.lastrep > 0 && hit.lastrep <= hit.repeat)
+                        self.playHitsound(hit, hit.lastrep);
+                }
                 if (t > hit.repeat)
                     t = hit.repeat;
                 if (hit.repeat > 1) {
@@ -500,7 +532,7 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 // sliderball rolling
                 // if (diff > -hit.sliderTimeTotal) {
                 //     var index = Math.floor(t * hit.sliderTime * 60 / 1000) % 10;
-                //     hit.ball.texture = Resources["sliderb" + index + ".png"];
+                //     hit.ball.texture = Skin["sliderb" + index + ".png"];
                 // }
 
                 if (hit.currentRepeat) {
