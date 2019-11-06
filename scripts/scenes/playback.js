@@ -272,7 +272,6 @@ function(Osu, Resources, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlaye
                 // if (Math.abs(norb.x * nora.y - norb.y * nora.x) < 0.00001)
                 //     return new LinearBezier(this, false, scaled);  // vectors parallel, use linear bezier instead
                 // else
-                console.log("use perfect curve");
                 hit.curve = new CircumscribedCircle(hit, gfx.width / gfx.height);
             }
             else
