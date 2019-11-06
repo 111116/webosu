@@ -251,8 +251,11 @@ function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActi
             }
             if (hit.type == 'slider')
             {
-                // TODO
-                self.game.hitNormal.play();
+                var toplay = hit.edgeHitsounds[0];
+                self.game.hitNormal.play(); // The normal sound is always played
+                if (toplay & 2) self.game.hitWhistle.play();
+                if (toplay & 4) self.game.hitFinish.play();
+                if (toplay & 8) self.game.hitClap.play();
             }
             hit.score = points;
             self.game.score.points += points;
