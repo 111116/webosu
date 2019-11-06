@@ -32,7 +32,6 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 if (line === "") continue;
                 if (line.indexOf("//") === 0) continue;
                 if (line.indexOf("[") === 0) {
-                    console.log("Section " + line);
                     section = line;
                     continue;
                 }
@@ -164,7 +163,6 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                     last = point;
                 }
             }
-            console.log("osu decoded");
             if (this.ondecoded !== null) {
                 this.ondecoded(this);
             }
@@ -212,8 +210,6 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
         function load_mp3() {
             var mp3_raw = _.find(self.zip.children, function(c) { return c.name.toLowerCase() === self.tracks[0].general.AudioFilename.toLowerCase(); });
             mp3_raw.getBlob("audio/mpeg", function(blob) {
-                console.log("Extracted blob");
-
                 var reader = new FileReader();
                 reader.onload = function(e) {
                     var buffer = e.target.result;
