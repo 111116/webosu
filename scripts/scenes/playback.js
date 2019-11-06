@@ -244,18 +244,18 @@ function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActi
             if (hit.type == 'circle')
             {
                 var toplay = hit.hitSound;
-                self.game.hitNormal.play(); // The normal sound is always played
-                if (toplay & 2) self.game.hitWhistle.play();
-                if (toplay & 4) self.game.hitFinish.play();
-                if (toplay & 8) self.game.hitClap.play();
+                self.game.sample[self.game.sampleSet].hitnormal.play(); // The normal sound is always played
+                if (toplay & 2) self.game.sample[self.game.sampleSet].hitwhistle.play();
+                if (toplay & 4) self.game.sample[self.game.sampleSet].hitfinish.play();
+                if (toplay & 8) self.game.sample[self.game.sampleSet].hitclap.play();
             }
             if (hit.type == 'slider')
             {
                 var toplay = hit.edgeHitsounds[0];
-                self.game.hitNormal.play(); // The normal sound is always played
-                if (toplay & 2) self.game.hitWhistle.play();
-                if (toplay & 4) self.game.hitFinish.play();
-                if (toplay & 8) self.game.hitClap.play();
+                self.game.sample[self.game.sampleSet].hitnormal.play(); // The normal sound is always played
+                if (toplay & 2) self.game.sample[self.game.sampleSet].hitwhistle.play();
+                if (toplay & 4) self.game.sample[self.game.sampleSet].hitfinish.play();
+                if (toplay & 8) self.game.sample[self.game.sampleSet].hitclap.play();
             }
             hit.score = points;
             self.game.score.points += points;

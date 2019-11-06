@@ -64,14 +64,8 @@ require(["scenes/need-files", "skin", "pixi", "sound"], function(NeedFiles, Skin
           goodClicks: 0,
           points: 0
         },
-        // hitsounds
-        hitNormal: null,
-        hitWhistle: null,
-        hitFinish: null,
-        hitClap: null
-        // sliderNormal: null,
-        // sliderWhistle: null,
-        // sliderTick: null
+        sample: [{}, {}, {}, {}],
+        sampleSet: 1
     };
     window.game = game;
 

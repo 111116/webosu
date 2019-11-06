@@ -49,27 +49,42 @@ define(["osu", "skin", "scenes/playback", "hash", "underscore", "pixi"], functio
 
                     // load hitsound set
                     // TODO: add loading hint
-                    var sampleset = self.tracks[i].general.SampleSet.toLowerCase();
+                    if (self.tracks[0].general.SampleSet == "Normal")
+                        self.game.sampleSet = 1;
+                    if (self.tracks[0].general.SampleSet == "Soft")
+                        self.game.sampleSet = 2;
+                    if (self.tracks[0].general.SampleSet == "Drum")
+                        self.game.sampleSet = 3;
                     var sample = [
-                        'hitsounds/' + sampleset + '-hitnormal.mp3',
-                        'hitsounds/' + sampleset + '-hitwhistle.mp3',
-                        'hitsounds/' + sampleset + '-hitfinish.mp3',
-                        'hitsounds/' + sampleset + '-hitclap.mp3'
-                        // 'hitsounds/' + sampleset + '-sliderslide.mp3',
-                        // 'hitsounds/' + sampleset + '-slidertick.mp3',
-                        // 'hitsounds/' + sampleset + '-sliderwhistle.mp3'
+                        'hitsounds/normal-hitnormal.mp3',
+                        'hitsounds/normal-hitwhistle.mp3',
+                        'hitsounds/normal-hitfinish.mp3',
+                        'hitsounds/normal-hitclap.mp3',
+                        'hitsounds/soft-hitnormal.mp3',
+                        'hitsounds/soft-hitwhistle.mp3',
+                        'hitsounds/soft-hitfinish.mp3',
+                        'hitsounds/soft-hitclap.mp3',
+                        'hitsounds/drum-hitnormal.mp3',
+                        'hitsounds/drum-hitwhistle.mp3',
+                        'hitsounds/drum-hitfinish.mp3',
+                        'hitsounds/drum-hitclap.mp3'
                     ];
                     console.log("Loading hit sounds:");
                     console.log(sample);
                     sounds.load(sample);
                     sounds.whenLoaded = function(){
-                        game.hitNormal = sounds['hitsounds/' + sampleset + '-hitnormal.mp3'];
-                        game.hitWhistle = sounds['hitsounds/' + sampleset + '-hitwhistle.mp3'];
-                        game.hitFinish = sounds['hitsounds/' + sampleset + '-hitfinish.mp3'];
-                        game.hitClap = sounds['hitsounds/' + sampleset + '-hitclap.mp3'];
-                        // game.sliderNormal = sounds['hitsounds/' + sampleset + '-sliderslide.mp3'];
-                        // game.sliderWhistle = sounds['hitsounds/' + sampleset + '-sliderwhistle.mp3'];
-                        // game.sliderTick = sounds['hitsounds/' + sampleset + '-slidertick.mp3'];
+                        game.sample[1].hitnormal = sounds['hitsounds/normal-hitnormal.mp3'];
+                        game.sample[1].hitwhistle = sounds['hitsounds/normal-hitwhistle.mp3'];
+                        game.sample[1].hitfinish = sounds['hitsounds/normal-hitfinish.mp3'];
+                        game.sample[1].hitclap = sounds['hitsounds/normal-hitclap.mp3'];
+                        game.sample[2].hitnormal = sounds['hitsounds/soft-hitnormal.mp3'];
+                        game.sample[2].hitwhistle = sounds['hitsounds/soft-hitwhistle.mp3'];
+                        game.sample[2].hitfinish = sounds['hitsounds/soft-hitfinish.mp3'];
+                        game.sample[2].hitclap = sounds['hitsounds/soft-hitclap.mp3'];
+                        game.sample[3].hitnormal = sounds['hitsounds/drum-hitnormal.mp3'];
+                        game.sample[3].hitwhistle = sounds['hitsounds/drum-hitwhistle.mp3'];
+                        game.sample[3].hitfinish = sounds['hitsounds/drum-hitfinish.mp3'];
+                        game.sample[3].hitclap = sounds['hitsounds/drum-hitclap.mp3'];
                         
                         // start playback
                         var playback = new Playback(self.game, self.osu, self.tracks[i]);
