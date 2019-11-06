@@ -55,10 +55,10 @@ define(["osu", "skin", "scenes/playback", "hash", "underscore", "pixi"], functio
                         'hitsounds/' + sampleset + '-hitnormal.mp3',
                         'hitsounds/' + sampleset + '-hitwhistle.mp3',
                         'hitsounds/' + sampleset + '-hitfinish.mp3',
-                        'hitsounds/' + sampleset + '-hitclap.mp3',
-                        'hitsounds/' + sampleset + '-sliderslide.mp3',
-                        'hitsounds/' + sampleset + '-slidertick.mp3',
-                        'hitsounds/' + sampleset + '-sliderwhistle.mp3'
+                        'hitsounds/' + sampleset + '-hitclap.mp3'
+                        // 'hitsounds/' + sampleset + '-sliderslide.mp3',
+                        // 'hitsounds/' + sampleset + '-slidertick.mp3',
+                        // 'hitsounds/' + sampleset + '-sliderwhistle.mp3'
                     ];
                     console.log("Loading hit sounds:");
                     console.log(sample);
@@ -68,9 +68,9 @@ define(["osu", "skin", "scenes/playback", "hash", "underscore", "pixi"], functio
                         game.hitWhistle = sounds['hitsounds/' + sampleset + '-hitwhistle.mp3'];
                         game.hitFinish = sounds['hitsounds/' + sampleset + '-hitfinish.mp3'];
                         game.hitClap = sounds['hitsounds/' + sampleset + '-hitclap.mp3'];
-                        game.sliderNormal = sounds['hitsounds/' + sampleset + '-sliderslide.mp3'];
-                        game.sliderWhistle = sounds['hitsounds/' + sampleset + '-sliderwhistle.mp3'];
-                        game.sliderTick = sounds['hitsounds/' + sampleset + '-slidertick.mp3'];
+                        // game.sliderNormal = sounds['hitsounds/' + sampleset + '-sliderslide.mp3'];
+                        // game.sliderWhistle = sounds['hitsounds/' + sampleset + '-sliderwhistle.mp3'];
+                        // game.sliderTick = sounds['hitsounds/' + sampleset + '-slidertick.mp3'];
                         game.scene = playback;
                         playback.start();
                     };

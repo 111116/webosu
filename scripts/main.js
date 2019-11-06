@@ -68,10 +68,10 @@ require(["scenes/need-files", "skin", "pixi", "sound"], function(NeedFiles, Skin
         hitNormal: null,
         hitWhistle: null,
         hitFinish: null,
-        hitClap: null,
-        sliderNormal: null,
-        sliderWhistle: null,
-        sliderTick: null
+        hitClap: null
+        // sliderNormal: null,
+        // sliderWhistle: null,
+        // sliderTick: null
     };
     window.game = game;
 
