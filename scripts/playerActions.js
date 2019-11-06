@@ -42,11 +42,9 @@ define([], function() {
   };
 
   var checkEndSlider = function checkEndSlider(click){
-    if (Math.abs(click.time - currentSlider.time - currentSlider.sliderTimeTotal) < TIME_ALLOWED){
-      var points = 50;
-      if (Math.abs(click.time - currentSlider.time) < TIME_ALLOWED_300)
-        points = 300;
-      playback.hitSuccess(currentSlider, points);
+    // check if releasing slider
+    if (click.time + 36 < currentSlider.time + currentSlider.sliderTimeTotal) {
+      currentSlider = null;
     }
   };
 
