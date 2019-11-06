@@ -79,7 +79,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             kaiMode: +parts[7]
                         };
                         if (t.millisecondsPerBeat < 0) {
-                            t.inherited = 1;
+                            t.inherited = 0;
                         }
                         this.timingPoints.push(t);
                         break;
@@ -175,11 +175,11 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 }
             }
             // Why do inherited timing points even exist, this is stupid
-            var last = this.timingPoints[0]
+            var last = this.timingPoints[0];
             for (var i = 1; i < this.timingPoints.length; i++) {
                 var point = this.timingPoints[i];
-                if (point.inherited === 1) {
-                    point.inherited = 0;
+                if (point.inherited === 0) {
+                    point.inherited = 1;
                     point.millisecondsPerBeat *= -0.01 * last.millisecondsPerBeat;
                 } else {
                     last = point;
