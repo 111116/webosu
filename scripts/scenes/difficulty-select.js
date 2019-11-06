@@ -42,12 +42,38 @@ define(["osu", "skin", "scenes/playback", "hash", "underscore", "pixi"], functio
                 var y = (i * (menu.height + 10)) + 10 + 30 + 20;
                 if (e.clientX > x && e.clientX < x + menu.width &&
                         e.clientY > y && e.clientY < y + menu.height) {
+                    // this difficulty is clicked on
                     self.teardown();
                     disposed = true;
                     Hash.beatmap(self.tracks[i].metadata.BeatmapID);
                     var playback = new Playback(self.game, self.osu, self.tracks[i]);
-                    self.game.scene = playback;
-                    playback.start();
+
+                    // load hitsound set
+                    // TODO: add loading hint
+                    var sampleset = self.tracks[i].general.SampleSet.toLowerCase();
+                    var sample = [
+                        'hitsounds/' + sampleset + '-hitnormal.mp3',
+                        'hitsounds/' + sampleset + '-hitwhistle.mp3',
+                        'hitsounds/' + sampleset + '-hitfinish.mp3',
+                        'hitsounds/' + sampleset + '-hitclap.mp3',
+                        'hitsounds/' + sampleset + '-sliderslide.mp3',
+                        'hitsounds/' + sampleset + '-slidertick.mp3',
+                        'hitsounds/' + sampleset + '-sliderwhistle.mp3'
+                    ];
+                    console.log("Loading hit sounds:");
+                    console.log(sample);
+                    sounds.load(sample);
+                    sounds.whenLoaded = function(){
+                        game.hitNormal = sounds['hitsounds/' + sampleset + '-hitnormal.mp3'];
+                        game.hitWhistle = sounds['hitsounds/' + sampleset + '-hitwhistle.mp3'];
+                        game.hitFinish = sounds['hitsounds/' + sampleset + '-hitfinish.mp3'];
+                        game.hitClap = sounds['hitsounds/' + sampleset + '-hitclap.mp3'];
+                        game.sliderNormal = sounds['hitsounds/' + sampleset + '-sliderslide.mp3'];
+                        game.sliderWhistle = sounds['hitsounds/' + sampleset + '-sliderwhistle.mp3'];
+                        game.sliderTick = sounds['hitsounds/' + sampleset + '-slidertick.mp3'];
+                        game.scene = playback;
+                        playback.start();
+                    };
                     return;
                 }
             }

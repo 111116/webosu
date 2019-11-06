@@ -240,7 +240,7 @@ function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActi
         }
 
         this.hitSuccess = function hitSuccess(hit, points){
-          SOUND_HIT.play();
+          self.game.hitNormal.play();
           hit.score = points;
           self.game.score.points += points;
           self.game.score.goodClicks += 1;

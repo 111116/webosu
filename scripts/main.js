@@ -23,8 +23,6 @@ require(["scenes/need-files", "skin", "pixi", "sound"], function(NeedFiles, Skin
     window.SLIDER_CATMULL = "C";
     window.SLIDER_BEZIER = "B";
     window.SLIDER_PERFECT_CURVE = "P";
-    sounds.load(['skin/normal-hitnormal.wav']);
-    sounds.whenLoaded = function(){ window.SOUND_HIT = sounds['skin/normal-hitnormal.wav']; }
     window.osuTextures = {
       'hit0': PIXI.Texture.fromImage('skin/hit0.png'),
       'hit50': PIXI.Texture.fromImage('skin/hit50.png'),
@@ -65,7 +63,15 @@ require(["scenes/need-files", "skin", "pixi", "sound"], function(NeedFiles, Skin
           nbClicks: 0,
           goodClicks: 0,
           points: 0
-        }
+        },
+        // hitsounds
+        hitNormal: null,
+        hitWhistle: null,
+        hitFinish: null,
+        hitClap: null,
+        sliderNormal: null,
+        sliderWhistle: null,
+        sliderTick: null
     };
     window.game = game;
 
