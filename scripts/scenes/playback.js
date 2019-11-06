@@ -240,12 +240,25 @@ function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActi
         }
 
         this.hitSuccess = function hitSuccess(hit, points){
-          self.game.hitNormal.play();
-          hit.score = points;
-          self.game.score.points += points;
-          self.game.score.goodClicks += 1;
-          self.updateScoreView();
-          hit.objectWin.texture = osuTextures["hit" + points];
+            // play hitsound
+            if (hit.type == 'circle')
+            {
+                var toplay = hit.hitSound;
+                self.game.hitNormal.play(); // The normal sound is always played
+                if (toplay & 2) self.game.hitWhistle.play();
+                if (toplay & 4) self.game.hitFinish.play();
+                if (toplay & 8) self.game.hitClap.play();
+            }
+            if (hit.type == 'slider')
+            {
+                // TODO
+                self.game.hitNormal.play();
+            }
+            hit.score = points;
+            self.game.score.points += points;
+            self.game.score.goodClicks += 1;
+            self.updateScoreView();
+            hit.objectWin.texture = osuTextures["hit" + points];
         };
 
 
