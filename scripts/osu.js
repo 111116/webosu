@@ -124,7 +124,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             hit.repeat = +parts[6];
                             hit.pixelLength = +parts[7];
                             if (parts.length > 8) {
-                                hit.edgeHitSound = +parts[8];
+                                hit.edgeHitsounds = parts[8].split("|").map(Number);
                             }
                         } else if ((hit.type & HIT_TYPE_SPINNER) > 0) {
                             hit.type = "spinner";
