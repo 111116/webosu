@@ -277,11 +277,13 @@ function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActi
         this.createSlider = function(hit) {
             var lastFrame = hit.keyframes[hit.keyframes.length - 1];
             var timing = track.timingPoints[0];
+            // select later one if timingPoints coincide
             for (var i = 1; i < track.timingPoints.length; i++) {
                 var t = track.timingPoints[i];
-                if (t.offset < hit.time) {
-                    timing = t;
+                if (t.offset > hit.time) {
+                    break;
                 }
+                timing = t;
             }
             hit.lastrep = 0; // for hitsound counting
             hit.sliderTime = timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
