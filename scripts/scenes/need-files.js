@@ -1,5 +1,5 @@
-define(["osu", "scenes/difficulty-select", "hash", "underscore", "resources", "pixi"],
-function(Osu, DifficultySelect, Hash, _, Resources, PIXI) {
+define(["osu", "scenes/difficulty-select", "hash", "underscore", "skin", "pixi"],
+function(Osu, DifficultySelect, Hash, _, Skin, PIXI) {
     function NeedFiles(game) {
         var self = this;
         this.stage = "Drag and drop a .osz file here\nDrag and drop a .osk file to apply a skin first";
@@ -64,9 +64,9 @@ function(Osu, DifficultySelect, Hash, _, Resources, PIXI) {
                     var mimetype = "image/png"; // TODO: More kinds of blobs
                     if (child.getBlob) {
                         child.getBlob(mimetype, function(blob) {
-                            Resources.load(blob, child.name);
+                            Skin.load(blob, child.name);
                             if (child.name === "cursor.png") {
-                                game.cursor.texture = Resources["cursor.png"];
+                                game.cursor.texture = Skin["cursor.png"];
                                 game.cursorMiddle.visible = false;
                             }
                         });

@@ -1,4 +1,4 @@
-define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], function(Osu, Resources, Playback, Hash, _, PIXI) {
+define(["osu", "skin", "scenes/playback", "hash", "underscore", "pixi"], function(Osu, Skin, Playback, Hash, _, PIXI) {
     function DifficultySelect(game, osu) {
         var self = this;
         self.osu = osu;
@@ -37,7 +37,7 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
         this.click = function(e) {
             if (disposed) return;
             for (var i = 0; i < self.tracks.length; i++) {
-                var menu = Resources["menu-button-background.png"];
+                var menu = Skin["menu-button-background.png"];
                 var x = game.window.innerWidth / 2 - menu.width / 2;
                 var y = (i * (menu.height + 10)) + 10 + 30 + 20;
                 if (e.clientX > x && e.clientX < x + menu.width &&
@@ -58,7 +58,7 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
         var tracks = [];
         for (var i = 0; i < self.tracks.length; i++) {
             var track = self.tracks[i];
-            var sprite = new PIXI.Sprite(Resources["menu-button-background.png"]);
+            var sprite = new PIXI.Sprite(Skin["menu-button-background.png"]);
             var leftEdge = game.window.innerWidth / 2 - sprite.width / 2;
             var titletext = track.metadata.Artist + " - " + track.metadata.Title + " / " + track.metadata.Version;
             var text = new PIXI.Text(titletext, { font: "20px sans-serif" });

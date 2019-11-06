@@ -1,4 +1,4 @@
-require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles, Resources, PIXI, sound) {
+require(["scenes/need-files", "skin", "pixi", "sound"], function(NeedFiles, Skin, PIXI, sound) {
     
     let app = new PIXI.Application({
         width: window.innerWidth,
@@ -94,7 +94,7 @@ require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles,
 
     game.cursor = null;
 
-    var statusText = new PIXI.Text("Loading resources...", { font: "24px sans-serif" });
+    var statusText = new PIXI.Text("Loading skin...", { font: "24px sans-serif" });
     statusText.anchor.x = statusText.anchor.y = 0.5;
     statusText.x = window.innerWidth / 2;
     statusText.y = window.innerHeight / 2;
@@ -106,14 +106,14 @@ require(["scenes/need-files", "resources", "pixi", "sound"], function(NeedFiles,
     wipText.y = 0;
     game.stage.addChild(wipText);
 
-    Resources.oncomplete = function() {
-        game.cursor = new PIXI.Sprite(Resources["cursor.png"]);
+    Skin.oncomplete = function() {
+        game.cursor = new PIXI.Sprite(Skin["cursor.png"]);
         game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
         game.stage.addChild(game.cursor);
         game.stage.removeChild(statusText);
         game.scene = new NeedFiles(game);
     };
-    Resources.loadDefault();
+    Skin.loadDefault();
 
     function gameLoop(timestamp) {
         var timediff = timestamp - game.lastFrameTime;
