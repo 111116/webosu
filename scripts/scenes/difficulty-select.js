@@ -1,4 +1,4 @@
-define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], function(Osu, Resources, Playback, Hash, _, PIXI) {
+define(["osu", "skin", "scenes/playback", "hash", "underscore", "pixi"], function(Osu, Skin, Playback, Hash, _, PIXI) {
     function DifficultySelect(game, osu) {
         var self = this;
         self.osu = osu;
@@ -37,17 +37,60 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
         this.click = function(e) {
             if (disposed) return;
             for (var i = 0; i < self.tracks.length; i++) {
-                var menu = Resources["menu-button-background.png"];
+                var menu = Skin["menu-button-background.png"];
                 var x = game.window.innerWidth / 2 - menu.width / 2;
                 var y = (i * (menu.height + 10)) + 10 + 30 + 20;
                 if (e.clientX > x && e.clientX < x + menu.width &&
                         e.clientY > y && e.clientY < y + menu.height) {
+                    // this difficulty is clicked on
                     self.teardown();
                     disposed = true;
                     Hash.beatmap(self.tracks[i].metadata.BeatmapID);
-                    var playback = new Playback(self.game, self.osu, self.tracks[i]);
-                    self.game.scene = playback;
-                    playback.start();
+
+                    // load hitsound set
+                    // TODO: add loading hint
+                    if (self.tracks[0].general.SampleSet == "Normal")
+                        self.game.sampleSet = 1;
+                    if (self.tracks[0].general.SampleSet == "Soft")
+                        self.game.sampleSet = 2;
+                    if (self.tracks[0].general.SampleSet == "Drum")
+                        self.game.sampleSet = 3;
+                    var sample = [
+                        'hitsounds/normal-hitnormal.mp3',
+                        'hitsounds/normal-hitwhistle.mp3',
+                        'hitsounds/normal-hitfinish.mp3',
+                        'hitsounds/normal-hitclap.mp3',
+                        'hitsounds/soft-hitnormal.mp3',
+                        'hitsounds/soft-hitwhistle.mp3',
+                        'hitsounds/soft-hitfinish.mp3',
+                        'hitsounds/soft-hitclap.mp3',
+                        'hitsounds/drum-hitnormal.mp3',
+                        'hitsounds/drum-hitwhistle.mp3',
+                        'hitsounds/drum-hitfinish.mp3',
+                        'hitsounds/drum-hitclap.mp3'
+                    ];
+                    console.log("Loading hit sounds:");
+                    console.log(sample);
+                    sounds.load(sample);
+                    sounds.whenLoaded = function(){
+                        game.sample[1].hitnormal = sounds['hitsounds/normal-hitnormal.mp3'];
+                        game.sample[1].hitwhistle = sounds['hitsounds/normal-hitwhistle.mp3'];
+                        game.sample[1].hitfinish = sounds['hitsounds/normal-hitfinish.mp3'];
+                        game.sample[1].hitclap = sounds['hitsounds/normal-hitclap.mp3'];
+                        game.sample[2].hitnormal = sounds['hitsounds/soft-hitnormal.mp3'];
+                        game.sample[2].hitwhistle = sounds['hitsounds/soft-hitwhistle.mp3'];
+                        game.sample[2].hitfinish = sounds['hitsounds/soft-hitfinish.mp3'];
+                        game.sample[2].hitclap = sounds['hitsounds/soft-hitclap.mp3'];
+                        game.sample[3].hitnormal = sounds['hitsounds/drum-hitnormal.mp3'];
+                        game.sample[3].hitwhistle = sounds['hitsounds/drum-hitwhistle.mp3'];
+                        game.sample[3].hitfinish = sounds['hitsounds/drum-hitfinish.mp3'];
+                        game.sample[3].hitclap = sounds['hitsounds/drum-hitclap.mp3'];
+                        
+                        // start playback
+                        var playback = new Playback(self.game, self.osu, self.tracks[i]);
+                        game.scene = playback;
+                        playback.start();
+                    };
                     return;
                 }
             }
@@ -58,7 +101,7 @@ define(["osu", "resources", "scenes/playback", "hash", "underscore", "pixi"], fu
         var tracks = [];
         for (var i = 0; i < self.tracks.length; i++) {
             var track = self.tracks[i];
-            var sprite = new PIXI.Sprite(Resources["menu-button-background.png"]);
+            var sprite = new PIXI.Sprite(Skin["menu-button-background.png"]);
             var leftEdge = game.window.innerWidth / 2 - sprite.width / 2;
             var titletext = track.metadata.Artist + " - " + track.metadata.Title + " / " + track.metadata.Version;
             var text = new PIXI.Text(titletext, { font: "20px sans-serif" });

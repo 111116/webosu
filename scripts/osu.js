@@ -122,9 +122,30 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             }
                             hit.repeat = +parts[6];
                             hit.pixelLength = +parts[7];
+
                             if (parts.length > 8) {
-                                hit.edgeHitSound = +parts[8];
+                                hit.edgeHitsounds = parts[8].split("|").map(Number);
                             }
+                            else {
+                                hit.edgeHitsounds = new Array();
+                                for (var wdnmd=0; wdnmd<hit.repeat+1; wdnmd++)
+                                    hit.edgeHitsounds.push(0);
+                            }
+
+                            hit.edgeAdditions = new Array();
+                            for (var wdnmd=0; wdnmd<hit.repeat+1; wdnmd++)
+                                hit.edgeAdditions.push(0);
+                            if (parts.length > 9) {
+                                var additions = parts[9].split("|");
+                                for (var wdnmd=0; wdnmd<additions.length; wdnmd++) {
+                                    var sets = additions[wdnmd].split(":");
+                                    hit.edgeAdditions[wdnmd] = {
+                                        sampleSet: +sets[0],
+                                        additionSet: +sets[1]
+                                    };
+                                }
+                            }
+                            // TODO parse extras
                         } else if ((hit.type & HIT_TYPE_SPINNER) > 0) {
                             hit.type = "spinner";
                         } else {
