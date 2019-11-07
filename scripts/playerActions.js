@@ -93,6 +93,41 @@ define([], function() {
         };
         checkHit(playback.upcomingHits, clickInfos);
     });
+    var Zdown = false;
+    var Xdown = false;
+    playback.game.window.addEventListener("keydown", function(e) {
+        if (e.keyCode == 90 || e.keyCode == 88) { // zx
+          if (e.keyCode == 90) {
+            if (Zdown) return;
+            Zdown = true;
+          }
+          if (e.keyCode == 88) {
+            if (Xdown) return;
+            Xdown = true;
+          }
+          e.preventDefault();
+          e.stopPropagation();
+          playback.game.score.nbClicks += 1;
+          var clickInfos = {
+            'x': playback.game.mouseX,
+            'y': playback.game.mouseY,
+            'time': playback.osu.audio.getPosition() * TIME_CONSTANT
+          };
+          checkHit(playback.upcomingHits, clickInfos);
+        }
+    });
+    playback.game.window.addEventListener("keyup", function(e) {
+        if (e.keyCode == 90 || e.keyCode == 88) { // zx
+          if (e.keyCode == 90) {
+            Zdown = false;
+          }
+          if (e.keyCode == 88) {
+            Xdown = false;
+          }
+          e.preventDefault();
+          e.stopPropagation();
+        }
+    });
     playback.game.window.addEventListener("dblclick", function(e) {
         e.preventDefault();
         e.stopPropagation(); // we don't want the main rpgmaker canvas to receive mouse events
