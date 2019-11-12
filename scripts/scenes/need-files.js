@@ -1,5 +1,5 @@
-define(["osu", "scenes/difficulty-select", "hash", "underscore", "skin", "pixi"],
-function(Osu, DifficultySelect, Hash, _, Skin, PIXI) {
+define(["osu", "scenes/difficulty-select", "hash", "underscore", "skin"],
+function(Osu, DifficultySelect, Hash, _, Skin) {
     function NeedFiles(game) {
         var self = this;
         this.stage = "Drag and drop a .osz file here\nDrag and drop a .osk file to apply a skin first";

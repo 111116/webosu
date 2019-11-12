@@ -1,4 +1,4 @@
-define(["pixi"], function(PIXI) {
+define([], function() {
     Skin = {};
     Skin.oncomplete = function() { }
     Skin.loadDefault = function() {

@@ -1,5 +1,5 @@
-define(["osu", "skin", "hash", "pixi", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions"],
-function(Osu, Skin, Hash, PIXI, LinearBezier, CircumscribedCircle, setPlayerActions) {
+define(["osu", "skin", "hash", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions"],
+function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions) {
     function Playback(game, osu, track) {
         var scoreCharWidth = 35;
         var scoreCharHeight = 45;

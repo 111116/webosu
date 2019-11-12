@@ -1,4 +1,4 @@
-define(["osu", "skin", "scenes/playback", "hash", "underscore", "pixi"], function(Osu, Skin, Playback, Hash, _, PIXI) {
+define(["osu", "skin", "scenes/playback", "hash", "underscore"], function(Osu, Skin, Playback, Hash, _) {
     function DifficultySelect(game, osu) {
         var self = this;
         self.osu = osu;

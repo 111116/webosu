@@ -1,4 +1,4 @@
-require(["scenes/need-files", "skin", "pixi", "sound"], function(NeedFiles, Skin, PIXI, sound) {
+require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound) {
     
     let app = new PIXI.Application({
         width: window.innerWidth,
