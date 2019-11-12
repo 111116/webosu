@@ -51,6 +51,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
             gfx.yoffset = 128;
             gfx.height = gfx.height - 256;
+            console.log("gfx: ", gfx)
         } else {
             // TODO: Portrait displays
         }
@@ -304,29 +305,18 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             else
                 hit.curve = new LinearBezier(hit, hit.sliderType === SLIDER_LINEAR);
             
-            var body = new SliderMesh(hit.curve.curve);
+            // create slider body
+            var body = new SliderMesh(hit.curve.curve,
+                {
+                    x: gfx.xoffset, y: gfx.yoffset,
+                    width: gfx.width, height: gfx.height,
+                    windowWidth: game.window.innerWidth,
+                    windowHeight: game.window.innerHeight
+                },
+                combos[hit.combo % combos.length]);
+            body.alpha = 0;
+            hit.objects.push(body);
 
-            // drawing slider edge under slider body
-            for (var i = 0; i < hit.curve.curve.length; i++) {
-                var c = hit.curve.curve[i];
-                var underlay = new PIXI.Sprite(Skin["slideredge.png"]);
-                underlay.anchor.x = underlay.anchor.y = 0.5;
-                underlay.x = gfx.xoffset + c.x * gfx.width;
-                underlay.y = gfx.yoffset + c.y * gfx.height;
-                underlay.alpha = 0;
-                hit.objects.push(underlay);
-            }
-
-            for (var i = 0; i < hit.curve.curve.length; i++) {
-                var c = hit.curve.curve[i];
-                var base = new PIXI.Sprite(Skin["hitcircle.png"]);
-                base.anchor.x = base.anchor.y = 0.5;
-                base.x = gfx.xoffset + c.x * gfx.width;
-                base.y = gfx.yoffset + c.y * gfx.height;
-                base.alpha = 0;
-                base.tint = combos[hit.combo % combos.length];
-                hit.objects.push(base);
-            }
             hit.hitcircleObjects = new Array();
             self.createHitCircle(hit, hit.hitcircleObjects); // Near end
             _.each(hit.hitcircleObjects, function(o){hit.objects.push(o);});
