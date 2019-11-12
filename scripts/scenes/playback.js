@@ -1,5 +1,5 @@
-define(["osu", "skin", "hash", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions"],
-function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions) {
+define(["osu", "skin", "hash", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions", "SliderMesh"],
+function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, SliderMesh) {
     function Playback(game, osu, track) {
         var scoreCharWidth = 35;
         var scoreCharHeight = 45;
@@ -303,6 +303,8 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions) {
             }
             else
                 hit.curve = new LinearBezier(hit, hit.sliderType === SLIDER_LINEAR);
+            
+            var body = new SliderMesh(hit.curve.curve);
 
             // drawing slider edge under slider body
             for (var i = 0; i < hit.curve.curve.length; i++) {

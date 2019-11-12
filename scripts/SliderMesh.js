@@ -8,7 +8,10 @@
 *   tint: 24-bit integer color of slider body, RGB highbits to lowbits
 */
 
-var SliderMesh = /*@__PURE__*/(function (Container) {
+define([],
+function() {
+
+    Container = PIXI.Container;
 
     // vertex shader source
     const vertexSrc = `
@@ -251,6 +254,4 @@ var SliderMesh = /*@__PURE__*/(function (Container) {
 
     return SliderMesh;
 
-}(PIXI.Container));
-
-
+});
