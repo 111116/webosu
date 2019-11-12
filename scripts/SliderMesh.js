@@ -18,11 +18,12 @@ function() {
     precision mediump float;
     attribute vec3 position;
     varying float dist;
-    uniform float height_to_width;
+    uniform float dx,dy,ox,oy;
     void main() {
         dist = position[2];
         gl_Position = vec4(position, 1.0);
-        gl_Position.x *= height_to_width;
+        gl_Position.x = gl_Position.x * dx + ox;
+        gl_Position.y = gl_Position.y * dy + oy;
     }`;
 
     // fragment shader source
@@ -83,9 +84,21 @@ function() {
 
 
     // create mesh from control curve
-    function curveGeometry(curve) // returning PIXI.Geometry object
+    function curveGeometry(osucurve, view) // returning PIXI.Geometry object
     {
-        let radius = 0.2;
+        // osu coordinate -> geometry coordinate
+        curve = new Array();
+        // filter out coinciding points
+        for (let i=0; i<osucurve.length; ++i)
+            if (i==0 || 
+                Math.abs(osucurve[i].x - osucurve[i-1].x) > 0.00001 || 
+                Math.abs(osucurve[i].y - osucurve[i-1].y) > 0.00001)
+            curve.push({
+                x: osucurve[i].x * view.width,
+                y: osucurve[i].y * view.height
+            });
+
+        let radius = 60;
         let vert = new Array();
         let index = new Array();
 
@@ -100,7 +113,6 @@ function() {
             let dx = x - lx;
             let dy = y - ly;
             let length = Math.hypot(dx, dy);
-            // TODO if length too small continue
             let ox = radius * -dy / length;
             let oy = radius * dx / length;
 
@@ -158,18 +170,21 @@ function() {
         return new PIXI.Geometry().addAttribute('position', vert, 3).addIndex(index)
     }
 
-    function SliderMesh(curve, tint) // constructor. 
+    function SliderMesh(curve, view, tint) // constructor. 
     {
         Container.call(this);
-
-        this.geometry = curveGeometry(curve);
+        this.geometry = curveGeometry(curve, view);
         this.tint = tint || 0;
         // FIXME NOTE: setting this.tint has no effect
 
+        // geometry coordinate -> gl coordinate
         this.uniforms = {
             uSampler2: newTexture(this.tint),
-            height_to_width: window.innerHeight / window.innerWidth,
             alpha: 1.0,
+            dx: 2 / view.windowWidth,
+            dy: -2 / view.windowHeight,
+            ox: -1 + 2 * view.x / view.windowWidth,
+            oy: 1 - 2 * view.y / view.windowHeight,
         };
         this.shader = PIXI.Shader.from(vertexSrc, fragmentSrc, this.uniforms);
 
