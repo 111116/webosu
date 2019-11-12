@@ -11,7 +11,6 @@ define(["underscore", "curves/CurveType"], function(_, CurveType) {
             var y = points[i].y - points[i + 1].y;
             approxLength += Math.sqrt(x * x + y * y);
         }
-
         this.init(approxLength);
     }
     _.extend(Bezier2.prototype, CurveType.prototype);

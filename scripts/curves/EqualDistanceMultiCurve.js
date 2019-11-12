@@ -40,7 +40,7 @@ define(["curves/Curve"], function(Curve) {
                         }
                     }
                 }
-                distanceAt += Math.floor(curCurve.curveDistance[curPoint] * 384);
+                distanceAt += Math.floor(curCurve.curveDistance[curPoint]);
             }
             var thisCurve = curCurve.curve[curPoint];
 
