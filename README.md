@@ -33,6 +33,8 @@ currently using sound.js for hitsound, but not music.
 
 don't know what `firefox` and `api` is for...
 
+cursor > approach > follow ?= hitcircle = slider
+
 
 ## TODO
 
