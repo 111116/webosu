@@ -35,6 +35,10 @@ don't know what `firefox` and `api` is for...
 
 cursor > approach > follow ?= hitcircle = slider
 
+If a slider is longer than given, just truncated it -- This is what's done in osu! lazer.
+
+About antialiasing: just blur the texture a little bit...
+
 
 ## TODO
 
