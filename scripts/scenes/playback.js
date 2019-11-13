@@ -20,10 +20,10 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         gfx.width = game.window.innerWidth;
         gfx.height = game.window.innerHeight;
         if (gfx.width > gfx.height) {
-            if (gfx.width / 640 > gfx.height / 480)
-                gfx.width = gfx.height / 480 * 640;
+            if (gfx.width / 512 > gfx.height / 384)
+                gfx.width = gfx.height / 384 * 512;
             else
-                gfx.height = gfx.width / 640 * 480;
+                gfx.height = gfx.width / 512 * 384;
             gfx.width *= 0.8;
             gfx.height *= 0.8;
             gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
@@ -35,7 +35,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
         // deal with difficulties
         self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
-        self.circleRadiusPixel = self.circleRadius * gfx.width / 640;
+        self.circleRadiusPixel = self.circleRadius * gfx.width / 512;
         self.hitSpriteScale = self.circleRadiusPixel / 60;
 
         self.TIME_ALLOWED = 200;
@@ -362,7 +362,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 {
                     x: gfx.xoffset, y: gfx.yoffset,
                     width: gfx.width, height: gfx.height,
-                    osuWidth: 640, osuHeight: 480,
+                    osuWidth: 512, osuHeight: 384,
                     windowWidth: game.window.innerWidth,
                     windowHeight: game.window.innerHeight
                 },

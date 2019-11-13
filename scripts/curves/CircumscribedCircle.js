@@ -49,7 +49,7 @@ function() {
         // find an angle with an arc length of pixelLength along this circle
         var radius = veclen(startAngPoint);
         var arcAng = Math.abs(startAng - endAng);
-        let expectAng = hit.pixelLength / radius / 480;
+        let expectAng = hit.pixelLength / radius / 384;
         if (arcAng > expectAng * 0.97) {
             // console.log("truncating arc to ", expectAng / arcAng);
             arcAng = expectAng; // truncate to given len
@@ -82,7 +82,7 @@ function() {
         for (let i=1; i<curve.length; ++i) {
             let dx = curve[i].x - curve[i-1].x;
             let dy = curve[i].y - curve[i-1].y;
-            l += Math.hypot(640 * dx, 480 * dy);
+            l += Math.hypot(512 * dx, 384 * dy);
         }
         return {curve: curve, pointAt: pointAt, totalDistance: l};
     };

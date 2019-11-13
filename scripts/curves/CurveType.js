@@ -22,7 +22,7 @@ define([], function() {
             } else {
                 var dx = this.curve[i].x - this.curve[i-1].x;
                 var dy = this.curve[i].y - this.curve[i-1].y;
-                this.curveDistance.push(Math.hypot(640 * dx, 480 * dy));
+                this.curveDistance.push(Math.hypot(512 * dx, 384 * dy));
                 this.totalDistance += this.curveDistance[i];
             }
         }

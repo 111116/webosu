@@ -206,7 +206,7 @@ function() {
         // FIXME NOTE: setting this.tint has no effect
 
         // osu pixel -> gl coordinate
-        // input mesh: [0, 640] x [0, 480]
+        // input mesh: [0, 512] x [0, 384]
         // view in system pixels: [x, x + width] x [y, y + height]
         // system pixel [0,windowWidth] x [0,windowHeight] -> gl coordinate [-1,1] x [1,-1]
         this.uniforms = {
