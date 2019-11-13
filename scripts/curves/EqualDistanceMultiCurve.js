@@ -10,18 +10,20 @@ define(["curves/Curve"], function(Curve) {
     }
     EqualDistanceMultiCurve.prototype.init = function init(curves) {
         this.ncurve = Math.floor(this.hitObject.pixelLength / CURVE_POINTS_SEPERATION);
+        // number of segments, which have approximately same length
         this.curve = [];
 
-        var distanceAt = 0;
+
+        var distanceAt = 0; // accumulated length of new curve
         var curPoint = 0;
         var curCurveIndex = 0;
-        var curCurve = curves[0];
+        var curCurve = curves[0]; // current pointer of raw curve array
         var lastCurve = curCurve.curve[0];
         var lastDistanceAt = 0;
 
-        var pixelLength = this.hitObject.pixelLength; // Scaled to 0...1
-        for (var i = 0; i < this.ncurve + 1; i++) {
-            var prefDistance = Math.floor(i * pixelLength / this.ncurve);
+        var pixelLength = this.hitObject.pixelLength; // This is the expected value of length
+        for (var i = 0; i <= this.ncurve; i++) {
+            var prefDistance = i * pixelLength / this.ncurve; // expected current accumulated length
             while (distanceAt < prefDistance) {
                 lastDistanceAt = distanceAt;
                 lastCurve = curCurve.curve[curPoint];
@@ -35,39 +37,47 @@ define(["curves/Curve"], function(Curve) {
                     } else {
                         curPoint = curCurve.ncurve - 1;
                         if (lastDistanceAt === distanceAt) {
+                            if (distanceAt < pixelLength * 0.99) {
+                                console.log("Warning: EDMC slider too short! ", distanceAt, pixelLength);
+                            }
                             // out of points even though the preferred distance hasn't been reached
                             break;
                         }
                     }
                 }
-                distanceAt += Math.floor(curCurve.curveDistance[curPoint]);
+                distanceAt += curCurve.curveDistance[curPoint];
             }
             var thisCurve = curCurve.curve[curPoint];
 
-            // interpolate the point between the two closest distances
-            if (distanceAt - lastDistanceAt > 1) {
-                var t = (prefDistance - lastDistanceAt) / (distanceAt - lastDistanceAt);
+            // linear interpolate between lastCurve & thisCurve
+            // this can always be done when lastCurve != thisCurve, since lastCurve is always available
+            // lastDistanceAt <= prefDistance <= distanceAt
+            if (lastCurve == thisCurve) {
+                this.curve[i] = thisCurve;
+            }
+            else {
+                let t = (prefDistance - lastDistanceAt) / (distanceAt - lastDistanceAt);
                 this.curve[i] = {
                     x: Curve.lerp(lastCurve.x, thisCurve.x, t),
                     y: Curve.lerp(lastCurve.y, thisCurve.y, t)
                 };
-            } else {
-                this.curve[i] = thisCurve;
             }
         }
     }
     EqualDistanceMultiCurve.prototype.pointAt = function pointAt(t) {
+
         var indexF = t * this.ncurve;
         var index = Math.floor(indexF);
-        if (index >= this.ncurve) {
-            return this.curve[this.ncurve - 1];
+        if (index >= this.ncurve) { // overflowing or at exact endpoint
+            return this.curve[this.ncurve];
         } else {
-            var poi = this.curve[index];
-            var poi2 = this.curve[index + 1];
-            var t2 = indexF - index;
+            // linear interpolation between two points
+            let poi = this.curve[index];
+            let poi2 = this.curve[index + 1];
+            let t = indexF - index;
             return {
-                x: Curve.lerp(poi.x, poi2.x, t2),
-                y: Curve.lerp(poi.y, poi2.y, t2)
+                x: Curve.lerp(poi.x, poi2.x, t),
+                y: Curve.lerp(poi.y, poi2.y, t)
             };
         }
     }

@@ -37,6 +37,13 @@ function(_, EqualDistanceMultiCurve, Bezier2) {
             beziers.push(new Bezier2(points));
             points.splice(0); // neccessary?
         }
+        //debug
+        if (points.length == 1 && Math.abs(hit.x-0.6816406)<0.0001 && Math.abs(hit.y - 0.4140625)<0.0001)
+        {
+            console.log("debug info starts");
+            console.log("pts ", points);
+            console.log("cv ", beziers);
+        }
         this.init(beziers);
     }
     _.extend(LinearBeizer.prototype, EqualDistanceMultiCurve.prototype);

@@ -49,17 +49,22 @@ function() {
         // find an angle with an arc length of pixelLength along this circle
         var radius = veclen(startAngPoint);
         var arcAng = Math.abs(startAng - endAng);
+        let expectAng = hit.pixelLength / radius / 480;
+        if (arcAng > expectAng * 0.97) {
+            // console.log("truncating arc to ", expectAng / arcAng);
+            arcAng = expectAng; // truncate to given len
+        }
+        else {
+            console.log("Warning: P slider too short! ", expectAng / arcAng);
+        }
 
         // now use it for our new end angle
         endAng = (endAng > startAng) ? startAng + arcAng : startAng - arcAng;
 
-        // finds the angles to draw for repeats
-        var drawEndAngle   = ((endAng   + (startAng > endAng ? HALF_PI : -HALF_PI)) * 180 / Math.PI);
-        var drawStartAngle = ((startAng + (startAng > endAng ? -HALF_PI : HALF_PI)) * 180 / Math.PI);
-
         // calculate points
         var step = hit.pixelLength / CURVE_POINTS_SEPERATION;
         var curve = new Array(Math.floor(step) + 1);
+
         pointAt = function(t) {
             if (t > 1) t = 1;
             var ang = lerp(startAng, endAng, t);
@@ -71,7 +76,15 @@ function() {
         for (var i = 0; i < curve.length; i++) {
             curve[i] = pointAt(i / step);
         }
-        return {curve: curve, pointAt: pointAt};
+
+        // check total distance
+        var l = 0;
+        for (let i=1; i<curve.length; ++i) {
+            let dx = curve[i].x - curve[i-1].x;
+            let dy = curve[i].y - curve[i-1].y;
+            l += Math.hypot(640 * dx, 480 * dy);
+        }
+        return {curve: curve, pointAt: pointAt, totalDistance: l};
     };
     return CircumscribedCircle;
 
