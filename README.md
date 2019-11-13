@@ -56,12 +56,14 @@ Modes other than STD (osu) will not be implemented.
 
 ## Current functions
 
-- scrolling during gameplay: yes
+- scrolling during gameplay to change volume: yes
 - keyboard button: yes (z x)
 - Hit circle: yes
 - Slider: partial
-- Spinner: no sure
-- CS, AR, OD: no
+- Spinner: no
+- CS: yes
+- AR: no
+- OD: no
 - beatmap skin: no
 
 #### Hit sounds
@@ -73,7 +75,8 @@ currently using lazer hit sounds.
 - slider reverse & end: always
 - slider tick: no
 - extra field: no
-- timing point: no
+- timing point sample: no
+- timing point volume: yes
 - beatmap hitsounds: no
 
 
