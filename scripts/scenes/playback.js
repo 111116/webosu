@@ -43,9 +43,12 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.approachTime = AR<5? 1800-120*AR: 1950-150*AR; // time of sliders/hitcircles and approach circles approaching
         self.objectFadeInTime = Math.min(350, self.approachTime); // time of sliders/hitcircles fading in, at beginning of approaching
         self.approachFadeInTime = Math.min(700, self.approachTime); // time of approach circles fading in, at beginning of approaching
-        self.sliderFadeOutTime = 350; // time of slidebody fading out
+        self.sliderFadeOutTime = 300; // time of slidebody fading out
         self.circleFadeOutTime = 200;
         self.scoreFadeOutTime = 600;
+        self.followZoomInTime = 100;
+        self.followFadeOutTime = 100;
+        self.ballFadeOutTime = 100;
         self.objectDespawnTime = 2000;
         // TODO easing curve currently linear
 
@@ -537,7 +540,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 alpha = 1;
             } else if (-diff > 0 && -diff < this.sliderFadeOutTime + hit.sliderTimeTotal) {
                 // Fade out (after slide)
-                alpha = 1 + diff / this.sliderFadeOutTime;
+                alpha = 1 - (-diff - hit.sliderTimeTotal) / this.sliderFadeOutTime;
             }
             // apply opacity
             _.each(hit.objects, function(o) {
@@ -555,16 +558,18 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 hit.approach.scale.x = hit.objects[2].scale.y = this.hitSpriteScale;
             }
 
-            if (-diff >= 0 && -diff <= this.sliderFadeOutTime + hit.sliderTimeTotal) {
+            if (-diff >= 0 && -diff <= this.sliderFadeOutTime + hit.sliderTimeTotal) { // after hit.time & before slider disappears
                 // hide hit circle & approach circle
                 _.each(hit.hitcircleObjects, function(o){o.visible = false;});
                 hit.approach.visible = false;
-                // slider ball appears
+                // slider ball immediately emerges
                 hit.ball.visible = true;
                 hit.ball.alpha = 1;
-                // TODO: follow circie animation
+                // follow circie immediately emerges and gradually enlarges
                 hit.follow.visible = true;
                 hit.follow.alpha = 1;
+                let followscale = (-diff > this.followZoomInTime)? 1: 0.5 + 0.5 * Math.sin(-diff / this.followZoomInTime * Math.PI / 2);
+                hit.follow.scale.x = hit.follow.scale.y = followscale * this.hitSpriteScale;
 
                 // t: position relative to slider duration
                 let t = -diff / hit.sliderTime;
@@ -587,7 +592,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                     t = t - Math.floor(t);
                 }
 
-                // Update ball and follow circle
+                // Update ball and follow circle position
                 let at = hit.curve.pointAt(t);
                 hit.follow.x = at.x * gfx.width + gfx.xoffset;
                 hit.follow.y = at.y * gfx.height + gfx.yoffset;
@@ -604,6 +609,17 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                     // TODO reverse arrow fade out animation
                 }
             }
+            // sliderball & follow circle fade-out Animation
+            let timeAfter = -diff - hit.sliderTimeTotal;
+            if (timeAfter > 0) {
+                hit.ball.alpha = Math.max(0, 1 - timeAfter / this.ballFadeOutTime);
+                let ballscale = (1 + 0.15 * timeAfter / this.ballFadeOutTime) * this.hitSpriteScale;
+                hit.ball.scale.x = hit.ball.scale.y = ballscale;
+                hit.follow.alpha = Math.max(0, 1 - timeAfter / this.followFadeOutTime);
+                let followscale = (1 - 0.5 * timeAfter / this.followFadeOutTime) * this.hitSpriteScale;
+                hit.follow.scale.x = hit.follow.scale.y = followscale;
+            }
+
             
             // display hit score
             if (hit.score > 0 || time > hit.time + hit.sliderTimeTotal + this.TIME_ALLOWED ){
