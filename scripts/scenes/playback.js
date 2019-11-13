@@ -245,13 +245,28 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         }
 
         this.playHitsound = function playHitsound(hit, id) {
+            let volume = self.osu.audio.gain.gain.value * hit.timing.volume / 100;
+            console.log(hit);
+            console.log(volume);
             if (hit.type == 'circle')
             {
                 var toplay = hit.hitSound;
-                self.game.sample[self.game.sampleSet].hitnormal.play(); // The normal sound is always played
-                if (toplay & 2) self.game.sample[self.game.sampleSet].hitwhistle.play();
-                if (toplay & 4) self.game.sample[self.game.sampleSet].hitfinish.play();
-                if (toplay & 8) self.game.sample[self.game.sampleSet].hitclap.play();
+
+                // The normal sound is always played
+                self.game.sample[self.game.sampleSet].hitnormal.volume = volume;
+                self.game.sample[self.game.sampleSet].hitnormal.play();
+                if (toplay & 2) {
+                    self.game.sample[self.game.sampleSet].hitwhistle.volume = volume;
+                    self.game.sample[self.game.sampleSet].hitwhistle.play();
+                }
+                if (toplay & 4) {
+                    self.game.sample[self.game.sampleSet].hitfinish.volume = volume;
+                    self.game.sample[self.game.sampleSet].hitfinish.play();
+                }
+                if (toplay & 8) {
+                    self.game.sample[self.game.sampleSet].hitclap.volume = volume;
+                    self.game.sample[self.game.sampleSet].hitclap.play();
+                }
             }
             if (hit.type == 'slider')
             {
@@ -262,11 +277,22 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                     sampleSet = hit.edgeAdditions[id].sampleSet;
                 if (hit.edgeAdditions[id].additionSet != 0)
                     additionSet = hit.edgeAdditions[id].additionSet;
-
-                self.game.sample[sampleSet].hitnormal.play(); // The normal sound is always played
-                if (toplay & 2) self.game.sample[additionSet].hitwhistle.play();
-                if (toplay & 4) self.game.sample[additionSet].hitfinish.play();
-                if (toplay & 8) self.game.sample[additionSet].hitclap.play();
+                
+                // The normal sound is always played
+                self.game.sample[sampleSet].hitnormal.volume = volume;
+                self.game.sample[sampleSet].hitnormal.play();
+                if (toplay & 2) {
+                    self.game.sample[additionSet].hitwhistle.volume = volume;
+                    self.game.sample[additionSet].hitwhistle.play();
+                }
+                if (toplay & 4) {
+                    self.game.sample[additionSet].hitfinish.volume = volume;
+                    self.game.sample[additionSet].hitfinish.play();
+                }
+                if (toplay & 8) {
+                    self.game.sample[additionSet].hitclap.volume = volume;
+                    self.game.sample[additionSet].hitclap.play();
+                }
             }
         };
         this.hitSuccess = function hitSuccess(hit, points){
@@ -280,17 +306,8 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
 
         this.createSlider = function(hit) {
-            var timing = track.timingPoints[0];
-            // select later one if timingPoints coincide
-            for (var i = 1; i < track.timingPoints.length; i++) {
-                var t = track.timingPoints[i];
-                if (t.offset > hit.time) {
-                    break;
-                }
-                timing = t;
-            }
             hit.lastrep = 0; // for hitsound counting
-            hit.sliderTime = timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
+            hit.sliderTime = hit.timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
             hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
             // TODO: Other sorts of curves besides LINEAR and BEZIER
             // TODO: Something other than shit peppysliders
@@ -377,6 +394,19 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
         this.populateHit = function(hit) {
             // Creates PIXI objects for a given hit
+
+            // find latest timing point that's not later than this hit
+            var timing = track.timingPoints[0];
+            // select later one if timingPoints coincide
+            for (var i = 1; i < track.timingPoints.length; i++) {
+                var t = track.timingPoints[i];
+                if (t.offset > hit.time) {
+                    break;
+                }
+                timing = t;
+            }
+            hit.timing = timing;
+
             hit.objects = [];
             hit.score = -1;
             switch (hit.type) {
