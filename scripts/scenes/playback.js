@@ -15,6 +15,30 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.upcomingHits = [];
         self.hits = self.track.hitObjects.slice(0); // what does this do?
         self.offset = 0;
+
+        var gfx = {}; // game field area
+        gfx.width = game.window.innerWidth;
+        gfx.height = game.window.innerHeight;
+        if (gfx.width > gfx.height) {
+            if (gfx.width / 640 > gfx.height / 480)
+                gfx.width = gfx.height / 480 * 640;
+            else
+                gfx.height = gfx.width / 640 * 480;
+            gfx.width *= 0.8;
+            gfx.height *= 0.8;
+            gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
+            gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
+            console.log("gfx: ", gfx)
+        } else {
+            // TODO: Portrait displays
+        }
+
+        self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
+        console.log("radius: ", self.circleRadius);
+        self.circleRadiusPixel = self.circleRadius * gfx.width / 640;
+        console.log("radiusPixel: ", self.circleRadiusPixel);
+        self.hitSpriteScale = self.circleRadiusPixel / 60;
+
         if (Hash.timestamp()) {
             self.offset = +Hash.timestamp();
         }
@@ -42,23 +66,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
             // TODO: Visualization
         });
-
-        var gfx = {}; // game field area
-        gfx.width = game.window.innerWidth;
-        gfx.height = game.window.innerHeight;
-        if (gfx.width > gfx.height) {
-            if (gfx.width / 640 > gfx.height / 480)
-                gfx.width = gfx.height / 480 * 640;
-            else
-                gfx.height = gfx.width / 640 * 480;
-            gfx.width *= 0.8;
-            gfx.height *= 0.8;
-            gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
-            gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
-            console.log("gfx: ", gfx)
-        } else {
-            // TODO: Portrait displays
-        }
 
         // Load background if possible
         self.backgroundOverlay = new PIXI.Graphics();
@@ -180,6 +187,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         this.createHitCircle = function(hit, objects = hit.objects) {
             var index = hit.index + 1;
             var base = new PIXI.Sprite(Skin["hitcircle.png"]);
+            base.scale.x = base.scale.y = this.hitSpriteScale;
             base.anchor.x = base.anchor.y = 0.5;
             base.x = gfx.xoffset + hit.x * gfx.width;
             base.y = gfx.yoffset + hit.y * gfx.height;
@@ -188,6 +196,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             base.alpha = 0;
             base.tint = combos[hit.combo % combos.length];
             var overlay = new PIXI.Sprite(Skin["hitcircleoverlay.png"]);
+            overlay.scale.x = overlay.scale.y = this.hitSpriteScale;
             overlay.anchor.x = overlay.anchor.y = 0.5;
             overlay.x = gfx.xoffset + hit.x * gfx.width;
             overlay.y = gfx.yoffset + hit.y * gfx.height;
@@ -203,11 +212,12 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
 
             if (!hit.objectWin){
-              hit.objectWin = new PIXI.Sprite(osuTextures.hit0);
-              hit.objectWin.anchor.x = hit.objectWin.anchor.y = 0.5;
-              hit.objectWin.x = gfx.xoffset + hit.x * gfx.width;
-              hit.objectWin.y = gfx.yoffset + hit.y * gfx.height;
-              hit.objectWin.alpha = 0;
+                hit.objectWin = new PIXI.Sprite(osuTextures.hit0);
+                hit.objectWin.scale.x = hit.objectWin.scale.y = this.hitSpriteScale;
+                hit.objectWin.anchor.x = hit.objectWin.anchor.y = 0.5;
+                hit.objectWin.x = gfx.xoffset + hit.x * gfx.width;
+                hit.objectWin.y = gfx.yoffset + hit.y * gfx.height;
+                hit.objectWin.alpha = 0;
             }
 
             objects.push(base);
@@ -222,6 +232,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 number.anchor.x = number.anchor.y = 0.5;
                 number.x = gfx.xoffset + hit.x * gfx.width;
                 number.y = gfx.yoffset + hit.y * gfx.height;
+                number.scale.x = number.scale.y = this.hitSpriteScale;
                 objects.push(number);
             } else if (index <= 99 && index > 0) {
                 var numberA = new PIXI.Sprite(Skin["default-" + (index % 10) + ".png"]);
@@ -229,7 +240,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 numberA.anchor.x = numberA.anchor.y = 0.5;
                 numberA.x = gfx.xoffset + hit.x * gfx.width + (numberA.width * 0.6) - 6;
                 numberA.y = gfx.yoffset + hit.y * gfx.height;
-                numberA.scale.x = numberA.scale.y = 0.9;
+                numberA.scale.x = numberA.scale.y = 0.9 * this.hitSpriteScale;
                 objects.push(numberA);
 
                 var numberB = new PIXI.Sprite(Skin["default-" +
@@ -238,7 +249,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 numberB.anchor.x = numberB.anchor.y = 0.5;
                 numberB.x = gfx.xoffset + hit.x * gfx.width - (numberB.width * 0.6) - 6;
                 numberB.y = gfx.yoffset + hit.y * gfx.height;
-                numberB.scale.x = numberB.scale.y = 0.9;
+                numberB.scale.x = numberB.scale.y = 0.9 * this.hitSpriteScale;
                 objects.push(numberB);
             }
             // Note: combos > 99 hits are unsupported
@@ -246,8 +257,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
         this.playHitsound = function playHitsound(hit, id) {
             let volume = self.osu.audio.gain.gain.value * hit.timing.volume / 100;
-            console.log(hit);
-            console.log(volume);
             if (hit.type == 'circle')
             {
                 var toplay = hit.hitSound;
@@ -333,6 +342,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             
             // Add follow circle, which lies visually under slider body
             var follow = hit.follow = new PIXI.Sprite(Skin["sliderfollowcircle.png"]);
+            follow.scale.x = follow.scale.y = this.hitSpriteScale;
             follow.visible = false;
             follow.alpha = 0;
             follow.anchor.x = follow.anchor.y = 0.5;
@@ -341,9 +351,11 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
             // create slider body
             var body = new SliderMesh(hit.curve.curve,
+                this.circleRadius,
                 {
                     x: gfx.xoffset, y: gfx.yoffset,
                     width: gfx.width, height: gfx.height,
+                    osuWidth: 640, osuHeight: 480,
                     windowWidth: game.window.innerWidth,
                     windowHeight: game.window.innerHeight
                 },
@@ -358,6 +370,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             
             // Add follow ball
             var ball = hit.ball = new PIXI.Sprite(Skin["sliderb.png"]);
+            ball.scale.x = ball.scale.y = this.hitSpriteScale;
             ball.visible = false;
             ball.alpha = 0;
             ball.anchor.x = ball.anchor.y = 0.5;
@@ -368,11 +381,11 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             if (hit.repeat > 1) {
                 // Add reverse symbol
                 var reverse = hit.reverse = new PIXI.Sprite(Skin["reversearrow.png"]);
+                reverse.scale.x = reverse.scale.y = this.hitSpriteScale;
                 reverse.alpha = 0;
                 reverse.anchor.x = reverse.anchor.y = 0.5;
                 reverse.x = gfx.xoffset + endPoint.x * gfx.width;
                 reverse.y = gfx.yoffset + endPoint.y * gfx.height;
-                reverse.scale.x = reverse.scale.y = 1;
                 reverse.tint = (255<<16)+(255<<8)+255;
                 reverse.rotation = endAngle + Math.PI;
                 hit.objects.push(reverse);
@@ -380,11 +393,11 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             if (hit.repeat > 2) {
                 // Add another reverse symbol at
                 var reverse = hit.reverse_b = new PIXI.Sprite(Skin["reversearrow.png"]);
+                reverse.scale.x = reverse.scale.y = this.hitSpriteScale;
                 reverse.alpha = 0;
                 reverse.anchor.x = reverse.anchor.y = 0.5;
                 reverse.x = gfx.xoffset + hit.x * gfx.width;
                 reverse.y = gfx.yoffset + hit.y * gfx.height;
-                reverse.scale.x = reverse.scale.y = 1;
                 reverse.tint = (255<<16)+(255<<8)+255;
                 reverse.rotation = endAngle;
                 reverse.visible = false; // Only visible when it's the next end to hit
@@ -432,7 +445,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             while (current < self.hits.length && futuremost < timestamp + (10 * TIME_CONSTANT)) {
                 var hit = self.hits[current++];
                 if (hit.objectWin){
-                  self.game.stage.addChildAt(hit.objectWin, 2);
+                    self.game.stage.addChildAt(hit.objectWin, 2);
                 }
                 for (var i = hit.objects.length - 1; i >= 0; i--) {
                     self.game.stage.addChildAt(hit.objects[i], 2);
@@ -473,15 +486,15 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 alpha -= 0.5; alpha = -alpha; alpha += 0.5;
             }
             if (diff <= NOTE_APPEAR && diff > 0) {
-                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
-                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
+                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
+                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
             } else {
-                hit.approach.scale.x = hit.objects[2].scale.y = 1;
+                hit.approach.scale.x = hit.objects[2].scale.y = 1 * this.hitSpriteScale;
             }
             if (hit.score > 0 || time > hit.time + TIME_ALLOWED ){
               hit.objectWin.alpha = 1 + (time - hit.time)/NOTE_DESPAWN;
-              hit.objectWin.scale.x = 1.2 * hit.objectWin.alpha;
-              hit.objectWin.scale.y = 1.2 * hit.objectWin.alpha;
+              hit.objectWin.scale.x = 1.2 * hit.objectWin.alpha * this.hitSpriteScale;
+              hit.objectWin.scale.y = 1.2 * hit.objectWin.alpha * this.hitSpriteScale;
               if (hit.score > 0){
                 // hit.objectWin.y = hit.approach.y - (1 - hit.objectWin.alpha) * gfx.height;
               } else{
@@ -499,8 +512,8 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 alpha = diff / NOTE_APPEAR;
                 alpha -= 0.5; alpha = -alpha; alpha += 0.5;
 
-                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
-                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
+                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
+                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
             } else if (diff <= NOTE_FULL_APPEAR && diff > -hit.sliderTimeTotal) {
                 // During slide
                 alpha = 1;
@@ -512,8 +525,8 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
             if (diff >= 0) {
                 // Update approach circle
-                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
-                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9;
+                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
+                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
             } else if (diff > NOTE_DISAPPEAR - hit.sliderTimeTotal) {
                 // Update slider ball and reverse symbols
                 hit.approach.visible = false;
@@ -582,12 +595,12 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
 
             if (hit.reverse_b) {
-                hit.reverse_b.scale.x = hit.reverse_b.scale.y = 1 + Math.abs(diff % 300) * 0.001;
+                hit.reverse_b.scale.x = hit.reverse_b.scale.y = 1 + Math.abs(diff % 300) * 0.001 * this.hitSpriteScale;
             }
             if (hit.score > 0 || time > hit.time + hit.sliderTimeTotal + TIME_ALLOWED ){
               hit.objectWin.alpha = 1 + (time - hit.time)/NOTE_DESPAWN;
-              hit.objectWin.scale.x = 1.2 * hit.objectWin.alpha;
-              hit.objectWin.scale.y = 1.2 * hit.objectWin.alpha;
+              hit.objectWin.scale.x = 1.2 * hit.objectWin.alpha * this.hitSpriteScale;
+              hit.objectWin.scale.y = 1.2 * hit.objectWin.alpha * this.hitSpriteScale;
               if (hit.score > 0){
                 // hit.objectWin.y = hit.approach.y - (1 - hit.objectWin.alpha) * gfx.height;
               } else{

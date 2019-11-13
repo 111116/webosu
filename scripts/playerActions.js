@@ -3,7 +3,6 @@ define([], function() {
   var TIME_ALLOWED_100 = 140;
   var TIME_ALLOWED_300 = 80;
   // TODO: support OD
-  var POSITION_ALLOWED = 60; //60px = circle radius
   var currentSlider = null;
 
   var checkHit = function checkHit(upcoming, click){
@@ -35,7 +34,7 @@ define([], function() {
   var checkInSlider = function checkInSlider(click){
     var dx = click.x - currentSlider.ball.x;
     var dy = click.y - currentSlider.ball.y;
-    var inSlider = dx*dx + dy*dy < 4 * POSITION_ALLOWED * POSITION_ALLOWED;
+    var inSlider = dx*dx + dy*dy < 4 * playback.circleRadiusPixel * playback.circleRadiusPixel;
     if (!inSlider){
       currentSlider = null;
     }
@@ -54,7 +53,7 @@ define([], function() {
       var dy = click.y - hit.basey;
       return ( 
         hit.score < 0
-        && dx*dx + dy*dy < POSITION_ALLOWED * POSITION_ALLOWED 
+        && dx*dx + dy*dy < playback.circleRadiusPixel * playback.circleRadiusPixel 
         && Math.abs(click.time - hit.time) < TIME_ALLOWED);
       }
   }
