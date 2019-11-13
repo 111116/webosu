@@ -314,6 +314,14 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             // curve points are of about-same distance, so these 2 points should be different
             let endAngle = Math.atan2(endPoint.y - endPoint2.y, endPoint.x - endPoint2.x);
             
+            // Add follow circle, which lies visually under slider body
+            var follow = hit.follow = new PIXI.Sprite(Skin["sliderfollowcircle.png"]);
+            follow.visible = false;
+            follow.alpha = 0;
+            follow.anchor.x = follow.anchor.y = 0.5;
+            follow.manualAlpha = true;
+            hit.objects.push(follow);
+
             // create slider body
             var body = new SliderMesh(hit.curve.curve,
                 {
@@ -326,16 +334,11 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             body.alpha = 0;
             hit.objects.push(body);
 
+            // create hitcircle at head
             hit.hitcircleObjects = new Array();
             self.createHitCircle(hit, hit.hitcircleObjects); // Near end
             _.each(hit.hitcircleObjects, function(o){hit.objects.push(o);});
-            // Add follow circle
-            var follow = hit.follow = new PIXI.Sprite(Skin["sliderfollowcircle.png"]);
-            follow.visible = false;
-            follow.alpha = 0;
-            follow.anchor.x = follow.anchor.y = 0.5;
-            follow.manualAlpha = true;
-            hit.objects.push(follow);
+            
             // Add follow ball
             var ball = hit.ball = new PIXI.Sprite(Skin["sliderb.png"]);
             ball.visible = false;
