@@ -91,8 +91,8 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                     case "[HitObjects]":
                         var parts = line.split(",");
                         var hit = {
-                            x: (+parts[0]) / 512,
-                            y: (+parts[1]) / 384,
+                            x: (+parts[0]) / 640,
+                            y: (+parts[1]) / 480,
                             time: +parts[2],
                             type: +parts[3],
                             hitSound: +parts[4]
@@ -118,7 +118,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             hit.keyframes = [];
                             for (var j = 1; j < sliderKeys.length; j++) {
                                 var p = sliderKeys[j].split(":");
-                                hit.keyframes.push({ x: (+p[0]) / 512, y: (+p[1]) / 384 });
+                                hit.keyframes.push({ x: (+p[0]) / 640, y: (+p[1]) / 480 });
                             }
                             hit.repeat = +parts[6];
                             hit.pixelLength = +parts[7];

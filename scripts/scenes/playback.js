@@ -43,14 +43,18 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             // TODO: Visualization
         });
 
-        var gfx = {};
+        var gfx = {}; // game field area
         gfx.width = game.window.innerWidth;
         gfx.height = game.window.innerHeight;
         if (gfx.width > gfx.height) {
-            gfx.width = gfx.height;
+            if (gfx.width / 640 > gfx.height / 480)
+                gfx.width = gfx.height / 480 * 640;
+            else
+                gfx.height = gfx.width / 640 * 480;
+            gfx.width *= 0.8;
+            gfx.height *= 0.8;
             gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
-            gfx.yoffset = 128;
-            gfx.height = gfx.height - 256;
+            gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
             console.log("gfx: ", gfx)
         } else {
             // TODO: Portrait displays
