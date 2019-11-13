@@ -4,6 +4,10 @@ osu! that can be played in a browser
 
 (under development)
 
+It runs on Firefox & Chrome. It doesn't run on Safari currently.
+
+Note: This is an unofficial implementation of osu!. It has nothing to do with @ppy.
+
 ## Architecture
 
 `main.js`
@@ -16,7 +20,7 @@ osu! that can be played in a browser
 	load from .osu file
 	
 `playback.js`
-	draw shapes in realtime. Gaming mainly happens here. 
+	create & update shapes in realtime. Gaming mainly happens here. 
 	
 `playerActions.js`
 	check hits, called by playback.js
@@ -29,15 +33,15 @@ osu! that can be played in a browser
 
 ## NOTES
 
-currently using sound.js for hitsound, but not music.
+- currently using sound.js for hitsound, but not music.
 
-don't know what `firefox` and `api` is for...
+- don't know what `firefox` and `api` is for...
 
-cursor > approach > follow ?= hitcircle = slider
+- cursor > approach > hitcircle = slider > follow
 
-If a slider is longer than given, just truncated it -- This is what's done in osu! lazer.
+- If a slider is longer than given, just truncated it -- This is what's done in osu! lazer.
 
-About antialiasing: just blur the texture a little bit...
+- About antialiasing: just blur the texture a little bit...
 
 
 ## TODO
@@ -50,19 +54,19 @@ First I'll work on core gaming experience, including:
 
 Latency should be adjustable.
 
-Scoring, deaths, skins and mods might be implemented later on, depending on code complexity.
+Scoring, deaths, skins and some of mods might be implemented later on, depending on code complexity.
 
 Modes other than STD (osu) will not be implemented.
 
 ## Current functions
 
-- scrolling during gameplay to change volume: yes
+- scrolling to change volume: yes
 - keyboard button: yes (z x)
 - Hit circle: yes
 - Slider: partial
 - Spinner: no
 - CS: yes
-- AR: no
+- AR: yes
 - OD: no
 - beatmap skin: no
 
