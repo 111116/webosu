@@ -44,7 +44,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.objectFadeInTime = Math.min(350, self.approachTime); // time of sliders/hitcircles fading in, at beginning of approaching
         self.approachFadeInTime = Math.min(700, self.approachTime); // time of approach circles fading in, at beginning of approaching
         self.sliderFadeOutTime = 300; // time of slidebody fading out
-        self.circleFadeOutTime = 200;
+        self.circleFadeOutTime = 100;
         self.scoreFadeOutTime = 600;
         self.followZoomInTime = 100;
         self.followFadeOutTime = 100;
@@ -485,6 +485,12 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
         }
 
+        this.fadeOutEasing = function(t) { // [0..1] -> [1..0]
+            if (t <= 0) return 1;
+            if (t > 1) return 0;
+            return 1 - Math.sin(t * Math.PI/2);
+        }
+
         this.updateHitCircle = function(hit, time) {
             let diff = hit.time - time; // milliseconds before time of circle
             // calculate opacity of circle
@@ -499,7 +505,9 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 alpha = 1;
             }
             else if (-diff > 0 && -diff < this.circleFadeOutTime) { // after time of circle
-                alpha = 1 + diff / this.circleFadeOutTime;
+                alpha = this.fadeOutEasing(-diff / this.circleFadeOutTime);
+                let scale = (1 + 0.15 * -diff / this.circleFadeOutTime) * this.hitSpriteScale;
+                _.each(hit.objects, function(o) { o.scale.x = o.scale.y = scale; });
             }
             _.each(hit.objects, function(o) { o.alpha = alpha; });
             // calculate size of approach circle
@@ -512,7 +520,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
             // display hit score
             if (hit.score > 0 || time > hit.time + this.TIME_ALLOWED){
-              hit.objectWin.alpha = Math.max(0, 1 + diff / this.scoreFadeOutTime);
+              hit.objectWin.alpha = this.fadeOutEasing(-diff / this.scoreFadeOutTime);
               hit.objectWin.scale.x = this.hitSpriteScale;
               hit.objectWin.scale.y = this.hitSpriteScale;
             }
@@ -540,7 +548,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 alpha = 1;
             } else if (-diff > 0 && -diff < this.sliderFadeOutTime + hit.sliderTimeTotal) {
                 // Fade out (after slide)
-                alpha = 1 - (-diff - hit.sliderTimeTotal) / this.sliderFadeOutTime;
+                alpha = this.fadeOutEasing((-diff - hit.sliderTimeTotal) / this.sliderFadeOutTime);
             }
             // apply opacity
             _.each(hit.objects, function(o) {
@@ -612,10 +620,10 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             // sliderball & follow circle fade-out Animation
             let timeAfter = -diff - hit.sliderTimeTotal;
             if (timeAfter > 0) {
-                hit.ball.alpha = Math.max(0, 1 - timeAfter / this.ballFadeOutTime);
+                hit.ball.alpha = this.fadeOutEasing(timeAfter / this.ballFadeOutTime);
                 let ballscale = (1 + 0.15 * timeAfter / this.ballFadeOutTime) * this.hitSpriteScale;
                 hit.ball.scale.x = hit.ball.scale.y = ballscale;
-                hit.follow.alpha = Math.max(0, 1 - timeAfter / this.followFadeOutTime);
+                hit.follow.alpha = this.fadeOutEasing(timeAfter / this.followFadeOutTime);
                 let followscale = (1 - 0.5 * timeAfter / this.followFadeOutTime) * this.hitSpriteScale;
                 hit.follow.scale.x = hit.follow.scale.y = followscale;
             }
@@ -623,7 +631,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             
             // display hit score
             if (hit.score > 0 || time > hit.time + hit.sliderTimeTotal + this.TIME_ALLOWED ){
-              hit.objectWin.alpha = Math.max(0, 1 + (diff + hit.sliderTimeTotal) / this.scoreFadeOutTime);
+              hit.objectWin.alpha = this.fadeOutEasing((-diff - hit.sliderTimeTotal) / this.scoreFadeOutTime);
               hit.objectWin.scale.x = this.hitSpriteScale;
               hit.objectWin.scale.y = this.hitSpriteScale;
             }
