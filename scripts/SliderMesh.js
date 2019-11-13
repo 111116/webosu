@@ -51,8 +51,8 @@ function() {
         const innerG = ((tint>>8)&255)/255;
         const innerB = (tint&255)/255;
         const innerA = 1.0;
-
-        const width = 100;
+        const blurrate = 0.012;
+        const width = 200;
 
         let buff = new Uint8Array(width * 4);
         for (let i = 0; i < width; i++) {
@@ -74,12 +74,31 @@ function() {
                 A = innerA * ((edgeOpacity - centerOpacity) * position / innerPortion + centerOpacity);
             }
             // pre-multiply alpha
-            buff[i*4] = R*A*255;
-            buff[i*4+1] = G*A*255;
-            buff[i*4+2] = B*A*255;
+            R*=A;
+            G*=A;
+            B*=A;
+            // blur at edge for "antialiasing" without supersampling
+            if (1-position < blurrate) // outer edge
+            {
+                R *= (1-position) / blurrate;
+                G *= (1-position) / blurrate;
+                B *= (1-position) / blurrate;
+                A *= (1-position) / blurrate;
+            }
+            if (innerPortion - position > 0 && innerPortion - position < blurrate)
+            {
+                let mu = (innerPortion - position) / blurrate;
+                R = mu * R + (1-mu) * borderR * borderA;
+                G = mu * G + (1-mu) * borderG * borderA;
+                B = mu * B + (1-mu) * borderB * borderA;
+                A = mu * innerA + (1-mu) * borderA;
+            }
+            buff[i*4] = R*255;
+            buff[i*4+1] = G*255;
+            buff[i*4+2] = B*255;
             buff[i*4+3] = A*255;
         }
-        return PIXI.Texture.fromBuffer(buff, 100, 1);
+        return PIXI.Texture.fromBuffer(buff, width, 1);
     }
 
 
