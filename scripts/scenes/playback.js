@@ -280,7 +280,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
 
         this.createSlider = function(hit) {
-            var lastFrame = hit.keyframes[hit.keyframes.length - 1];
             var timing = track.timingPoints[0];
             // select later one if timingPoints coincide
             for (var i = 1; i < track.timingPoints.length; i++) {
@@ -308,6 +307,12 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
             else
                 hit.curve = new LinearBezier(hit, hit.sliderType === SLIDER_LINEAR);
+            if (hit.curve.length < 2)
+                console.log("Error: slider curve calculation failed");
+            let endPoint = hit.curve.curve[hit.curve.curve.length-1];
+            let endPoint2 = hit.curve.curve[hit.curve.curve.length-2];
+            // curve points are of about-same distance, so these 2 points should be different
+            let endAngle = Math.atan2(endPoint.y - endPoint2.y, endPoint.x - endPoint2.x);
             
             // create slider body
             var body = new SliderMesh(hit.curve.curve,
@@ -345,32 +350,24 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 var reverse = hit.reverse = new PIXI.Sprite(Skin["reversearrow.png"]);
                 reverse.alpha = 0;
                 reverse.anchor.x = reverse.anchor.y = 0.5;
-                reverse.x = gfx.xoffset + lastFrame.x * gfx.width;
-                reverse.y = gfx.yoffset + lastFrame.y * gfx.height;
+                reverse.x = gfx.xoffset + endPoint.x * gfx.width;
+                reverse.y = gfx.yoffset + endPoint.y * gfx.height;
                 reverse.scale.x = reverse.scale.y = 1;
                 reverse.tint = (255<<16)+(255<<8)+255;
-                // This makes the arrow point back towards the start of the slider
-                // TODO: Make it point at the previous keyframe instead
-                var deltaX = lastFrame.x - hit.x;
-                var deltaY = lastFrame.y - hit.y;
-                reverse.rotation = Math.atan2(deltaY, deltaX) + Math.PI;
-
+                reverse.rotation = endAngle + Math.PI;
                 hit.objects.push(reverse);
             }
             if (hit.repeat > 2) {
-                // Add another reverse symbol
+                // Add another reverse symbol at
                 var reverse = hit.reverse_b = new PIXI.Sprite(Skin["reversearrow.png"]);
                 reverse.alpha = 0;
                 reverse.anchor.x = reverse.anchor.y = 0.5;
                 reverse.x = gfx.xoffset + hit.x * gfx.width;
                 reverse.y = gfx.yoffset + hit.y * gfx.height;
                 reverse.scale.x = reverse.scale.y = 1;
-                reverse.tint = 0;
-                var deltaX = lastFrame.x - hit.x;
-                var deltaY = lastFrame.y - hit.y;
-                reverse.rotation = Math.atan2(deltaY, deltaX);
+                reverse.tint = (255<<16)+(255<<8)+255;
+                reverse.rotation = endAngle;
                 reverse.visible = false; // Only visible when it's the next end to hit
-
                 hit.objects.push(reverse);
             }
         }
