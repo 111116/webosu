@@ -32,6 +32,8 @@ define(["osu", "skin", "scenes/playback", "hash", "underscore"], function(Osu, S
                 });
             }
         }
+
+        const distbetweenbutton = -5;
         
         var disposed = false;
         this.click = function(e) {
@@ -39,7 +41,7 @@ define(["osu", "skin", "scenes/playback", "hash", "underscore"], function(Osu, S
             for (var i = 0; i < self.tracks.length; i++) {
                 var menu = Skin["menu-button-background.png"];
                 var x = game.window.innerWidth / 2 - menu.width / 2;
-                var y = (i * (menu.height + 10)) + 10 + 30 + 20;
+                var y = (i * (menu.height + distbetweenbutton)) + 10 + 30 + 20;
                 if (e.clientX > x && e.clientX < x + menu.width &&
                         e.clientY > y && e.clientY < y + menu.height) {
                     // this difficulty is clicked on
@@ -104,11 +106,12 @@ define(["osu", "skin", "scenes/playback", "hash", "underscore"], function(Osu, S
             var sprite = new PIXI.Sprite(Skin["menu-button-background.png"]);
             var leftEdge = game.window.innerWidth / 2 - sprite.width / 2;
             var titletext = track.metadata.Artist + " - " + track.metadata.Title + " / " + track.metadata.Version;
-            var text = new PIXI.Text(titletext, { font: "20px sans-serif" });
+            var text = new PIXI.Text(titletext, { fontSize: 20 });
+            sprite.alpha = 0.95;
             sprite.x = leftEdge;
-            sprite.y = i * (sprite.height + 10) + 10 + 30 + 20;
+            sprite.y = i * (sprite.height + distbetweenbutton) + 10 + 30 + 20;
             text.x = leftEdge + 20;
-            text.y = i * (sprite.height + 10) + 30 + 20 + (sprite.height / 2);
+            text.y = i * (sprite.height + distbetweenbutton) + 30 + 20 + (sprite.height / 2);
             tracks.push({ sprite: sprite, text: text });
             game.stage.addChild(sprite);
             game.stage.addChild(text);

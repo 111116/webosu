@@ -102,7 +102,7 @@ function(Osu, DifficultySelect, Hash, _, Skin) {
             osu.load();
         }
 
-        var statusText = new PIXI.Text(self.stage, { font: "18px sans-serif", align: "center" });
+        var statusText = new PIXI.Text(self.stage, { fontSize: 18, align: "center" });
         statusText.anchor.x = statusText.anchor.y = 0.5;
         statusText.x = game.window.innerWidth / 2;
         statusText.y = game.window.innerHeight / 2;
