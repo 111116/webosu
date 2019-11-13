@@ -130,7 +130,7 @@ function() {
 
         function addArc(c, p1, p2) // c as center, sector from c-p1 to c-p2 counterclockwise
         {
-            const DIVIDES = 64;
+            const DIVIDES = 40; // approximate a circle with a polygon of DEVIDES sides
             let theta_1 = Math.atan2(vert[3*p1+1]-vert[3*c+1], vert[3*p1]-vert[3*c])
             let theta_2 = Math.atan2(vert[3*p2+1]-vert[3*c+1], vert[3*p2]-vert[3*c])
             if (theta_1 > theta_2)
