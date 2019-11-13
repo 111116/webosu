@@ -6,7 +6,7 @@ osu! that can be played in a browser
 
 It runs on Firefox & Chrome. It doesn't run on Safari currently.
 
-Note: This is an unofficial implementation of osu!. It has nothing to do with @ppy.
+Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). It has nothing to do with @ppy.
 
 ## Architecture
 
