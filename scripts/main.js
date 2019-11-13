@@ -13,12 +13,7 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
     app.renderer.backgroundColor = 0xFFFFFF;
 
     // Global constants
-    window.TIME_CONSTANT = 1000;
-    window.TIME_ALLOWED = 0.2 * TIME_CONSTANT;
-    window.NOTE_APPEAR = 0.5 * TIME_CONSTANT;
-    window.NOTE_FULL_APPEAR = 0.4 * TIME_CONSTANT;
-    window.NOTE_DISAPPEAR = -0.2 * TIME_CONSTANT;
-    window.NOTE_DESPAWN = -2 * TIME_CONSTANT;
+    window.TIME_CONSTANT = 1000; // milliseconds per second
     window.SLIDER_LINEAR = "L";
     window.SLIDER_CATMULL = "C";
     window.SLIDER_BEZIER = "B";
