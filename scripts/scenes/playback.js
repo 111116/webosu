@@ -33,11 +33,24 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             // TODO: Portrait displays
         }
 
+        // deal with difficulties
         self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
-        console.log("radius: ", self.circleRadius);
         self.circleRadiusPixel = self.circleRadius * gfx.width / 640;
-        console.log("radiusPixel: ", self.circleRadiusPixel);
         self.hitSpriteScale = self.circleRadiusPixel / 60;
+
+        self.TIME_ALLOWED = 200;
+        let AR = track.difficulty.ApproachRate;
+        self.approachTime = AR<5? 1800-120*AR: 1950-150*AR; // time of sliders/hitcircles and approach circles approaching
+        self.objectFadeInTime = Math.min(350, self.approachTime); // time of sliders/hitcircles fading in, at beginning of approaching
+        self.approachFadeInTime = Math.min(700, self.approachTime); // time of approach circles fading in, at beginning of approaching
+        self.sliderFadeOutTime = 300; // time of slidebody fading out
+        self.circleFadeOutTime = 100;
+        self.scoreFadeOutTime = 600;
+        self.followZoomInTime = 100;
+        self.followFadeOutTime = 100;
+        self.ballFadeOutTime = 100;
+        self.objectDespawnTime = 2000;
+        // TODO easing curve currently linear
 
         if (Hash.timestamp()) {
             self.offset = +Hash.timestamp();
@@ -318,8 +331,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             hit.lastrep = 0; // for hitsound counting
             hit.sliderTime = hit.timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
             hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
-            // TODO: Other sorts of curves besides LINEAR and BEZIER
-            // TODO: Something other than shit peppysliders
 
             // get slider curve
             if (hit.sliderType === SLIDER_PERFECT_CURVE && hit.keyframes.length == 2) {
@@ -335,10 +346,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 hit.curve = new LinearBezier(hit, hit.sliderType === SLIDER_LINEAR);
             if (hit.curve.length < 2)
                 console.log("Error: slider curve calculation failed");
-            let endPoint = hit.curve.curve[hit.curve.curve.length-1];
-            let endPoint2 = hit.curve.curve[hit.curve.curve.length-2];
-            // curve points are of about-same distance, so these 2 points should be different
-            let endAngle = Math.atan2(endPoint.y - endPoint2.y, endPoint.x - endPoint2.x);
             
             // Add follow circle, which lies visually under slider body
             var follow = hit.follow = new PIXI.Sprite(Skin["sliderfollowcircle.png"]);
@@ -377,6 +384,11 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             ball.tint = (255<<16)+(255<<8)+255;
             ball.manualAlpha = true;
             hit.objects.push(ball);
+
+            let endPoint = hit.curve.curve[hit.curve.curve.length-1];
+            let endPoint2 = hit.curve.curve[hit.curve.curve.length-2];
+            // curve points are of about-same distance, so these 2 points should be different
+            let endAngle = Math.atan2(endPoint.y - endPoint2.y, endPoint.x - endPoint2.x);
 
             if (hit.repeat > 1) {
                 // Add reverse symbol
@@ -458,7 +470,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             for (var i = 0; i < self.upcomingHits.length; i++) {
                 var hit = self.upcomingHits[i];
                 var diff = hit.time - timestamp;
-                var despawn = NOTE_DESPAWN;
+                var despawn = -this.objectDespawnTime;
                 if (hit.type === "slider") {
                     despawn -= hit.sliderTimeTotal;
                 }
@@ -473,80 +485,106 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
         }
 
+        this.fadeOutEasing = function(t) { // [0..1] -> [1..0]
+            if (t <= 0) return 1;
+            if (t > 1) return 0;
+            return 1 - Math.sin(t * Math.PI/2);
+        }
+
         this.updateHitCircle = function(hit, time) {
-            var diff = hit.time - time;
-            var alpha = 0;
-            if (diff <= NOTE_APPEAR && diff > NOTE_FULL_APPEAR) {
-                alpha = diff / NOTE_APPEAR;
-                alpha -= 0.5; alpha = -alpha; alpha += 0.5;
-            } else if (diff <= NOTE_FULL_APPEAR && diff > 0) {
+            let diff = hit.time - time; // milliseconds before time of circle
+            // calculate opacity of circle
+            let alpha = 0;
+            let noteFullAppear = this.approachTime - this.objectFadeInTime; // duration of opaque hit circle when approaching
+            let approachFullAppear = this.approachTime - this.approachFadeInTime; // duration of opaque approach circle when approaching
+
+            if (diff <= this.approachTime && diff > noteFullAppear) { // fading in
+                alpha = (this.approachTime - diff) / this.objectFadeInTime;
+            }
+            else if (diff <= noteFullAppear && diff >= 0) { // approaching (or at exact time of circle), after fade-in
                 alpha = 1;
-            } else if (diff > NOTE_DISAPPEAR && diff < 0) {
-                alpha = diff / NOTE_DISAPPEAR;
-                alpha -= 0.5; alpha = -alpha; alpha += 0.5;
             }
-            if (diff <= NOTE_APPEAR && diff > 0) {
-                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
-                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
-            } else {
-                hit.approach.scale.x = hit.objects[2].scale.y = 1 * this.hitSpriteScale;
-            }
-            if (hit.score > 0 || time > hit.time + TIME_ALLOWED ){
-              hit.objectWin.alpha = 1 + (time - hit.time)/NOTE_DESPAWN;
-              hit.objectWin.scale.x = 1.2 * hit.objectWin.alpha * this.hitSpriteScale;
-              hit.objectWin.scale.y = 1.2 * hit.objectWin.alpha * this.hitSpriteScale;
-              if (hit.score > 0){
-                // hit.objectWin.y = hit.approach.y - (1 - hit.objectWin.alpha) * gfx.height;
-              } else{
-                hit.objectWin.y = hit.approach.y + 0.3 * (1 - hit.objectWin.alpha) * gfx.height;
-              }
+            else if (-diff > 0 && -diff < this.circleFadeOutTime) { // after time of circle
+                alpha = this.fadeOutEasing(-diff / this.circleFadeOutTime);
+                let scale = (1 + 0.15 * -diff / this.circleFadeOutTime) * this.hitSpriteScale;
+                _.each(hit.objects, function(o) { o.scale.x = o.scale.y = scale; });
             }
             _.each(hit.objects, function(o) { o.alpha = alpha; });
+            // calculate size of approach circle
+            if (diff <= this.approachTime && diff > 0) { // approaching
+                let scale = (diff / this.approachTime * 2 + 1) * 0.9 * this.hitSpriteScale;
+                hit.approach.scale.x = scale;
+                hit.approach.scale.y = scale;
+            } else {
+                hit.approach.scale.x = hit.objects[2].scale.y = this.hitSpriteScale;
+            }
+            // display hit score
+            if (hit.score > 0 || time > hit.time + this.TIME_ALLOWED){
+              hit.objectWin.alpha = this.fadeOutEasing(-diff / this.scoreFadeOutTime);
+              hit.objectWin.scale.x = this.hitSpriteScale;
+              hit.objectWin.scale.y = this.hitSpriteScale;
+            }
+            // calculate opacity of approach circle
+            if (diff <= this.approachTime && diff > approachFullAppear) { // approach circle fading in
+                alpha = (this.approachTime - diff) / this.approachFadeInTime;
+            }
+            else if (diff <= approachFullAppear && diff > 0) { // approach circle opaque, just shrinking
+                alpha = 1;
+            }
+            hit.approach.alpha = alpha;
         }
 
         this.updateSlider = function(hit, time) {
-            var diff = hit.time - time;
-            var alpha = 0;
-            if (diff <= NOTE_APPEAR && diff > NOTE_FULL_APPEAR) {
+            let diff = hit.time - time; // milliseconds before hit.time
+            // calculate opacity of slider
+            let alpha = 0;
+            let noteFullAppear = this.approachTime - this.objectFadeInTime; // duration of opaque hit circle when approaching
+            let approachFullAppear = this.approachTime - this.approachFadeInTime; // duration of opaque approach circle when approaching
+            if (diff <= this.approachTime && diff > noteFullAppear) {
                 // Fade in (before hit)
-                alpha = diff / NOTE_APPEAR;
-                alpha -= 0.5; alpha = -alpha; alpha += 0.5;
-
-                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
-                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
-            } else if (diff <= NOTE_FULL_APPEAR && diff > -hit.sliderTimeTotal) {
-                // During slide
+                alpha = (this.approachTime - diff) / this.objectFadeInTime;
+            } else if (diff <= noteFullAppear && diff > -hit.sliderTimeTotal) {
+                // approaching or During slide
                 alpha = 1;
-            } else if (diff > NOTE_DISAPPEAR - hit.sliderTimeTotal && diff < 0) {
+            } else if (-diff > 0 && -diff < this.sliderFadeOutTime + hit.sliderTimeTotal) {
                 // Fade out (after slide)
-                alpha = diff / (NOTE_DISAPPEAR - hit.sliderTimeTotal);
-                alpha -= 0.5; alpha = -alpha; alpha += 0.5;
+                alpha = this.fadeOutEasing((-diff - hit.sliderTimeTotal) / this.sliderFadeOutTime);
+            }
+            // apply opacity
+            _.each(hit.objects, function(o) {
+                if (_.isUndefined(o._manualAlpha)) {
+                    o.alpha = alpha;
+                }
+            });
+
+            // calculate size of approach circle
+            if (diff >= 0 && diff <= this.approachTime) { // approaching
+                let scale = (diff / this.approachTime * 2 + 1) * 0.9 * this.hitSpriteScale;
+                hit.approach.scale.x = scale;
+                hit.approach.scale.y = scale;
+            } else {
+                hit.approach.scale.x = hit.objects[2].scale.y = this.hitSpriteScale;
             }
 
-            if (diff >= 0) {
-                // Update approach circle
-                hit.approach.scale.x = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
-                hit.approach.scale.y = ((diff / NOTE_APPEAR * 2) + 1) * 0.9 * this.hitSpriteScale;
-            } else if (diff > NOTE_DISAPPEAR - hit.sliderTimeTotal) {
-                // Update slider ball and reverse symbols
+            if (-diff >= 0 && -diff <= this.sliderFadeOutTime + hit.sliderTimeTotal) { // after hit.time & before slider disappears
+                // hide hit circle & approach circle
+                _.each(hit.hitcircleObjects, function(o){o.visible = false;});
                 hit.approach.visible = false;
-                hit.follow.visible = true;
-                hit.follow.alpha = 1;
+                // slider ball immediately emerges
                 hit.ball.visible = true;
                 hit.ball.alpha = 1;
-                // hide hit circle
-                _.each(hit.hitcircleObjects, function(o){o.visible = false;});
+                // follow circie immediately emerges and gradually enlarges
+                hit.follow.visible = true;
+                hit.follow.alpha = 1;
+                let followscale = (-diff > this.followZoomInTime)? 1: 0.5 + 0.5 * Math.sin(-diff / this.followZoomInTime * Math.PI / 2);
+                hit.follow.scale.x = hit.follow.scale.y = followscale * this.hitSpriteScale;
 
+                // t: position relative to slider duration
+                let t = -diff / hit.sliderTime;
                 if (hit.repeat > 1) {
-                    hit.currentRepeat = Math.ceil(-diff / hit.sliderTimeTotal * hit.repeat);
+                    hit.currentRepeat = Math.ceil(t);
                 }
-
-                if (hit.currentRepeat > 1) {
-                   // TODO Hide combo number of first hit circle
-                }
-
-                // t: position relative to slider duration (0..1)
-                var t = -diff / hit.sliderTime;
+                // clamp t
                 if (Math.floor(t) > hit.lastrep)
                 {
                     hit.lastrep = Math.floor(t);
@@ -562,57 +600,41 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                     t = t - Math.floor(t);
                 }
 
-                // Update ball and follow circle
-                var at = hit.curve.pointAt(t);
+                // Update ball and follow circle position
+                let at = hit.curve.pointAt(t);
                 hit.follow.x = at.x * gfx.width + gfx.xoffset;
                 hit.follow.y = at.y * gfx.height + gfx.yoffset;
                 hit.ball.x = at.x * gfx.width + gfx.xoffset;
                 hit.ball.y = at.y * gfx.height + gfx.yoffset;
 
-                // sliderball rolling
-                // if (diff > -hit.sliderTimeTotal) {
-                //     var index = Math.floor(t * hit.sliderTime * 60 / 1000) % 10;
-                //     hit.ball.texture = Skin["sliderb" + index + ".png"];
-                // }
-
+                // reverse arrow
                 if (hit.currentRepeat) {
-                    // Update position of reverse symbol
-                    if (hit.currentRepeat % 2 == 0 && hit.currentRepeat < hit.repeat) {
-                        // Reverse symbol is on start
-                        hit.reverse.visible = false;
-                        if (hit.reverse_b) {hit.reverse_b.visible = true;}
-                    } else if (hit.currentRepeat % 2 == 1 && hit.currentRepeat < hit.repeat) {
-                        // Reverse symbol is on end
-                        hit.reverse.visible = true;
-                        if (hit.reverse_b) {hit.reverse_b.visible = true;}
-                    } else {
-                        // Last slide
-                        hit.reverse.visible = false;
-                        if (hit.reverse_b) {hit.reverse_b.visible = true;}
-                    }
+                    let finalrepfromA = hit.repeat - hit.repeat % 2; // even
+                    let finalrepfromB = hit.repeat-1 + hit.repeat % 2; // odd
+                    hit.reverse.visible = (hit.currentRepeat < finalrepfromA);
+                    if (hit.reverse_b)
+                        hit.reverse_b.visible = (hit.currentRepeat < finalrepfromB);
+                    // TODO reverse arrow fade out animation
                 }
-
+            }
+            // sliderball & follow circle fade-out Animation
+            let timeAfter = -diff - hit.sliderTimeTotal;
+            if (timeAfter > 0) {
+                hit.ball.alpha = this.fadeOutEasing(timeAfter / this.ballFadeOutTime);
+                let ballscale = (1 + 0.15 * timeAfter / this.ballFadeOutTime) * this.hitSpriteScale;
+                hit.ball.scale.x = hit.ball.scale.y = ballscale;
+                hit.follow.alpha = this.fadeOutEasing(timeAfter / this.followFadeOutTime);
+                let followscale = (1 - 0.5 * timeAfter / this.followFadeOutTime) * this.hitSpriteScale;
+                hit.follow.scale.x = hit.follow.scale.y = followscale;
             }
 
-            if (hit.reverse_b) {
-                hit.reverse_b.scale.x = hit.reverse_b.scale.y = 1 + Math.abs(diff % 300) * 0.001 * this.hitSpriteScale;
+            
+            // display hit score
+            if (hit.score > 0 || time > hit.time + hit.sliderTimeTotal + this.TIME_ALLOWED ){
+              hit.objectWin.alpha = this.fadeOutEasing((-diff - hit.sliderTimeTotal) / this.scoreFadeOutTime);
+              hit.objectWin.scale.x = this.hitSpriteScale;
+              hit.objectWin.scale.y = this.hitSpriteScale;
             }
-            if (hit.score > 0 || time > hit.time + hit.sliderTimeTotal + TIME_ALLOWED ){
-              hit.objectWin.alpha = 1 + (time - hit.time)/NOTE_DESPAWN;
-              hit.objectWin.scale.x = 1.2 * hit.objectWin.alpha * this.hitSpriteScale;
-              hit.objectWin.scale.y = 1.2 * hit.objectWin.alpha * this.hitSpriteScale;
-              if (hit.score > 0){
-                // hit.objectWin.y = hit.approach.y - (1 - hit.objectWin.alpha) * gfx.height;
-              } else{
-                hit.objectWin.y = hit.approach.y + (1 - hit.objectWin.alpha) * gfx.height;
-              }
-            }
-
-            _.each(hit.objects, function(o) {
-                if (_.isUndefined(o._manualAlpha)) {
-                    o.alpha = alpha;
-                }
-            });
         }
 
         this.updateHitObjects = function(time) {
