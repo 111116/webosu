@@ -8,6 +8,74 @@ It runs on Firefox & Chrome. It doesn't run on Safari currently.
 
 Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). It has nothing to do with @ppy.
 
+## Running
+
+Just set up a local web server with root directory located where `index.html` is in.
+
+## Current functions
+
+- menu: no
+- scroll to change volume: yes
+- keyboard button: yes (z x)
+- Hit circle: yes
+- Slider: partial
+- Spinner: no
+
+#### difficulties
+
+- CS: yes
+- AR: yes
+- OD: no
+- star calculation: no
+- life drain: no
+- scoring: no
+
+#### graphics
+
+currently mixing lazer & stable osu! styled visual elements.
+
+- background: yes
+- background dim: yes
+- background blur: no
+- object fade in/out: yes
+- slider snake-in: no
+- slider snake-out: no
+- hit burst light: no
+- hit lighting: no
+- beatmap color: yes
+- beatmap skin: no
+- custom skin: unchecked
+
+#### Hit sounds
+
+currently using lazer hit sounds.
+
+- beatmap general sampleset: yes
+- edgeAdditions: yes
+- slider reverse & end: always
+- slider tick: no
+- extra field: no
+- timing point sample: no
+- timing point volume: yes
+- beatmap hitsounds: no
+
+## Rules
+
+Game field: 512 x 384 (in osu! pixels)
+
+Hit window total length
+
+	300: (80 - 6*OD) ms
+	100: (140 - 8*OD) ms
+	50: (200 - 10*OD) ms
+
+Circle diameter: `109 - 9*CS` (osu! pixels)
+
+Approach Time: `AR<5? 1800-120*AR: 1950-150*AR`
+
+SpinsRequired: `seconds * lerp(OD(0-5-10), 3-5-7.5))`
+
+
 ## Architecture
 
 `main.js`
@@ -24,7 +92,6 @@ Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). It has
 	
 `playerActions.js`
 	check hits, called by playback.js
-
 
 #### Execution sequence:
 
@@ -44,7 +111,7 @@ Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). It has
 - About antialiasing: just blur the texture a little bit...
 
 
-## TODO
+## Future Plan
 
 First I'll work on core gaming experience, including:
 
@@ -57,31 +124,6 @@ Latency should be adjustable.
 Scoring, deaths, skins and some of mods might be implemented later on, depending on code complexity.
 
 Modes other than STD (osu) will not be implemented.
-
-## Current functions
-
-- scrolling to change volume: yes
-- keyboard button: yes (z x)
-- Hit circle: yes
-- Slider: partial
-- Spinner: no
-- CS: yes
-- AR: yes
-- OD: no
-- beatmap skin: no
-
-#### Hit sounds
-
-currently using lazer hit sounds.
-
-- beatmap general sampleset: yes
-- edgeAdditions: yes
-- slider reverse & end: always
-- slider tick: no
-- extra field: no
-- timing point sample: no
-- timing point volume: yes
-- beatmap hitsounds: no
 
 
 ## notes from ddevault/osuweb
