@@ -2,7 +2,7 @@
 
 osu! that can be played in a browser
 
-(under development)
+(under development, currently **not playable**)
 
 It runs on Firefox & Chrome. It doesn't run on Safari currently.
 
