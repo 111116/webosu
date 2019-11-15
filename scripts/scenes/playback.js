@@ -81,12 +81,12 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         });
 
         // Load background if possible
-        self.backgroundOverlay = new PIXI.Graphics();
-        self.backgroundOverlay.alpha = 0;
-        self.backgroundOverlay.beginFill(0);
-        self.backgroundOverlay.drawRect(0, 0, self.game.window.innerWidth, self.game.window.innerHeight);
-        self.backgroundOverlay.endFill();
-        self.game.stage.addChild(self.backgroundOverlay);
+        self.backgroundDim = new PIXI.Graphics();
+        self.backgroundDim.alpha = 0;
+        self.backgroundDim.beginFill(0);
+        self.backgroundDim.drawRect(0, 0, self.game.window.innerWidth, self.game.window.innerHeight);
+        self.backgroundDim.endFill();
+        self.game.stage.addChildAt(self.backgroundDim, 1);
         if (self.track.events.length != 0) {
             self.ready = false;
             var file = self.track.events[0][2];
@@ -103,9 +103,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                     self.background.x = self.background.y = 0;
                     self.background.width = self.game.window.innerWidth;
                     self.background.height = self.game.window.innerHeight;
-                    self.game.stage.addChild(self.background);
-                    self.game.stage.setChildIndex(self.background, 0);
-                    self.game.stage.setChildIndex(self.backgroundOverlay, 1);
+                    self.game.stage.addChildAt(self.background, 0);
                     self.ready = true;
                     self.start();
                 });
@@ -669,7 +667,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                     fade = 0;
                 }
             }
-            self.backgroundOverlay.alpha = fade;
+            self.backgroundDim.alpha = fade;
         }
 
         this.render = function(timestamp) {
