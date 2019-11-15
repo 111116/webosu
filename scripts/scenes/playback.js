@@ -263,8 +263,9 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             } else if (index <= 99 && index > 0) {
                 var numberA = new PIXI.Sprite(Skin["default-" + (index % 10) + ".png"]);
                 numberA.alpha = 0;
-                numberA.anchor.x = numberA.anchor.y = 0.5;
-                numberA.x = gfx.xoffset + hit.x * gfx.width + (numberA.width * 0.6) - 6;
+                numberA.anchor.x = 0.0 + 0.1;
+                numberA.anchor.y = 0.5;
+                numberA.x = gfx.xoffset + hit.x * gfx.width;
                 numberA.y = gfx.yoffset + hit.y * gfx.height;
                 numberA.scale.x = numberA.scale.y = 0.9 * this.hitSpriteScale;
                 numberA.depth = 4.9999-0.0001*hit.hitIndex;
@@ -273,8 +274,9 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 var numberB = new PIXI.Sprite(Skin["default-" +
                     ((index - (index % 10)) / 10) + ".png"]);
                 numberB.alpha = 0;
-                numberB.anchor.x = numberB.anchor.y = 0.5;
-                numberB.x = gfx.xoffset + hit.x * gfx.width - (numberB.width * 0.6) - 6;
+                numberB.anchor.x = 1.0 + 0.1;
+                numberB.anchor.y = 0.5;
+                numberB.x = gfx.xoffset + hit.x * gfx.width;
                 numberB.y = gfx.yoffset + hit.y * gfx.height;
                 numberB.scale.x = numberB.scale.y = 0.9 * this.hitSpriteScale;
                 numberB.depth = 4.9999-0.0001*hit.hitIndex;
