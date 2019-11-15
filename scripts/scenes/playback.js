@@ -655,8 +655,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
         }
 
-        this.render = function(timestamp) {
-            var time = osu.audio.getPosition() * TIME_CONSTANT + self.offset;
+        this.updateBackground = function(time) {
             var fade = 0.7;
             if (self.track.general.PreviewTime !== 0 && time < self.track.general.PreviewTime) {
                 var diff = self.track.general.PreviewTime - time;
@@ -671,6 +670,11 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 }
             }
             self.backgroundOverlay.alpha = fade;
+        }
+
+        this.render = function(timestamp) {
+            var time = osu.audio.getPosition() * TIME_CONSTANT + self.offset;
+            this.updateBackground(time);
             if (time !== 0) {
                 self.updateHitObjects(time);
                 self.game.updatePlayerActions(time);
