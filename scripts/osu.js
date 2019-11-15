@@ -174,6 +174,13 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                     this.hitObjects[i].time -= this.general.AudioLeadIn / 10;
                 }
             }
+            if (this.difficulty.OverallDifficulty) {
+                this.difficulty.HPDrainRate = this.difficulty.HPDrainRate || this.difficulty.OverallDifficulty;
+                this.difficulty.CircleSize = this.difficulty.CircleSize || this.difficulty.OverallDifficulty;
+                this.difficulty.ApproachRate = this.difficulty.ApproachRate || this.difficulty.OverallDifficulty;
+            } else {
+                console.log("Error: OverallDifficulty undefined");
+            }
             // Why do inherited timing points even exist, this is stupid
             var last = this.timingPoints[0];
             for (var i = 1; i < this.timingPoints.length; i++) {
