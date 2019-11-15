@@ -357,6 +357,8 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 //     return new LinearBezier(this, false, scaled);  // vectors parallel, use linear bezier instead
                 // else
                 hit.curve = new CircumscribedCircle(hit, gfx.width / gfx.height);
+                if (hit.curve.length == 0) // fallback
+                    hit.curve = new LinearBezier(hit, hit.sliderType === SLIDER_LINEAR);
             }
             else
                 hit.curve = new LinearBezier(hit, hit.sliderType === SLIDER_LINEAR);
