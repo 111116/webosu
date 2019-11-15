@@ -3,7 +3,7 @@
 *       [0,1) background / storyboard
 *       [2,3) hit score, bottom to top
 *       [4,5) hit objects, top to bottom
-*       [5,6) follow circle, one visible instance at a time (add blend)
+*       [5,6) follow circle & slider ball, one visible instance at a time (add blend)
 *       [6,7) approach circle, bottom to top
 *       assuming number of possible hits doesn't exceed 9998
 */
@@ -402,7 +402,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             ball.anchor.x = ball.anchor.y = 0.5;
             ball.tint = (255<<16)+(255<<8)+255;
             ball.manualAlpha = true;
-            ball.depth = 4.9999-0.0001*hit.hitIndex;
+            ball.depth = 5;
             hit.objects.push(ball);
 
             let endPoint = hit.curve.curve[hit.curve.curve.length-1];
