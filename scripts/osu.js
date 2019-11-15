@@ -72,14 +72,14 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             offset: +parts[0],
                             millisecondsPerBeat: +parts[1],
                             meter: +parts[2],
-                            sampleType: +parts[3],
-                            sampleSet: +parts[4],
+                            sampleSet: +parts[3],
+                            sampleIndex: +parts[4],
                             volume: +parts[5],
-                            inherited: +parts[6],
+                            uninherited: +parts[6],
                             kaiMode: +parts[7]
                         };
                         if (t.millisecondsPerBeat < 0) {
-                            t.inherited = 0;
+                            t.uninherited = 0;
                         }
                         this.timingPoints.push(t);
                         break;
@@ -178,8 +178,8 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
             var last = this.timingPoints[0];
             for (var i = 1; i < this.timingPoints.length; i++) {
                 var point = this.timingPoints[i];
-                if (point.inherited === 0) {
-                    point.inherited = 1;
+                if (point.uninherited === 0) {
+                    point.uninherited = 1;
                     point.millisecondsPerBeat *= -0.01 * last.millisecondsPerBeat;
                 } else {
                     last = point;

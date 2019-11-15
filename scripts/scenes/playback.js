@@ -288,32 +288,29 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             if (hit.type == 'circle')
             {
                 var toplay = hit.hitSound;
+                var sampleSet = hit.timing.sampleSet || self.game.sampleSet;
 
                 // The normal sound is always played
-                self.game.sample[self.game.sampleSet].hitnormal.volume = volume;
-                self.game.sample[self.game.sampleSet].hitnormal.play();
+                self.game.sample[sampleSet].hitnormal.volume = volume;
+                self.game.sample[sampleSet].hitnormal.play();
                 if (toplay & 2) {
-                    self.game.sample[self.game.sampleSet].hitwhistle.volume = volume;
-                    self.game.sample[self.game.sampleSet].hitwhistle.play();
+                    self.game.sample[sampleSet].hitwhistle.volume = volume;
+                    self.game.sample[sampleSet].hitwhistle.play();
                 }
                 if (toplay & 4) {
-                    self.game.sample[self.game.sampleSet].hitfinish.volume = volume;
-                    self.game.sample[self.game.sampleSet].hitfinish.play();
+                    self.game.sample[sampleSet].hitfinish.volume = volume;
+                    self.game.sample[sampleSet].hitfinish.play();
                 }
                 if (toplay & 8) {
-                    self.game.sample[self.game.sampleSet].hitclap.volume = volume;
-                    self.game.sample[self.game.sampleSet].hitclap.play();
+                    self.game.sample[sampleSet].hitclap.volume = volume;
+                    self.game.sample[sampleSet].hitclap.play();
                 }
             }
             if (hit.type == 'slider')
             {
                 var toplay = hit.edgeHitsounds[id];
-                var sampleSet = self.game.sampleSet;
-                var additionSet = self.game.sampleSet;
-                if (hit.edgeAdditions[id].sampleSet != 0)
-                    sampleSet = hit.edgeAdditions[id].sampleSet;
-                if (hit.edgeAdditions[id].additionSet != 0)
-                    additionSet = hit.edgeAdditions[id].additionSet;
+                var sampleSet = hit.edgeAdditions[id].sampleSet || hit.timing.sampleSet || self.game.sampleSet;
+                var additionSet = hit.edgeAdditions[id].additionSet || hit.timing.sampleSet || self.game.sampleSet;
                 
                 // The normal sound is always played
                 self.game.sample[sampleSet].hitnormal.volume = volume;
