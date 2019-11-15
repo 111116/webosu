@@ -19,6 +19,7 @@ function() {
         var nora = nor(vecsub(mid, start));
         var norb = nor(vecsub(mid, end));
         var circleCenter = intersect(mida, nora, midb, norb);
+        if (!circleCenter) return [];
 
         // find the angles relative to the circle center
         var startAngPoint = vecsub(start, circleCenter);
@@ -125,8 +126,10 @@ function() {
         //u = ((b.y-a.y)ta.x +(a.x-b.x)ta.y) / (tb.x*ta.y - tb.y*ta.x);
 
         var des = tb.x * ta.y - tb.y * ta.x;
-        if (Math.abs(des) < 0.00001)
-            throw "Vectors are parallel.";
+        if (Math.abs(des) < 0.00001) {
+            console.log("Vectors are parallel.");
+            return undefined;
+        }
         var u = ((b.y - a.y) * ta.x + (a.x - b.x) * ta.y) / des;
         return { x: b.x + tb.x * u, y: b.y + tb.y * u };
     }

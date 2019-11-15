@@ -59,8 +59,18 @@ define([], function() {
   }
 
   var playerActions = function(playback){
+    let autoplay = true;
     playback.game.updatePlayerActions = function(time){
-      if (currentSlider){
+      if (autoplay) {
+        let good = playback.upcomingHits.find(function(hit){return hit.score < 0 && Math.abs(time - hit.time) < TIME_ALLOWED});
+        if (good){
+          let diff = time - good.time;
+          if (diff > -8)
+            playback.hitSuccess(good, 300);
+        }
+      }
+      else {
+        if (currentSlider){
           var clickInfos = {
             'x': playback.game.mouseX,
             'y': playback.game.mouseY,
@@ -68,6 +78,7 @@ define([], function() {
           };
           checkInSlider(clickInfos);
         }
+      }
     };
     playback.game.window.addEventListener("mousemove", function(e) {
         playback.game.mouseX = e.clientX;
@@ -199,6 +210,5 @@ define([], function() {
       writable: true
     });
   }
-
   return playerActions;
 });
