@@ -25,6 +25,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.hits = self.track.hitObjects.slice(0); // what does this do?
         self.offset = 0;
         self.currentHitIndex = 0; // index for all hit objects
+        self.autoplay = true;
 
         var gfx = {}; // game field area
         gfx.width = game.window.innerWidth;
@@ -60,7 +61,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.followFadeOutTime = 100;
         self.ballFadeOutTime = 100;
         self.objectDespawnTime = 2000;
-        // TODO easing curve currently linear
 
         if (Hash.timestamp()) {
             self.offset = +Hash.timestamp();
