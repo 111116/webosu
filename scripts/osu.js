@@ -169,11 +169,6 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                     [139,191,222]
                 ];
             }
-            if (this.general.AudioLeadIn !== 0) {
-                for (var i = 0; i < this.hitObjects.length; i++) {
-                    this.hitObjects[i].time -= this.general.AudioLeadIn / 10;
-                }
-            }
             if (this.difficulty.OverallDifficulty) {
                 this.difficulty.HPDrainRate = this.difficulty.HPDrainRate || this.difficulty.OverallDifficulty;
                 this.difficulty.CircleSize = this.difficulty.CircleSize || this.difficulty.OverallDifficulty;
