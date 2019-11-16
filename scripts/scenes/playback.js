@@ -30,19 +30,16 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         var gfx = {}; // game field area
         gfx.width = game.window.innerWidth;
         gfx.height = game.window.innerHeight;
-        if (gfx.width > gfx.height) {
-            if (gfx.width / 512 > gfx.height / 384)
-                gfx.width = gfx.height / 384 * 512;
-            else
-                gfx.height = gfx.width / 512 * 384;
-            gfx.width *= 0.8;
-            gfx.height *= 0.8;
-            gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
-            gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
-            console.log("gfx: ", gfx)
-        } else {
-            // TODO: Portrait displays
-        }
+        if (gfx.width / 512 > gfx.height / 384)
+            gfx.width = gfx.height / 384 * 512;
+        else
+            gfx.height = gfx.width / 512 * 384;
+        gfx.width *= 0.8;
+        gfx.height *= 0.8;
+        gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
+        gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
+        console.log("gfx: ", gfx)
+        // fuck portrait displays
 
         // deal with difficulties
         self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
@@ -427,6 +424,29 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
         }
 
+        this.createSpinner = function(hit) {
+            hit.x = 0.5;
+            hit.y = 0.5;
+            var base = new PIXI.Sprite(Skin["spinner.png"]);
+            base.scale.x = base.scale.y = gfx.width / 768;
+            base.anchor.x = base.anchor.y = 0.5;
+            base.x = gfx.xoffset + hit.x * gfx.width;
+            base.y = gfx.yoffset + hit.y * gfx.height;
+            base.depth = 4.9999 - 0.0001 * (hit.hitIndex || 1);
+            base.alpha = 0;
+
+            if (!hit.objectWin){
+                hit.objectWin = new PIXI.Sprite(osuTextures.hit0);
+                hit.objectWin.scale.x = hit.objectWin.scale.y = this.hitSpriteScale;
+                hit.objectWin.anchor.x = hit.objectWin.anchor.y = 0.5;
+                hit.objectWin.x = gfx.xoffset + hit.x * gfx.width;
+                hit.objectWin.y = gfx.yoffset + hit.y * gfx.height;
+                hit.objectWin.depth = 2 + 0.0001 * hit.hitIndex;
+                hit.objectWin.alpha = 0;
+            }
+            hit.objects.push(base);
+        }
+
         this.populateHit = function(hit) {
             // Creates PIXI objects for a given hit
             this.currentHitIndex += 1;
@@ -451,6 +471,9 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                     break;
                 case "slider":
                     self.createSlider(hit);
+                    break;
+                case "spinner":
+                    self.createSpinner(hit);
                     break;
             }
         }
@@ -495,6 +518,9 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 var despawn = -this.objectDespawnTime;
                 if (hit.type === "slider") {
                     despawn -= hit.sliderTimeTotal;
+                }
+                if (hit.type === "spinner") {
+                    despawn -= hit.endTime - hit.time;
                 }
                 if (diff < despawn) {
                     self.upcomingHits.splice(i, 1);
@@ -659,6 +685,21 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
         }
 
+        this.updateSpinner = function(hit, time) {
+            let diff = hit.time - time; // milliseconds before time of circle
+            // calculate opacity of circle
+            let alpha = (time >= hit.time && time <= hit.endTime)? 1: 0;
+
+            _.each(hit.objects, function(o) { o.alpha = alpha; });
+           
+            // // display hit score
+            // if (hit.score > 0 || time > hit.time + this.TIME_ALLOWED){
+            //   hit.objectWin.alpha = this.fadeOutEasing(-diff / this.scoreFadeOutTime);
+            //   hit.objectWin.scale.x = this.hitSpriteScale;
+            //   hit.objectWin.scale.y = this.hitSpriteScale;
+            // }
+        }
+
         this.updateHitObjects = function(time) {
             self.updateUpcoming(time);
             for (var i = self.upcomingHits.length - 1; i >= 0; i--) {
@@ -671,7 +712,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                         self.updateSlider(hit, time);
                         break;
                     case "spinner":
-                        //self.updateSpinner(hit, time); // TODO
+                        self.updateSpinner(hit, time);
                         break;
                 }
             }

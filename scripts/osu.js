@@ -163,6 +163,9 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                             };
                         } else if ((hit.type & HIT_TYPE_SPINNER) > 0) {
                             hit.type = "spinner";
+                            hit.endTime = +parts[5];
+                            if (hit.endTime < hit.time)
+                                hit.endTime = hit.time + 1;
                             // parse hitSample
                             const hitSample = (parts.length > 6? parts[6]: '0:0:0:0:').split(":");
                             hit.hitSample = {
@@ -183,7 +186,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
             this.general.PreviewTime /= 10;
             if (this.general.PreviewTime > this.hitObjects[0].time) {
                 this.general.PreviewTime = 0;
-            }
+            } // WTF is this
             if (this.colors.length === 0) {
                 this.colors = [
                     [96,159,159],

@@ -12,6 +12,7 @@ define([], function() {
             "sliderb.png",
             "slideredge.png",
             "reversearrow.png",
+            "spinner.png",
             "menu-button-background.png",
             "default-0.png", "default-1.png", "default-2.png", "default-3.png",
             "default-4.png", "default-5.png", "default-6.png", "default-7.png",
