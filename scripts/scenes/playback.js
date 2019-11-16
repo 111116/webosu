@@ -286,49 +286,36 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         }
 
         this.playHitsound = function playHitsound(hit, id) {
-            let volume = self.osu.audio.gain.gain.value * hit.timing.volume / 100;
-            if (hit.type == 'circle')
-            {
-                var toplay = hit.hitSound;
-                var sampleSet = hit.timing.sampleSet || self.game.sampleSet;
-
+            let volume = self.osu.audio.gain.gain.value * (hit.hitSample.volume || hit.timing.volume) / 100;
+            let defaultSet = hit.timing.sampleSet || self.game.sampleSet;
+            function playHit(bitmask, normalSet, additionSet) {
                 // The normal sound is always played
-                self.game.sample[sampleSet].hitnormal.volume = volume;
-                self.game.sample[sampleSet].hitnormal.play();
-                if (toplay & 2) {
-                    self.game.sample[sampleSet].hitwhistle.volume = volume;
-                    self.game.sample[sampleSet].hitwhistle.play();
-                }
-                if (toplay & 4) {
-                    self.game.sample[sampleSet].hitfinish.volume = volume;
-                    self.game.sample[sampleSet].hitfinish.play();
-                }
-                if (toplay & 8) {
-                    self.game.sample[sampleSet].hitclap.volume = volume;
-                    self.game.sample[sampleSet].hitclap.play();
-                }
-            }
-            if (hit.type == 'slider')
-            {
-                var toplay = hit.edgeHitsounds[id];
-                var sampleSet = hit.edgeAdditions[id].sampleSet || hit.timing.sampleSet || self.game.sampleSet;
-                var additionSet = hit.edgeAdditions[id].additionSet || hit.timing.sampleSet || self.game.sampleSet;
-                
-                // The normal sound is always played
-                self.game.sample[sampleSet].hitnormal.volume = volume;
-                self.game.sample[sampleSet].hitnormal.play();
-                if (toplay & 2) {
+                self.game.sample[normalSet].hitnormal.volume = volume;
+                self.game.sample[normalSet].hitnormal.play();
+                if (bitmask & 2) {
                     self.game.sample[additionSet].hitwhistle.volume = volume;
                     self.game.sample[additionSet].hitwhistle.play();
                 }
-                if (toplay & 4) {
+                if (bitmask & 4) {
                     self.game.sample[additionSet].hitfinish.volume = volume;
                     self.game.sample[additionSet].hitfinish.play();
                 }
-                if (toplay & 8) {
+                if (bitmask & 8) {
                     self.game.sample[additionSet].hitclap.volume = volume;
                     self.game.sample[additionSet].hitclap.play();
                 }
+            }
+            if (hit.type == 'circle') {
+                let toplay = hit.hitSound;
+                let normalSet = hit.hitSample.normalSet || defaultSet;
+                let additionSet = hit.hitSample.additionSet || normalSet;
+                playHit(toplay, normalSet, additionSet);
+            }
+            if (hit.type == 'slider') {
+                let toplay = hit.edgeHitsounds[id];
+                let normalSet = hit.edgeSets[id].normalSet || defaultSet;
+                let additionSet = hit.edgeSets[id].additionSet || normalSet;
+                playHit(toplay, normalSet, additionSet);
             }
         };
         this.hitSuccess = function hitSuccess(hit, points){

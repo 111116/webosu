@@ -54,9 +54,10 @@ currently using lazer hit sounds.
 - edgeAdditions: yes
 - slider reverse & end: always
 - slider tick: no
-- extra field: no
 - timing point sample: yes
 - timing point volume: yes
+- hit-specific sample: yes
+- hit-specific volume: yes
 - beatmap hitsounds: no
 
 ## Rules

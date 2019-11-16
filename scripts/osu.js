@@ -108,9 +108,15 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                         // Decode specific hit object type
                         if ((hit.type & HIT_TYPE_CIRCLE) > 0) {
                             hit.type = "circle";
-                            if (parts.length > 5) {
-                                hit.addition = parts[5].split(":");
-                            }
+                            // parse hitSample
+                            const hitSample = (parts.length > 5? parts[5]: '0:0:0:0:').split(":");
+                            hit.hitSample = {
+                                normalSet: +hitSample[0],
+                                additionSet: +hitSample[1],
+                                index: +hitSample[2],
+                                volume: +hitSample[3],
+                                filename: hitSample[4]
+                            };
                         } else if ((hit.type & HIT_TYPE_SLIDER) > 0) {
                             hit.type = "slider";
                             var sliderKeys = parts[5].split("|");
@@ -132,23 +138,40 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                                     hit.edgeHitsounds.push(0);
                             }
 
-                            hit.edgeAdditions = new Array();
+                            hit.edgeSets = new Array();
                             for (var wdnmd=0; wdnmd<hit.repeat+1; wdnmd++)
-                                hit.edgeAdditions.push({
-                                    sampleSet: 0,
+                                hit.edgeSets.push({
+                                    normalSet: 0,
                                     additionSet: 0
                                 });
                             if (parts.length > 9) {
                                 var additions = parts[9].split("|");
                                 for (var wdnmd=0; wdnmd<additions.length; wdnmd++) {
                                     var sets = additions[wdnmd].split(":");
-                                    hit.edgeAdditions[wdnmd].sampleSet = +sets[0];
-                                    hit.edgeAdditions[wdnmd].additionSet = +sets[1]
+                                    hit.edgeSets[wdnmd].normalSet = +sets[0];
+                                    hit.edgeSets[wdnmd].additionSet = +sets[1]
                                 }
                             }
-                            // TODO parse extras
+                            // parse hitSample
+                            const hitSample = (parts.length > 10? parts[10]: '0:0:0:0:').split(":");
+                            hit.hitSample = {
+                                normalSet: +hitSample[0],
+                                additionSet: +hitSample[1],
+                                index: +hitSample[2],
+                                volume: +hitSample[3],
+                                filename: hitSample[4]
+                            };
                         } else if ((hit.type & HIT_TYPE_SPINNER) > 0) {
                             hit.type = "spinner";
+                            // parse hitSample
+                            const hitSample = (parts.length > 6? parts[6]: '0:0:0:0:').split(":");
+                            hit.hitSample = {
+                                normalSet: +hitSample[0],
+                                additionSet: +hitSample[1],
+                                index: +hitSample[2],
+                                volume: +hitSample[3],
+                                filename: hitSample[4]
+                            };
                         } else {
                             console.log("Attempted to decode unknown hit object type " + hit.type + ": " + line);
                         }
