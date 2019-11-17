@@ -59,7 +59,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.sliderFadeOutTime = 300; // time of slidebody fading out
         self.circleFadeOutTime = 150;
         self.scoreFadeOutTime = 600;
-        self.followZoomInTime = 100;
+        self.followZoomInTime = 100; // TODO related to AR
         self.followFadeOutTime = 100;
         self.ballFadeOutTime = 100;
         self.objectDespawnTime = 2000;
@@ -321,6 +321,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             follow.blendMode = PIXI.BLEND_MODES.ADD;
             follow.depth = 5;
             hit.objects.push(follow);
+            hit.followSize = 1; // [1,2] current follow circle size relative to hitcircle
 
             // create slider body
             var body = new SliderMesh(hit.curve.curve,
@@ -337,6 +338,17 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             body.depth = 4.9999-0.0001*hit.hitIndex;
             hit.objects.push(body);
 
+            // Add slider ball
+            var ball = hit.ball = new PIXI.Sprite(Skin["sliderb.png"]);
+            ball.scale.x = ball.scale.y = this.hitSpriteScale;
+            ball.visible = false;
+            ball.alpha = 0;
+            ball.anchor.x = ball.anchor.y = 0.5;
+            ball.tint = 0xFFFFFF;
+            ball.manualAlpha = true;
+            ball.depth = 4.9999-0.0001*hit.hitIndex;
+            hit.objects.push(ball);
+
             // create hitcircle at head
             hit.hitcircleObjects = new Array();
             self.createHitCircle(hit, hit.hitcircleObjects); // Near end
@@ -350,17 +362,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             burst.depth = 4.9999 - 0.0001 * hit.hitIndex;
             burst.visible = false;
             hit.objects.push(burst);
-            
-            // Add follow ball
-            var ball = hit.ball = new PIXI.Sprite(Skin["sliderb.png"]);
-            ball.scale.x = ball.scale.y = this.hitSpriteScale;
-            ball.visible = false;
-            ball.alpha = 0;
-            ball.anchor.x = ball.anchor.y = 0.5;
-            ball.tint = 0xFFFFFF;
-            ball.manualAlpha = true;
-            ball.depth = 5;
-            hit.objects.push(ball);
 
             let endPoint = hit.curve.curve[hit.curve.curve.length-1];
             let endPoint2 = hit.curve.curve[hit.curve.curve.length-2];
@@ -600,7 +601,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 hit.approach.scale.x = scale;
                 hit.approach.scale.y = scale;
             } else {
-                hit.approach.scale.x = hit.approach.scale.y = 0.5 * this.hitSpriteScale;
+                hit.approach.scale.x = hit.approach.scale.y = 0.47 * this.hitSpriteScale;
             }
 
             // display hit score
@@ -649,7 +650,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 hit.approach.scale.x = scale;
                 hit.approach.scale.y = scale;
             } else {
-                hit.approach.scale.x = hit.approach.scale.y = 0.5 * this.hitSpriteScale;
+                hit.approach.scale.x = hit.approach.scale.y = 0.47 * this.hitSpriteScale;
             }
             // calculate for hit circle
             if (hit.clickTime) { // clicked
@@ -665,23 +666,24 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 hit.burst.alpha = alpha;
                 hit.burst.scale.x = hit.burst.scale.y = scale;
             }
-            else if (-diff > 0) { // about to be missed
-                let timeAfter = time - hit.time;
+            else if (-diff > this.MehTime) { // missed
+                let timeAfter = -diff - this.MehTime;
                 alpha = this.fadeOutEasing(timeAfter / this.circleFadeOutTime);
                 _.each(hit.hitcircleObjects, function(o) { o.alpha = alpha; });
                 hit.approach.alpha = alpha;
             }
 
-            if (-diff >= 0 && -diff <= this.sliderFadeOutTime + hit.sliderTimeTotal) { // after hit.time & before slider disappears
-                // slider ball immediately emerges
-                hit.ball.visible = true;
-                hit.ball.alpha = 1;
-                // follow circie immediately emerges and gradually enlarges
-                hit.follow.visible = true;
-                hit.follow.alpha = 1;
-                let followscale = (-diff > this.followZoomInTime)? 1: 0.5 + 0.5 * Math.sin(-diff / this.followZoomInTime * Math.PI / 2);
-                hit.follow.scale.x = hit.follow.scale.y = followscale * this.hitSpriteScale;
+            function resizeFollow(hit, time, dir) {
+                if (!hit.followLasttime) hit.followLasttime = time;
+                if (!hit.followLinearSize) hit.followLinearSize = 1;
+                let dt = time - hit.followLasttime;
+                console.log("dt=", dt);
+                hit.followLinearSize = Math.max(1, Math.min(2, hit.followLinearSize + dt * dir));
+                hit.followSize = hit.followLinearSize; // easing can happen here
+                hit.followLasttime = time;
+            }
 
+            if (-diff >= 0 && -diff <= this.sliderFadeOutTime + hit.sliderTimeTotal) { // after hit.time & before slider disappears
                 // t: position relative to slider duration
                 let t = -diff / hit.sliderTime;
                 if (hit.repeat > 1) {
@@ -705,10 +707,46 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
                 // Update ball and follow circle position
                 let at = hit.curve.pointAt(t);
-                hit.follow.x = at.x * gfx.width + gfx.xoffset;
-                hit.follow.y = at.y * gfx.height + gfx.yoffset;
-                hit.ball.x = at.x * gfx.width + gfx.xoffset;
-                hit.ball.y = at.y * gfx.height + gfx.yoffset;
+                let atx = at.x * gfx.width + gfx.xoffset;
+                let aty = at.y * gfx.height + gfx.yoffset;
+                hit.follow.x = atx;
+                hit.follow.y = aty;
+                hit.ball.x = atx;
+                hit.ball.y = aty;
+                _.each(hit.hitcircleObjects, function(o) { o.x = atx; o.y = aty; });
+                hit.approach.x = atx;
+                hit.approach.y = aty;
+
+                // sliderball & follow circle Animation
+                if (-diff >= 0 && -diff <= hit.sliderTimeTotal) {
+                    // slider ball immediately emerges
+                    hit.ball.visible = true;
+                    hit.ball.alpha = 1;
+                    // follow circie immediately emerges and gradually enlarges
+                    hit.follow.visible = true;
+                    console.log("down", this.game.down, hit.followSize);
+                    let dx = game.mouseX - atx;
+                    let dy = game.mouseY - aty;
+                    let followPixelSize = hit.followSize * this.circleRadiusPixel;
+                    let isfollowing = dx*dx + dy*dy <= followPixelSize * followPixelSize;
+                    if (this.game.down && isfollowing)
+                        resizeFollow(hit, time, 1 / this.followZoomInTime); // expand 
+                    else
+                        resizeFollow(hit, time, -1 / this.followZoomInTime); // shrink
+                    let followscale = hit.followSize * 0.45 * this.hitSpriteScale;
+                    hit.follow.scale.x = hit.follow.scale.y = followscale;
+                    hit.follow.alpha = hit.followSize - 1;
+                }
+                let timeAfter = -diff - hit.sliderTimeTotal;
+                if (timeAfter > 0) {
+                    resizeFollow(hit, time, -1 / this.followZoomInTime); // shrink
+                    let followscale = hit.followSize * 0.45 * this.hitSpriteScale;
+                    hit.follow.scale.x = hit.follow.scale.y = followscale;
+                    hit.follow.alpha = hit.followSize - 1;
+                    hit.ball.alpha = this.fadeOutEasing(timeAfter / this.ballFadeOutTime);
+                    let ballscale = (1 + 0.15 * timeAfter / this.ballFadeOutTime) * this.hitSpriteScale;
+                    hit.ball.scale.x = hit.ball.scale.y = ballscale;
+                }
 
                 // reverse arrow
                 if (hit.currentRepeat) {
@@ -719,16 +757,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                         hit.reverse_b.visible = (hit.currentRepeat < finalrepfromB);
                     // TODO reverse arrow fade out animation
                 }
-            }
-            // sliderball & follow circle fade-out Animation
-            let timeAfter = -diff - hit.sliderTimeTotal;
-            if (timeAfter > 0) {
-                hit.ball.alpha = this.fadeOutEasing(timeAfter / this.ballFadeOutTime);
-                let ballscale = (1 + 0.15 * timeAfter / this.ballFadeOutTime) * this.hitSpriteScale;
-                hit.ball.scale.x = hit.ball.scale.y = ballscale;
-                hit.follow.alpha = this.fadeOutEasing(timeAfter / this.followFadeOutTime);
-                let followscale = (1 - 0.5 * timeAfter / this.followFadeOutTime) * this.hitSpriteScale;
-                hit.follow.scale.x = hit.follow.scale.y = followscale;
             }
 
             
