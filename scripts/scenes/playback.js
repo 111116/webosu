@@ -10,8 +10,6 @@
 define(["osu", "skin", "hash", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions", "SliderMesh"],
 function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, SliderMesh) {
     function Playback(game, osu, track) {
-        var scoreCharWidth = 35;
-        var scoreCharHeight = 45;
         var self = this;
         window.playback = this;
         self.game = game;
@@ -26,26 +24,30 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.offset = 0;
         self.currentHitIndex = 0; // index for all hit objects
         self.autoplay = false;
+        var scoreCharWidth = 35;
+        var scoreCharHeight = 45;
 
         var gfx = {}; // game field area
-        gfx.width = game.window.innerWidth;
-        gfx.height = game.window.innerHeight;
-        if (gfx.width / 512 > gfx.height / 384)
-            gfx.width = gfx.height / 384 * 512;
-        else
-            gfx.height = gfx.width / 512 * 384;
-        gfx.width *= 0.8;
-        gfx.height *= 0.8;
-        gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
-        gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
-        console.log("gfx: ", gfx)
-        // fuck portrait displays
+        var calcSize = function() {
+            gfx.width = game.window.innerWidth;
+            gfx.height = game.window.innerHeight;
+            if (gfx.width / 512 > gfx.height / 384)
+                gfx.width = gfx.height / 384 * 512;
+            else
+                gfx.height = gfx.width / 512 * 384;
+            gfx.width *= 0.8;
+            gfx.height *= 0.8;
+            gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
+            gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
+            console.log("gfx: ", gfx)
+            // deal with difficulties
+            self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
+            self.circleRadiusPixel = self.circleRadius * gfx.width / 512;
+            self.hitSpriteScale = self.circleRadiusPixel / 60;
+        };
+        calcSize();
 
         // deal with difficulties
-        self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
-        self.circleRadiusPixel = self.circleRadius * gfx.width / 512;
-        self.hitSpriteScale = self.circleRadiusPixel / 60;
-
         let OD = track.difficulty.OverallDifficulty;
         self.MehTime = 200 - 10 * OD;
         self.GoodTime = 140 - 8 * OD;
@@ -68,17 +70,21 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
         setPlayerActions(self);
 
-        self.game.window.addEventListener('wheel', function(e) {
-            self.osu.audio.gain.gain.value -= e.deltaY * 0.01;
-            if (self.osu.audio.gain.gain.value < 0) {
-                self.osu.audio.gain.gain.value = 0;
-            } 
-            if (self.osu.audio.gain.gain.value > 1) {
-                self.osu.audio.gain.gain.value = 1;
-            }
-            // TODO: Visualization
-        });
+        // adjust volume
+        if (game.allowMouseScroll) {
+            self.game.window.addEventListener('wheel', function(e) {
+                self.osu.audio.gain.gain.value -= e.deltaY * 0.01;
+                if (self.osu.audio.gain.gain.value < 0) {
+                    self.osu.audio.gain.gain.value = 0;
+                } 
+                if (self.osu.audio.gain.gain.value > 1) {
+                    self.osu.audio.gain.gain.value = 1;
+                }
+                // TODO: Visualization
+            });
+        }
 
+        // pause
         window.addEventListener("keyup", function(e) {
             if (e.keyCode === 32) {
                 if (self.osu.audio.playing) {
