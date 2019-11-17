@@ -64,22 +64,11 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
     };
     window.game = game;
 
-    window.addEventListener("keydown", function(e) {
-        if (e.keyCode === 70 || e.keyCode === 68 // fd
-            || e.keyCode === 90 || e.keyCode === 88 // zx
-            ) {
-        }
-    });
-    window.addEventListener("keyup", function(e) {
-        if (e.keyCode === 70 || e.keyCode === 68 // fd
-            || e.keyCode === 90 || e.keyCode === 88 // zx
-            ) {
-        }
-    });
     window.addEventListener("mousemove", function(e) {
         game.mouseX = e.clientX;
         game.mouseY = e.clientY;
     });
+    
     document.addEventListener("contextmenu", function(e) {
         e.preventDefault();
         return false;
@@ -101,6 +90,7 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
     wipText.y = 0;
     game.stage.addChild(wipText);
 
+    // load game cursor
     Skin.oncomplete = function() {
         game.cursor = new PIXI.Sprite(Skin["cursor.png"]);
         game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
