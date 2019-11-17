@@ -50,8 +50,18 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
         stage: null,
         scene: null,
         updatePlayerActions: null,
-        mouseX: 0,
+
+        // cursor info
+        mouseX: 0, // in absolute pixel
         mouseY: 0,
+        K1down: false,
+        K2down: false,
+        K1keycode: 90,
+        K2keycode: 88,
+        M1down: false,
+        M2down: false,
+        down: false,
+
         lastFrameTime: -1,
         finished : false,
         score: {

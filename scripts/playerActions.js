@@ -25,7 +25,7 @@ define([], function() {
                     currentSlider = good;
                     break;
                 case "spinner":
-                    //self.updateSpinner(hit, time); // TODO
+                    // spinners don't need to be clicked on
                     break;
             }
         }
@@ -36,13 +36,6 @@ define([], function() {
         var dy = click.y - currentSlider.ball.y;
         var inSlider = dx*dx + dy*dy < 4 * playback.circleRadiusPixel * playback.circleRadiusPixel;
         if (!inSlider){
-            currentSlider = null;
-        }
-    };
-
-    var checkEndSlider = function checkEndSlider(click){
-        // check if releasing slider
-        if (click.time + 36 < currentSlider.time + currentSlider.sliderTimeTotal) {
             currentSlider = null;
         }
     };
@@ -83,87 +76,61 @@ define([], function() {
 
         // set eventlisteners
         if (!playback.autoplay) {
-            playback.game.window.addEventListener("mousemove", function(e) {
-                    playback.game.mouseX = e.clientX;
-                    playback.game.mouseY = e.clientY;
-                    if (currentSlider){
-                        var clickInfos = {
-                            'x': e.clientX,
-                            'y': e.clientY,
-                            'time': playback.osu.audio.getPosition() * TIME_CONSTANT
-                        };
-                        checkInSlider(clickInfos);
-                    }
-            });
-            playback.game.window.addEventListener("mousedown", function(e) {
-                    e.preventDefault();
-                    e.stopPropagation(); // we don't want the main rpgmaker canvas to receive mouse events
-                    playback.game.score.nbClicks += 1;
-                    var clickInfos = {
-                        'x': e.clientX,
-                        'y': e.clientY,
-                        'time': playback.osu.audio.getPosition() * TIME_CONSTANT
-                    };
-                    checkHit(playback.upcomingHits, clickInfos);
-            });
-            var Zdown = false;
-            var Xdown = false;
-            playback.game.window.addEventListener("keydown", function(e) {
-                if (e.keyCode == 90 || e.keyCode == 88) { // zx
-                    if (e.keyCode == 90) {
-                        if (Zdown) return;
-                        Zdown = true;
-                    }
-                    if (e.keyCode == 88) {
-                        if (Xdown) return;
-                        Xdown = true;
-                    }
-                    e.preventDefault();
-                    e.stopPropagation();
-                    playback.game.score.nbClicks += 1;
-                    var clickInfos = {
-                        'x': playback.game.mouseX,
-                        'y': playback.game.mouseY,
-                        'time': playback.osu.audio.getPosition() * TIME_CONSTANT
-                    };
-                    checkHit(playback.upcomingHits, clickInfos);
-                }
-            });
-            playback.game.window.addEventListener("keyup", function(e) {
-                if (e.keyCode == 90 || e.keyCode == 88) { // zx
-                    if (e.keyCode == 90) {
-                        Zdown = false;
-                    }
-                    if (e.keyCode == 88) {
-                        Xdown = false;
-                    }
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-            playback.game.window.addEventListener("dblclick", function(e) {
-                e.preventDefault();
-                e.stopPropagation(); // we don't want the main rpgmaker canvas to receive mouse events
-                playback.game.score.nbClicks += 1;
-                var clickInfos = {
-                    'x': e.clientX,
-                    'y': e.clientY,
+            function clickInfos() {
+                return {
+                    'x': playback.game.mouseX,
+                    'y': playback.game.mouseY,
                     'time': playback.osu.audio.getPosition() * TIME_CONSTANT
                 };
-                checkHit(playback.upcomingHits, clickInfos);
+            }
+            playback.game.window.addEventListener("mousemove", function(e) {
+                playback.game.mouseX = e.clientX;
+                playback.game.mouseY = e.clientY;
+                if (currentSlider){
+                    checkInSlider(clickInfos());
+                }
             });
-            playback.game.window.addEventListener("mouseup", function(e) {
+            playback.game.window.addEventListener("mousedown", function(e) {
+                playback.game.mouseX = e.clientX;
+                playback.game.mouseY = e.clientY;
+                if (e.button == 0) playback.game.M1down = true; else
+                if (e.button == 2) playback.game.M2down = true; else
+                return;
                 e.preventDefault();
                 e.stopPropagation();
-                if (currentSlider){
-                    var clickInfos = {
-                        'x': e.clientX,
-                        'y': e.clientY,
-                        'time': playback.osu.audio.getPosition() * TIME_CONSTANT
-                    };
-                    checkEndSlider(clickInfos);
-                    currentSlider = null;
-                }
+                playback.game.down = playback.game.K1down || playback.game.K2down
+                                  || playback.game.M1down || playback.game.M2down;
+                checkHit(playback.upcomingHits, clickInfos());
+            });
+            playback.game.window.addEventListener("mouseup", function(e) {
+                playback.game.mouseX = e.clientX;
+                playback.game.mouseY = e.clientY;
+                if (e.button == 0) playback.game.M1down = false; else
+                if (e.button == 2) playback.game.M2down = false; else
+                return;
+                e.preventDefault();
+                e.stopPropagation();
+                playback.game.down = playback.game.K1down || playback.game.K2down
+                                  || playback.game.M1down || playback.game.M2down;
+            });
+            playback.game.window.addEventListener("keydown", function(e) {
+                if (e.keyCode == playback.game.K1keycode) playback.game.K1down = true; else
+                if (e.keyCode == playback.game.K2keycode) playback.game.K2down = true; else
+                return;
+                e.preventDefault();
+                e.stopPropagation();
+                playback.game.down = playback.game.K1down || playback.game.K2down
+                                  || playback.game.M1down || playback.game.M2down;
+                checkHit(playback.upcomingHits, clickInfos());
+            });
+            playback.game.window.addEventListener("keyup", function(e) {
+                if (e.keyCode == playback.game.K1keycode) playback.game.K1down = false; else
+                if (e.keyCode == playback.game.K2keycode) playback.game.K2down = false; else
+                return;
+                e.preventDefault();
+                e.stopPropagation();
+                playback.game.down = playback.game.K1down || playback.game.K2down
+                                  || playback.game.M1down || playback.game.M2down;
             });
         }
     }
