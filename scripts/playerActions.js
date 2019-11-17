@@ -93,8 +93,16 @@ define([], function() {
             playback.game.window.addEventListener("mousedown", function(e) {
                 playback.game.mouseX = e.clientX;
                 playback.game.mouseY = e.clientY;
-                if (e.button == 0) playback.game.M1down = true; else
-                if (e.button == 2) playback.game.M2down = true; else
+                if (e.button == 0) {
+                    if (playback.game.M1down) return;
+                    playback.game.M1down = true;
+                }
+                else
+                if (e.button == 2) {
+                    if (playback.game.M2down) return;
+                    playback.game.M2down = true;
+                }
+                else
                 return;
                 e.preventDefault();
                 e.stopPropagation();
@@ -114,8 +122,16 @@ define([], function() {
                                   || playback.game.M1down || playback.game.M2down;
             });
             playback.game.window.addEventListener("keydown", function(e) {
-                if (e.keyCode == playback.game.K1keycode) playback.game.K1down = true; else
-                if (e.keyCode == playback.game.K2keycode) playback.game.K2down = true; else
+                if (e.keyCode == playback.game.K1keycode) {
+                    if (playback.game.K1down) return;
+                    playback.game.K1down = true;
+                }
+                else
+                if (e.keyCode == playback.game.K2keycode) {
+                    if (playback.game.K2down) return;
+                    playback.game.K2down = true;
+                }
+                else
                 return;
                 e.preventDefault();
                 e.stopPropagation();
