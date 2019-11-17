@@ -427,7 +427,10 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         this.createSpinner = function(hit) {
             hit.x = 0.5;
             hit.y = 0.5;
-            var base = new PIXI.Sprite(Skin["spinner.png"]);
+            hit.rotation = 0;
+            hit.clicked = false;
+
+            var base = hit.base = new PIXI.Sprite(Skin["spinner.png"]);
             base.scale.x = base.scale.y = gfx.width / 768;
             base.anchor.x = base.anchor.y = 0.5;
             base.x = gfx.xoffset + hit.x * gfx.width;
@@ -686,11 +689,31 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         }
 
         this.updateSpinner = function(hit, time) {
+            // update rotation
+            if (time >= hit.time && time <= hit.endTime) {
+                if (this.game.down) {
+                    let Xr = this.game.mouseX - gfx.xoffset - gfx.width/2;
+                    let Yr = this.game.mouseY - gfx.yoffset - gfx.height/2;
+                    let mouseAngle = Math.atan2(Yr, Xr);
+                    if (!hit.clicked) {
+                        hit.clicked = true;
+                    }
+                    else {
+                        hit.rotation += mouseAngle - hit.lastAngle;
+                    }
+                    hit.lastAngle = mouseAngle;
+                }
+                else {
+                    hit.clicked = false;
+                }
+            }
+
             let diff = hit.time - time; // milliseconds before time of circle
             // calculate opacity of circle
             let alpha = (time >= hit.time && time <= hit.endTime)? 1: 0;
 
-            _.each(hit.objects, function(o) { o.alpha = alpha; });
+            hit.base.rotation = hit.rotation;
+            hit.base.alpha = alpha;
            
             // // display hit score
             // if (hit.score > 0 || time > hit.time + this.TIME_ALLOWED){
