@@ -690,11 +690,12 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                     hit.currentRepeat = Math.ceil(t);
                 }
                 // clamp t
+                let atEnd = false;
                 if (Math.floor(t) > hit.lastrep)
                 {
                     hit.lastrep = Math.floor(t);
                     if (hit.lastrep > 0 && hit.lastrep <= hit.repeat)
-                        self.playHitsound(hit, hit.lastrep);
+                        atEnd = true;
                 }
                 if (t > hit.repeat)
                     t = hit.repeat;
@@ -717,6 +718,14 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 hit.approach.x = atx;
                 hit.approach.y = aty;
 
+                let dx = game.mouseX - atx;
+                let dy = game.mouseY - aty;
+                let followPixelSize = hit.followSize * this.circleRadiusPixel;
+                let isfollowing = dx*dx + dy*dy <= followPixelSize * followPixelSize;
+
+                if (atEnd && this.game.down && isfollowing)
+                    self.playHitsound(hit, hit.lastrep);
+
                 // sliderball & follow circle Animation
                 if (-diff >= 0 && -diff <= hit.sliderTimeTotal) {
                     // slider ball immediately emerges
@@ -725,10 +734,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                     // follow circie immediately emerges and gradually enlarges
                     hit.follow.visible = true;
                     console.log("down", this.game.down, hit.followSize);
-                    let dx = game.mouseX - atx;
-                    let dy = game.mouseY - aty;
-                    let followPixelSize = hit.followSize * this.circleRadiusPixel;
-                    let isfollowing = dx*dx + dy*dy <= followPixelSize * followPixelSize;
                     if (this.game.down && isfollowing)
                         resizeFollow(hit, time, 1 / this.followZoomInTime); // expand 
                     else
