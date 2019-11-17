@@ -51,6 +51,9 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
         scene: null,
         updatePlayerActions: null,
 
+        allowMouseButton: true,
+        allowMouseScroll: true,
+
         // cursor info
         mouseX: 0, // in absolute pixel
         mouseY: 0,

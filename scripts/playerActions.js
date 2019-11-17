@@ -89,37 +89,43 @@ define([], function() {
                     checkInSlider(clickInfos());
                 }
             });
-            playback.game.window.addEventListener("mousedown", function(e) {
-                playback.game.mouseX = e.clientX;
-                playback.game.mouseY = e.clientY;
-                if (e.button == 0) {
-                    if (playback.game.M1down) return;
-                    playback.game.M1down = true;
-                }
-                else
-                if (e.button == 2) {
-                    if (playback.game.M2down) return;
-                    playback.game.M2down = true;
-                }
-                else
-                return;
-                e.preventDefault();
-                e.stopPropagation();
-                playback.game.down = playback.game.K1down || playback.game.K2down
-                                  || playback.game.M1down || playback.game.M2down;
-                checkHit(playback.upcomingHits, clickInfos());
-            });
-            playback.game.window.addEventListener("mouseup", function(e) {
-                playback.game.mouseX = e.clientX;
-                playback.game.mouseY = e.clientY;
-                if (e.button == 0) playback.game.M1down = false; else
-                if (e.button == 2) playback.game.M2down = false; else
-                return;
-                e.preventDefault();
-                e.stopPropagation();
-                playback.game.down = playback.game.K1down || playback.game.K2down
-                                  || playback.game.M1down || playback.game.M2down;
-            });
+
+            // mouse click handling for gameplay
+            if (playback.game.allowMouseButton) {
+                playback.game.window.addEventListener("mousedown", function(e) {
+                    playback.game.mouseX = e.clientX;
+                    playback.game.mouseY = e.clientY;
+                    if (e.button == 0) {
+                        if (playback.game.M1down) return;
+                        playback.game.M1down = true;
+                    }
+                    else
+                    if (e.button == 2) {
+                        if (playback.game.M2down) return;
+                        playback.game.M2down = true;
+                    }
+                    else
+                    return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    playback.game.down = playback.game.K1down || playback.game.K2down
+                                      || playback.game.M1down || playback.game.M2down;
+                    checkHit(playback.upcomingHits, clickInfos());
+                });
+                playback.game.window.addEventListener("mouseup", function(e) {
+                    playback.game.mouseX = e.clientX;
+                    playback.game.mouseY = e.clientY;
+                    if (e.button == 0) playback.game.M1down = false; else
+                    if (e.button == 2) playback.game.M2down = false; else
+                    return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    playback.game.down = playback.game.K1down || playback.game.K2down
+                                      || playback.game.M1down || playback.game.M2down;
+                });
+            }
+
+            // keyboard click handling for gameplay
             playback.game.window.addEventListener("keydown", function(e) {
                 if (e.keyCode == playback.game.K1keycode) {
                     if (playback.game.K1down) return;

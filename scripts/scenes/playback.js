@@ -10,8 +10,6 @@
 define(["osu", "skin", "hash", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions", "SliderMesh"],
 function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, SliderMesh) {
     function Playback(game, osu, track) {
-        var scoreCharWidth = 35;
-        var scoreCharHeight = 45;
         var self = this;
         window.playback = this;
         self.game = game;
@@ -22,30 +20,34 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.ready = true;
         self.started = false;
         self.upcomingHits = [];
-        self.hits = self.track.hitObjects.slice(0); // what does this do?
+        self.hits = self.track.hitObjects.slice(0); // creating a copy of hitobjects
         self.offset = 0;
         self.currentHitIndex = 0; // index for all hit objects
         self.autoplay = false;
+        var scoreCharWidth = 35;
+        var scoreCharHeight = 45;
 
         var gfx = {}; // game field area
-        gfx.width = game.window.innerWidth;
-        gfx.height = game.window.innerHeight;
-        if (gfx.width / 512 > gfx.height / 384)
-            gfx.width = gfx.height / 384 * 512;
-        else
-            gfx.height = gfx.width / 512 * 384;
-        gfx.width *= 0.8;
-        gfx.height *= 0.8;
-        gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
-        gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
-        console.log("gfx: ", gfx)
-        // fuck portrait displays
+        var calcSize = function() {
+            gfx.width = game.window.innerWidth;
+            gfx.height = game.window.innerHeight;
+            if (gfx.width / 512 > gfx.height / 384)
+                gfx.width = gfx.height / 384 * 512;
+            else
+                gfx.height = gfx.width / 512 * 384;
+            gfx.width *= 0.8;
+            gfx.height *= 0.8;
+            gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
+            gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
+            console.log("gfx: ", gfx)
+            // deal with difficulties
+            self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
+            self.circleRadiusPixel = self.circleRadius * gfx.width / 512;
+            self.hitSpriteScale = self.circleRadiusPixel / 60;
+        };
+        calcSize();
 
         // deal with difficulties
-        self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
-        self.circleRadiusPixel = self.circleRadius * gfx.width / 512;
-        self.hitSpriteScale = self.circleRadiusPixel / 60;
-
         let OD = track.difficulty.OverallDifficulty;
         self.MehTime = 200 - 10 * OD;
         self.GoodTime = 140 - 8 * OD;
@@ -57,7 +59,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.sliderFadeOutTime = 300; // time of slidebody fading out
         self.circleFadeOutTime = 150;
         self.scoreFadeOutTime = 600;
-        self.followZoomInTime = 100;
+        self.followZoomInTime = 100; // TODO related to AR
         self.followFadeOutTime = 100;
         self.ballFadeOutTime = 100;
         self.objectDespawnTime = 2000;
@@ -68,17 +70,21 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
         setPlayerActions(self);
 
-        self.game.window.addEventListener('wheel', function(e) {
-            self.osu.audio.gain.gain.value -= e.deltaY * 0.01;
-            if (self.osu.audio.gain.gain.value < 0) {
-                self.osu.audio.gain.gain.value = 0;
-            } 
-            if (self.osu.audio.gain.gain.value > 1) {
-                self.osu.audio.gain.gain.value = 1;
-            }
-            // TODO: Visualization
-        });
+        // adjust volume
+        if (game.allowMouseScroll) {
+            self.game.window.addEventListener('wheel', function(e) {
+                self.osu.audio.gain.gain.value -= e.deltaY * 0.01;
+                if (self.osu.audio.gain.gain.value < 0) {
+                    self.osu.audio.gain.gain.value = 0;
+                } 
+                if (self.osu.audio.gain.gain.value > 1) {
+                    self.osu.audio.gain.gain.value = 1;
+                }
+                // TODO: Visualization
+            });
+        }
 
+        // pause
         window.addEventListener("keyup", function(e) {
             if (e.keyCode === 32) {
                 if (self.osu.audio.playing) {
@@ -122,6 +128,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
         }
 
+        // load combo colors
         var combos = [];
         for (var i = 0; i < track.colors.length; i++) {
             var color = track.colors[i];
@@ -130,52 +137,36 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                         ((+color[2]) << 0));
         }
 
-      //XXX doesn't work ...
-        // function makeScoreNumberObject(position){
-        //   var num = new PIXI.Sprite(osuTextures['score0']);
-        //   num.anchor.x = num.anchor.y = 0.5;
-        //   num.x = game.canvas.width - (position * scoreCharWidth);
-        //   num.y = scoreCharHeight;
-        //   self.game.stage.addChild(num);
-        //   return num;
-        // }
-        // self.scoreView = {
-          // score1: makeScoreNumberObject(1),
-          // score10: makeScoreNumberObject(2),
-          // score100: makeScoreNumberObject(3),
-          // score1000: makeScoreNumberObject(4),
-          // score10000: makeScoreNumberObject(5)
-        // };
+        // 5-digit score overlay
+        var num1 = new PIXI.Sprite(osuTextures['score0']);
+        num1.anchor.x = num1.anchor.y = 0.5;
+        num1.x = game.window.innerWidth - (1 * scoreCharWidth);
+        num1.y = scoreCharHeight;
+        self.game.stage.addChild(num1);
 
-          var num1 = new PIXI.Sprite(osuTextures['score0']);
-          num1.anchor.x = num1.anchor.y = 0.5;
-          num1.x = game.window.innerWidth - (1 * scoreCharWidth);
-          num1.y = scoreCharHeight;
-          self.game.stage.addChild(num1);
+        var num2 = new PIXI.Sprite(osuTextures['score0']);
+        num2.anchor.x = num2.anchor.y = 0.5;
+        num2.x = game.window.innerWidth - (2 * scoreCharWidth);
+        num2.y = scoreCharHeight;
+        self.game.stage.addChild(num2);
 
-          var num2 = new PIXI.Sprite(osuTextures['score0']);
-          num2.anchor.x = num2.anchor.y = 0.5;
-          num2.x = game.window.innerWidth - (2 * scoreCharWidth);
-          num2.y = scoreCharHeight;
-          self.game.stage.addChild(num2);
+        var num3 = new PIXI.Sprite(osuTextures['score0']);
+        num3.anchor.x = num3.anchor.y = 0.5;
+        num3.x = game.window.innerWidth - (3 * scoreCharWidth);
+        num3.y = scoreCharHeight;
+        self.game.stage.addChild(num3);
 
-          var num3 = new PIXI.Sprite(osuTextures['score0']);
-          num3.anchor.x = num3.anchor.y = 0.5;
-          num3.x = game.window.innerWidth - (3 * scoreCharWidth);
-          num3.y = scoreCharHeight;
-          self.game.stage.addChild(num3);
+        var num4 = new PIXI.Sprite(osuTextures['score0']);
+        num4.anchor.x = num4.anchor.y = 0.5;
+        num4.x = game.window.innerWidth - (4 * scoreCharWidth);
+        num4.y = scoreCharHeight;
+        self.game.stage.addChild(num4);
 
-          var num4 = new PIXI.Sprite(osuTextures['score0']);
-          num4.anchor.x = num4.anchor.y = 0.5;
-          num4.x = game.window.innerWidth - (4 * scoreCharWidth);
-          num4.y = scoreCharHeight;
-          self.game.stage.addChild(num4);
-
-          var num5 = new PIXI.Sprite(osuTextures['score0']);
-          num5.anchor.x = num5.anchor.y = 0.5;
-          num5.x = game.window.innerWidth - (5 * scoreCharWidth);
-          num5.y = scoreCharHeight;
-          self.game.stage.addChild(num5);
+        var num5 = new PIXI.Sprite(osuTextures['score0']);
+        num5.anchor.x = num5.anchor.y = 0.5;
+        num5.x = game.window.innerWidth - (5 * scoreCharWidth);
+        num5.y = scoreCharHeight;
+        self.game.stage.addChild(num5);
 
         self.scoreView = {
           score1: num1,
@@ -205,6 +196,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
           }
         }
 
+        // creating hit objects
         this.createHitCircle = function(hit, objects = hit.objects) {
             var index = hit.index + 1;
 
@@ -297,50 +289,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             // Note: combos > 99 hits are unsupported
         }
 
-        this.playHitsound = function playHitsound(hit, id) {
-            let volume = self.osu.audio.gain.gain.value * (hit.hitSample.volume || hit.timing.volume) / 100;
-            let defaultSet = hit.timing.sampleSet || self.game.sampleSet;
-            function playHit(bitmask, normalSet, additionSet) {
-                // The normal sound is always played
-                self.game.sample[normalSet].hitnormal.volume = volume;
-                self.game.sample[normalSet].hitnormal.play();
-                if (bitmask & 2) {
-                    self.game.sample[additionSet].hitwhistle.volume = volume;
-                    self.game.sample[additionSet].hitwhistle.play();
-                }
-                if (bitmask & 4) {
-                    self.game.sample[additionSet].hitfinish.volume = volume;
-                    self.game.sample[additionSet].hitfinish.play();
-                }
-                if (bitmask & 8) {
-                    self.game.sample[additionSet].hitclap.volume = volume;
-                    self.game.sample[additionSet].hitclap.play();
-                }
-            }
-            if (hit.type == 'circle') {
-                let toplay = hit.hitSound;
-                let normalSet = hit.hitSample.normalSet || defaultSet;
-                let additionSet = hit.hitSample.additionSet || normalSet;
-                playHit(toplay, normalSet, additionSet);
-            }
-            if (hit.type == 'slider') {
-                let toplay = hit.edgeHitsounds[id];
-                let normalSet = hit.edgeSets[id].normalSet || defaultSet;
-                let additionSet = hit.edgeSets[id].additionSet || normalSet;
-                playHit(toplay, normalSet, additionSet);
-            }
-        };
-        this.hitSuccess = function hitSuccess(hit, points){
-            self.playHitsound(hit, 0);
-            hit.score = points;
-            self.game.score.points += points;
-            self.game.score.goodClicks += 1;
-            self.updateScoreView();
-            if (hit.objectWin)
-                hit.objectWin.texture = osuTextures["hit" + points];
-        };
-
-
         this.createSlider = function(hit) {
             hit.lastrep = 0; // for hitsound counting
             hit.sliderTime = hit.timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
@@ -373,6 +321,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             follow.blendMode = PIXI.BLEND_MODES.ADD;
             follow.depth = 5;
             hit.objects.push(follow);
+            hit.followSize = 1; // [1,2] current follow circle size relative to hitcircle
 
             // create slider body
             var body = new SliderMesh(hit.curve.curve,
@@ -389,6 +338,17 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             body.depth = 4.9999-0.0001*hit.hitIndex;
             hit.objects.push(body);
 
+            // Add slider ball
+            var ball = hit.ball = new PIXI.Sprite(Skin["sliderb.png"]);
+            ball.scale.x = ball.scale.y = this.hitSpriteScale;
+            ball.visible = false;
+            ball.alpha = 0;
+            ball.anchor.x = ball.anchor.y = 0.5;
+            ball.tint = 0xFFFFFF;
+            ball.manualAlpha = true;
+            ball.depth = 4.9999-0.0001*hit.hitIndex;
+            hit.objects.push(ball);
+
             // create hitcircle at head
             hit.hitcircleObjects = new Array();
             self.createHitCircle(hit, hit.hitcircleObjects); // Near end
@@ -402,17 +362,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             burst.depth = 4.9999 - 0.0001 * hit.hitIndex;
             burst.visible = false;
             hit.objects.push(burst);
-            
-            // Add follow ball
-            var ball = hit.ball = new PIXI.Sprite(Skin["sliderb.png"]);
-            ball.scale.x = ball.scale.y = this.hitSpriteScale;
-            ball.visible = false;
-            ball.alpha = 0;
-            ball.anchor.x = ball.anchor.y = 0.5;
-            ball.tint = 0xFFFFFF;
-            ball.manualAlpha = true;
-            ball.depth = 5;
-            hit.objects.push(ball);
 
             let endPoint = hit.curve.curve[hit.curve.curve.length-1];
             let endPoint2 = hit.curve.curve[hit.curve.curve.length-2];
@@ -509,6 +458,52 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             this.populateHit(this.hits[i]); // Prepare sprites and such
         }
 
+        // hit result handling
+        this.playHitsound = function playHitsound(hit, id) {
+            let volume = self.osu.audio.gain.gain.value * (hit.hitSample.volume || hit.timing.volume) / 100;
+            let defaultSet = hit.timing.sampleSet || self.game.sampleSet;
+            function playHit(bitmask, normalSet, additionSet) {
+                // The normal sound is always played
+                self.game.sample[normalSet].hitnormal.volume = volume;
+                self.game.sample[normalSet].hitnormal.play();
+                if (bitmask & 2) {
+                    self.game.sample[additionSet].hitwhistle.volume = volume;
+                    self.game.sample[additionSet].hitwhistle.play();
+                }
+                if (bitmask & 4) {
+                    self.game.sample[additionSet].hitfinish.volume = volume;
+                    self.game.sample[additionSet].hitfinish.play();
+                }
+                if (bitmask & 8) {
+                    self.game.sample[additionSet].hitclap.volume = volume;
+                    self.game.sample[additionSet].hitclap.play();
+                }
+            }
+            if (hit.type == 'circle') {
+                let toplay = hit.hitSound;
+                let normalSet = hit.hitSample.normalSet || defaultSet;
+                let additionSet = hit.hitSample.additionSet || normalSet;
+                playHit(toplay, normalSet, additionSet);
+            }
+            if (hit.type == 'slider') {
+                let toplay = hit.edgeHitsounds[id];
+                let normalSet = hit.edgeSets[id].normalSet || defaultSet;
+                let additionSet = hit.edgeSets[id].additionSet || normalSet;
+                playHit(toplay, normalSet, additionSet);
+            }
+        };
+
+        this.hitSuccess = function hitSuccess(hit, points){
+            self.playHitsound(hit, 0);
+            hit.score = points;
+            self.game.score.points += points;
+            self.game.score.goodClicks += 1;
+            self.updateScoreView();
+            if (hit.objectWin)
+                hit.objectWin.texture = osuTextures["hit" + points];
+        };
+
+        // hit object updating
         var futuremost = 0, current = 0;
         if (self.track.hitObjects.length > 0) {
             futuremost = self.track.hitObjects[0].time;
@@ -606,7 +601,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 hit.approach.scale.x = scale;
                 hit.approach.scale.y = scale;
             } else {
-                hit.approach.scale.x = hit.approach.scale.y = 0.5 * this.hitSpriteScale;
+                hit.approach.scale.x = hit.approach.scale.y = 0.47 * this.hitSpriteScale;
             }
 
             // display hit score
@@ -655,7 +650,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 hit.approach.scale.x = scale;
                 hit.approach.scale.y = scale;
             } else {
-                hit.approach.scale.x = hit.approach.scale.y = 0.5 * this.hitSpriteScale;
+                hit.approach.scale.x = hit.approach.scale.y = 0.47 * this.hitSpriteScale;
             }
             // calculate for hit circle
             if (hit.clickTime) { // clicked
@@ -671,34 +666,36 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 hit.burst.alpha = alpha;
                 hit.burst.scale.x = hit.burst.scale.y = scale;
             }
-            else if (-diff > 0) { // about to be missed
-                let timeAfter = time - hit.time;
+            else if (-diff > this.MehTime) { // missed
+                let timeAfter = -diff - this.MehTime;
                 alpha = this.fadeOutEasing(timeAfter / this.circleFadeOutTime);
                 _.each(hit.hitcircleObjects, function(o) { o.alpha = alpha; });
                 hit.approach.alpha = alpha;
             }
 
-            if (-diff >= 0 && -diff <= this.sliderFadeOutTime + hit.sliderTimeTotal) { // after hit.time & before slider disappears
-                // slider ball immediately emerges
-                hit.ball.visible = true;
-                hit.ball.alpha = 1;
-                // follow circie immediately emerges and gradually enlarges
-                hit.follow.visible = true;
-                hit.follow.alpha = 1;
-                let followscale = (-diff > this.followZoomInTime)? 1: 0.5 + 0.5 * Math.sin(-diff / this.followZoomInTime * Math.PI / 2);
-                hit.follow.scale.x = hit.follow.scale.y = followscale * this.hitSpriteScale;
+            function resizeFollow(hit, time, dir) {
+                if (!hit.followLasttime) hit.followLasttime = time;
+                if (!hit.followLinearSize) hit.followLinearSize = 1;
+                let dt = time - hit.followLasttime;
+                console.log("dt=", dt);
+                hit.followLinearSize = Math.max(1, Math.min(2, hit.followLinearSize + dt * dir));
+                hit.followSize = hit.followLinearSize; // easing can happen here
+                hit.followLasttime = time;
+            }
 
+            if (-diff >= 0 && -diff <= this.sliderFadeOutTime + hit.sliderTimeTotal) { // after hit.time & before slider disappears
                 // t: position relative to slider duration
                 let t = -diff / hit.sliderTime;
                 if (hit.repeat > 1) {
                     hit.currentRepeat = Math.ceil(t);
                 }
                 // clamp t
+                let atEnd = false;
                 if (Math.floor(t) > hit.lastrep)
                 {
                     hit.lastrep = Math.floor(t);
                     if (hit.lastrep > 0 && hit.lastrep <= hit.repeat)
-                        self.playHitsound(hit, hit.lastrep);
+                        atEnd = true;
                 }
                 if (t > hit.repeat)
                     t = hit.repeat;
@@ -711,10 +708,50 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
                 // Update ball and follow circle position
                 let at = hit.curve.pointAt(t);
-                hit.follow.x = at.x * gfx.width + gfx.xoffset;
-                hit.follow.y = at.y * gfx.height + gfx.yoffset;
-                hit.ball.x = at.x * gfx.width + gfx.xoffset;
-                hit.ball.y = at.y * gfx.height + gfx.yoffset;
+                let atx = at.x * gfx.width + gfx.xoffset;
+                let aty = at.y * gfx.height + gfx.yoffset;
+                hit.follow.x = atx;
+                hit.follow.y = aty;
+                hit.ball.x = atx;
+                hit.ball.y = aty;
+                _.each(hit.hitcircleObjects, function(o) { o.x = atx; o.y = aty; });
+                hit.approach.x = atx;
+                hit.approach.y = aty;
+
+                let dx = game.mouseX - atx;
+                let dy = game.mouseY - aty;
+                let followPixelSize = hit.followSize * this.circleRadiusPixel;
+                let isfollowing = dx*dx + dy*dy <= followPixelSize * followPixelSize;
+
+                if (atEnd && this.game.down && isfollowing)
+                    self.playHitsound(hit, hit.lastrep);
+
+                // sliderball & follow circle Animation
+                if (-diff >= 0 && -diff <= hit.sliderTimeTotal) {
+                    // slider ball immediately emerges
+                    hit.ball.visible = true;
+                    hit.ball.alpha = 1;
+                    // follow circie immediately emerges and gradually enlarges
+                    hit.follow.visible = true;
+                    console.log("down", this.game.down, hit.followSize);
+                    if (this.game.down && isfollowing)
+                        resizeFollow(hit, time, 1 / this.followZoomInTime); // expand 
+                    else
+                        resizeFollow(hit, time, -1 / this.followZoomInTime); // shrink
+                    let followscale = hit.followSize * 0.45 * this.hitSpriteScale;
+                    hit.follow.scale.x = hit.follow.scale.y = followscale;
+                    hit.follow.alpha = hit.followSize - 1;
+                }
+                let timeAfter = -diff - hit.sliderTimeTotal;
+                if (timeAfter > 0) {
+                    resizeFollow(hit, time, -1 / this.followZoomInTime); // shrink
+                    let followscale = hit.followSize * 0.45 * this.hitSpriteScale;
+                    hit.follow.scale.x = hit.follow.scale.y = followscale;
+                    hit.follow.alpha = hit.followSize - 1;
+                    hit.ball.alpha = this.fadeOutEasing(timeAfter / this.ballFadeOutTime);
+                    let ballscale = (1 + 0.15 * timeAfter / this.ballFadeOutTime) * this.hitSpriteScale;
+                    hit.ball.scale.x = hit.ball.scale.y = ballscale;
+                }
 
                 // reverse arrow
                 if (hit.currentRepeat) {
@@ -725,16 +762,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                         hit.reverse_b.visible = (hit.currentRepeat < finalrepfromB);
                     // TODO reverse arrow fade out animation
                 }
-            }
-            // sliderball & follow circle fade-out Animation
-            let timeAfter = -diff - hit.sliderTimeTotal;
-            if (timeAfter > 0) {
-                hit.ball.alpha = this.fadeOutEasing(timeAfter / this.ballFadeOutTime);
-                let ballscale = (1 + 0.15 * timeAfter / this.ballFadeOutTime) * this.hitSpriteScale;
-                hit.ball.scale.x = hit.ball.scale.y = ballscale;
-                hit.follow.alpha = this.fadeOutEasing(timeAfter / this.followFadeOutTime);
-                let followscale = (1 - 0.5 * timeAfter / this.followFadeOutTime) * this.hitSpriteScale;
-                hit.follow.scale.x = hit.follow.scale.y = followscale;
             }
 
             
