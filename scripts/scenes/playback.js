@@ -46,7 +46,10 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.circleRadiusPixel = self.circleRadius * gfx.width / 512;
         self.hitSpriteScale = self.circleRadiusPixel / 60;
 
-        self.TIME_ALLOWED = 200;
+        let OD = track.difficulty.OverallDifficulty;
+        self.MehTime = 200 - 10 * OD;
+        self.GoodTime = 140 - 8 * OD;
+        self.GreatTime = 80 - 6 * OD;
         let AR = track.difficulty.ApproachRate;
         self.approachTime = AR<5? 1800-120*AR: 1950-150*AR; // time of sliders/hitcircles and approach circles approaching
         self.objectFadeInTime = Math.min(350, self.approachTime); // time of sliders/hitcircles fading in, at beginning of approaching
@@ -570,7 +573,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 hit.approach.scale.x = hit.approach.scale.y = 0.5 * this.hitSpriteScale;
             }
             // display hit score
-            if (hit.score > 0 || time > hit.time + this.TIME_ALLOWED){
+            if (hit.score > 0 || time > hit.time + this.MehTime){
               hit.objectWin.alpha = this.fadeOutEasing(-diff / this.scoreFadeOutTime);
               hit.objectWin.scale.x = this.hitSpriteScale;
               hit.objectWin.scale.y = this.hitSpriteScale;
@@ -681,7 +684,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
             
             // display hit score
-            if (hit.score > 0 || time > hit.time + hit.sliderTimeTotal + this.TIME_ALLOWED ){
+            if (hit.score > 0 || time > hit.time + hit.sliderTimeTotal + this.MehTime ){
               hit.objectWin.alpha = this.fadeOutEasing((-diff - hit.sliderTimeTotal) / this.scoreFadeOutTime);
               hit.objectWin.scale.x = this.hitSpriteScale;
               hit.objectWin.scale.y = this.hitSpriteScale;

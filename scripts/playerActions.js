@@ -1,7 +1,4 @@
 define([], function() {
-    var TIME_ALLOWED = 200; // 200 ms
-    var TIME_ALLOWED_100 = 140;
-    var TIME_ALLOWED_300 = 80;
     // TODO: support OD
     var currentSlider = null;
 
@@ -12,15 +9,15 @@ define([], function() {
                 case "circle":
                     var points = 50;
                     var diff = click.time - good.time;
-                    if (Math.abs(diff) < TIME_ALLOWED_100) points = 100;
-                    if (Math.abs(diff) < TIME_ALLOWED_300) points = 300;
+                    if (Math.abs(diff) < playback.GoodTime) points = 100;
+                    if (Math.abs(diff) < playback.GreatTime) points = 300;
                     playback.hitSuccess(good, points);
                     break;
                 case "slider":
                     var points = 50;
                     var diff = click.time - good.time;
-                    if (Math.abs(diff) < TIME_ALLOWED_100) points = 100;
-                    if (Math.abs(diff) < TIME_ALLOWED_300) points = 300;
+                    if (Math.abs(diff) < playback.GoodTime) points = 100;
+                    if (Math.abs(diff) < playback.GreatTime) points = 300;
                     playback.hitSuccess(good, points);
                     currentSlider = good;
                     break;
@@ -47,7 +44,7 @@ define([], function() {
             return ( 
                 hit.score < 0
                 && dx*dx + dy*dy < playback.circleRadiusPixel * playback.circleRadiusPixel 
-                && Math.abs(click.time - hit.time) < TIME_ALLOWED);
+                && Math.abs(click.time - hit.time) < playback.MehTime);
             }
     }
 
@@ -55,7 +52,7 @@ define([], function() {
         
         playback.game.updatePlayerActions = function(time){
             if (playback.autoplay) {
-                let good = playback.upcomingHits.find(function(hit){return hit.score < 0 && Math.abs(time - hit.time) < TIME_ALLOWED});
+                let good = playback.upcomingHits.find(function(hit){return hit.score < 0 && Math.abs(time - hit.time) < playback.MehTime});
                 if (good){
                     let diff = time - good.time;
                     if (diff > -8)

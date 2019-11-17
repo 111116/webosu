@@ -64,7 +64,7 @@ currently using lazer hit sounds.
 
 Game field: 512 x 384 (in osu! pixels)
 
-Hit window total length
+Hit window radius
 
 	300: (80 - 6*OD) ms
 	100: (140 - 8*OD) ms
