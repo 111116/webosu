@@ -191,7 +191,7 @@ function() {
             if (t > 0) { // turning counterclockwise
                 addArc(5*i, 5*i-1, 5*i+2);
             }
-            if (t < 0) { // turning clockwise
+            else { // turning clockwise or straight back
                 addArc(5*i, 5*i+1, 5*i-2);
             }
         }
