@@ -55,7 +55,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.objectFadeInTime = Math.min(350, self.approachTime); // time of sliders/hitcircles fading in, at beginning of approaching
         self.approachFadeInTime = Math.min(700, self.approachTime); // time of approach circles fading in, at beginning of approaching
         self.sliderFadeOutTime = 300; // time of slidebody fading out
-        self.circleFadeOutTime = 100;
+        self.circleFadeOutTime = 150;
         self.scoreFadeOutTime = 600;
         self.followZoomInTime = 100;
         self.followFadeOutTime = 100;
@@ -207,7 +207,8 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
         this.createHitCircle = function(hit, objects = hit.objects) {
             var index = hit.index + 1;
-            var base = new PIXI.Sprite(Skin["hitcircle.png"]);
+
+            var base = hit.base = new PIXI.Sprite(Skin["hitcircle.png"]);
             base.scale.x = base.scale.y = this.hitSpriteScale;
             base.anchor.x = base.anchor.y = 0.5;
             base.x = gfx.xoffset + hit.x * gfx.width;
@@ -217,6 +218,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             hit.basey = base.y;
             base.alpha = 0;
             base.tint = combos[hit.combo % combos.length];
+
             var overlay = new PIXI.Sprite(Skin["hitcircleoverlay.png"]);
             overlay.scale.x = overlay.scale.y = this.hitSpriteScale;
             overlay.anchor.x = overlay.anchor.y = 0.5;
@@ -224,6 +226,15 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             overlay.y = gfx.yoffset + hit.y * gfx.height;
             overlay.depth = 4.9999 - 0.0001 * hit.hitIndex;
             overlay.alpha = 0;
+
+            var burst = hit.burst = new PIXI.Sprite(Skin["hitburst.png"]);
+            burst.scale.x = burst.scale.y = this.hitSpriteScale;
+            burst.anchor.x = burst.anchor.y = 0.5;
+            burst.x = gfx.xoffset + hit.x * gfx.width;
+            burst.y = gfx.yoffset + hit.y * gfx.height;
+            burst.depth = 4.9999 - 0.0001 * hit.hitIndex;
+            burst.visible = false;
+
             var approach;
             if (index > 0) { // index == -1 is used for slider ends
                 hit.approach = approach = new PIXI.Sprite(Skin["approachcircle.png"]);
@@ -247,6 +258,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
             objects.push(base);
             objects.push(overlay);
+            objects.push(burst);
             if (index > 0) {
                 objects.push(approach);
             }
@@ -381,6 +393,15 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             hit.hitcircleObjects = new Array();
             self.createHitCircle(hit, hit.hitcircleObjects); // Near end
             _.each(hit.hitcircleObjects, function(o){hit.objects.push(o);});
+
+            var burst = hit.burst = new PIXI.Sprite(Skin["hitburst.png"]);
+            burst.scale.x = burst.scale.y = this.hitSpriteScale;
+            burst.anchor.x = burst.anchor.y = 0.5;
+            burst.x = gfx.xoffset + hit.x * gfx.width;
+            burst.y = gfx.yoffset + hit.y * gfx.height;
+            burst.depth = 4.9999 - 0.0001 * hit.hitIndex;
+            burst.visible = false;
+            hit.objects.push(burst);
             
             // Add follow ball
             var ball = hit.ball = new PIXI.Sprite(Skin["sliderb.png"]);
@@ -388,7 +409,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             ball.visible = false;
             ball.alpha = 0;
             ball.anchor.x = ball.anchor.y = 0.5;
-            ball.tint = (255<<16)+(255<<8)+255;
+            ball.tint = 0xFFFFFF;
             ball.manualAlpha = true;
             ball.depth = 5;
             hit.objects.push(ball);
@@ -406,7 +427,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 reverse.anchor.x = reverse.anchor.y = 0.5;
                 reverse.x = gfx.xoffset + endPoint.x * gfx.width;
                 reverse.y = gfx.yoffset + endPoint.y * gfx.height;
-                reverse.tint = (255<<16)+(255<<8)+255;
+                reverse.tint = 0xFFFFFF;
                 reverse.rotation = endAngle + Math.PI;
                 reverse.depth = 4.9999-0.0001*hit.hitIndex;
                 hit.objects.push(reverse);
@@ -419,7 +440,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 reverse.anchor.x = reverse.anchor.y = 0.5;
                 reverse.x = gfx.xoffset + hit.x * gfx.width;
                 reverse.y = gfx.yoffset + hit.y * gfx.height;
-                reverse.tint = (255<<16)+(255<<8)+255;
+                reverse.tint = 0xFFFFFF;
                 reverse.rotation = endAngle;
                 reverse.visible = false; // Only visible when it's the next end to hit
                 reverse.depth = 4.9999-0.0001*hit.hitIndex;
@@ -554,16 +575,31 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
             if (diff <= this.approachTime && diff > noteFullAppear) { // fading in
                 alpha = (this.approachTime - diff) / this.objectFadeInTime;
+                _.each(hit.objects, function(o) { o.alpha = alpha; });
             }
-            else if (diff <= noteFullAppear && diff >= 0) { // approaching (or at exact time of circle), after fade-in
+            else if (hit.score > 0) { // clicked
+                // burst light
+                if (!hit.burst.visible) {
+                    _.each(hit.objects, function(o) { o.visible = false; });
+                    hit.burst.visible = true;
+                }
+                let timeAfter = time - hit.clickTime;
+                alpha = Math.max(0, 1 - timeAfter / this.circleFadeOutTime);
+                let scale = (1 + 0.4 * timeAfter / this.circleFadeOutTime) * this.hitSpriteScale;
+                hit.burst.alpha = alpha;
+                hit.burst.scale.x = hit.burst.scale.y = scale;
+            }
+            else if (diff <= noteFullAppear && -diff <= this.MehTime) { // before click
                 alpha = 1;
+                _.each(hit.objects, function(o) { o.alpha = alpha; });
             }
-            else if (-diff > 0 && -diff < this.circleFadeOutTime) { // after time of circle
-                alpha = this.fadeOutEasing(-diff / this.circleFadeOutTime);
-                let scale = (1 + 0.15 * -diff / this.circleFadeOutTime) * this.hitSpriteScale;
-                _.each(hit.objects, function(o) { o.scale.x = o.scale.y = scale; });
+            else if (-diff > this.MehTime) { // missed
+                hit.score = 0;
+                let timeAfter = time - hit.time - this.MehTime;
+                alpha = this.fadeOutEasing(timeAfter / this.circleFadeOutTime);
+                _.each(hit.objects, function(o) { o.alpha = alpha; });
             }
-            _.each(hit.objects, function(o) { o.alpha = alpha; });
+
             // calculate size of approach circle
             if (diff <= this.approachTime && diff > 0) { // approaching
                 let scale = (diff / this.approachTime * 2 + 1) * 0.45 * this.hitSpriteScale;
@@ -572,12 +608,14 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             } else {
                 hit.approach.scale.x = hit.approach.scale.y = 0.5 * this.hitSpriteScale;
             }
+
             // display hit score
             if (hit.score > 0 || time > hit.time + this.MehTime){
               hit.objectWin.alpha = this.fadeOutEasing(-diff / this.scoreFadeOutTime);
               hit.objectWin.scale.x = this.hitSpriteScale;
               hit.objectWin.scale.y = this.hitSpriteScale;
             }
+
             // calculate opacity of approach circle
             if (diff <= this.approachTime && diff > approachFullAppear) { // approach circle fading in
                 alpha = (this.approachTime - diff) / this.approachFadeInTime;
@@ -619,11 +657,28 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             } else {
                 hit.approach.scale.x = hit.approach.scale.y = 0.5 * this.hitSpriteScale;
             }
+            // calculate for hit circle
+            if (hit.clickTime) { // clicked
+                // burst light
+                if (!hit.burst.visible) {
+                    _.each(hit.hitcircleObjects, function(o) { o.visible = false; });
+                    hit.burst.visible = true;
+                    hit.approach.visible = false;
+                }
+                let timeAfter = time - hit.clickTime;
+                alpha = Math.max(0, 1 - timeAfter / this.circleFadeOutTime);
+                let scale = (1 + 0.4 * timeAfter / this.circleFadeOutTime) * this.hitSpriteScale;
+                hit.burst.alpha = alpha;
+                hit.burst.scale.x = hit.burst.scale.y = scale;
+            }
+            else if (-diff > 0) { // about to be missed
+                let timeAfter = time - hit.time;
+                alpha = this.fadeOutEasing(timeAfter / this.circleFadeOutTime);
+                _.each(hit.hitcircleObjects, function(o) { o.alpha = alpha; });
+                hit.approach.alpha = alpha;
+            }
 
             if (-diff >= 0 && -diff <= this.sliderFadeOutTime + hit.sliderTimeTotal) { // after hit.time & before slider disappears
-                // hide hit circle & approach circle
-                _.each(hit.hitcircleObjects, function(o){o.visible = false;});
-                hit.approach.visible = false;
                 // slider ball immediately emerges
                 hit.ball.visible = true;
                 hit.ball.alpha = 1;

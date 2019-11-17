@@ -7,6 +7,7 @@ define([], function() {
             "cursor.png",
             "approachcircle.png",
             "hitcircle.png",
+            "hitburst.png",
             "hitcircleoverlay.png",
             "sliderfollowcircle.png",
             "sliderb.png",

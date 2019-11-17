@@ -11,6 +11,7 @@ define([], function() {
                     var diff = click.time - good.time;
                     if (Math.abs(diff) < playback.GoodTime) points = 100;
                     if (Math.abs(diff) < playback.GreatTime) points = 300;
+                    good.clickTime = click.time;
                     playback.hitSuccess(good, points);
                     break;
                 case "slider":
@@ -18,6 +19,7 @@ define([], function() {
                     var diff = click.time - good.time;
                     if (Math.abs(diff) < playback.GoodTime) points = 100;
                     if (Math.abs(diff) < playback.GreatTime) points = 300;
+                    good.clickTime = click.time;
                     playback.hitSuccess(good, points);
                     currentSlider = good;
                     break;
