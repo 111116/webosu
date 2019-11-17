@@ -25,7 +25,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.hits = self.track.hitObjects.slice(0); // what does this do?
         self.offset = 0;
         self.currentHitIndex = 0; // index for all hit objects
-        self.autoplay = true;
+        self.autoplay = false;
 
         var gfx = {}; // game field area
         gfx.width = game.window.innerWidth;
