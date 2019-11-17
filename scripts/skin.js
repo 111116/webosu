@@ -22,23 +22,24 @@ define([], function() {
             "score-4.png", "score-5.png", "score-6.png", "score-7.png",
             "score-8.png", "score-9.png",
         ];
-        function loadNext() {
-            var xhr = new XMLHttpRequest();
-            var resource = skinResource[0];
+
+        var skinLoadCounter = 0;
+        var loadCallback = function() {
+            skinLoadCounter += 1;
+            if (skinLoadCounter == skinResource.length)
+                Skin.oncomplete();
+        }
+        for (let i=0; i<skinResource.length; ++i) {
+            let xhr = new XMLHttpRequest();
+            let resource = skinResource[i];
             xhr.open("GET", "skin/" + resource);
             xhr.responseType = 'blob';
-            skinResource.splice(0, 1);
             xhr.onload = function() {
                 Skin.load(xhr.response, resource);
-                if (skinResource.length > 0) {
-                    loadNext();
-                } else {
-                    Skin.oncomplete();
-                }
+                loadCallback();
             };
             xhr.send();
         }
-        loadNext();
     };
 
     Skin.load = function(blob, name) {
