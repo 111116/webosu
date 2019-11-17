@@ -20,7 +20,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.ready = true;
         self.started = false;
         self.upcomingHits = [];
-        self.hits = self.track.hitObjects.slice(0); // what does this do?
+        self.hits = self.track.hitObjects.slice(0); // creating a copy of hitobjects
         self.offset = 0;
         self.currentHitIndex = 0; // index for all hit objects
         self.autoplay = false;
@@ -128,6 +128,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
         }
 
+        // load combo colors
         var combos = [];
         for (var i = 0; i < track.colors.length; i++) {
             var color = track.colors[i];
@@ -136,52 +137,36 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                         ((+color[2]) << 0));
         }
 
-      //XXX doesn't work ...
-        // function makeScoreNumberObject(position){
-        //   var num = new PIXI.Sprite(osuTextures['score0']);
-        //   num.anchor.x = num.anchor.y = 0.5;
-        //   num.x = game.canvas.width - (position * scoreCharWidth);
-        //   num.y = scoreCharHeight;
-        //   self.game.stage.addChild(num);
-        //   return num;
-        // }
-        // self.scoreView = {
-          // score1: makeScoreNumberObject(1),
-          // score10: makeScoreNumberObject(2),
-          // score100: makeScoreNumberObject(3),
-          // score1000: makeScoreNumberObject(4),
-          // score10000: makeScoreNumberObject(5)
-        // };
+        // 5-digit score overlay
+        var num1 = new PIXI.Sprite(osuTextures['score0']);
+        num1.anchor.x = num1.anchor.y = 0.5;
+        num1.x = game.window.innerWidth - (1 * scoreCharWidth);
+        num1.y = scoreCharHeight;
+        self.game.stage.addChild(num1);
 
-          var num1 = new PIXI.Sprite(osuTextures['score0']);
-          num1.anchor.x = num1.anchor.y = 0.5;
-          num1.x = game.window.innerWidth - (1 * scoreCharWidth);
-          num1.y = scoreCharHeight;
-          self.game.stage.addChild(num1);
+        var num2 = new PIXI.Sprite(osuTextures['score0']);
+        num2.anchor.x = num2.anchor.y = 0.5;
+        num2.x = game.window.innerWidth - (2 * scoreCharWidth);
+        num2.y = scoreCharHeight;
+        self.game.stage.addChild(num2);
 
-          var num2 = new PIXI.Sprite(osuTextures['score0']);
-          num2.anchor.x = num2.anchor.y = 0.5;
-          num2.x = game.window.innerWidth - (2 * scoreCharWidth);
-          num2.y = scoreCharHeight;
-          self.game.stage.addChild(num2);
+        var num3 = new PIXI.Sprite(osuTextures['score0']);
+        num3.anchor.x = num3.anchor.y = 0.5;
+        num3.x = game.window.innerWidth - (3 * scoreCharWidth);
+        num3.y = scoreCharHeight;
+        self.game.stage.addChild(num3);
 
-          var num3 = new PIXI.Sprite(osuTextures['score0']);
-          num3.anchor.x = num3.anchor.y = 0.5;
-          num3.x = game.window.innerWidth - (3 * scoreCharWidth);
-          num3.y = scoreCharHeight;
-          self.game.stage.addChild(num3);
+        var num4 = new PIXI.Sprite(osuTextures['score0']);
+        num4.anchor.x = num4.anchor.y = 0.5;
+        num4.x = game.window.innerWidth - (4 * scoreCharWidth);
+        num4.y = scoreCharHeight;
+        self.game.stage.addChild(num4);
 
-          var num4 = new PIXI.Sprite(osuTextures['score0']);
-          num4.anchor.x = num4.anchor.y = 0.5;
-          num4.x = game.window.innerWidth - (4 * scoreCharWidth);
-          num4.y = scoreCharHeight;
-          self.game.stage.addChild(num4);
-
-          var num5 = new PIXI.Sprite(osuTextures['score0']);
-          num5.anchor.x = num5.anchor.y = 0.5;
-          num5.x = game.window.innerWidth - (5 * scoreCharWidth);
-          num5.y = scoreCharHeight;
-          self.game.stage.addChild(num5);
+        var num5 = new PIXI.Sprite(osuTextures['score0']);
+        num5.anchor.x = num5.anchor.y = 0.5;
+        num5.x = game.window.innerWidth - (5 * scoreCharWidth);
+        num5.y = scoreCharHeight;
+        self.game.stage.addChild(num5);
 
         self.scoreView = {
           score1: num1,
@@ -211,6 +196,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
           }
         }
 
+        // creating hit objects
         this.createHitCircle = function(hit, objects = hit.objects) {
             var index = hit.index + 1;
 
@@ -302,50 +288,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
             // Note: combos > 99 hits are unsupported
         }
-
-        this.playHitsound = function playHitsound(hit, id) {
-            let volume = self.osu.audio.gain.gain.value * (hit.hitSample.volume || hit.timing.volume) / 100;
-            let defaultSet = hit.timing.sampleSet || self.game.sampleSet;
-            function playHit(bitmask, normalSet, additionSet) {
-                // The normal sound is always played
-                self.game.sample[normalSet].hitnormal.volume = volume;
-                self.game.sample[normalSet].hitnormal.play();
-                if (bitmask & 2) {
-                    self.game.sample[additionSet].hitwhistle.volume = volume;
-                    self.game.sample[additionSet].hitwhistle.play();
-                }
-                if (bitmask & 4) {
-                    self.game.sample[additionSet].hitfinish.volume = volume;
-                    self.game.sample[additionSet].hitfinish.play();
-                }
-                if (bitmask & 8) {
-                    self.game.sample[additionSet].hitclap.volume = volume;
-                    self.game.sample[additionSet].hitclap.play();
-                }
-            }
-            if (hit.type == 'circle') {
-                let toplay = hit.hitSound;
-                let normalSet = hit.hitSample.normalSet || defaultSet;
-                let additionSet = hit.hitSample.additionSet || normalSet;
-                playHit(toplay, normalSet, additionSet);
-            }
-            if (hit.type == 'slider') {
-                let toplay = hit.edgeHitsounds[id];
-                let normalSet = hit.edgeSets[id].normalSet || defaultSet;
-                let additionSet = hit.edgeSets[id].additionSet || normalSet;
-                playHit(toplay, normalSet, additionSet);
-            }
-        };
-        this.hitSuccess = function hitSuccess(hit, points){
-            self.playHitsound(hit, 0);
-            hit.score = points;
-            self.game.score.points += points;
-            self.game.score.goodClicks += 1;
-            self.updateScoreView();
-            if (hit.objectWin)
-                hit.objectWin.texture = osuTextures["hit" + points];
-        };
-
 
         this.createSlider = function(hit) {
             hit.lastrep = 0; // for hitsound counting
@@ -515,6 +457,52 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             this.populateHit(this.hits[i]); // Prepare sprites and such
         }
 
+        // hit result handling
+        this.playHitsound = function playHitsound(hit, id) {
+            let volume = self.osu.audio.gain.gain.value * (hit.hitSample.volume || hit.timing.volume) / 100;
+            let defaultSet = hit.timing.sampleSet || self.game.sampleSet;
+            function playHit(bitmask, normalSet, additionSet) {
+                // The normal sound is always played
+                self.game.sample[normalSet].hitnormal.volume = volume;
+                self.game.sample[normalSet].hitnormal.play();
+                if (bitmask & 2) {
+                    self.game.sample[additionSet].hitwhistle.volume = volume;
+                    self.game.sample[additionSet].hitwhistle.play();
+                }
+                if (bitmask & 4) {
+                    self.game.sample[additionSet].hitfinish.volume = volume;
+                    self.game.sample[additionSet].hitfinish.play();
+                }
+                if (bitmask & 8) {
+                    self.game.sample[additionSet].hitclap.volume = volume;
+                    self.game.sample[additionSet].hitclap.play();
+                }
+            }
+            if (hit.type == 'circle') {
+                let toplay = hit.hitSound;
+                let normalSet = hit.hitSample.normalSet || defaultSet;
+                let additionSet = hit.hitSample.additionSet || normalSet;
+                playHit(toplay, normalSet, additionSet);
+            }
+            if (hit.type == 'slider') {
+                let toplay = hit.edgeHitsounds[id];
+                let normalSet = hit.edgeSets[id].normalSet || defaultSet;
+                let additionSet = hit.edgeSets[id].additionSet || normalSet;
+                playHit(toplay, normalSet, additionSet);
+            }
+        };
+
+        this.hitSuccess = function hitSuccess(hit, points){
+            self.playHitsound(hit, 0);
+            hit.score = points;
+            self.game.score.points += points;
+            self.game.score.goodClicks += 1;
+            self.updateScoreView();
+            if (hit.objectWin)
+                hit.objectWin.texture = osuTextures["hit" + points];
+        };
+
+        // hit object updating
         var futuremost = 0, current = 0;
         if (self.track.hitObjects.length > 0) {
             futuremost = self.track.hitObjects[0].time;
