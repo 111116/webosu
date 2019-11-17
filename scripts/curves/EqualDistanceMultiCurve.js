@@ -37,7 +37,7 @@ define(["curves/Curve"], function(Curve) {
                     } else {
                         curPoint = curCurve.ncurve - 1;
                         if (lastDistanceAt === distanceAt) {
-                            if (distanceAt < pixelLength * 0.99) {
+                            if (distanceAt < pixelLength * 0.97) {
                                 console.log("Warning: EDMC slider too short! ", distanceAt, pixelLength);
                             }
                             // out of points even though the preferred distance hasn't been reached
