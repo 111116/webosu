@@ -563,11 +563,11 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             _.each(hit.objects, function(o) { o.alpha = alpha; });
             // calculate size of approach circle
             if (diff <= this.approachTime && diff > 0) { // approaching
-                let scale = (diff / this.approachTime * 2 + 1) * 0.9 * this.hitSpriteScale;
+                let scale = (diff / this.approachTime * 2 + 1) * 0.45 * this.hitSpriteScale;
                 hit.approach.scale.x = scale;
                 hit.approach.scale.y = scale;
             } else {
-                hit.approach.scale.x = hit.objects[2].scale.y = this.hitSpriteScale;
+                hit.approach.scale.x = hit.approach.scale.y = 0.5 * this.hitSpriteScale;
             }
             // display hit score
             if (hit.score > 0 || time > hit.time + this.TIME_ALLOWED){
@@ -610,11 +610,11 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
             // calculate size of approach circle
             if (diff >= 0 && diff <= this.approachTime) { // approaching
-                let scale = (diff / this.approachTime * 2 + 1) * 0.9 * this.hitSpriteScale;
+                let scale = (diff / this.approachTime * 2 + 1) * 0.45 * this.hitSpriteScale;
                 hit.approach.scale.x = scale;
                 hit.approach.scale.y = scale;
             } else {
-                hit.approach.scale.x = hit.objects[2].scale.y = this.hitSpriteScale;
+                hit.approach.scale.x = hit.approach.scale.y = 0.5 * this.hitSpriteScale;
             }
 
             if (-diff >= 0 && -diff <= this.sliderFadeOutTime + hit.sliderTimeTotal) { // after hit.time & before slider disappears
