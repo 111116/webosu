@@ -56,6 +56,10 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
         backgroundDimRate: 0.7,
         backgroundBlurRate: 0.0, // not yet implemented
 
+        masterVolume: 0.7,
+        effectVolume: 1.0,
+        musicVolume: 1.0,
+
         // cursor info
         mouseX: 0, // in absolute pixel
         mouseY: 0,

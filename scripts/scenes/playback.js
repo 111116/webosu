@@ -73,16 +73,18 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         // adjust volume
         if (game.allowMouseScroll) {
             self.game.window.addEventListener('wheel', function(e) {
-                self.osu.audio.gain.gain.value -= e.deltaY * 0.01;
-                if (self.osu.audio.gain.gain.value < 0) {
-                    self.osu.audio.gain.gain.value = 0;
+                self.game.masterVolume -= e.deltaY * 0.01;
+                if (self.game.masterVolume < 0) {
+                    self.game.masterVolume = 0;
                 } 
-                if (self.osu.audio.gain.gain.value > 1) {
-                    self.osu.audio.gain.gain.value = 1;
+                if (self.game.masterVolume > 1) {
+                    self.game.masterVolume = 1;
                 }
+                self.osu.audio.gain.gain.value = self.game.musicVolume * self.game.masterVolume;
                 // TODO: Visualization
             });
         }
+        self.osu.audio.gain.gain.value = self.game.musicVolume * self.game.masterVolume;
 
         // pause
         window.addEventListener("keyup", function(e) {
@@ -465,7 +467,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
         // hit result handling
         this.playHitsound = function playHitsound(hit, id) {
-            let volume = self.osu.audio.gain.gain.value * (hit.hitSample.volume || hit.timing.volume) / 100;
+            let volume = self.game.masterVolume * self.game.effectVolume * (hit.hitSample.volume || hit.timing.volume) / 100;
             let defaultSet = hit.timing.sampleSet || self.game.sampleSet;
             function playHit(bitmask, normalSet, additionSet) {
                 // The normal sound is always played
