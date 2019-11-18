@@ -79,7 +79,7 @@ define([], function() {
                 return {
                     'x': playback.game.mouseX,
                     'y': playback.game.mouseY,
-                    'time': playback.osu.audio.getPosition() * TIME_CONSTANT
+                    'time': playback.osu.audio.getPosition() * 1000
                 };
             }
             playback.game.window.addEventListener("mousemove", function(e) {

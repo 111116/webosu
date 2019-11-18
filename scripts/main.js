@@ -12,29 +12,6 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
     app.renderer.autoResize = true;
     app.renderer.backgroundColor = 0xFFFFFF;
 
-    // Global constants
-    window.TIME_CONSTANT = 1000; // milliseconds per second
-    window.SLIDER_LINEAR = "L";
-    window.SLIDER_CATMULL = "C";
-    window.SLIDER_BEZIER = "B";
-    window.SLIDER_PERFECT_CURVE = "P";
-    window.osuTextures = {
-      'hit0': PIXI.Texture.fromImage('skin/hit0.png'),
-      'hit50': PIXI.Texture.fromImage('skin/hit50.png'),
-      'hit100': PIXI.Texture.fromImage('skin/hit100.png'),
-      'hit300': PIXI.Texture.fromImage('skin/hit300.png'),
-      'score0': PIXI.Texture.fromImage('skin/score-0.png'),
-      'score1': PIXI.Texture.fromImage('skin/score-1.png'),
-      'score2': PIXI.Texture.fromImage('skin/score-2.png'),
-      'score3': PIXI.Texture.fromImage('skin/score-3.png'),
-      'score4': PIXI.Texture.fromImage('skin/score-4.png'),
-      'score5': PIXI.Texture.fromImage('skin/score-5.png'),
-      'score6': PIXI.Texture.fromImage('skin/score-6.png'),
-      'score7': PIXI.Texture.fromImage('skin/score-7.png'),
-      'score8': PIXI.Texture.fromImage('skin/score-8.png'),
-      'score9': PIXI.Texture.fromImage('skin/score-9.png')
-    };
-
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
     PIXI.Sprite.prototype.bringToFront = function() {

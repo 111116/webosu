@@ -10,6 +10,10 @@
 define(["osu", "skin", "hash", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions", "SliderMesh"],
 function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, SliderMesh) {
     function Playback(game, osu, track) {
+        const SLIDER_LINEAR = "L";
+        const SLIDER_CATMULL = "C";
+        const SLIDER_BEZIER = "B";
+        const SLIDER_PERFECT_CURVE = "P";
         var self = this;
         window.playback = this;
         self.game = game;
@@ -63,6 +67,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.followFadeOutTime = 100;
         self.ballFadeOutTime = 100;
         self.objectDespawnTime = 2000;
+        self.backgroundFadeTime = 3000;
 
         if (Hash.timestamp()) {
             self.offset = +Hash.timestamp();
@@ -149,7 +154,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             self.scoreDigit = [];
             for (let i=1; i<=5; ++i)
             {
-                var digit = new PIXI.Sprite(osuTextures['score0']);
+                var digit = new PIXI.Sprite(Skin['score-0.png']);
                 digit.anchor.x = digit.anchor.y = 0.5;
                 digit.x = game.window.innerWidth - (i * scoreCharWidth);
                 digit.y = scoreCharHeight;
@@ -164,7 +169,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             var len = numbers.length;
             for (let i=0; i<5; ++i) {
                 if (len > i) {
-                    self.scoreDigit[i].texture = osuTextures["score" + numbers[i]];
+                    self.scoreDigit[i].texture = Skin["score-" + numbers[i] + '.png'];
                 }
             }
         }
@@ -212,7 +217,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             }
 
             if (!hit.objectWin){
-                hit.objectWin = new PIXI.Sprite(osuTextures.hit0);
+                hit.objectWin = new PIXI.Sprite(Skin["hit0.png"]);
                 hit.objectWin.scale.x = hit.objectWin.scale.y = this.hitSpriteScale;
                 hit.objectWin.anchor.x = hit.objectWin.anchor.y = 0.5;
                 hit.objectWin.x = gfx.xoffset + hit.x * gfx.width;
@@ -385,7 +390,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             base.alpha = 0;
 
             if (!hit.objectWin){
-                hit.objectWin = new PIXI.Sprite(osuTextures.hit0);
+                hit.objectWin = new PIXI.Sprite(Skin["hit0.png"]);
                 hit.objectWin.scale.x = hit.objectWin.scale.y = this.hitSpriteScale;
                 hit.objectWin.anchor.x = hit.objectWin.anchor.y = 0.5;
                 hit.objectWin.x = gfx.xoffset + hit.x * gfx.width;
@@ -473,7 +478,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             self.game.score.goodClicks += 1;
             self.updateScoreOverlay();
             if (hit.objectWin)
-                hit.objectWin.texture = osuTextures["hit" + points];
+                hit.objectWin.texture = Skin["hit" + points + ".png"];
         };
 
         // hit object updating
@@ -483,7 +488,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         }
         this.updateUpcoming = function(timestamp) {
             // Cache the next ten seconds worth of hit objects
-            while (current < self.hits.length && futuremost < timestamp + (10 * TIME_CONSTANT)) {
+            while (current < self.hits.length && futuremost < timestamp + 10000) {
                 var hit = self.hits[current++];
                 let findindex = function(i) { // returning smallest j satisfying (self.game.stage.children[j].depth || 0)>=i
                     let l = 0, r = self.game.stage.children.length;
@@ -801,8 +806,8 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             var fade = self.game.backgroundDimRate;
             if (self.track.general.PreviewTime !== 0 && time < self.track.general.PreviewTime) {
                 var diff = self.track.general.PreviewTime - time;
-                if (diff < 3 * TIME_CONSTANT) {
-                    fade = 1 - diff / (3 * TIME_CONSTANT);
+                if (diff < self.backgroundFadeTime) {
+                    fade = 1 - diff / (self.backgroundFadeTime);
                     fade *= self.game.backgroundDimRate;
                 } else {
                     fade = 0;
@@ -812,7 +817,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         }
 
         this.render = function(timestamp) {
-            var time = osu.audio.getPosition() * TIME_CONSTANT + self.offset;
+            var time = osu.audio.getPosition() * 1000 + self.offset;
             this.updateBackground(time);
             if (time !== 0) {
                 self.updateHitObjects(time);
