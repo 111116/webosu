@@ -6,8 +6,10 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
         resolution: window.devicePixelRatio || 1,
         autoResize: true,
     });
-	document.body.removeChild(document.getElementById("title"));
-    document.body.appendChild(app.view);
+
+    // load script done
+    document.getElementById("script-progress").innerText += " Done";
+    // document.body.appendChild(app.view);
     
     app.renderer.autoResize = true;
     app.renderer.backgroundColor = 0xFFFFFF;
@@ -90,6 +92,7 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
 
     // load game cursor
     Skin.oncomplete = function() {
+        document.getElementById("skin-progress").innerText += " Done";
         game.cursor = new PIXI.Sprite(Skin["cursor.png"]);
         game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
         game.stage.addChild(game.cursor);
@@ -97,6 +100,41 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
         game.scene = new NeedFiles(game);
     };
     Skin.loadDefault();
+
+    // load sounds
+    // load hitsound set
+    var sample = [
+        'hitsounds/normal-hitnormal.mp3',
+        'hitsounds/normal-hitwhistle.mp3',
+        'hitsounds/normal-hitfinish.mp3',
+        'hitsounds/normal-hitclap.mp3',
+        'hitsounds/soft-hitnormal.mp3',
+        'hitsounds/soft-hitwhistle.mp3',
+        'hitsounds/soft-hitfinish.mp3',
+        'hitsounds/soft-hitclap.mp3',
+        'hitsounds/drum-hitnormal.mp3',
+        'hitsounds/drum-hitwhistle.mp3',
+        'hitsounds/drum-hitfinish.mp3',
+        'hitsounds/drum-hitclap.mp3'
+    ];
+    console.log("Loading hit sounds:");
+    console.log(sample);
+    sounds.whenLoaded = function(){
+        game.sample[1].hitnormal = sounds['hitsounds/normal-hitnormal.mp3'];
+        game.sample[1].hitwhistle = sounds['hitsounds/normal-hitwhistle.mp3'];
+        game.sample[1].hitfinish = sounds['hitsounds/normal-hitfinish.mp3'];
+        game.sample[1].hitclap = sounds['hitsounds/normal-hitclap.mp3'];
+        game.sample[2].hitnormal = sounds['hitsounds/soft-hitnormal.mp3'];
+        game.sample[2].hitwhistle = sounds['hitsounds/soft-hitwhistle.mp3'];
+        game.sample[2].hitfinish = sounds['hitsounds/soft-hitfinish.mp3'];
+        game.sample[2].hitclap = sounds['hitsounds/soft-hitclap.mp3'];
+        game.sample[3].hitnormal = sounds['hitsounds/drum-hitnormal.mp3'];
+        game.sample[3].hitwhistle = sounds['hitsounds/drum-hitwhistle.mp3'];
+        game.sample[3].hitfinish = sounds['hitsounds/drum-hitfinish.mp3'];
+        game.sample[3].hitclap = sounds['hitsounds/drum-hitclap.mp3'];
+        document.getElementById("sound-progress").innerText += " Done";
+    };
+    sounds.load(sample);
 
     function gameLoop(timestamp) {
         var timediff = timestamp - game.lastFrameTime;
