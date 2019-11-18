@@ -53,6 +53,8 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
 
         allowMouseButton: true,
         allowMouseScroll: true,
+        backgroundDimRate: 0.7,
+        backgroundBlurRate: 0.0, // not yet implemented
 
         // cursor info
         mouseX: 0, // in absolute pixel

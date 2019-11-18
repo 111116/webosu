@@ -96,37 +96,42 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             // TODO: Visualization
         });
 
-        // Load background if possible
-        self.backgroundDim = new PIXI.Graphics();
-        self.backgroundDim.alpha = 0;
-        self.backgroundDim.beginFill(0);
-        self.backgroundDim.drawRect(0, 0, self.game.window.innerWidth, self.game.window.innerHeight);
-        self.backgroundDim.endFill();
-        self.game.stage.addChild(self.backgroundDim);
-        if (self.track.events.length != 0) {
-            self.ready = false;
-            var file = self.track.events[0][2];
-            if (track.events[0][0] === "Video") {
-                file = self.track.events[1][2];
-            }
-            file = file.substr(1, file.length - 2);
-            entry = osu.zip.getChildByName(file);
-            if (entry) {
-                entry.getBlob("image/jpeg", function (blob) {
-                    var uri = URL.createObjectURL(blob);
-                    var image = PIXI.Texture.fromImage(uri);
-                    self.background = new PIXI.Sprite(image);
-                    self.background.x = self.background.y = 0;
-                    self.background.width = self.game.window.innerWidth;
-                    self.background.height = self.game.window.innerHeight;
-                    self.game.stage.addChildAt(self.background, 0);
+        this.createBackground = function(){
+            // Load background if possible
+            self.backgroundDim = new PIXI.Graphics();
+            self.backgroundDim.alpha = 0;
+            self.backgroundDim.beginFill(0);
+            self.backgroundDim.drawRect(0, 0, self.game.window.innerWidth, self.game.window.innerHeight);
+            self.backgroundDim.endFill();
+            self.game.stage.addChild(self.backgroundDim);
+            if (self.track.events.length != 0) {
+                self.ready = false;
+                var file = self.track.events[0][2];
+                if (track.events[0][0] === "Video") {
+                    file = self.track.events[1][2];
+                }
+                file = file.substr(1, file.length - 2);
+                entry = osu.zip.getChildByName(file);
+                if (entry) {
+                    entry.getBlob("image/jpeg", function (blob) {
+                        var uri = URL.createObjectURL(blob);
+                        var image = PIXI.Texture.fromImage(uri);
+                        self.background = new PIXI.Sprite(image);
+                        self.background.x = self.background.y = 0;
+                        self.background.width = self.game.window.innerWidth;
+                        self.background.height = self.game.window.innerHeight;
+                        // var blurFilter = new PIXI.filters.KawaseBlurFilter(4,3,true);
+                        // self.background.filters = [blurFilter];
+                        self.game.stage.addChildAt(self.background, 0); // put background under dim layer
+                        self.ready = true;
+                        self.start();
+                    });
+                } else  {
                     self.ready = true;
-                    self.start();
-                });
-            } else  {
-                self.ready = true;
+                }
             }
-        }
+        };
+        self.createBackground();
 
         // load combo colors
         var combos = [];
@@ -677,7 +682,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 if (!hit.followLasttime) hit.followLasttime = time;
                 if (!hit.followLinearSize) hit.followLinearSize = 1;
                 let dt = time - hit.followLasttime;
-                console.log("dt=", dt);
                 hit.followLinearSize = Math.max(1, Math.min(2, hit.followLinearSize + dt * dir));
                 hit.followSize = hit.followLinearSize; // easing can happen here
                 hit.followLasttime = time;
@@ -733,7 +737,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                     hit.ball.alpha = 1;
                     // follow circie immediately emerges and gradually enlarges
                     hit.follow.visible = true;
-                    console.log("down", this.game.down, hit.followSize);
                     if (this.game.down && isfollowing)
                         resizeFollow(hit, time, 1 / this.followZoomInTime); // expand 
                     else
@@ -827,15 +830,12 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         }
 
         this.updateBackground = function(time) {
-            var fade = 0.7;
+            var fade = self.game.backgroundDimRate;
             if (self.track.general.PreviewTime !== 0 && time < self.track.general.PreviewTime) {
                 var diff = self.track.general.PreviewTime - time;
                 if (diff < 3 * TIME_CONSTANT) {
-                    fade = diff / (3 * TIME_CONSTANT);
-                    fade -= 0.5;
-                    fade = -fade;
-                    fade += 0.5;
-                    fade *= 0.7;
+                    fade = 1 - diff / (3 * TIME_CONSTANT);
+                    fade *= self.game.backgroundDimRate;
                 } else {
                     fade = 0;
                 }
