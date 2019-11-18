@@ -144,63 +144,29 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                         ((+color[2]) << 0));
         }
 
-        // 5-digit score overlay
-        var num1 = new PIXI.Sprite(osuTextures['score0']);
-        num1.anchor.x = num1.anchor.y = 0.5;
-        num1.x = game.window.innerWidth - (1 * scoreCharWidth);
-        num1.y = scoreCharHeight;
-        self.game.stage.addChild(num1);
-
-        var num2 = new PIXI.Sprite(osuTextures['score0']);
-        num2.anchor.x = num2.anchor.y = 0.5;
-        num2.x = game.window.innerWidth - (2 * scoreCharWidth);
-        num2.y = scoreCharHeight;
-        self.game.stage.addChild(num2);
-
-        var num3 = new PIXI.Sprite(osuTextures['score0']);
-        num3.anchor.x = num3.anchor.y = 0.5;
-        num3.x = game.window.innerWidth - (3 * scoreCharWidth);
-        num3.y = scoreCharHeight;
-        self.game.stage.addChild(num3);
-
-        var num4 = new PIXI.Sprite(osuTextures['score0']);
-        num4.anchor.x = num4.anchor.y = 0.5;
-        num4.x = game.window.innerWidth - (4 * scoreCharWidth);
-        num4.y = scoreCharHeight;
-        self.game.stage.addChild(num4);
-
-        var num5 = new PIXI.Sprite(osuTextures['score0']);
-        num5.anchor.x = num5.anchor.y = 0.5;
-        num5.x = game.window.innerWidth - (5 * scoreCharWidth);
-        num5.y = scoreCharHeight;
-        self.game.stage.addChild(num5);
-
-        self.scoreView = {
-          score1: num1,
-          score10: num2,
-          score100: num3,
-          score1000: num4,
-          score10000: num5
+        this.createScoreOverlay = function(){
+            // 5-digit score
+            self.scoreDigit = [];
+            for (let i=1; i<=5; ++i)
+            {
+                var digit = new PIXI.Sprite(osuTextures['score0']);
+                digit.anchor.x = digit.anchor.y = 0.5;
+                digit.x = game.window.innerWidth - (i * scoreCharWidth);
+                digit.y = scoreCharHeight;
+                self.game.stage.addChild(digit);
+                self.scoreDigit[i-1] = digit;
+            }
         };
+        self.createScoreOverlay();
 
-        this.updateScoreView = function(){
-          var numbers = self.game.score.points.toString().split('').reverse();
-          var len = numbers.length;
-          if (len > 0){
-            self.scoreView.score1.texture = osuTextures["score" + numbers[0]];
-          }
-          if (len > 1){
-            self.scoreView.score10.texture = osuTextures["score" + numbers[1]];
-          }
-          if (len > 2){
-            self.scoreView.score100.texture = osuTextures["score" + numbers[2]];
-          }
-          if (len > 3){
-            self.scoreView.score1000.texture = osuTextures["score" + numbers[3]];
-          }
-          if (len > 4){
-            self.scoreView.score10000.texture = osuTextures["score" + numbers[4]];
-          }
+        this.updateScoreOverlay = function(){
+            var numbers = self.game.score.points.toString().split('').reverse();
+            var len = numbers.length;
+            for (let i=0; i<5; ++i) {
+                if (len > i) {
+                    self.scoreDigit[i].texture = osuTextures["score" + numbers[i]];
+                }
+            }
         }
 
         // creating hit objects
@@ -505,7 +471,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             hit.score = points;
             self.game.score.points += points;
             self.game.score.goodClicks += 1;
-            self.updateScoreView();
+            self.updateScoreOverlay();
             if (hit.objectWin)
                 hit.objectWin.texture = osuTextures["hit" + points];
         };
