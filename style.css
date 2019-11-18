@@ -1,0 +1,56 @@
+body{
+	background: #ecf0f1;
+	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 16px;
+}
+
+.main-page {
+	padding:20px;
+	width: 1000px;
+	height: 500px;
+	margin:auto;
+}
+
+.main-content{
+	float: left;
+	background: #fff;
+	border-radius:5px;  
+	box-shadow: 0 2px 3px 0 rgba(0,0,0,.1); 
+	margin:100px auto;
+	padding:20px 20px 20px;
+	width:60%;
+	height:100%;
+}
+
+.panel{
+	float:right;
+	background: #fff;
+	border-radius:5px;  
+	box-shadow: 0 2px 3px 0 rgba(0,0,0,.1); 
+	margin:100px auto;
+	padding:20px 20px 20px;
+	width:30%;
+	height:100%;
+}
+
+.progress {
+	line-height: 1.8em;
+}
+
+.dragbox {
+  margin: 50px auto;
+  border: dotted 5px #aaaaaa;
+  border-radius: 10px;
+  font-size: 18px;
+  height: 200px;
+  width: 300px;
+  color: gray;
+  aligned: center;
+  padding: auto;
+}
+.dragbox-inner {
+  width: 64%;
+  margin-left: 18%;
+  margin-top: 16%;
+  line-height: 1.5em;
+}
