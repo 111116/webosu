@@ -60,6 +60,8 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
         effectVolume: 1.0,
         musicVolume: 1.0,
 
+        cursorSize: 1.0,
+
         // cursor info
         mouseX: 0, // in absolute pixel
         mouseY: 0,
@@ -126,7 +128,7 @@ require(["scenes/need-files", "skin", "sound"], function(NeedFiles, Skin, sound)
             // Handle cursor
             game.cursor.x = game.mouseX;
             game.cursor.y = game.mouseY;
-            game.cursor.scale.x = game.cursor.scale.y = 0.8;
+            game.cursor.scale.x = game.cursor.scale.y = 0.6 * game.cursorSize;
             game.cursor.bringToFront();
         }
 
