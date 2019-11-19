@@ -186,15 +186,51 @@ input[type=checkbox]:checked + span::after{
 }
 .option-control{
   float:right;
+  position: relative;
 }
 .slider {
   width: 180px;
+}
+
+.range-indicator {
+  position: absolute;
+  background: #111;
+  padding-left: 8px;
+  padding-right: 8px;
+  height: 30px; 
+  text-align: center; 
+  color: white; 
+  border-radius: 5px; 
+  display: inline-block; 
+  line-height: 2em;
+  bottom: 150%;
+  left: 0px;
+  opacity: 0.8;
+  margin-left: -1%;
+  transform: translateX(-50%)
+}
+.range-indicator:after { 
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 10px solid #111;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  margin-top: -1px;
 }
 
 hr {
   height: 2px;
   border: none;
   background: #ee6da7;
+}
+
+div[hidden=""] {
+  visibility: hidden;
 }
 
 

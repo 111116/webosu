@@ -23,6 +23,7 @@
                 urlArgs: "bust=" +  (new Date()).getTime()
             });
         </script>
+        <script src="scripts/settings.js"></script>
     </head>
 
     <body>
@@ -72,8 +73,9 @@
                             <div class="option-name">
                                 Background dim
                             </div>
-                            <div class="option-control" id="dimRange">
-                            <input class="slider" type="range" min="0" max="100" value="50">
+                            <div class="option-control">
+                                <input id="dim-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="dim-range-indicator" hidden></div>
                             </div>
                         </td>
                     </tr>
@@ -82,8 +84,9 @@
                             <div class="option-name">
                                 Background blur
                             </div>
-                            <div class="option-control" id="blurRange">
-                            <input class="slider" type="range" min="0" max="100" value="50">
+                            <div class="option-control">
+                                <input id="blur-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="blur-range-indicator" hidden></div>
                             </div>
                         </td>
                     </tr>
@@ -93,7 +96,8 @@
                                 Cursor size
                             </div>
                             <div class="option-control">
-                            <input class="slider" type="range" min="0" max="100" value="50">
+                                <input id="cursorsize-range" class="slider" type="range" min="0.5" max="2.0" step="0.01" value="0.5">
+                                <div class="range-indicator" id="cursorsize-range-indicator" hidden></div>
                             </div>
                         </td>
                     </tr>
@@ -102,7 +106,9 @@
                             <div class="option-name">
                                 Disable mouse wheel in gameplay
                             </div>
-                            <div class="option-control"><input type="checkbox" /><span></span></div>
+                            <div class="option-control">
+                                <input id="disable-wheel-check" type="checkbox" /><span></span>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -110,7 +116,9 @@
                             <div class="option-name">
                                 Disable mouse buttons in gameplay
                             </div>
-                            <div class="option-control"><input type="checkbox" /><span></span></div>
+                            <div class="option-control">
+                                <input id="disable-button-check" type="checkbox" /><span></span>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -126,7 +134,8 @@
                                 Master volume
                             </div>
                             <div class="option-control">
-                            <input class="slider" type="range" min="0" max="100" value="50" oninput="Master(this.value)">
+                                <input id="mastervolume-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="mastervolume-range-indicator" hidden></div>
                             </div>
                         </td>
                     </tr>
@@ -136,7 +145,8 @@
                                 Effect volume
                             </div>
                             <div class="option-control">
-                            <input class="slider" type="range" min="0" max="100" value="100">
+                                <input id="effectvolume-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="effectvolume-range-indicator" hidden></div>
                             </div>
                         </td>
                     </tr>
@@ -146,7 +156,8 @@
                                 Music volume
                             </div>
                             <div class="option-control">
-                            <input class="slider" type="range" min="0" max="100" value="100">
+                                <input id="musicvolume-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="musicvolume-range-indicator" hidden></div>
                             </div>
                         </td>
                     </tr>
@@ -156,7 +167,8 @@
                                 Audio offset
                             </div>
                             <div class="option-control">
-                            <input class="slider" type="range" min="0" max="100" value="50">
+                                <input id="audiooffset-range" class="slider" type="range" min="-80" max="80" value="-80">
+                                <div class="range-indicator" id="audiooffset-range-indicator" hidden></div>
                             </div>
                         </td>
                     </tr>
@@ -165,7 +177,8 @@
                             <div class="option-name">
                                 Enable beatmap hitsounds
                             </div>
-                            <div class="option-control"><input type="checkbox" /><span></span>
+                            <div class="option-control">
+                                <input id="beatmap-hitsound-check" type="checkbox" /><span></span>
                             </div>
                         </td>
                     </tr>
