@@ -19,12 +19,15 @@ canvas {
 .game-area {
 }
 
+
+
 .main-page {
 	padding:20px;
-	width: 1100px;
+	width: 1200px;
 	height: 1000px;
 	margin:auto;
 }
+
 
 .main-content{
 	float: left;
@@ -33,12 +36,15 @@ canvas {
 	box-shadow: 0 2px 3px 0 rgba(0,0,0,.1); 
 	margin:20px auto;
 	padding:20px 20px 20px;
-	width:61%;
+	width:61.5%;
 	height:100%;
 }
 
+.disabled{
+  color: #aaa;
+}
 .panel{
-	float:right;
+	float: right;
 	background: #fff;
 	border-radius:5px;  
 	box-shadow: 0 2px 3px 0 rgba(0,0,0,.1); 
@@ -75,6 +81,93 @@ canvas {
 }
 
 
+
+
+table {
+  width: 100%;
+}
+tr{
+  height: 2.7em;
+}
+td{
+  /*border-bottom:1px solid #f6f6f6;*/
+  padding:5px 10px;
+}
+
+td:nth-child(2){
+  text-align: right;
+  width: 40px;
+}
+
+input[type=checkbox] {
+  cursor: pointer;
+  height: 20px;
+  margin: 2px 2px;
+  position: absolute;
+  opacity: 0;
+  width: 40px;
+  z-index: 2;
+}
+
+input[type=checkbox] + span {
+  background: #BBBBBB;
+  border-radius: 10px;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.1);
+  display: inline-block;
+  height: 20px;
+  margin: 2px 2px;
+  position:relative;
+  width: 40px;
+  transition: all .2s ease;
+}
+
+input[type=checkbox] + span::before, input[type=checkbox] + span::after{
+  background:#fff;
+  content:'';
+  display:block;
+  position:absolute;
+  height:16px;
+  top:2px;
+  border-radius: 50%;
+  transition: all .2s ease;
+}
+
+input[type=checkbox] + span::after{
+  right:22px;
+  width:16px;
+}
+
+input[type=checkbox]:checked + span {
+  background:#22aaff;         
+}
+
+input[type=checkbox]:checked + span::after{
+  right: 2px;
+  width:16px;
+}
+
+input[type=submit] {
+  background-color: #2ecc71;
+  border: 0;
+  border-radius: 4px;
+  color: #FFF;
+  cursor: pointer;
+  display: inline-block;
+  font-size:16px;
+  text-align: center;
+  padding: 12px 20px 14px;
+}
+
+.option-name{
+  float:left;
+}
+.option-control{
+  float:right;
+}
+.slider {
+  width: 180px;
+}
+
 .beatmapbox {
   box-shadow: 0 1px 2px 0 rgba(0,0,0,.3); 
   background: #fff;
@@ -99,3 +192,5 @@ canvas {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+
