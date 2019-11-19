@@ -20,10 +20,8 @@ canvas {
 }
 
 
-
 .main-page {
-	padding:20px;
-	width: 1200px;
+	width: 1240px;
 	height: 1000px;
 	margin:auto;
 }
@@ -36,21 +34,22 @@ canvas {
 	box-shadow: 0 2px 3px 0 rgba(0,0,0,.1); 
 	margin:20px auto;
 	padding:20px 20px 20px;
-	width:61.5%;
+	width:770px;
 	height:100%;
 }
 
 .disabled{
   color: #aaa;
 }
+
 .panel{
-	float: right;
+  float: right;
 	background: #fff;
 	border-radius:5px;  
 	box-shadow: 0 2px 3px 0 rgba(0,0,0,.1); 
 	margin:20px auto;
 	padding:20px 20px 20px;
-	width:30%;
+	width:370px;
 	height:100%;
 }
 
@@ -63,23 +62,58 @@ canvas {
 }
 
 
+.beatmap-list {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: left;
+  margin-right: -17px;
+}
+
+
 .dragbox {
-  margin: 50px auto;
-  border: dotted 5px #aaaaaa;
-  border-radius: 10px;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,.3); 
+  background: #eee;
+  color: #666;
+  border-radius: 6px;
   font-size: 18px;
-  height: 192px;
-  width: 296px;
-  color: gray;
-  padding: auto;
+  height: 200px;
+  width: 245px;
+  margin-bottom: 20px;
+  margin-right: 17px;
 }
 .dragbox-inner {
-  width: 64%;
-  margin-left: 18%;
+  width: 80%;
+  margin-left: 10%;
   margin-top: 16%;
   line-height: 1.5em;
 }
 
+.beatmapbox {
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,.3); 
+  background: #fff;
+  border-radius: 6px;
+  font-size: 18px;
+  height: 200px;
+  width: 245px;
+  margin-bottom: 20px;
+  margin-right: 17px;
+}
+.beatmapcover {
+  object-fit: cover;
+  background: #ccc;
+  width: 245px;
+  height: 130px;
+  border-radius: 5px 5px 0 0;
+  position: absolute;
+}
+.beatmaptitle {
+  padding: 142px 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 
 
@@ -138,7 +172,7 @@ input[type=checkbox] + span::after{
 }
 
 input[type=checkbox]:checked + span {
-  background:#22aaff;         
+  background:#fc7bb4;         
 }
 
 input[type=checkbox]:checked + span::after{
@@ -146,17 +180,6 @@ input[type=checkbox]:checked + span::after{
   width:16px;
 }
 
-input[type=submit] {
-  background-color: #2ecc71;
-  border: 0;
-  border-radius: 4px;
-  color: #FFF;
-  cursor: pointer;
-  display: inline-block;
-  font-size:16px;
-  text-align: center;
-  padding: 12px 20px 14px;
-}
 
 .option-name{
   float:left;
@@ -168,29 +191,10 @@ input[type=submit] {
   width: 180px;
 }
 
-.beatmapbox {
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,.3); 
-  background: #fff;
-  border-radius: 6px;
-  margin:50px auto;
-  font-size: 20px;
-  height: 200px;
-  width: 300px;
-  padding: auto;
-}
-.beatmapcover {
-  object-fit: cover;
-  background: #ccc;
-  width: 300px;
-  height: 140px;
-  border-radius: 5px 5px 0 0;
-  position: absolute;
-}
-.beatmaptitle {
-  padding: 157px 20px 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+hr {
+  height: 2px;
+  border: none;
+  background: #ee6da7;
 }
 
 
