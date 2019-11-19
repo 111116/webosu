@@ -85,15 +85,15 @@ define(["osu", "skin", "scenes/playback", "hash", "underscore"], function(Osu, S
         }
 
         this.render = function(time) {
-            if (!disposed && Hash.beatmap()) {
-                disposed = true;
-                self.teardown();
-                var playback = new Playback(self.game, self.osu, _.find(self.tracks, function(t) {
-                    return t.metadata.BeatmapID === +Hash.beatmap();
-                }));
-                self.game.scene = playback;
-                playback.start();
-            }
+            // if (!disposed && Hash.beatmap()) {
+            //     disposed = true;
+            //     self.teardown();
+            //     var playback = new Playback(self.game, self.osu, _.find(self.tracks, function(t) {
+            //         return t.metadata.BeatmapID === +Hash.beatmap();
+            //     }));
+            //     self.game.scene = playback;
+            //     playback.start();
+            // }
         }
         
         this.teardown = function() {
