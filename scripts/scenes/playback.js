@@ -28,6 +28,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.offset = 0;
         self.currentHitIndex = 0; // index for all hit objects
         self.autoplay = false;
+        self.approachScale = 3.5;
         var scoreCharWidth = 35;
         var scoreCharHeight = 45;
 
@@ -64,7 +65,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         let AR = track.difficulty.ApproachRate;
         self.approachTime = AR<5? 1800-120*AR: 1950-150*AR; // time of sliders/hitcircles and approach circles approaching
         self.objectFadeInTime = Math.min(350, self.approachTime); // time of sliders/hitcircles fading in, at beginning of approaching
-        self.approachFadeInTime = Math.min(700, self.approachTime); // time of approach circles fading in, at beginning of approaching
+        self.approachFadeInTime = self.approachTime; // time of approach circles fading in, at beginning of approaching
         self.sliderFadeOutTime = 300; // time of slidebody fading out
         self.circleFadeOutTime = 150;
         self.scoreFadeOutTime = 600;
@@ -592,11 +593,11 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
             // calculate size of approach circle
             if (diff <= this.approachTime && diff > 0) { // approaching
-                let scale = (diff / this.approachTime * 2 + 1) * 0.45 * this.hitSpriteScale;
+                let scale = (diff / this.approachTime * this.approachScale + 1) * 0.48 * this.hitSpriteScale;
                 hit.approach.scale.x = scale;
                 hit.approach.scale.y = scale;
             } else {
-                hit.approach.scale.x = hit.approach.scale.y = 0.47 * this.hitSpriteScale;
+                hit.approach.scale.x = hit.approach.scale.y = 0.48 * this.hitSpriteScale;
             }
 
             // display hit score
@@ -639,13 +640,22 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 }
             });
 
+            // calculate opacity of approach circle
+            if (diff <= this.approachTime && diff > approachFullAppear) { // approach circle fading in
+                alpha = (this.approachTime - diff) / this.approachFadeInTime;
+            }
+            else if (diff <= approachFullAppear && diff > 0) { // approach circle opaque, just shrinking
+                alpha = 1;
+            }
+            hit.approach.alpha = alpha;
+
             // calculate size of approach circle
             if (diff >= 0 && diff <= this.approachTime) { // approaching
-                let scale = (diff / this.approachTime * 2 + 1) * 0.45 * this.hitSpriteScale;
+                let scale = (diff / this.approachTime * this.approachScale + 1) * 0.48 * this.hitSpriteScale;
                 hit.approach.scale.x = scale;
                 hit.approach.scale.y = scale;
             } else {
-                hit.approach.scale.x = hit.approach.scale.y = 0.47 * this.hitSpriteScale;
+                hit.approach.scale.x = hit.approach.scale.y = 0.48 * this.hitSpriteScale;
             }
             // calculate for hit circle
             if (hit.clickTime) { // clicked

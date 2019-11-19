@@ -7,7 +7,7 @@ function(Osu, DifficultySelect, _, Skin, sound) {
         scene: null,
         updatePlayerActions: null,
 
-        allowMouseButton: true,
+        allowMouseButton: false,
         allowMouseScroll: true,
         backgroundDimRate: 0.7,
         backgroundBlurRate: 0.0, // not yet implemented
