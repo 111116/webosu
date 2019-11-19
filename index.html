@@ -30,17 +30,25 @@
         </script>
     </head>
     <body>
-        <div class="main-page">
+        <div class="game-area" id="game-area" hidden>
+        </div>
+        <div class="main-page" id="main-page">
             <div class="main-content">
                 <div class="progress" id="script-progress">Loading scripts ...</div>
                 <div class="progress" id="skin-progress">Loading skin ... </div>
                 <div class="progress" id="sound-progress">Loading hitsounds ...</div>
                 <div class="dragbox" id="beatmap-dragbox">
-                    <div class="dragbox-inner">
-                        <h3> Custom beatmap </h3>
-                        Drag and drop a beatmap (.osz) file here
+                    <div class="dragbox-inner" id="beatmap-dragbox-inner" hidden>
+                        <div class="dragbox-title" id="beatmap-dragbox-title">
+                            <h3> Custom beatmap </h3>
+                        </div>
+                        <div class="dragbox-hint" id="beatmap-dragbox-hint">
+                            Drag and drop a beatmap (.osz) file here
+                        </div>
                     </div>
                 </div>
+                <div class="text">Please use latest versions of Firefox or Chrome.</div>
+                <div class="text">Alpha version. <a href="https://github.com/111116/osuweb">Github</a></div>
             </div>
         <div class="panel">
             <h2>Settings</h2>

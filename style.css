@@ -4,6 +4,10 @@ body{
 	font-size: 16px;
 }
 
+.game-area {
+  position: absolute;
+}
+
 .main-page {
 	padding:20px;
 	width: 1000px;
@@ -37,15 +41,19 @@ body{
 	line-height: 1.8em;
 }
 
+.text {
+	line-height: 1.8em;
+}
+
+
 .dragbox {
   margin: 50px auto;
   border: dotted 5px #aaaaaa;
   border-radius: 10px;
   font-size: 18px;
-  height: 200px;
-  width: 300px;
+  height: 192px;
+  width: 296px;
   color: gray;
-  aligned: center;
   padding: auto;
 }
 .dragbox-inner {
@@ -53,4 +61,27 @@ body{
   margin-left: 18%;
   margin-top: 16%;
   line-height: 1.5em;
+}
+
+
+.beatmapbox {
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,.3); 
+  background: #fff;
+  border-radius: 6px;
+  margin:50px auto;
+  font-size: 20px;
+  height: 200px;
+  width: 300px;
+  padding: auto;
+}
+.beatmapcover {
+  object-fit: cover;
+  background: #ccc;
+  width: 300px;
+  height: 140px;
+  border-radius: 5px 5px 0 0;
+  position: fixed;
+}
+.beatmaptitle {
+  padding: 157px 20px 10px;
 }
