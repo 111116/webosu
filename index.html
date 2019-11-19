@@ -4,11 +4,6 @@
         <meta charset="utf-8" />
         <title>Osu! Web</title>
         <link rel="stylesheet" type="text/css" href="style.css">
-        <style>
-        html, body { width: 100%; height: 100%; padding: 0; margin: 0; overflow: hidden; }
-        canvas { cursor: none !important; }
-        </style>
-
         <script src="scripts/lib/zip.js"></script>
         <script src="scripts/lib/zip-fs.js"></script>
         <script src="scripts/lib/pixi.min.js"></script>
@@ -29,9 +24,11 @@
             });
         </script>
     </head>
+
     <body>
         <div class="game-area" id="game-area" hidden>
         </div>
+
         <div class="main-page" id="main-page">
             <div class="main-content">
                 <div class="progress" id="script-progress">Loading scripts ...</div>
@@ -50,9 +47,112 @@
                 <div class="text">Please use latest versions of Firefox or Chrome.</div>
                 <div class="text">Alpha version. <a href="https://github.com/111116/osuweb">Github</a></div>
             </div>
-        <div class="panel">
-            <h2>Settings</h2>
+
+            <div class="panel">
+                <h2>Settings</h2>
+                <table class="holder" id="settings-panel">
+                    <tr>
+                        <td>
+                            <h3>
+                                GAMEPLAY
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Background dim
+                            </div>
+                            <div class="option-control" id="dimRange">
+                            <input class="slider" type="range" min="0" max="100" value="50">
+                            </div>
+                        </td>
+                    <tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Background blur
+                            </div>
+                            <div class="option-control" id="blurRange">
+                            <input class="slider" type="range" min="0" max="100" value="50">
+                            </div>
+                        </td>
+                    <tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Cursor size
+                            </div>
+                            <div class="option-control">
+                            <input class="slider" type="range" min="0" max="100" value="50">
+                            </div>
+                        </td>
+                    <tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Disable mouse wheel during gameplay
+                            </div>
+                            <div class="option-control"><input type="checkbox" /><span></span></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Disable mouse buttons during gameplay
+                            </div>
+                            <div class="option-control"><input type="checkbox" /><span></span></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>
+                                AUDIO
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Master volume
+                            </div>
+                            <div class="option-control">
+                            <input class="slider" type="range" min="0" max="100" value="50" oninput="Master(this.value)">
+                            </div>
+                        </td>
+                    <tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Effect volume
+                            </div>
+                            <div class="option-control">
+                            <input class="slider" type="range" min="0" max="100" value="100">
+                            </div>
+                        </td>
+                    <tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Music volume
+                            </div>
+                            <div class="option-control">
+                            <input class="slider" type="range" min="0" max="100" value="100">
+                            </div>
+                        </td>
+                    <tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Audio offset
+                            </div>
+                            <div class="option-control">
+                            <input class="slider" type="range" min="0" max="100" value="50">
+                            </div>
+                        </td>
+                    <tr>
+                </table>
+            </div>
         </div>
-        <div>
     </body>
 </html>
