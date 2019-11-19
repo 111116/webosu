@@ -324,7 +324,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             ball.anchor.x = ball.anchor.y = 0.5;
             ball.tint = 0xFFFFFF;
             ball.manualAlpha = true;
-            ball.depth = 4.9999-0.0001*hit.hitIndex;
+            ball.depth = 5;
             hit.objects.push(ball);
 
             // create hitcircle at head
