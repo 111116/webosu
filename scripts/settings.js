@@ -34,7 +34,7 @@ function setOptionPanel() {
 		effectvolume: 100,
 		musicvolume: 100,
 		audiooffset: 0,
-		beatmapHitsound: false,
+		beatmapHitsound: true,
 	};
 
 	// gameplay settings
@@ -44,8 +44,8 @@ function setOptionPanel() {
 	dimRange.onmousedown = showIndicator(dimRangeIndicator);
 	dimRange.onmouseup = hideIndicator(dimRangeIndicator);
 	dimRange.oninput = updateIndicator(dimRange, dimRangeIndicator, function(v){return v+"%"});
-	dimRange.oninput();
 	dimRange.value = gamesettings.dim;
+	dimRange.oninput();
 	dimRange.onchange = function() {
 
 	}
@@ -55,8 +55,8 @@ function setOptionPanel() {
 	blurRange.onmousedown = showIndicator(blurRangeIndicator);
 	blurRange.onmouseup = hideIndicator(blurRangeIndicator);
 	blurRange.oninput = updateIndicator(blurRange, blurRangeIndicator, function(v){return v+"%"});
-	blurRange.oninput();
 	blurRange.value = gamesettings.blur;
+	blurRange.oninput();
 	blurRange.onchange = function() {
 
 	}
@@ -66,8 +66,8 @@ function setOptionPanel() {
 	cursorsizeRange.onmousedown = showIndicator(cursorsizeRangeIndicator);
 	cursorsizeRange.onmouseup = hideIndicator(cursorsizeRangeIndicator);
 	cursorsizeRange.oninput = updateIndicator(cursorsizeRange, cursorsizeRangeIndicator, function(v){return v.toFixed(2)+"x"});
-	cursorsizeRange.oninput();
 	cursorsizeRange.value = gamesettings.cursorsize;
+	cursorsizeRange.oninput();
 	cursorsizeRange.onchange = function() {
 
 	}
@@ -91,8 +91,8 @@ function setOptionPanel() {
 	mastervolumeRange.onmousedown = showIndicator(mastervolumeRangeIndicator);
 	mastervolumeRange.onmouseup = hideIndicator(mastervolumeRangeIndicator);
 	mastervolumeRange.oninput = updateIndicator(mastervolumeRange, mastervolumeRangeIndicator, function(v){return v+"%"});
-	mastervolumeRange.oninput();
 	mastervolumeRange.value = gamesettings.mastervolume;
+	mastervolumeRange.oninput();
 	mastervolumeRange.onchange = function() {
 
 	}
@@ -102,8 +102,8 @@ function setOptionPanel() {
 	effectvolumeRange.onmousedown = showIndicator(effectvolumeRangeIndicator);
 	effectvolumeRange.onmouseup = hideIndicator(effectvolumeRangeIndicator);
 	effectvolumeRange.oninput = updateIndicator(effectvolumeRange, effectvolumeRangeIndicator, function(v){return v+"%"});
-	effectvolumeRange.oninput();
 	effectvolumeRange.value = gamesettings.effectvolume;
+	effectvolumeRange.oninput();
 	effectvolumeRange.onchange = function() {
 
 	}
@@ -113,8 +113,8 @@ function setOptionPanel() {
 	musicvolumeRange.onmousedown = showIndicator(musicvolumeRangeIndicator);
 	musicvolumeRange.onmouseup = hideIndicator(musicvolumeRangeIndicator);
 	musicvolumeRange.oninput = updateIndicator(musicvolumeRange, musicvolumeRangeIndicator, function(v){return v+"%"});
-	musicvolumeRange.oninput();
 	musicvolumeRange.value = gamesettings.musicvolume;
+	musicvolumeRange.oninput();
 	musicvolumeRange.onchange = function() {
 
 	}
@@ -124,8 +124,8 @@ function setOptionPanel() {
 	audiooffsetRange.onmousedown = showIndicator(audiooffsetRangeIndicator);
 	audiooffsetRange.onmouseup = hideIndicator(audiooffsetRangeIndicator);
 	audiooffsetRange.oninput = updateIndicator(audiooffsetRange, audiooffsetRangeIndicator, function(v){return v+"ms"});
-	audiooffsetRange.oninput();
 	audiooffsetRange.value = gamesettings.audiooffset;
+	audiooffsetRange.oninput();
 	audiooffsetRange.onchange = function() {
 
 	}
