@@ -50,6 +50,11 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             self.hitSpriteScale = self.circleRadiusPixel / 60;
         };
         calcSize();
+        self.game.window.onresize = function() {
+            self.pause();
+            calcSize();
+            // regenerate objects
+        }
 
         // deal with difficulties
         let OD = track.difficulty.OverallDifficulty;
@@ -75,6 +80,17 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
         setPlayerActions(self);
 
+
+        self.paused = false;
+        this.pause = function() {
+            // this.osu.audio.pause();
+            // this.game.paused = true;
+        };
+        this.resume = function() {
+            // this.osu.audio.resume();
+            // this.game.paused = false;
+        };
+
         // adjust volume
         if (game.allowMouseScroll) {
             self.game.window.addEventListener('wheel', function(e) {
@@ -94,10 +110,11 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         // pause
         window.addEventListener("keyup", function(e) {
             if (e.keyCode === 32) {
-                if (self.osu.audio.playing) {
-                    self.osu.audio.pause();
-                } else {
-                    self.osu.audio.play();
+                if (!self.game.paused) {
+                    self.pause();
+                }
+                else {
+                    self.resume();
                 }
             }
             // TODO: Visualization

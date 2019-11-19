@@ -11,20 +11,20 @@ function(Osu, DifficultySelect, _, Skin, sound) {
         allowMouseScroll: true,
         backgroundDimRate: 0.7,
         backgroundBlurRate: 0.0, // not yet implemented
+        cursorSize: 1.0,
 
         masterVolume: 0.7,
         effectVolume: 1.0,
         musicVolume: 1.0,
 
-        cursorSize: 1.0,
+        K1keycode: 90,
+        K2keycode: 88,
 
         // cursor info
         mouseX: 0, // in absolute pixel
         mouseY: 0,
         K1down: false,
         K2down: false,
-        K1keycode: 90,
-        K2keycode: 88,
         M1down: false,
         M2down: false,
         down: false,
@@ -193,7 +193,10 @@ function(Osu, DifficultySelect, _, Skin, sound) {
                 pBeatmapCover.src = "skin/defaultbg.jpg";
             }
             // click Beatmap box to start playing
-            pBeatmapBox.onclick = startgame;
+            pBeatmapBox.onclick = function(e) {
+                e.stopPropagation();
+                startgame();
+            }
         };
         osu.onerror = function(error) {
             self.stage = error;

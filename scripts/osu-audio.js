@@ -69,7 +69,7 @@ define([], function() {
             }
             self.playing = true;
         };
-    
+
         this.pause = function pause() {
             self.position = self.audio.currentTime - self.started;
             self.source.stop();
