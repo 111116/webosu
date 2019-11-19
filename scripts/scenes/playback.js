@@ -28,7 +28,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
         self.offset = 0;
         self.currentHitIndex = 0; // index for all hit objects
         self.autoplay = false;
-        self.approachScale = 3.5;
+        self.approachScale = 3;
         var scoreCharWidth = 35;
         var scoreCharHeight = 45;
 

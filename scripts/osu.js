@@ -187,6 +187,8 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
             if (this.general.PreviewTime > this.hitObjects[0].time) {
                 this.general.PreviewTime = 0;
             } // WTF is this
+
+            // complete with default values
             if (this.colors.length === 0) {
                 this.colors = [
                     [96,159,159],
@@ -202,7 +204,8 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
             } else {
                 console.log("Error: OverallDifficulty undefined");
             }
-            // Why do inherited timing points even exist, this is stupid
+
+            // calculate inherited timing points
             var last = this.timingPoints[0];
             for (var i = 1; i < this.timingPoints.length; i++) {
                 var point = this.timingPoints[i];
@@ -213,6 +216,11 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                     last = point;
                 }
             }
+
+            // stack hitobjects
+            stackHitObjects(this);
+
+            // callback
             if (this.ondecoded !== null) {
                 this.ondecoded(this);
             }
@@ -274,5 +282,10 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
             });
         }
     };
+
     return Osu;
+
+    function stackHitObjects(track) {
+
+    }
 });
