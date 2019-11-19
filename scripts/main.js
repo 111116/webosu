@@ -167,8 +167,8 @@ function(Osu, DifficultySelect, _, Skin, sound) {
             pBeatmapTitle.className = "beatmaptitle";
             pBeatmapBox.appendChild(pBeatmapCover);
             pBeatmapBox.appendChild(pBeatmapTitle);
-            // set beatmap title display
-            var title = osu.tracks[0].metadata.TitleUnicode || osu.tracks[0].metadata.Title;
+            // set beatmap title display (prefer ascii title)
+            var title = osu.tracks[0].metadata.Title || osu.tracks[0].metadata.TitleUnicode;
             pBeatmapTitle.innerText = title;
             // set beatmap cover display
             pBeatmapCover.alt = "beatmap cover";
