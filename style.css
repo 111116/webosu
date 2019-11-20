@@ -256,3 +256,53 @@ div[hidden=""] {
 }
 
 
+.difficulty-box{
+  width: 180px;
+  height: auto;
+  position: absolute;
+  top: 250px;
+  left: 400px;
+  background: #fff;
+  transition: all 0.2s ease 0s;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 5px 3px;
+  border-radius: 3px;
+  z-index: 2;
+}
+.difficulty-item {
+  padding: 12px;
+  height: 18px;
+}
+.difficulty-ring {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  border: solid #aaa 3px;
+  float: left;
+  margin-top: 2px;
+  margin-left: 0px;
+  margin-right: 8px;
+}
+
+.difficulty-ring.easy {
+  border-color: #88b300;
+}
+.difficulty-ring.normal {
+  border-color: #6cf;
+}
+.difficulty-ring.hard {
+  border-color: #fc2;
+}
+.difficulty-ring.insane {
+  border-color: #f6a;
+}
+.difficulty-ring.expert {
+  border-color: #86e;
+}
+.difficulty-ring.expert-plus {
+  border-color: #000;
+}
+
+.difficulty-item:hover {
+  background: #eee; 
+}

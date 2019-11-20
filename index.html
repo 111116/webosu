@@ -29,7 +29,6 @@
     <body>
         <div class="game-area" id="game-area" hidden>
         </div>
-
         <div class="main-page" id="main-page">
             <div class="main-content">
                 <div class="progress-list">
@@ -38,7 +37,7 @@
                     <div class="progress" id="sound-progress">Loading hitsounds ...</div>
                 </div>
                 <hr/>
-                <div class="beatmap-list">
+                <div class="beatmap-list" id="beatmap-list">
                     <div class="beatmapbox"><img class="beatmapcover" alt="beatmap cover" src="skin/defaultbg.jpg"><div class="beatmaptitle">Placeholder</div></div>
                     <div class="beatmapbox"><img class="beatmapcover" alt="beatmap cover" src="skin/defaultbg.jpg"><div class="beatmaptitle">Placeholder</div></div>
                     <div class="beatmapbox"><img class="beatmapcover" alt="beatmap cover" src="skin/defaultbg.jpg"><div class="beatmaptitle">Placeholder</div></div>
@@ -49,7 +48,7 @@
                                 <h3> Custom beatmap </h3>
                             </div>
                             <div class="dragbox-hint" id="beatmap-dragbox-hint">
-                                Drag and drop a beatmap (.osz) file here
+                                +
                             </div>
                         </div>
                     </div>
@@ -205,6 +204,29 @@
                         </td>
                     </tr>
                 </table>
+            </div>
+
+            <div class="difficulty-box">
+                <div class="difficulty-item">
+                    <div class="difficulty-ring"></div>
+                    Unknown
+                </div>
+                <div class="difficulty-item">
+                    <div class="difficulty-ring normal"></div>
+                    Normal
+                </div>
+                <div class="difficulty-item">
+                    <div class="difficulty-ring hard"></div>
+                    Hard
+                </div>
+                <div class="difficulty-item">
+                    <div class="difficulty-ring insane"></div>
+                    Insane
+                </div>
+                <div class="difficulty-item">
+                    <div class="difficulty-ring expert"></div>
+                    Lunatic
+                </div>
             </div>
         </div>
     </body>

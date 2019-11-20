@@ -1,6 +1,7 @@
 require(["osu", "scenes/difficulty-select", "underscore", "skin", "sound"], 
 function(Osu, DifficultySelect, _, Skin, sound) {
 
+    // initialize global game
     var game = {
         window: window,
         stage: null,
@@ -45,7 +46,12 @@ function(Osu, DifficultySelect, _, Skin, sound) {
     window.skinReady = false;
     window.soundReady = false;
     window.scriptReady = false;
-    window.osuReady = false;
+    window.addEventListener("mousemove", function(e) {
+        game.mouseX = e.clientX;
+        game.mouseY = e.clientY;
+    });
+    game.stage = new PIXI.Container();
+    game.cursor = null;
 
 
     // load skin & game cursor
@@ -100,31 +106,21 @@ function(Osu, DifficultySelect, _, Skin, sound) {
         resolution: window.devicePixelRatio || 1,
         autoResize: true,
     });
-    
     app.renderer.autoResize = true;
     app.renderer.backgroundColor = 0xFFFFFF;
 
+    // load audio context
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-    window.addEventListener("mousemove", function(e) {
-        game.mouseX = e.clientX;
-        game.mouseY = e.clientY;
-    });
-    
-    game.stage = new PIXI.Container();
-    game.cursor = null;
 
-    var pDragbox = document.getElementById("beatmap-dragbox");
-    var pDragboxInner = document.getElementById("beatmap-dragbox-inner");
-    var pDragboxHint = document.getElementById("beatmap-dragbox-hint");
-    var pBeatmapBox = null;
-    var pGameArea = document.getElementById("game-area");
-    var pMainPage = document.getElementById("main-page");
-
-    function startgame() {
+    // objects that contain osu object of a beatmap
+    function BeatmapController(){
+        this.osuReady = false;
+    }
+    BeatmapController.prototype.startgame = function() {
         // get ready for gaming
         // Hash.set(osu.tracks[0].metadata.BeatmapSetID);
-        if (!scriptReady || !skinReady || !soundReady || !osuReady)
+        if (!scriptReady || !skinReady || !soundReady || !this.osuReady)
             return;
         document.addEventListener("contextmenu", function(e) {
             e.preventDefault();
@@ -135,93 +131,86 @@ function(Osu, DifficultySelect, _, Skin, sound) {
         game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
         game.cursor.scale.x = game.cursor.scale.y = 0.6 * game.cursorSize;
         game.stage.addChild(game.cursor);
-        
+
         pGameArea.appendChild(app.view);
         pMainPage.setAttribute("hidden","");
         pGameArea.removeAttribute("hidden");
-        var difficultySelect = new DifficultySelect(self.game, osu);
+        var difficultySelect = new DifficultySelect(window.game, this.osu);
         game.scene = difficultySelect;
     }
 
+
+    // web page elements
+    var pDragbox = document.getElementById("beatmap-dragbox");
+    var pDragboxInner = document.getElementById("beatmap-dragbox-inner");
+    var pDragboxHint = document.getElementById("beatmap-dragbox-hint");
+    var pBeatmapList = document.getElementById("beatmap-list");
+    pDragboxHint.defaultHint = "Drag and drop a beatmap (.osz) file here";
+    pDragboxHint.modeErrHint = "Only supports osu! (std) mode beatmaps. Drop another file.";
+    pDragboxHint.nonValidHint = "Not a valid osz file. Drop another file.";
+    pDragboxHint.nonOszHint = "Not an osz file. Drop another file.";
+    pDragboxHint.loadingHint = "loading...";
+    var pGameArea = document.getElementById("game-area");
+    var pMainPage = document.getElementById("main-page");
+    // controller
+
     function oszLoaded() {
         // Verify that this has all the pieces we need
-        var osu = window.osu = new Osu(window.osz.root);
+        var map = new BeatmapController();
+        map.osu = new Osu(window.osz.root);
 
-        osu.onready = function() {
-            window.osuReady = true;
-            if (!_.some(osu.tracks, function(t) { return t.general.Mode === 0; })) {
-                pDragboxHint.innerText = "Only supports osu! (std) mode beatmaps. Drop another file.";
+        map.osu.onready = function() {
+            map.osuReady = true;
+            if (!_.some(map.osu.tracks, function(t) { return t.general.Mode === 0; })) {
+                pDragboxHint.innerText = pDragboxHint.modeErrHint;
                 return;
             }
-            // replace dragbox with beatmap box
-            pDragbox.className = "beatmapbox";
-            pBeatmapBox = pDragbox;
-            // remove dragbox elements
-            pBeatmapBox.ondrop = null;
-            while (pBeatmapBox.firstChild) {
-                pBeatmapBox.removeChild(pBeatmapBox.firstChild);
-            }
-            pDragbox = null;
-            pDragboxInner = null;
-            pDragboxHint = null;
-            // add beatmap box elements
+            // create container of beatmap on web page
+            let pBeatmapBox = document.createElement("div");
             let pBeatmapCover = document.createElement("img");
-            pBeatmapCover.className = "beatmapcover";
             let pBeatmapTitle = document.createElement("div");
+            pBeatmapBox.className = "beatmapbox";
+            pBeatmapCover.className = "beatmapcover";
             pBeatmapTitle.className = "beatmaptitle";
             pBeatmapBox.appendChild(pBeatmapCover);
             pBeatmapBox.appendChild(pBeatmapTitle);
             // set beatmap title display (prefer ascii title)
-            var title = osu.tracks[0].metadata.Title || osu.tracks[0].metadata.TitleUnicode;
+            var title = map.osu.tracks[0].metadata.Title || map.osu.tracks[0].metadata.TitleUnicode;
             pBeatmapTitle.innerText = title;
             // set beatmap cover display
             pBeatmapCover.alt = "beatmap cover";
-            try {
-                var file = self.osu.tracks[0].events[0][2];
-                if (self.osu.tracks[0].events[0][0] === "Video") {
-                    file = self.osu.tracks[0].events[1][2];
-                }
-                file = file.substr(1, file.length - 2);
-                entry = osu.zip.getChildByName(file);
-            }
-            catch (error) {
-                console.error(error);
-                entry = null;
-            }
-            if (entry) {
-                entry.getBlob("image/jpeg", function (blob) {
-                    var url = URL.createObjectURL(blob);
-                    pBeatmapCover.src = url;
-                });
-            } else {
-                pBeatmapCover.src = "skin/defaultbg.jpg";
-            }
+            map.osu.getCoverSrc(pBeatmapCover);
+
+            // insert container before dragbox
+            pBeatmapList.insertBefore(pBeatmapBox, pDragbox);
+            // restore dragbox hint
+            pDragboxHint.innerText = pDragboxHint.defaultHint;
             // click Beatmap box to start playing
             pBeatmapBox.onclick = function(e) {
                 e.stopPropagation();
-                startgame();
+                map.startgame();
             }
         };
-        osu.onerror = function(error) {
-            self.stage = error;
+        map.osu.onerror = function(error) {
+            console.error("osu load error");
         };
-        osu.load();
+        map.osu.load();
     }
 
     var handleDragDrop = function(e) {
         e.stopPropagation();
         e.preventDefault();
-        pDragboxHint.innerText = "loading...";
+        pDragboxHint.innerText = pDragboxHint.loadingHint;
         var raw_file = e.dataTransfer.files[0];
         // check suffix name
         if (raw_file.name.indexOf(".osz") === raw_file.name.length - 4) {
             var fs = window.osz = new zip.fs.FS();
             fs.root.importBlob(raw_file, oszLoaded,
                 function(err) {
-                    pDragboxHint.innerText = "Not a valid osz file. Drop another file.";
+                    pDragboxHint.innerText = pDragboxHint.nonValidHint;
                 });
         } else {
-            pDragboxHint.innerText = "Not an osz file. Drop another file.";
+            pDragboxHint.innerText = pDragboxHint.nonOszHint;
         }
     }
     pDragbox.ondrop = handleDragDrop;
@@ -230,6 +219,7 @@ function(Osu, DifficultySelect, _, Skin, sound) {
     window.addEventListener('drop', function(e){(e||event).preventDefault()}, false);
 
     // load script done
+    pDragboxHint.innerText = pDragboxHint.defaultHint;
     pDragboxInner.removeAttribute("hidden");
     window.scriptReady = true;
     document.getElementById("script-progress").innerText += " Done";

@@ -265,6 +265,31 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
             }
         });
 
+        this.getCoverSrc = function(img) {
+            let fileentry = null;
+            try {
+                var file = this.tracks[0].events[0][2];
+                if (this.tracks[0].events[0][0] === "Video") {
+                    file = this.tracks[0].events[1][2];
+                }
+                file = file.substr(1, file.length - 2);
+                fileentry = this.zip.getChildByName(file);
+            }
+            catch (error) {
+                console.error(error);
+                fileentry = null;
+            }
+            if (fileentry) {
+                console.log(fileentry);
+                console.log(URL.createObjectURL);
+                fileentry.getBlob("image/jpeg", function (blob) {
+                    img.src = URL.createObjectURL(blob);
+                });
+            } else {
+                img.src = "skin/defaultbg.jpg";
+            }
+        };
+
         function load_mp3() {
             var mp3_raw = _.find(self.zip.children, function(c) { return c.name.toLowerCase() === self.tracks[0].general.AudioFilename.toLowerCase(); });
             mp3_raw.getBlob("audio/mpeg", function(blob) {
