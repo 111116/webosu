@@ -185,15 +185,16 @@ function(Osu, DifficultySelect, _, Skin, sound) {
             pBeatmapCover.alt = "beatmap cover";
             map.osu.getCoverSrc(pBeatmapCover);
 
-            // insert container before dragbox
+            // add the container to page & restore drag box
             pBeatmapList.insertBefore(pBeatmapBox, pDragbox);
-            // restore dragbox hint
             pDragboxHint.innerText = pDragboxHint.defaultHint;
-            // click Beatmap box to start playing
+            // click Beatmap box to show difficulty selection menu
             pBeatmapBox.onclick = function(e) {
+                // allow only one selection menu at a time
                 if (!window.showingDifficultyBox) {
                     e.stopPropagation();
                     // create difficulty seleciton menu
+                    // set menu position
                     let difficultyBox = document.createElement("div");
                     difficultyBox.className = "difficulty-box";
                     let rect = e.target.getBoundingClientRect();
@@ -201,12 +202,14 @@ function(Osu, DifficultySelect, _, Skin, sound) {
                     let y = e.clientY - rect.top; 
                     difficultyBox.style.left = x + "px";
                     difficultyBox.style.top = y + "px";
+                    // create difficulty list items
                     for (let i=0; i<map.osu.tracks.length; ++i) {
                         let difficultyItem = document.createElement("div");
                         let difficultyRing = document.createElement("div");
                         let difficultyText = document.createElement("span");
                         difficultyItem.className = "difficulty-item";
                         difficultyRing.className = "difficulty-ring";
+                        // color ring acoording to Star; gray ring if unavailable
                         let star = map.osu.tracks[i].difficulty.star;
                         if (star) {
                             if (star<2) difficultyRing.classList.add("easy"); else
