@@ -26,7 +26,7 @@ function setOptionPanel() {
 
 	window.gamesettings = {
 		dim: 70,
-		blur: 100,
+		blur: 0,
 		cursorsize: 1.0,
 		disableWheel: false,
 		disableButton: false,
@@ -34,8 +34,21 @@ function setOptionPanel() {
 		effectvolume: 100,
 		musicvolume: 100,
 		audiooffset: 0,
-		beatmapHitsound: true,
+		beatmapHitsound: false,
 	};
+
+	window.gamesettings.loadToGame = function() {
+        window.game.backgroundDimRate = this.dim / 100;
+        window.game.backgroundBlurRate = this.blur / 100;
+        window.game.cursorSize = this.cursorsize;
+        window.game.allowMouseScroll = !this.disableWheel;
+        window.game.allowMouseButton = !this.disableButton;
+        window.game.masterVolume = this.mastervolume / 100;
+        window.game.effectVolume = this.effectvolume / 100;
+        window.game.musicVolume = this.musicvolume / 100;
+        // window.game.K1keycode: 90,
+        // window.game.K2keycode: 88,
+	}
 
 	// gameplay settings
 
@@ -47,7 +60,8 @@ function setOptionPanel() {
 	dimRange.value = gamesettings.dim;
 	dimRange.oninput();
 	dimRange.onchange = function() {
-
+		gamesettings.dim = dimRange.value;
+        window.game.backgroundDimRate = gamesettings.dim / 100;
 	}
 
 	let blurRange = document.getElementById("blur-range");
@@ -58,7 +72,8 @@ function setOptionPanel() {
 	blurRange.value = gamesettings.blur;
 	blurRange.oninput();
 	blurRange.onchange = function() {
-
+		gamesettings.blur = blurRange.value;
+        window.game.backgroundBlurRate = gamesettings.blur / 100;
 	}
 
 	let cursorsizeRange = document.getElementById("cursorsize-range");
@@ -69,19 +84,22 @@ function setOptionPanel() {
 	cursorsizeRange.value = gamesettings.cursorsize;
 	cursorsizeRange.oninput();
 	cursorsizeRange.onchange = function() {
-
+		gamesettings.cursorsize = cursorsizeRange.value;
+        window.game.cursorSize = gamesettings.cursorsize;
 	}
 
 	let disableWheelCheck = document.getElementById("disable-wheel-check");
 	disableWheelCheck.checked = gamesettings.disableWheel;
 	disableWheelCheck.onclick = function() {
-
+		gamesettings.disableWheel = disableWheelCheck.checked;
+        window.game.allowMouseScroll = !gamesettings.disableWheel;
 	}
 
 	let disableButtonCheck = document.getElementById("disable-button-check");
 	disableButtonCheck.checked = gamesettings.disableButton;
 	disableButtonCheck.onclick = function() {
-
+		gamesettings.disableButton = disableButtonCheck.checked;
+        window.game.allowMouseButton = !gamesettings.disableButton;
 	}
 
 	// audio settings
@@ -94,7 +112,8 @@ function setOptionPanel() {
 	mastervolumeRange.value = gamesettings.mastervolume;
 	mastervolumeRange.oninput();
 	mastervolumeRange.onchange = function() {
-
+		gamesettings.mastervolume = mastervolumeRange.value;
+        window.game.masterVolume = gamesettings.mastervolume / 100;
 	}
 
 	let effectvolumeRange = document.getElementById("effectvolume-range");
@@ -105,7 +124,8 @@ function setOptionPanel() {
 	effectvolumeRange.value = gamesettings.effectvolume;
 	effectvolumeRange.oninput();
 	effectvolumeRange.onchange = function() {
-
+		gamesettings.effectvolume = effectvolumeRange.value;
+        window.game.effectVolume = gamesettings.effectvolume / 100;
 	}
 
 	let musicvolumeRange = document.getElementById("musicvolume-range");
@@ -116,7 +136,8 @@ function setOptionPanel() {
 	musicvolumeRange.value = gamesettings.musicvolume;
 	musicvolumeRange.oninput();
 	musicvolumeRange.onchange = function() {
-
+		gamesettings.musicvolume = musicvolumeRange.value;
+        window.game.musicVolume = gamesettings.musicvolume / 100;
 	}
 
 	let audiooffsetRange = document.getElementById("audiooffset-range");
@@ -127,13 +148,13 @@ function setOptionPanel() {
 	audiooffsetRange.value = gamesettings.audiooffset;
 	audiooffsetRange.oninput();
 	audiooffsetRange.onchange = function() {
-
+		gamesettings.audiooffset = audiooffsetRange.value;
 	}
 
 	let beatmapHitsoundCheck = document.getElementById("beatmap-hitsound-check");
 	beatmapHitsoundCheck.checked = gamesettings.beatmapHitsound;
 	beatmapHitsoundCheck.onclick = function() {
-		
+		gamesettings.beatmapHitsound = beatmapHitsoundCheck.checked;
 	}
 
 }

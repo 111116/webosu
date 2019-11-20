@@ -7,10 +7,10 @@ function(Osu, DifficultySelect, _, Skin, sound) {
         scene: null,
         updatePlayerActions: null,
 
-        allowMouseButton: false,
-        allowMouseScroll: true,
         backgroundDimRate: 0.7,
         backgroundBlurRate: 0.0, // not yet implemented
+        allowMouseButton: false,
+        allowMouseScroll: true,
         cursorSize: 1.0,
 
         masterVolume: 0.7,
@@ -40,6 +40,8 @@ function(Osu, DifficultySelect, _, Skin, sound) {
         sampleSet: 1
     };
     window.game = game;
+    if (window.gamesettings)
+        window.gamesettings.loadToGame();
     window.skinReady = false;
     window.soundReady = false;
     window.scriptReady = false;
@@ -50,10 +52,6 @@ function(Osu, DifficultySelect, _, Skin, sound) {
     Skin.oncomplete = function() {
         window.skinReady = true;
         document.getElementById("skin-progress").innerText += " Done";
-        game.cursor = new PIXI.Sprite(Skin["cursor.png"]);
-        game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
-        game.cursor.scale.x = game.cursor.scale.y = 0.6 * game.cursorSize;
-        game.stage.addChild(game.cursor);
     };
     Skin.loadDefault();
 
@@ -132,6 +130,12 @@ function(Osu, DifficultySelect, _, Skin, sound) {
             e.preventDefault();
             return false;
         });
+        // load cursor
+        game.cursor = new PIXI.Sprite(Skin["cursor.png"]);
+        game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
+        game.cursor.scale.x = game.cursor.scale.y = 0.6 * game.cursorSize;
+        game.stage.addChild(game.cursor);
+        
         pGameArea.appendChild(app.view);
         pMainPage.setAttribute("hidden","");
         pGameArea.removeAttribute("hidden");
