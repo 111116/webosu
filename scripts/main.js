@@ -159,7 +159,11 @@ function(Osu, DifficultySelect, _, Skin, sound) {
         var map = new BeatmapController();
         map.osu = new Osu(window.osz.root);
 
+        // ask sayobot of star ratings of beatmaps immediately when decoded
+        map.osu.ondecoded = map.osu.requestStar;
+
         map.osu.onready = function() {
+            map.osu.sortTracks();
             map.osuReady = true;
             if (!_.some(map.osu.tracks, function(t) { return t.general.Mode === 0; })) {
                 pDragboxHint.innerText = pDragboxHint.modeErrHint;
@@ -187,8 +191,52 @@ function(Osu, DifficultySelect, _, Skin, sound) {
             pDragboxHint.innerText = pDragboxHint.defaultHint;
             // click Beatmap box to start playing
             pBeatmapBox.onclick = function(e) {
-                e.stopPropagation();
-                map.startgame();
+                if (!window.showingDifficultyBox) {
+                    e.stopPropagation();
+                    // create difficulty seleciton menu
+                    let difficultyBox = document.createElement("div");
+                    difficultyBox.className = "difficulty-box";
+                    let rect = e.target.getBoundingClientRect();
+                    let x = e.clientX - rect.left;
+                    let y = e.clientY - rect.top; 
+                    difficultyBox.style.left = x + "px";
+                    difficultyBox.style.top = y + "px";
+                    for (let i=0; i<map.osu.tracks.length; ++i) {
+                        let difficultyItem = document.createElement("div");
+                        let difficultyRing = document.createElement("div");
+                        let difficultyText = document.createElement("span");
+                        difficultyItem.className = "difficulty-item";
+                        difficultyRing.className = "difficulty-ring";
+                        let star = map.osu.tracks[i].difficulty.star;
+                        if (star) {
+                            if (star<2) difficultyRing.classList.add("easy"); else
+                            if (star<2.7) difficultyRing.classList.add("normal"); else
+                            if (star<4) difficultyRing.classList.add("hard"); else
+                            if (star<5.3) difficultyRing.classList.add("insane"); else
+                            if (star<6.5) difficultyRing.classList.add("expert"); else
+                                difficultyRing.classList.add("expert-plus");
+                        }
+                        difficultyText.innerText = map.osu.tracks[i].metadata.Version;
+                        difficultyItem.appendChild(difficultyRing);
+                        difficultyItem.appendChild(difficultyText);
+                        difficultyBox.appendChild(difficultyItem);
+                    }
+                    pBeatmapBox.appendChild(difficultyBox);
+                    window.showingDifficultyBox = true;
+
+                    // launch game if clicked inside
+                    difficultyBox.onclick = function(e) {
+                        e.stopPropagation();
+                    }
+                    // close menu if clicked outside
+                    var closeDifficultyMenu = function(e) {
+                        pBeatmapBox.removeChild(difficultyBox);
+                        window.showingDifficultyBox = false;
+                        window.removeEventListener('click', closeDifficultyMenu, false);
+                    };
+                    window.addEventListener("click", closeDifficultyMenu, false);
+                    // map.startgame();
+                }
             }
         };
         map.osu.onerror = function(error) {

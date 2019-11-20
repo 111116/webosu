@@ -280,8 +280,6 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 fileentry = null;
             }
             if (fileentry) {
-                console.log(fileentry);
-                console.log(URL.createObjectURL);
                 fileentry.getBlob("image/jpeg", function (blob) {
                     img.src = URL.createObjectURL(blob);
                 });
@@ -289,6 +287,32 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 img.src = "skin/defaultbg.jpg";
             }
         };
+
+        this.requestStar = function() {
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://api.sayobot.cn/beatmapinfo?1=" + this.tracks[0].metadata.BeatmapSetID);
+            xhr.responseType = 'text';
+            let self = this;
+            xhr.onload = function() {
+                let info = JSON.parse(xhr.response);
+                if (info.status == 0) {
+                    for (let i=0; i<info.data.length; ++i) {
+                        for (let j=0; j<self.tracks.length; ++j) {
+                            if (self.tracks[j].metadata.BeatmapID == info.data[i].bid) {
+                                self.tracks[j].difficulty.star = info.data[i].star;
+                            }
+                        }
+                    }
+                }
+            }
+            xhr.send();
+        }
+
+        this.sortTracks = function() {
+            self.tracks.sort(function(a,b){
+                return a.difficulty.OverallDifficulty - b.difficulty.OverallDifficulty;
+            });
+        }
 
         function load_mp3() {
             var mp3_raw = _.find(self.zip.children, function(c) { return c.name.toLowerCase() === self.tracks[0].general.AudioFilename.toLowerCase(); });

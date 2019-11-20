@@ -69,6 +69,7 @@ canvas {
   flex-wrap: wrap;
   justify-content: left;
   margin-right: -17px;
+  position: relative;
 }
 
 
@@ -99,6 +100,12 @@ canvas {
   width: 245px;
   margin-bottom: 20px;
   margin-right: 17px;
+  position: relative;
+  /* shouldn't hide overflow because we have to show difficulty selection box */
+  /* but we must ensure content don't get outside this box */
+}
+.beatmapbox:hover {
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,.7); 
 }
 .beatmapcover {
   object-fit: cover;
@@ -109,7 +116,8 @@ canvas {
   position: absolute;
 }
 .beatmaptitle {
-  padding: 142px 13px;
+  padding-top: 142px;
+  padding-left: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -134,7 +142,6 @@ td:nth-child(2){
 }
 
 input[type=checkbox] {
-  cursor: pointer;
   height: 20px;
   margin: 2px 2px;
   position: absolute;
@@ -257,31 +264,47 @@ div[hidden=""] {
 
 
 .difficulty-box{
-  width: 180px;
+  width: auto;
+  min-width: 180px;
   height: auto;
   position: absolute;
-  top: 250px;
-  left: 400px;
   background: #fff;
-  transition: all 0.2s ease 0s;
   overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 5px 3px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 5px 2px;
   border-radius: 3px;
   z-index: 2;
+  animation: 0.2s unfold ease;
+  transform-origin: top left;
 }
+
+@keyframes unfold {
+  0% {
+    transform: scaleY(0);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
 .difficulty-item {
   padding: 12px;
   height: 18px;
+  white-space: nowrap;
+  font-size: 16px;
+}
+.difficulty-item span {
+  top: -4px;
+  position: relative;
 }
 .difficulty-ring {
   height: 12px;
   width: 12px;
   border-radius: 50%;
   border: solid #aaa 3px;
-  float: left;
   margin-top: 2px;
   margin-left: 0px;
   margin-right: 8px;
+  display: inline-block;
 }
 
 .difficulty-ring.easy {
