@@ -8,6 +8,7 @@ function(Osu, _, Skin, sound, Playback) {
         scene: null,
         updatePlayerActions: null,
 
+        // note: preference values here will be overwritten by gamesettings (in settings.js)
         backgroundDimRate: 0.7,
         backgroundBlurRate: 0.0, // not yet implemented
         allowMouseButton: false,

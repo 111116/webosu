@@ -123,6 +123,16 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
 
         this.createBackground = function(){
             // Load background if possible
+            function loadBackground(uri) {
+                var image = PIXI.Texture.fromImage(uri);
+                self.background = new PIXI.Sprite(image);
+                self.background.x = self.background.y = 0;
+                self.background.width = self.game.window.innerWidth;
+                self.background.height = self.game.window.innerHeight;
+                // var blurFilter = new PIXI.filters.KawaseBlurFilter(4,3,true);
+                // self.background.filters = [blurFilter];
+                self.game.stage.addChildAt(self.background, 0);
+            }
             self.backgroundDim = new PIXI.Graphics();
             self.backgroundDim.alpha = 0;
             self.backgroundDim.beginFill(0);
@@ -140,20 +150,16 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 if (entry) {
                     entry.getBlob("image/jpeg", function (blob) {
                         var uri = URL.createObjectURL(blob);
-                        var image = PIXI.Texture.fromImage(uri);
-                        self.background = new PIXI.Sprite(image);
-                        self.background.x = self.background.y = 0;
-                        self.background.width = self.game.window.innerWidth;
-                        self.background.height = self.game.window.innerHeight;
-                        // var blurFilter = new PIXI.filters.KawaseBlurFilter(4,3,true);
-                        // self.background.filters = [blurFilter];
-                        self.game.stage.addChildAt(self.background, 0); // put background under dim layer
+                        loadBackground(uri);
                         self.ready = true;
                         self.start();
                     });
                 } else  {
+                    loadBackground("skin/defaultbg.jpg");
                     self.ready = true;
                 }
+            } else {
+                loadBackground("skin/defaultbg.jpg");
             }
         };
         self.createBackground();
