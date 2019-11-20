@@ -1,5 +1,5 @@
-require(["osu", "scenes/difficulty-select", "underscore", "skin", "sound"], 
-function(Osu, DifficultySelect, _, Skin, sound) {
+require(["osu", "underscore", "skin", "sound", "playback"],
+function(Osu, _, Skin, sound, Playback) {
 
     // initialize global game
     var game = {
@@ -117,7 +117,7 @@ function(Osu, DifficultySelect, _, Skin, sound) {
     function BeatmapController(){
         this.osuReady = false;
     }
-    BeatmapController.prototype.startgame = function() {
+    BeatmapController.prototype.startGame = function(trackid) {
         // get ready for gaming
         // Hash.set(osu.tracks[0].metadata.BeatmapSetID);
         if (!scriptReady || !skinReady || !soundReady || !this.osuReady)
@@ -131,12 +131,14 @@ function(Osu, DifficultySelect, _, Skin, sound) {
         game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
         game.cursor.scale.x = game.cursor.scale.y = 0.6 * game.cursorSize;
         game.stage.addChild(game.cursor);
-
+        // switch page to game view
         pGameArea.appendChild(app.view);
         pMainPage.setAttribute("hidden","");
         pGameArea.removeAttribute("hidden");
-        var difficultySelect = new DifficultySelect(window.game, this.osu);
-        game.scene = difficultySelect;
+
+        var playback = new Playback(window.game, this.osu, this.osu.tracks[trackid]);
+        game.scene = playback;
+        playback.start();
     }
 
 
@@ -148,6 +150,7 @@ function(Osu, DifficultySelect, _, Skin, sound) {
     pDragboxHint.defaultHint = "Drag and drop a beatmap (.osz) file here";
     pDragboxHint.modeErrHint = "Only supports osu! (std) mode beatmaps. Drop another file.";
     pDragboxHint.nonValidHint = "Not a valid osz file. Drop another file.";
+    pDragboxHint.noTransferHint = "Not receiving any file. Please retry.";
     pDragboxHint.nonOszHint = "Not an osz file. Drop another file.";
     pDragboxHint.loadingHint = "loading...";
     var pGameArea = document.getElementById("game-area");
@@ -216,6 +219,12 @@ function(Osu, DifficultySelect, _, Skin, sound) {
                     let y = e.clientY - rect.top; 
                     difficultyBox.style.left = x + "px";
                     difficultyBox.style.top = y + "px";
+                    // close menu callback
+                    var closeDifficultyMenu = function() {
+                        pBeatmapBox.removeChild(difficultyBox);
+                        window.showingDifficultyBox = false;
+                        window.removeEventListener('click', closeDifficultyMenu, false);
+                    };
                     // create difficulty list items
                     for (let i=0; i<map.osu.tracks.length; ++i) {
                         let difficultyItem = document.createElement("div");
@@ -237,22 +246,17 @@ function(Osu, DifficultySelect, _, Skin, sound) {
                         difficultyItem.appendChild(difficultyRing);
                         difficultyItem.appendChild(difficultyText);
                         difficultyBox.appendChild(difficultyItem);
+                        // launch game if clicked inside
+                        difficultyItem.onclick = function(e) {
+                            e.stopPropagation();
+                            closeDifficultyMenu();
+                            map.startGame(i);
+                        }
                     }
                     pBeatmapBox.appendChild(difficultyBox);
                     window.showingDifficultyBox = true;
-
-                    // launch game if clicked inside
-                    difficultyBox.onclick = function(e) {
-                        e.stopPropagation();
-                    }
                     // close menu if clicked outside
-                    var closeDifficultyMenu = function(e) {
-                        pBeatmapBox.removeChild(difficultyBox);
-                        window.showingDifficultyBox = false;
-                        window.removeEventListener('click', closeDifficultyMenu, false);
-                    };
                     window.addEventListener("click", closeDifficultyMenu, false);
-                    // map.startgame();
                 }
             }
         };
@@ -267,6 +271,10 @@ function(Osu, DifficultySelect, _, Skin, sound) {
         e.preventDefault();
         pDragboxHint.innerText = pDragboxHint.loadingHint;
         var raw_file = e.dataTransfer.files[0];
+        if (!raw_file) {
+            pDragboxHint.innerText = pDragboxHint.noTransferHint;
+            return;
+        }
         // check suffix name
         if (raw_file.name.indexOf(".osz") === raw_file.name.length - 4) {
             var fs = window.osz = new zip.fs.FS();
