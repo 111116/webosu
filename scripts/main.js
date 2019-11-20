@@ -214,7 +214,7 @@ function(Osu, _, Skin, sound, Playback) {
                     // set menu position
                     let difficultyBox = document.createElement("div");
                     difficultyBox.className = "difficulty-box";
-                    let rect = e.target.getBoundingClientRect();
+                    let rect = this.getBoundingClientRect();
                     let x = e.clientX - rect.left;
                     let y = e.clientY - rect.top; 
                     difficultyBox.style.left = x + "px";
