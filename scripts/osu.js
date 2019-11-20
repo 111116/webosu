@@ -300,6 +300,7 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                         for (let j=0; j<self.tracks.length; ++j) {
                             if (self.tracks[j].metadata.BeatmapID == info.data[i].bid) {
                                 self.tracks[j].difficulty.star = info.data[i].star;
+                                self.tracks[j].length = info.data[i].length;
                             }
                         }
                     }

@@ -173,17 +173,31 @@ function(Osu, DifficultySelect, _, Skin, sound) {
             let pBeatmapBox = document.createElement("div");
             let pBeatmapCover = document.createElement("img");
             let pBeatmapTitle = document.createElement("div");
+            let pBeatmapAuthor = document.createElement("div");
             pBeatmapBox.className = "beatmapbox";
             pBeatmapCover.className = "beatmapcover";
             pBeatmapTitle.className = "beatmaptitle";
+            pBeatmapAuthor.className = "beatmapauthor";
             pBeatmapBox.appendChild(pBeatmapCover);
             pBeatmapBox.appendChild(pBeatmapTitle);
-            // set beatmap title display (prefer ascii title)
-            var title = map.osu.tracks[0].metadata.Title || map.osu.tracks[0].metadata.TitleUnicode;
+            pBeatmapBox.appendChild(pBeatmapAuthor);
+            // set beatmap title & artist display (prefer ascii title)
+            var title = map.osu.tracks[0].metadata.Title;
+            var artist = map.osu.tracks[0].metadata.Artist;
+            var creator = map.osu.tracks[0].metadata.Creator;
             pBeatmapTitle.innerText = title;
+            pBeatmapAuthor.innerText = artist + " / " + creator;
             // set beatmap cover display
             pBeatmapCover.alt = "beatmap cover";
             map.osu.getCoverSrc(pBeatmapCover);
+            // display beatmap length
+            if (map.osu.tracks[0].length) {
+                let pBeatmapLength = document.createElement("div");
+                pBeatmapLength.className = "beatmaplength";
+                pBeatmapBox.appendChild(pBeatmapLength);
+                let length = map.osu.tracks[0].length;
+                pBeatmapLength.innerText = Math.floor(length/60) + ":" + (length%60<10?"0":"") + (length%60);
+            }
 
             // add the container to page & restore drag box
             pBeatmapList.insertBefore(pBeatmapBox, pDragbox);

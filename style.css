@@ -122,6 +122,24 @@ canvas {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.beatmapauthor {
+  padding-left: 13px;
+  float: left;
+  color: #888;
+  font-size: 14px;
+  padding-top: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 180px;
+}
+.beatmaplength {
+  padding-right: 13px;
+  float: right;
+  color: #888;
+  font-size: 14px;
+  padding-top: 5px;
+}
 
 
 
