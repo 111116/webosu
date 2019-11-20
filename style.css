@@ -223,6 +223,28 @@ input[type=checkbox]:checked + span::after{
   margin-top: -1px;
 }
 
+input[type=button] {
+  border-radius: 12px;
+  position: relative;
+  width: auto;
+  transition: all .2s ease;
+  color: #555;
+  font-size: 16px;
+  line-height: 17px;
+  padding-top: 0px;
+  height: 24px;
+  margin-left: 5px;
+  /*padding-left: 12px;*/
+  /*padding-right: 12px;*/
+  width: 70px;
+  background: #eee;
+  border: none;
+}
+input[type=button]:hover {
+  background: #888;
+  color: #fff;
+}
+
 hr {
   height: 2px;
   border: none;
