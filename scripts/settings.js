@@ -1,31 +1,43 @@
-function updateIndicator(range, indicator, show) {
-	return function() {
-		let min = parseFloat(range.min);
-		let max = parseFloat(range.max);
-		let val = parseFloat(range.value);
-		let pos = (val-min) / (max-min);
-		let length = range.clientWidth - 20;
-		indicator.style.left = (pos * length + 13) + "px";
-		indicator.innerText = show(val);
-	}
-}
-function hideIndicator(indicator) {
-	return function() {
-    	indicator.setAttribute("hidden", "");
-	}
-}
-function showIndicator(indicator) {
-	return function() {
-    	indicator.removeAttribute("hidden");
-	}
-}
-
 function setOptionPanel() {
+
+	function updateIndicator(range, indicator, show) {
+		return function() {
+			let min = parseFloat(range.min);
+			let max = parseFloat(range.max);
+			let val = parseFloat(range.value);
+			let pos = (val-min) / (max-min);
+			let length = range.clientWidth - 20;
+			indicator.style.left = (pos * length + 13) + "px";
+			indicator.innerText = show(val);
+		}
+	}
+
+	function hideIndicator(indicator) {
+		return function() {
+	    	indicator.setAttribute("hidden", "");
+		}
+	}
+
+	function showIndicator(indicator) {
+		return function() {
+	    	indicator.removeAttribute("hidden");
+		}
+	}
+
+	function loadFromLocal() {
+		let str = window.localStorage.getItem("osugamesettings");
+		if (str) window.gamesettings = JSON.parse(str);
+	}
+
+	function saveToLocal() {
+		window.localStorage.setItem("osugamesettings", JSON.stringify(window.gamesettings));
+	}
+
 	// give inputs initial value; set their callback on change
 	// give range inputs a visual feedback (a hovering indicator that shows on drag)
 
 	window.gamesettings = {
-		dim: 70,
+		dim: 50,
 		blur: 0,
 		cursorsize: 1.0,
 		disableWheel: false,
@@ -36,6 +48,7 @@ function setOptionPanel() {
 		audiooffset: 0,
 		beatmapHitsound: false,
 	};
+	loadFromLocal();
 
 	window.gamesettings.loadToGame = function() {
         window.game.backgroundDimRate = this.dim / 100;
@@ -62,6 +75,7 @@ function setOptionPanel() {
 	dimRange.onchange = function() {
 		gamesettings.dim = dimRange.value;
         window.game.backgroundDimRate = gamesettings.dim / 100;
+        saveToLocal();
 	}
 
 	let blurRange = document.getElementById("blur-range");
@@ -74,6 +88,7 @@ function setOptionPanel() {
 	blurRange.onchange = function() {
 		gamesettings.blur = blurRange.value;
         window.game.backgroundBlurRate = gamesettings.blur / 100;
+        saveToLocal();
 	}
 
 	let cursorsizeRange = document.getElementById("cursorsize-range");
@@ -86,6 +101,7 @@ function setOptionPanel() {
 	cursorsizeRange.onchange = function() {
 		gamesettings.cursorsize = cursorsizeRange.value;
         window.game.cursorSize = gamesettings.cursorsize;
+        saveToLocal();
 	}
 
 	let disableWheelCheck = document.getElementById("disable-wheel-check");
@@ -93,6 +109,7 @@ function setOptionPanel() {
 	disableWheelCheck.onclick = function() {
 		gamesettings.disableWheel = disableWheelCheck.checked;
         window.game.allowMouseScroll = !gamesettings.disableWheel;
+        saveToLocal();
 	}
 
 	let disableButtonCheck = document.getElementById("disable-button-check");
@@ -100,6 +117,7 @@ function setOptionPanel() {
 	disableButtonCheck.onclick = function() {
 		gamesettings.disableButton = disableButtonCheck.checked;
         window.game.allowMouseButton = !gamesettings.disableButton;
+        saveToLocal();
 	}
 
 	// audio settings
@@ -114,6 +132,7 @@ function setOptionPanel() {
 	mastervolumeRange.onchange = function() {
 		gamesettings.mastervolume = mastervolumeRange.value;
         window.game.masterVolume = gamesettings.mastervolume / 100;
+        saveToLocal();
 	}
 
 	let effectvolumeRange = document.getElementById("effectvolume-range");
@@ -126,6 +145,7 @@ function setOptionPanel() {
 	effectvolumeRange.onchange = function() {
 		gamesettings.effectvolume = effectvolumeRange.value;
         window.game.effectVolume = gamesettings.effectvolume / 100;
+        saveToLocal();
 	}
 
 	let musicvolumeRange = document.getElementById("musicvolume-range");
@@ -138,6 +158,7 @@ function setOptionPanel() {
 	musicvolumeRange.onchange = function() {
 		gamesettings.musicvolume = musicvolumeRange.value;
         window.game.musicVolume = gamesettings.musicvolume / 100;
+        saveToLocal();
 	}
 
 	let audiooffsetRange = document.getElementById("audiooffset-range");
@@ -149,12 +170,14 @@ function setOptionPanel() {
 	audiooffsetRange.oninput();
 	audiooffsetRange.onchange = function() {
 		gamesettings.audiooffset = audiooffsetRange.value;
+        saveToLocal();
 	}
 
 	let beatmapHitsoundCheck = document.getElementById("beatmap-hitsound-check");
 	beatmapHitsoundCheck.checked = gamesettings.beatmapHitsound;
 	beatmapHitsoundCheck.onclick = function() {
 		gamesettings.beatmapHitsound = beatmapHitsoundCheck.checked;
+        saveToLocal();
 	}
 
 }
