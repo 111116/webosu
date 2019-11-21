@@ -138,7 +138,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             judgement.alpha = 0;
             judgement.clickTime = -1;
             judgement.finalTime = finalTime;
-            judgement.dir = 0.000000000001;
+            judgement.dir = 0.0000000000007;
             return judgement;
         }
 
@@ -359,7 +359,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             ball.anchor.x = ball.anchor.y = 0.5;
             ball.tint = 0xFFFFFF;
             ball.manualAlpha = true;
-            ball.depth = 5;
+            ball.depth = 7.1;
             hit.objects.push(ball);
 
             // create hitcircle at head
