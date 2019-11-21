@@ -1,41 +1,19 @@
 define([], function() {
     // TODO: support OD
-    var currentSlider = null;
 
     var checkHit = function checkHit(upcoming, click){
-        var good = upcoming.find(inUpcoming(click));
-        if (good){
-            switch (good.type) {
-                case "circle":
-                    var points = 50;
-                    var diff = click.time - good.time;
-                    if (Math.abs(diff) < playback.GoodTime) points = 100;
-                    if (Math.abs(diff) < playback.GreatTime) points = 300;
-                    good.clickTime = click.time;
-                    playback.hitSuccess(good, points);
-                    break;
-                case "slider":
-                    var points = 50;
-                    var diff = click.time - good.time;
-                    if (Math.abs(diff) < playback.GoodTime) points = 100;
-                    if (Math.abs(diff) < playback.GreatTime) points = 300;
-                    good.clickTime = click.time;
-                    playback.hitSuccess(good, points);
-                    currentSlider = good;
-                    break;
-                case "spinner":
-                    // spinners don't need to be clicked on
-                    break;
+        var hit = upcoming.find(inUpcoming(click));
+        if (hit){
+            if (hit.type == "circle" || hit.type == "slider") {
+                let points = 50;
+                let diff = click.time - hit.time;
+                if (Math.abs(diff) < playback.GoodTime) points = 100;
+                if (Math.abs(diff) < playback.GreatTime) points = 300;
+                playback.hitSuccess(hit, points, click.time);
             }
-        }
-    };
+            else { // spinner
 
-    var checkInSlider = function checkInSlider(click){
-        var dx = click.x - currentSlider.ball.x;
-        var dy = click.y - currentSlider.ball.y;
-        var inSlider = dx*dx + dy*dy < 4 * playback.circleRadiusPixel * playback.circleRadiusPixel;
-        if (!inSlider){
-            currentSlider = null;
+            }
         }
     };
 
@@ -61,16 +39,6 @@ define([], function() {
                         playback.hitSuccess(good, 300);
                 }
             }
-            else {
-                if (currentSlider){
-                    var clickInfos = {
-                        'x': playback.game.mouseX,
-                        'y': playback.game.mouseY,
-                        'time': time
-                    };
-                    checkInSlider(clickInfos);
-                }
-            }
         };
 
         // set eventlisteners
@@ -85,9 +53,6 @@ define([], function() {
             playback.game.window.addEventListener("mousemove", function(e) {
                 playback.game.mouseX = e.clientX;
                 playback.game.mouseY = e.clientY;
-                if (currentSlider){
-                    checkInSlider(clickInfos());
-                }
             });
 
             // mouse click handling for gameplay

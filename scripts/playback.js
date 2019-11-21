@@ -3,8 +3,10 @@
 *       [0,1) background / storyboard
 *       [2,3) hit score, bottom to top
 *       [4,5) hit objects, top to bottom
-*       [5,6) follow circle & slider ball, one visible instance at a time (add blend)
-*       [6,7) approach circle, bottom to top
+*       [5,6) hit score, top to bottom
+*       [6,7) hit burst
+*       [7,8) follow circle, slider ball, one visible instance at a time (add blend)
+*       [8,9) approach circle, bottom to top
 *       assuming number of possible hits doesn't exceed 9998
 */
 define(["osu", "skin", "hash", "playerActions", "SliderMesh"],
@@ -117,6 +119,44 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             // TODO: Visualization
         });
 
+
+        this.fadeOutEasing = function(t) { // [0..1] -> [1..0]
+            if (t <= 0) return 1;
+            if (t > 1) return 0;
+            return 1 - Math.sin(t * Math.PI/2);
+        }
+
+        this.newJudgement = function(x, y, depth, finalTime) {
+            let judgement = new PIXI.Sprite(Skin["hit0.png"]);
+            judgement.scale.x = judgement.scale.y = this.hitSpriteScale;
+            judgement.anchor.x = judgement.anchor.y = 0.5;
+            judgement.basex = x;
+            judgement.basey = y;
+            judgement.x = gfx.xoffset + x * gfx.width;
+            judgement.y = gfx.yoffset + y * gfx.height;
+            judgement.depth = depth; 
+            judgement.alpha = 0;
+            judgement.clickTime = -1;
+            judgement.finalTime = finalTime;
+            judgement.dir = 0.000000000001;
+            return judgement;
+        }
+
+        this.updateJudgement = function(judgement, time) {
+            let timeAfter = -1;
+            if (judgement.clickTime >= 0) {
+                timeAfter = time - judgement.clickTime;
+            }
+            else if (time > judgement.finalTime) {
+                timeAfter = time - judgement.finalTime;
+            }
+            if (timeAfter >= 0) {
+                judgement.alpha = Math.max(0, 1 - timeAfter / this.scoreFadeOutTime);
+                judgement.x = gfx.xoffset + judgement.basex * gfx.width;
+                judgement.y = gfx.yoffset + (judgement.basey + judgement.dir * Math.pow(timeAfter,4)) * gfx.height;
+            }
+        }
+
         this.createBackground = function(){
             // Load background if possible
             function loadBackground(uri) {
@@ -222,7 +262,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             burst.anchor.x = burst.anchor.y = 0.5;
             burst.x = gfx.xoffset + hit.x * gfx.width;
             burst.y = gfx.yoffset + hit.y * gfx.height;
-            burst.depth = 4.9999 - 0.0001 * hit.hitIndex;
+            burst.depth = 6.9999 - 0.0001 * hit.hitIndex;
             burst.visible = false;
 
             var approach;
@@ -232,19 +272,11 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
                 approach.anchor.x = approach.anchor.y = 0.5;
                 approach.x = gfx.xoffset + hit.x * gfx.width;
                 approach.y = gfx.yoffset + hit.y * gfx.height;
-                approach.depth = 6 + 0.0001 * hit.hitIndex;
+                approach.depth = 8 + 0.0001 * hit.hitIndex;
                 approach.tint = combos[hit.combo % combos.length];
             }
 
-            if (!hit.objectWin){
-                hit.objectWin = new PIXI.Sprite(Skin["hit0.png"]);
-                hit.objectWin.scale.x = hit.objectWin.scale.y = this.hitSpriteScale;
-                hit.objectWin.anchor.x = hit.objectWin.anchor.y = 0.5;
-                hit.objectWin.x = gfx.xoffset + hit.x * gfx.width;
-                hit.objectWin.y = gfx.yoffset + hit.y * gfx.height;
-                hit.objectWin.depth = 2 + 0.0001 * hit.hitIndex;
-                hit.objectWin.alpha = 0;
-            }
+            hit.judgements.push(this.newJudgement(hit.x, hit.y, 5, hit.time + this.MehTime)); // TODO depth
 
             objects.push(base);
             objects.push(overlay);
@@ -300,7 +332,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             follow.anchor.x = follow.anchor.y = 0.5;
             follow.manualAlpha = true;
             follow.blendMode = PIXI.BLEND_MODES.ADD;
-            follow.depth = 5;
+            follow.depth = 7;
             hit.objects.push(follow);
             hit.followSize = 1; // [1,2] current follow circle size relative to hitcircle
 
@@ -340,7 +372,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             burst.anchor.x = burst.anchor.y = 0.5;
             burst.x = gfx.xoffset + hit.x * gfx.width;
             burst.y = gfx.yoffset + hit.y * gfx.height;
-            burst.depth = 4.9999 - 0.0001 * hit.hitIndex;
+            burst.depth = 6.9999 - 0.0001 * hit.hitIndex;
             burst.visible = false;
             hit.objects.push(burst);
 
@@ -394,15 +426,13 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             base.depth = 4.9999 - 0.0001 * (hit.hitIndex || 1);
             base.alpha = 0;
 
-            if (!hit.objectWin){
-                hit.objectWin = new PIXI.Sprite(Skin["hit0.png"]);
-                hit.objectWin.scale.x = hit.objectWin.scale.y = this.hitSpriteScale;
-                hit.objectWin.anchor.x = hit.objectWin.anchor.y = 0.5;
-                hit.objectWin.x = gfx.xoffset + hit.x * gfx.width;
-                hit.objectWin.y = gfx.yoffset + hit.y * gfx.height;
-                hit.objectWin.depth = 2 + 0.0001 * hit.hitIndex;
-                hit.objectWin.alpha = 0;
-            }
+                // hit.judgement = new PIXI.Sprite(Skin["hit0.png"]);
+                // hit.judgement.scale.x = hit.judgement.scale.y = this.hitSpriteScale;
+                // hit.judgement.anchor.x = hit.judgement.anchor.y = 0.5;
+                // hit.judgement.x = gfx.xoffset + hit.x * gfx.width;
+                // hit.judgement.y = gfx.yoffset + hit.y * gfx.height;
+                // hit.judgement.depth = 2 + 0.0001 * hit.hitIndex;
+                // hit.judgement.alpha = 0;
             hit.objects.push(base);
         }
 
@@ -411,6 +441,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             this.currentHitIndex += 1;
             hit.hitIndex = this.currentHitIndex;
             hit.objects = [];
+            hit.judgements = [];
             hit.score = -1;
             switch (hit.type) {
                 case "circle":
@@ -464,14 +495,16 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             }
         };
 
-        this.hitSuccess = function hitSuccess(hit, points){
+        this.hitSuccess = function hitSuccess(hit, points, time){
             self.playHitsound(hit, 0);
             hit.score = points;
             self.game.score.points += points;
             self.game.score.goodClicks += 1;
             self.updateScoreOverlay();
-            if (hit.objectWin)
-                hit.objectWin.texture = Skin["hit" + points + ".png"];
+            hit.clickTime = time;
+            hit.judgements[0].clickTime = time;
+            hit.judgements[0].dir *= -1;
+            hit.judgements[0].texture = Skin["hit" + points + ".png"];
         };
 
         // hit object updating
@@ -494,10 +527,10 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
                     }
                     return l;
                 }
-                if (hit.objectWin){
-                    self.game.stage.addChildAt(hit.objectWin, findindex(hit.objectWin.depth || 0.0001));
+                for (let i = hit.judgements.length - 1; i >= 0; i--) {
+                    self.game.stage.addChildAt(hit.judgements[i], findindex(hit.judgements[i].depth || 0.0001));
                 }
-                for (var i = hit.objects.length - 1; i >= 0; i--) {
+                for (let i = hit.objects.length - 1; i >= 0; i--) {
                     self.game.stage.addChildAt(hit.objects[i], findindex(hit.objects[i].depth || 0.0001));
                 }
                 self.upcomingHits.push(hit);
@@ -519,17 +552,9 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
                     self.upcomingHits.splice(i, 1);
                     i--;
                     _.each(hit.objects, function(o) { self.game.stage.removeChild(o); o.destroy(); });
-                    if (hit.objectWin){
-                      self.game.stage.removeChild(hit.objectWin); hit.objectWin.destroy();
-                    }
+                    _.each(hit.judgements, function(o) { self.game.stage.removeChild(o); o.destroy(); });
                 }
             }
-        }
-
-        this.fadeOutEasing = function(t) { // [0..1] -> [1..0]
-            if (t <= 0) return 1;
-            if (t > 1) return 0;
-            return 1 - Math.sin(t * Math.PI/2);
         }
 
         this.updateHitCircle = function(hit, time) {
@@ -576,11 +601,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             }
 
             // display hit score
-            if (hit.score > 0 || time > hit.time + this.MehTime){
-              hit.objectWin.alpha = this.fadeOutEasing(-diff / this.scoreFadeOutTime);
-              hit.objectWin.scale.x = this.hitSpriteScale;
-              hit.objectWin.scale.y = this.hitSpriteScale;
-            }
+            this.updateJudgement(hit.judgements[0], time);
 
             // calculate opacity of approach circle
             if (diff <= this.approachTime && diff > approachFullAppear) { // approach circle fading in
@@ -746,14 +767,9 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
                     // TODO reverse arrow fade out animation
                 }
             }
-
             
             // display hit score
-            if (hit.score > 0 || time > hit.time + hit.sliderTimeTotal + this.MehTime ){
-              hit.objectWin.alpha = this.fadeOutEasing((-diff - hit.sliderTimeTotal) / this.scoreFadeOutTime);
-              hit.objectWin.scale.x = this.hitSpriteScale;
-              hit.objectWin.scale.y = this.hitSpriteScale;
-            }
+            this.updateJudgement(hit.judgements[0], time);
         }
 
         this.updateSpinner = function(hit, time) {
@@ -785,9 +801,9 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
            
             // // display hit score
             // if (hit.score > 0 || time > hit.time + this.TIME_ALLOWED){
-            //   hit.objectWin.alpha = this.fadeOutEasing(-diff / this.scoreFadeOutTime);
-            //   hit.objectWin.scale.x = this.hitSpriteScale;
-            //   hit.objectWin.scale.y = this.hitSpriteScale;
+            //   hit.judgement.alpha = this.fadeOutEasing(-diff / this.scoreFadeOutTime);
+            //   hit.judgement.scale.x = this.hitSpriteScale;
+            //   hit.judgement.scale.y = this.hitSpriteScale;
             // }
         }
 
