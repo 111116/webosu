@@ -699,7 +699,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 if (hit.repeat > 1) {
                     hit.currentRepeat = Math.ceil(t);
                 }
-                // clamp t
                 let atEnd = false;
                 if (Math.floor(t) > hit.lastrep)
                 {
@@ -707,13 +706,19 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                     if (hit.lastrep > 0 && hit.lastrep <= hit.repeat)
                         atEnd = true;
                 }
+                // clamp t
                 if (t > hit.repeat)
                     t = hit.repeat;
                 if (hit.repeat > 1) {
-                    if (hit.currentRepeat % 2 == 0) {
-                        t = -t
+                    if (t - Math.floor(t) == 0) {
+                        t = t % 2;
                     }
-                    t = t - Math.floor(t);
+                    else {
+                        if (hit.currentRepeat % 2 == 0) {
+                            t = -t
+                        }
+                        t = t - Math.floor(t);
+                    }
                 }
 
                 // Update ball and follow circle position
