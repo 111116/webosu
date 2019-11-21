@@ -138,7 +138,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             judgement.alpha = 0;
             judgement.clickTime = -1;
             judgement.finalTime = finalTime;
-            judgement.dir = 0.0000000000007;
+            judgement.dir = 0.000000000001;
             return judgement;
         }
 
@@ -510,7 +510,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             self.updateScoreOverlay();
             hit.clickTime = time;
             hit.judgements[0].clickTime = time;
-            hit.judgements[0].dir *= -1;
+            hit.judgements[0].dir *= -0.5;
             hit.judgements[0].texture = Skin["hit" + points + ".png"];
         };
 
@@ -739,7 +739,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
                 if (atEnd && this.game.down && isfollowing) {
                     hit.judgements[hit.lastrep].clickTime = time;
                     hit.judgements[hit.lastrep].texture = Skin["hit300.png"];
-                    hit.judgements[hit.lastrep].dir *= -1;
+                    hit.judgements[hit.lastrep].dir *= -0.5;
                     self.playHitsound(hit, hit.lastrep);
                 }
 
