@@ -365,10 +365,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             burst.visible = false;
             hit.objects.push(burst);
 
-            let endPoint = hit.curve.curve[hit.curve.curve.length-1];
-            let endPoint2 = hit.curve.curve[hit.curve.curve.length-2];
-            // curve points are of about-same distance, so these 2 points should be different
-            let endAngle = Math.atan2(endPoint.y - endPoint2.y, endPoint.x - endPoint2.x);
 
             if (hit.repeat > 1) {
                 // Add reverse symbol
@@ -376,10 +372,13 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 reverse.scale.x = reverse.scale.y = this.hitSpriteScale;
                 reverse.alpha = 0;
                 reverse.anchor.x = reverse.anchor.y = 0.5;
+                // curve points are of about-same distance, so these 2 points should be different
+                let endPoint = hit.curve.curve[hit.curve.curve.length-1];
+                let endPoint2 = hit.curve.curve[hit.curve.curve.length-2];
                 reverse.x = gfx.xoffset + endPoint.x * gfx.width;
                 reverse.y = gfx.yoffset + endPoint.y * gfx.height;
                 reverse.tint = 0xFFFFFF;
-                reverse.rotation = endAngle + Math.PI;
+                reverse.rotation = Math.atan2(endPoint2.y - endPoint.y, endPoint2.x - endPoint.x);
                 reverse.depth = 4.9999-0.0001*hit.hitIndex;
                 hit.objects.push(reverse);
             }
@@ -388,11 +387,14 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
                 var reverse = hit.reverse_b = new PIXI.Sprite(Skin["reversearrow.png"]);
                 reverse.scale.x = reverse.scale.y = this.hitSpriteScale;
                 reverse.alpha = 0;
+                // curve points are of about-same distance, so these 2 points should be different
+                let startPoint = hit.curve.curve[0];
+                let startPoint2 = hit.curve.curve[1];
                 reverse.anchor.x = reverse.anchor.y = 0.5;
-                reverse.x = gfx.xoffset + hit.x * gfx.width;
-                reverse.y = gfx.yoffset + hit.y * gfx.height;
+                reverse.x = gfx.xoffset + startPoint.x * gfx.width;
+                reverse.y = gfx.yoffset + startPoint.y * gfx.height;
                 reverse.tint = 0xFFFFFF;
-                reverse.rotation = endAngle;
+                reverse.rotation = Math.atan2(startPoint2.y - startPoint.y, startPoint2.x - startPoint.x);
                 reverse.visible = false; // Only visible when it's the next end to hit
                 reverse.depth = 4.9999-0.0001*hit.hitIndex;
                 hit.objects.push(reverse);
