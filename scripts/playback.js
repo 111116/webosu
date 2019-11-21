@@ -410,6 +410,13 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
                 reverse.depth = 4.9999-0.0001*hit.hitIndex;
                 hit.objects.push(reverse);
             }
+            // add judgement objects at edge
+            let endPoint = hit.curve.curve[hit.curve.curve.length-1];
+            for (let i=1; i<=hit.repeat; ++i) {
+                let x = (i%2==1)? endPoint.x: hit.x;
+                let y = (i%2==1)? endPoint.y: hit.y;
+                hit.judgements.push(this.newJudgement(x, y, 5, hit.time + i * hit.sliderTime));
+            }
         }
 
         this.createSpinner = function(hit) {
@@ -728,8 +735,13 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
                 let followPixelSize = hit.followSize * this.circleRadiusPixel;
                 let isfollowing = dx*dx + dy*dy <= followPixelSize * followPixelSize;
 
-                if (atEnd && this.game.down && isfollowing)
+                // slider edge judgement
+                if (atEnd && this.game.down && isfollowing) {
+                    hit.judgements[hit.lastrep].clickTime = time;
+                    hit.judgements[hit.lastrep].texture = Skin["hit300.png"];
+                    hit.judgements[hit.lastrep].dir *= -1;
                     self.playHitsound(hit, hit.lastrep);
+                }
 
                 // sliderball & follow circle Animation
                 if (-diff >= 0 && -diff <= hit.sliderTimeTotal) {
@@ -769,7 +781,8 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             }
             
             // display hit score
-            this.updateJudgement(hit.judgements[0], time);
+            for (let i=0; i<hit.judgements.length; ++i)
+                this.updateJudgement(hit.judgements[i], time);
         }
 
         this.updateSpinner = function(hit, time) {
