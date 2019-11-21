@@ -1,4 +1,5 @@
-define(["underscore", "osu-audio"], function(_, OsuAudio) {
+define(["underscore", "osu-audio", "curves/LinearBezier", "curves/CircumscribedCircle"],
+function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
     var HIT_TYPE_CIRCLE = 1,
         HIT_TYPE_SLIDER = 2,
         HIT_TYPE_NEWCOMBO = 4,
@@ -217,6 +218,8 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
                 }
             }
 
+            preallocateTiming(this);
+            calculateCurve(this);
             // stack hitobjects
             stackHitObjects(this);
 
@@ -338,7 +341,148 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
 
     return Osu;
 
-    function stackHitObjects(track) {
+    function preallocateTiming(track) {
+        let currentTimingIndex = 0;
+        for (let i=0; i<track.hitObjects.length; ++i) {
+            while (currentTimingIndex + 1 < track.timingPoints.length && track.timingPoints[currentTimingIndex + 1].offset <= track.hitObjects[i].time) {
+                currentTimingIndex += 1;
+            }
+            track.hitObjects[i].timing = track.timingPoints[currentTimingIndex];
+        }
+    }
 
+    function calculateCurve(track) {
+        for (let i=0; i<track.hitObjects.length; ++i) {
+            let hit = track.hitObjects[i];
+            if (hit.type == "slider") {
+                if (hit.sliderType === "P" && hit.keyframes.length == 2) {
+                    // handle straight P slider
+                    // Vec2f nora = new Vec2f(sliderX[0] - x, sliderY[0] - y).nor();
+                    // Vec2f norb = new Vec2f(sliderX[0] - sliderX[1], sliderY[0] - sliderY[1]).nor();
+                    // if (Math.abs(norb.x * nora.y - norb.y * nora.x) < 0.00001)
+                    //     return new LinearBezier(this, false, scaled);  // vectors parallel, use linear bezier instead
+                    // else
+                    hit.curve = new CircumscribedCircle(hit, 512 / 384);
+                    if (hit.curve.length == 0) // (not sure here) fallback
+                        hit.curve = new LinearBezier(hit, hit.sliderType === "L");
+                }
+                else {
+                    if (hit.sliderType == "C")
+                        console.error("Catmull curve unsupported. fallback to bezier");
+                    hit.curve = new LinearBezier(hit, hit.sliderType === "L");
+                }
+                if (hit.curve.length < 2) // (not sure here)
+                    console.error("slider curve calculation failed");
+            }
+        }
+    }
+
+
+    function stackHitObjects(track) {
+        // stack coinciding objects to make them easier to see.
+        // stacked objects form chains (probably not with consecutive index)
+        const AR = track.difficulty.ApproachRate;
+        const approachTime = AR<5? 1800-120*AR: 1950-150*AR;
+        const stackDistance = 3;
+        const stackThreshold = approachTime * track.general.StackLeniency;
+
+        // time interval between hitobject A and hitobject B
+        // (it's guaranteed that A and B are not spinners)
+        function getintv(A, B) {
+            let endTime = A.time;
+            if (A.type == "slider") {
+                // add slider duration
+                endTime += A.repeat * A.timing.millisecondsPerBeat * (A.pixelLength / track.difficulty.SliderMultiplier) / 100;
+            }
+            return B.time - endTime;
+        }
+        // distance (in osu! pixels) between hitobject A and hitobject B
+        // coordinates have been normalized to [0,1], so we have to restore them to 512*384
+        // (it's guaranteed that A and B are not spinners)
+        function getdist(A, B) {
+            let x = A.x;
+            let y = A.y;
+            if (A.type == "slider" && (A.repeat%2==1)) {
+                x = A.curve.curve[A.curve.curve.length-1].x;
+                y = A.curve.curve[A.curve.curve.length-1].y;
+            }
+            return Math.hypot(512*(x-B.x), 384*(y-B.y));
+        }
+
+        let chains = new Array(); // array of chains represented by array of index
+        let stacked = new Array(track.hitObjects.length); // whether a hitobject has been added to chains
+        stacked.fill(false);
+        for (let i=0; i<track.hitObjects.length; ++i)
+        {
+            if (stacked[i]) continue;
+            let hitI = track.hitObjects[i];
+            if (hitI.type == "spinner") continue;
+            // start a new chain
+            stacked[i] = true;
+            let newchain = [hitI];
+            // finding chain starting from hitI
+            for (let j=i+1; j<track.hitObjects.length; ++j)
+            {
+                if (stacked[j]) {
+                    // intersecting with a previous chain.
+                    // this shouldn't happen in a usual beatmap.
+                    console.error("Error while stacking");
+                    // quit stacking
+                    return;
+                }
+                let hitJ = track.hitObjects[j];
+                if (hitJ.type == "spinner") break;
+                if (getintv(newchain[newchain.length-1], hitJ) > stackThreshold) break;
+                // append hitJ to the chain if it's close in space & time
+                if (getdist(newchain[newchain.length-1], hitJ) <= stackDistance) {
+                    stacked[j] = true;
+                    newchain.push(hitJ);
+                }
+            }
+            if (newchain.length > 1) { // just ignoring one-element chains
+                chains.push(newchain);
+                if (hitI.type == "slider")
+                    console.log("o==ooo ", newchain);
+            }
+        }
+        // stack offset
+        const stackScale = (1.0 - 0.7 * (track.difficulty.CircleSize - 5) / 5) / 2;
+        const scaleX = stackScale * 6.4 / 512;
+        const scaleY = stackScale * 6.4 / 384;
+        function movehit(hit, dep) {
+            hit.x += scaleX * dep;
+            hit.y += scaleY * dep;
+            if (hit.type == "slider") {
+                for (let j=0; j<hit.keyframes.length; ++j) {
+                    hit.keyframes[j].x += scaleX * dep;
+                    hit.keyframes[j].y += scaleY * dep;
+                }
+            }
+        }
+        for (let i=0; i<chains.length; ++i) {
+            if (chains[i][0].type == "slider") {
+                // fix this slider and move objects below
+                for (let j=0; j<chains[i].length; ++j) {
+                    movehit(chains[i][j], j);
+                }
+            }
+            else {
+                // fix object at bottom
+                for (let j=0; j<chains[i].length; ++j) {
+                    movehit(chains[i][chains[i].length-1-j], -j);
+                }
+            }
+        }
+        if (track.metadata.Version == "Advanced Gameplay")
+        for (let i=0; i+1<track.hitObjects.length; ++i) {
+            if (track.hitObjects[i].type == "slider" && stacked[i+1] && getdist(track.hitObjects[i], track.hitObjects[i+1])<50)
+            {
+                console.log("!");
+                console.log(track.hitObjects[i]);
+                console.log(track.hitObjects[i+1]);
+                console.log(track.hitObjects[i+2]);
+                console.log(track.hitObjects[i+3]);
+            }
+        }
     }
 });

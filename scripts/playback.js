@@ -7,13 +7,9 @@
 *       [6,7) approach circle, bottom to top
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "skin", "hash", "curves/LinearBezier", "curves/CircumscribedCircle", "playerActions", "SliderMesh"],
-function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, SliderMesh) {
+define(["osu", "skin", "hash", "playerActions", "SliderMesh"],
+function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
     function Playback(game, osu, track) {
-        const SLIDER_LINEAR = "L";
-        const SLIDER_CATMULL = "C";
-        const SLIDER_BEZIER = "B";
-        const SLIDER_PERFECT_CURVE = "P";
         var self = this;
         window.playback = this;
         self.game = game;
@@ -295,25 +291,8 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             hit.lastrep = 0; // for hitsound counting
             hit.sliderTime = hit.timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
             hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
-
-            // get slider curve
-            if (hit.sliderType === SLIDER_PERFECT_CURVE && hit.keyframes.length == 2) {
-                // handle straight P slider
-                // Vec2f nora = new Vec2f(sliderX[0] - x, sliderY[0] - y).nor();
-                // Vec2f norb = new Vec2f(sliderX[0] - sliderX[1], sliderY[0] - sliderY[1]).nor();
-                // if (Math.abs(norb.x * nora.y - norb.y * nora.x) < 0.00001)
-                //     return new LinearBezier(this, false, scaled);  // vectors parallel, use linear bezier instead
-                // else
-                hit.curve = new CircumscribedCircle(hit, gfx.width / gfx.height);
-                if (hit.curve.length == 0) // fallback
-                    hit.curve = new LinearBezier(hit, hit.sliderType === SLIDER_LINEAR);
-            }
-            else
-                hit.curve = new LinearBezier(hit, hit.sliderType === SLIDER_LINEAR);
-            if (hit.curve.length < 2)
-                console.log("Error: slider curve calculation failed");
             
-            // Add follow circle, which lies visually under slider body
+            // Add follow circle (above slider body)
             var follow = hit.follow = new PIXI.Sprite(Skin["sliderfollowcircle.png"]);
             follow.scale.x = follow.scale.y = this.hitSpriteScale;
             follow.visible = false;
@@ -340,7 +319,7 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             body.depth = 4.9999-0.0001*hit.hitIndex;
             hit.objects.push(body);
 
-            // Add slider ball
+            // Add slider ball (above follow circle)
             var ball = hit.ball = new PIXI.Sprite(Skin["sliderb.png"]);
             ball.scale.x = ball.scale.y = this.hitSpriteScale;
             ball.visible = false;
@@ -431,18 +410,6 @@ function(Osu, Skin, Hash, LinearBezier, CircumscribedCircle, setPlayerActions, S
             // Creates PIXI objects for a given hit
             this.currentHitIndex += 1;
             hit.hitIndex = this.currentHitIndex;
-            // find latest timing point that's not later than this hit
-            var timing = track.timingPoints[0];
-            // select later one if timingPoints coincide
-            for (var i = 1; i < track.timingPoints.length; i++) {
-                var t = track.timingPoints[i];
-                if (t.offset > hit.time) {
-                    break;
-                }
-                timing = t;
-            }
-            hit.timing = timing;
-
             hit.objects = [];
             hit.score = -1;
             switch (hit.type) {
