@@ -167,6 +167,7 @@ function(Osu, _, Skin, sound, Playback) {
         map.osu.ondecoded = map.osu.requestStar;
 
         map.osu.onready = function() {
+            map.osu.filterTracks();
             map.osu.sortTracks();
             map.osuReady = true;
             if (!_.some(map.osu.tracks, function(t) { return t.general.Mode === 0; })) {

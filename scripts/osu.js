@@ -309,6 +309,9 @@ define(["underscore", "osu-audio"], function(_, OsuAudio) {
             xhr.send();
         }
 
+        this.filterTracks = function() {
+            self.tracks = self.tracks.filter(function(t){ return t.general.Mode == 0; });
+        }
         this.sortTracks = function() {
             self.tracks.sort(function(a,b){
                 return a.difficulty.OverallDifficulty - b.difficulty.OverallDifficulty;
