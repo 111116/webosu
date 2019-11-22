@@ -441,8 +441,6 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
             }
             if (newchain.length > 1) { // just ignoring one-element chains
                 chains.push(newchain);
-                if (hitI.type == "slider")
-                    console.log("o==ooo ", newchain);
             }
         }
         // stack offset
@@ -471,17 +469,6 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                 for (let j=0; j<chains[i].length; ++j) {
                     movehit(chains[i][chains[i].length-1-j], -j);
                 }
-            }
-        }
-        if (track.metadata.Version == "Advanced Gameplay")
-        for (let i=0; i+1<track.hitObjects.length; ++i) {
-            if (track.hitObjects[i].type == "slider" && stacked[i+1] && getdist(track.hitObjects[i], track.hitObjects[i+1])<50)
-            {
-                console.log("!");
-                console.log(track.hitObjects[i]);
-                console.log(track.hitObjects[i+1]);
-                console.log(track.hitObjects[i+2]);
-                console.log(track.hitObjects[i+3]);
             }
         }
     }
