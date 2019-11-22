@@ -47,7 +47,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
             self.circleRadiusPixel = self.circleRadius * gfx.width / 512;
             self.hitSpriteScale = self.circleRadiusPixel / 60;
-            self.scoreOverlay = new ScoreOverlay(gfx);
+            self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, track.difficulty.HPDrainRate);
             self.scoreOverlay.depth = 23333333333; // score overlay is at top of screen
         };
         calcSize();
@@ -152,6 +152,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             else if (time > judgement.finalTime) {
                 // missed
                 this.scoreOverlay.hit(0, time);
+                judgement.clickTime = judgement.finalTime;
                 timeAfter = time - judgement.finalTime;
             }
             if (timeAfter >= 0) {
