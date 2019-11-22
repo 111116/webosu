@@ -17,7 +17,7 @@ define(["skin"], function(Skin)
         this.target = value;
         this.lasttime = 0;
     }
-    LazyNumber.prototype.lag = 0.01;
+    LazyNumber.prototype.lag = 400;
     // param time must be non-decreasing
     LazyNumber.prototype.update = function(time) {
         this.value += (this.target - this.value) * (1 - Math.exp((this.lasttime - time) / this.lag));
@@ -74,6 +74,19 @@ define(["skin"], function(Skin)
         this.comboDigits = this.newSpriteArray(5, 0.5); // 1000x
         this.accuracyDigits = this.newSpriteArray(7, 0.5); // 100.00%
 
+        this.HPbar = this.newSpriteArray(3, 0.5);
+        this.HPbar[0].texture = Skin["hpbarleft.png"];
+        this.HPbar[1].texture = Skin["hpbarright.png"];
+        this.HPbar[2].texture = Skin["hpbarmid.png"];
+        this.HPbar[0].anchor.x = 1;
+        this.HPbar[0].scale.x = this.field.width;
+        this.HPbar[1].scale.x = this.field.width;
+        this.HPbar[0].y = 10 * this.scaleMul;
+        this.HPbar[1].y = 10 * this.scaleMul;
+        this.HPbar[2].y = 10 * this.scaleMul;
+
+        // value initialization ends
+
         this.HPincreasefor = function(result) {
             switch (result)
             {
@@ -96,6 +109,7 @@ define(["skin"], function(Skin)
             // any zero-score result is a miss
             this.combo = (result > 0)? this.combo+1 : 0;
             this.HP += this.HPincreasefor(result);
+            this.HP = Math.min(1, Math.max(0, this.HP));
 
             this.score4display.set(time, this.score);
             this.combo4display.set(time, this.combo);
@@ -134,18 +148,17 @@ define(["skin"], function(Skin)
         }
 
         this.update = function(time) {
-            console.log("score overlay updating");
-            this.score4display.set(time, this.score);
-            this.combo4display.set(time, this.combo);
-            if (this.maxscore > 0)
-                this.accuracy4display.set(time, this.score / this.maxscore);
+            let HPpos = this.HP4display.valueAt(time) * this.field.width;
+            this.HPbar[0].x = HPpos;
+            this.HPbar[1].x = HPpos;
+            this.HPbar[2].x = HPpos;
 
             this.setSpriteArrayText(this.scoreDigits, Math.round(this.score4display.valueAt(time)).toString().padStart(6,'0'));
             this.setSpriteArrayText(this.comboDigits, Math.round(this.combo4display.valueAt(time)).toString() + "X");
             this.setSpriteArrayText(this.accuracyDigits, (this.accuracy4display.valueAt(time) * 100).toFixed(2) + "%");
            
             let basex = this.field.width * 0.5;
-            let basey = this.field.height * 0.02;
+            let basey = this.field.height * 0.04;
             let unit = Math.min(this.field.width / 640, this.field.height / 480);
             this.setSpriteArrayPos(this.scoreDigits, basex - this.scoreDigits.width / 2, basey);
             this.setSpriteArrayPos(this.accuracyDigits, basex - this.scoreDigits.width / 2 - this.accuracyDigits.width - 16*unit, basey + 4*unit);
