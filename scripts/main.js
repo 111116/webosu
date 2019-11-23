@@ -100,25 +100,23 @@ function(Osu, _, Skin, sound, Playback) {
     sounds.load(sample);
 
 
-    // load app
-    let app = window.app = new PIXI.Application({
-        width: window.innerWidth,
-        height: window.innerHeight,
-        resolution: window.devicePixelRatio || 1,
-        autoResize: true,
-    });
-    app.renderer.autoResize = true;
-    app.renderer.backgroundColor = 0xFFFFFF;
-
-    // load audio context
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-
-
     // objects that contain osu object of a beatmap
     function BeatmapController(){
         this.osuReady = false;
     }
-    BeatmapController.prototype.startGame = function(trackid) {
+    BeatmapController.prototype.startGame = function(trackid){
+        // load app
+        let app = window.app = new PIXI.Application({
+            width: window.innerWidth,
+            height: window.innerHeight,
+            resolution: window.devicePixelRatio || 1,
+            autoResize: true,
+        });
+        app.renderer.autoResize = true;
+        app.renderer.backgroundColor = 0xFFFFFF;
+        // load audio context
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
         // get ready for gaming
         // Hash.set(osu.tracks[0].metadata.BeatmapSetID);
         if (!scriptReady || !skinReady || !soundReady || !this.osuReady)
@@ -141,6 +139,23 @@ function(Osu, _, Skin, sound, Playback) {
         var playback = new Playback(window.game, this.osu, this.osu.tracks[trackid]);
         game.scene = playback;
         playback.start();
+
+        function gameLoop(timestamp) {
+            var timediff = timestamp - game.lastFrameTime;
+            if (game.cursor) {
+                // Handle cursor
+                game.cursor.x = game.mouseX;
+                game.cursor.y = game.mouseY;
+                game.cursor.bringToFront();
+            }
+            if (game.scene) {
+                game.scene.render(timestamp);
+            }
+            app.renderer.render(game.stage);
+            game.lastFrameTime = timestamp;
+            window.requestAnimationFrame(gameLoop);
+        }
+        window.requestAnimationFrame(gameLoop);
     }
 
 
@@ -307,26 +322,4 @@ function(Osu, _, Skin, sound, Playback) {
             parent.addChild(this);
         }
     }
-
-    function gameLoop(timestamp) {
-        var timediff = timestamp - game.lastFrameTime;
-
-        if (game.cursor) {
-            // Handle cursor
-            game.cursor.x = game.mouseX;
-            game.cursor.y = game.mouseY;
-            game.cursor.bringToFront();
-        }
-
-        if (game.scene) {
-            game.scene.render(timestamp);
-        }
-
-        app.renderer.render(game.stage);
-        game.lastFrameTime = timestamp;
-
-        window.requestAnimationFrame(gameLoop);
-    }
-
-    window.requestAnimationFrame(gameLoop);
 });
