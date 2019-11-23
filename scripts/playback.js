@@ -751,7 +751,8 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 let isfollowing = dx*dx + dy*dy <= followPixelSize * followPixelSize;
 
                 // slider edge judgement
-                if (atEnd && this.game.down && isfollowing) {
+                // Note: being tolerant if follow circle hasn't shrinked to minimum
+                if (atEnd && (this.game.down && isfollowing || hit.followSize > 1.01)) {
                     hit.judgements[hit.lastrep].clickTime = time;
                     hit.judgements[hit.lastrep].texture = Skin["hit300.png"];
                     hit.judgements[hit.lastrep].dir *= -0.5;
