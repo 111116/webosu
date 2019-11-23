@@ -31,7 +31,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         var scoreCharHeight = 45;
 
         var gfx = {}; // game field area
-        var calcSize = function() {
+        self.calcSize = function() {
             gfx.width = game.window.innerWidth;
             gfx.height = game.window.innerHeight;
             if (gfx.width / 512 > gfx.height / 384)
@@ -50,11 +50,27 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, track.difficulty.HPDrainRate);
             self.scoreOverlay.depth = 23333333333; // score overlay is at top of screen
         };
-        calcSize();
+        self.calcSize();
+
+        self.replaceHit = function(hit) {
+            switch (hit.type) {
+                case "circle":
+                    self.createHitCircle(hit);
+                    break;
+                case "slider":
+                    self.createSlider(hit);
+                    break;
+                case "spinner":
+                    self.createSpinner(hit);
+                    break;
+            }
+        }
+
         self.game.window.onresize = function() {
             self.pause();
-            calcSize();
-            // regenerate objects
+            self.calcSize();
+            for (let i=0; i<self.hits.length; ++i)
+                self.replaceHit(self.hits[i]);
         }
 
         // deal with difficulties
@@ -218,85 +234,42 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
 
         // creating hit objects
         this.createHitCircle = function(hit, objects = hit.objects) {
+
+            function newHitSprite(spritename, depth, scalemul = 1, anchorx = 0.5, anchory = 0.5) {
+                let sprite = new PIXI.Sprite(Skin[spritename]);
+                sprite.scale.x = sprite.scale.y = self.hitSpriteScale * scalemul;
+                sprite.anchor.x = anchorx;
+                sprite.anchor.y = anchory;
+                sprite.x = gfx.xoffset + hit.x * gfx.width;
+                sprite.y = gfx.yoffset + hit.y * gfx.height;
+                sprite.depth = depth;
+                sprite.alpha = 0;
+                objects.push(sprite);
+                return sprite;
+            }
             var index = hit.index + 1;
 
-            var base = hit.base = new PIXI.Sprite(Skin["hitcircle.png"]);
-            base.scale.x = base.scale.y = this.hitSpriteScale;
-            base.anchor.x = base.anchor.y = 0.5;
-            base.x = gfx.xoffset + hit.x * gfx.width;
-            base.y = gfx.yoffset + hit.y * gfx.height;
-            base.depth = 4.9999 - 0.0001 * hit.hitIndex;
-            hit.basex = base.x;
-            hit.basey = base.y;
-            base.alpha = 0;
-            base.tint = combos[hit.combo % combos.length];
+            hit.base = newHitSprite("hitcircle.png", 4.9999 - 0.0001 * hit.hitIndex);
+            hit.base.tint = combos[hit.combo % combos.length];
+            hit.basex = hit.base.x;
+            hit.basey = hit.base.y;
 
-            var overlay = new PIXI.Sprite(Skin["hitcircleoverlay.png"]);
-            overlay.scale.x = overlay.scale.y = this.hitSpriteScale;
-            overlay.anchor.x = overlay.anchor.y = 0.5;
-            overlay.x = gfx.xoffset + hit.x * gfx.width;
-            overlay.y = gfx.yoffset + hit.y * gfx.height;
-            overlay.depth = 4.9999 - 0.0001 * hit.hitIndex;
-            overlay.alpha = 0;
+            newHitSprite("hitcircleoverlay.png", 4.9999 - 0.0001 * hit.hitIndex);
+            hit.burst = newHitSprite("hitburst.png", 6.9999 - 0.0001 * hit.hitIndex);
+            hit.burst.visible = false;
 
-            var burst = hit.burst = new PIXI.Sprite(Skin["hitburst.png"]);
-            burst.scale.x = burst.scale.y = this.hitSpriteScale;
-            burst.anchor.x = burst.anchor.y = 0.5;
-            burst.x = gfx.xoffset + hit.x * gfx.width;
-            burst.y = gfx.yoffset + hit.y * gfx.height;
-            burst.depth = 6.9999 - 0.0001 * hit.hitIndex;
-            burst.visible = false;
-
-            var approach;
             if (index > 0) { // index == -1 is used for slider ends
-                hit.approach = approach = new PIXI.Sprite(Skin["approachcircle.png"]);
-                approach.alpha = 0;
-                approach.anchor.x = approach.anchor.y = 0.5;
-                approach.x = gfx.xoffset + hit.x * gfx.width;
-                approach.y = gfx.yoffset + hit.y * gfx.height;
-                approach.depth = 8 + 0.0001 * hit.hitIndex;
-                approach.tint = combos[hit.combo % combos.length];
+                hit.approach = newHitSprite("approachcircle.png", 8 + 0.0001 * hit.hitIndex);
+                hit.approach.tint = combos[hit.combo % combos.length];
             }
-
             hit.judgements.push(this.newJudgement(hit.x, hit.y, 5, hit.time + this.MehTime)); // TODO depth
 
-            objects.push(base);
-            objects.push(overlay);
-            objects.push(burst);
-            if (index > 0) {
-                objects.push(approach);
-            }
-
+            // create combo number
             if (index <= 9 && index > 0) {
-                var number = new PIXI.Sprite(Skin["default-" + index + ".png"]);
-                number.alpha = 0;
-                number.anchor.x = number.anchor.y = 0.5;
-                number.x = gfx.xoffset + hit.x * gfx.width;
-                number.y = gfx.yoffset + hit.y * gfx.height;
-                number.scale.x = number.scale.y = this.hitSpriteScale;
-                number.depth = 4.9999-0.0001*hit.hitIndex;
-                objects.push(number);
+                newHitSprite("default-" + index + ".png", 4.9999-0.0001*hit.hitIndex);
             } else if (index <= 99 && index > 0) {
-                var numberA = new PIXI.Sprite(Skin["default-" + (index % 10) + ".png"]);
-                numberA.alpha = 0;
-                numberA.anchor.x = 0.0 + 0.1;
-                numberA.anchor.y = 0.5;
-                numberA.x = gfx.xoffset + hit.x * gfx.width;
-                numberA.y = gfx.yoffset + hit.y * gfx.height;
-                numberA.scale.x = numberA.scale.y = 0.9 * this.hitSpriteScale;
-                numberA.depth = 4.9999-0.0001*hit.hitIndex;
-                objects.push(numberA);
-
-                var numberB = new PIXI.Sprite(Skin["default-" +
-                    ((index - (index % 10)) / 10) + ".png"]);
-                numberB.alpha = 0;
-                numberB.anchor.x = 1.0 + 0.1;
-                numberB.anchor.y = 0.5;
-                numberB.x = gfx.xoffset + hit.x * gfx.width;
-                numberB.y = gfx.yoffset + hit.y * gfx.height;
-                numberB.scale.x = numberB.scale.y = 0.9 * this.hitSpriteScale;
-                numberB.depth = 4.9999-0.0001*hit.hitIndex;
-                objects.push(numberB);
+                newHitSprite("default-" + (index % 10) + ".png", 4.9999-0.0001*hit.hitIndex, 0.9, 0.1);
+                newHitSprite("default-" + ((index - (index % 10)) / 10) + ".png", 4.9999-0.0001*hit.hitIndex, 0.9, 1.1);
             }
             // Note: combos > 99 hits are unsupported
         }
