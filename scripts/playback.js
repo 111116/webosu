@@ -11,6 +11,9 @@
 */
 define(["osu", "skin", "hash", "playerActions", "SliderMesh", "score"],
 function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
+    function clamp01(a) {
+        return Math.min(1, Math.max(0, a));
+    }
     function Playback(game, osu, track) {
         var self = this;
         window.playback = this;
@@ -143,6 +146,9 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.ballFadeOutTime = 100;
         self.objectDespawnTime = 2000;
         self.backgroundFadeTime = 3000;
+        self.spinnerAppearTime = 1500;
+        self.spinnerZoomInTime = 300;
+        self.spinnerFadeOutTime = 150;
 
         if (Hash.timestamp()) {
             self.offset = +Hash.timestamp();
@@ -373,12 +379,6 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.hitcircleObjects = new Array();
             self.createHitCircle(hit, hit.hitcircleObjects); // Near end
             _.each(hit.hitcircleObjects, function(o){hit.objects.push(o);});
-            _.each(hit.hitcircleObjects, function(o){
-                if (o.transform == null) {
-                    console.error("Wtf");
-                    throw "null";
-                }
-            });
 
 
             var burst = hit.burst = new PIXI.Sprite(Skin["hitburst.png"]);
@@ -437,24 +437,31 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.x = 0.5;
             hit.y = 0.5;
             hit.rotation = 0;
+            hit.rotationProgress = 0;
             hit.clicked = false;
+            hit.basescale = gfx.height / 1280;
+            let OD = track.difficulty.OverallDifficulty;
+            let spinRequiredPerSec = OD<5? 3+0.4*OD: 2.5+0.5*OD;
+            spinRequiredPerSec *= 0.8; // make it easier
+            hit.rotationRequired = 2 * Math.PI * spinRequiredPerSec * (hit.endTime - hit.time)/1000;
 
-            var base = hit.base = new PIXI.Sprite(Skin["spinner.png"]);
-            base.scale.x = base.scale.y = gfx.width / 768;
-            base.anchor.x = base.anchor.y = 0.5;
-            base.x = gfx.xoffset + hit.x * gfx.width;
-            base.y = gfx.yoffset + hit.y * gfx.height;
-            base.depth = 4.9999 - 0.0001 * (hit.hitIndex || 1);
-            base.alpha = 0;
+            function newsprite(spritename) {
+                var sprite = new PIXI.Sprite(Skin[spritename]);
+                sprite.scale.x = sprite.scale.y = hit.basescale;
+                sprite.anchor.x = sprite.anchor.y = 0.5;
+                sprite.x = gfx.xoffset + hit.x * gfx.width;
+                sprite.y = gfx.yoffset + hit.y * gfx.height;
+                sprite.depth = 4.9999 - 0.0001 * (hit.hitIndex || 1);
+                sprite.alpha = 0;
+                hit.objects.push(sprite);
+                return sprite;
+            }
 
-                // hit.judgement = new PIXI.Sprite(Skin["hit0.png"]);
-                // hit.judgement.scale.x = hit.judgement.scale.y = this.hitSpriteScale;
-                // hit.judgement.anchor.x = hit.judgement.anchor.y = 0.5;
-                // hit.judgement.x = gfx.xoffset + hit.x * gfx.width;
-                // hit.judgement.y = gfx.yoffset + hit.y * gfx.height;
-                // hit.judgement.depth = 2 + 0.0001 * hit.hitIndex;
-                // hit.judgement.alpha = 0;
-            hit.objects.push(base);
+            hit.base = newsprite("spinnerbase.png");
+            hit.progress = newsprite("spinnerprogress.png");
+            hit.top = newsprite("spinnertop.png");
+
+            hit.judgements.push(this.newJudgement(hit.x, hit.y, 5, hit.endTime + 233)); // TODO depth
         }
 
         this.populateHit = function(hit) {
@@ -813,7 +820,11 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                         hit.clicked = true;
                     }
                     else {
-                        hit.rotation += mouseAngle - hit.lastAngle;
+                        let delta = mouseAngle - hit.lastAngle;
+                        if (delta > Math.PI) delta -= Math.PI * 2;
+                        if (delta < -Math.PI) delta += Math.PI * 2;
+                        hit.rotation += delta;
+                        hit.rotationProgress += Math.abs(delta);
                     }
                     hit.lastAngle = mouseAngle;
                 }
@@ -822,19 +833,52 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 }
             }
 
-            let diff = hit.time - time; // milliseconds before time of circle
-            // calculate opacity of circle
-            let alpha = (time >= hit.time && time <= hit.endTime)? 1: 0;
-
-            hit.base.rotation = hit.rotation;
+            // calculate opacity of spinner
+            let alpha = 0;
+            if (time >= hit.time - self.spinnerZoomInTime - self.spinnerAppearTime)
+            {
+                if (time <= hit.endTime)
+                    alpha = 1;
+                else
+                    alpha = clamp01(1 - (time - hit.endTime) / self.spinnerFadeOutTime);
+            }
+            hit.top.alpha = alpha;
+            hit.progress.alpha = alpha;
             hit.base.alpha = alpha;
-           
-            // // display hit score
-            // if (hit.score > 0 || time > hit.time + this.TIME_ALLOWED){
-            //   hit.judgement.alpha = this.fadeOutEasing(-diff / this.scoreFadeOutTime);
-            //   hit.judgement.scale.x = this.hitSpriteScale;
-            //   hit.judgement.scale.y = this.hitSpriteScale;
-            // }
+
+            // calculate scales of components
+            if (time < hit.endTime) {
+                // top zoom in first
+                hit.top.scale.set(hit.basescale * clamp01((time - (hit.time - self.spinnerZoomInTime - self.spinnerAppearTime)) / self.spinnerZoomInTime));
+                hit.base.scale.set(hit.basescale * clamp01((time - (hit.time - self.spinnerZoomInTime)) / self.spinnerZoomInTime));
+            }
+            if (time < hit.time) {
+                let t = (hit.time - time) / (self.spinnerZoomInTime + self.spinnerAppearTime);
+                if (t <= 1)
+                    hit.top.rotation = -t*t*10;
+            }
+            let progress = hit.rotationProgress / hit.rotationRequired;
+            hit.progress.scale.set(hit.basescale * clamp01(progress));
+            if (time > hit.time) {
+                hit.base.rotation = hit.rotation / 2;
+                hit.top.rotation = hit.rotation / 2;
+            }
+
+            if (time >= hit.endTime) {
+                if (hit.score < 0) {
+                    let points = 0;
+                    if (progress >= 1) points = 300; else
+                    if (progress >= 0.9) points = 100; else
+                    if (progress >= 0.75) points = 50;
+                    this.scoreOverlay.hit(points, time);
+                    hit.judgements[0].clickTime = hit.endTime;
+                    if (points > 0)
+                        hit.judgements[0].dir *= -0.5;
+                    hit.judgements[0].texture = Skin["hit" + points + ".png"];
+                    hit.score = points;
+                }
+            }
+            this.updateJudgement(hit.judgements[0], time);
         }
 
         this.updateHitObjects = function(time) {
