@@ -182,7 +182,7 @@ define(["skin"], function(Skin)
             this.setSpriteArrayText(this.accuracyDigits, (this.accuracy4display.valueAt(time) * 100).toFixed(2) + "%");
            
             let basex = this.field.width * 0.5;
-            let basey = this.field.height * 0.035;
+            let basey = this.field.height * 0.04;
             let unit = Math.min(this.field.width / 640, this.field.height / 480);
             this.setSpriteArrayPos(this.scoreDigits, basex - this.scoreDigits.width / 2, basey);
             this.setSpriteArrayPos(this.accuracyDigits, basex - this.scoreDigits.width / 2 - this.accuracyDigits.width - 16*unit, basey + 3*unit);
