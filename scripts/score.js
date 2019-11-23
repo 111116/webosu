@@ -113,7 +113,6 @@ define(["skin"], function(Skin)
 
             this.score4display.set(time, this.score);
             this.combo4display.set(time, this.combo);
-            console.log("acc", this.score / this.maxscore);
             this.accuracy4display.set(time, this.score / this.maxscore);
             this.HP4display.set(time, this.HP);
         }
