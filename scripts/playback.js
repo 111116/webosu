@@ -116,6 +116,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             self.pause();
             let oldwidth = gfx.width;
             self.calcSize();
+            self.scoreOverlay.resize({width: window.innerWidth, height: window.innerHeight});
 
             self.background.width = self.game.window.innerWidth;
             self.background.height = self.game.window.innerHeight;
