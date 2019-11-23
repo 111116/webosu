@@ -41,8 +41,7 @@ define(["skin"], function(Skin)
 
         this.field = windowfield;
         this.HPdrain = HPdrain;
-        this.scaleMul = 1;
-        this.tint = 0xffffff;
+        this.scaleMul = windowfield.height / 800;
 
         this.score = 0;
         this.combo = 0;
@@ -57,22 +56,23 @@ define(["skin"], function(Skin)
         this.accuracy4display = new LazyNumber(1);
         this.HP4display = new LazyNumber(this.HP);
 
-        this.newSpriteArray = function(len, scaleMul = 1, anchorx = 0, anchory = 0) {
+        this.newSpriteArray = function(len, scaleMul = 1, tint = 0xffffff) {
             let a = new Array(len); 
             for (let i=0; i<len; ++i) {
                 a[i] = new PIXI.Sprite();
                 a[i].scale.x = a[i].scale.y = this.scaleMul * scaleMul;
-                a[i].anchor.x = anchorx;
-                a[i].anchor.y = anchory;
+                a[i].anchor.x = 0;
+                a[i].anchor.y = 0;
                 a[i].alpha = 1;
+                a[i].tint = tint;
                 this.addChild(a[i]);
             }
             return a;
         }
 
-        this.scoreDigits = this.newSpriteArray(7); // 1000000
-        this.comboDigits = this.newSpriteArray(5, 0.5); // 1000x
-        this.accuracyDigits = this.newSpriteArray(7, 0.5); // 100.00%
+        this.scoreDigits = this.newSpriteArray(7, 1, 0xddffff); // 1000000
+        this.comboDigits = this.newSpriteArray(5, 0.5, 0xddffff); // 1000x
+        this.accuracyDigits = this.newSpriteArray(7, 0.5, 0xddffff); // 100.00%
 
         this.HPbar = this.newSpriteArray(3, 0.5);
         this.HPbar[0].texture = Skin["hpbarleft.png"];
@@ -158,11 +158,11 @@ define(["skin"], function(Skin)
             this.setSpriteArrayText(this.accuracyDigits, (this.accuracy4display.valueAt(time) * 100).toFixed(2) + "%");
            
             let basex = this.field.width * 0.5;
-            let basey = this.field.height * 0.04;
+            let basey = this.field.height * 0.035;
             let unit = Math.min(this.field.width / 640, this.field.height / 480);
             this.setSpriteArrayPos(this.scoreDigits, basex - this.scoreDigits.width / 2, basey);
-            this.setSpriteArrayPos(this.accuracyDigits, basex - this.scoreDigits.width / 2 - this.accuracyDigits.width - 16*unit, basey + 4*unit);
-            this.setSpriteArrayPos(this.comboDigits, basex + this.scoreDigits.width / 2 + 16*unit, basey + 4*unit);
+            this.setSpriteArrayPos(this.accuracyDigits, basex - this.scoreDigits.width / 2 - this.accuracyDigits.width - 16*unit, basey + 3*unit);
+            this.setSpriteArrayPos(this.comboDigits, basex + this.scoreDigits.width / 2 + 16*unit, basey + 3*unit);
         }
     }
     
