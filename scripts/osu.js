@@ -423,18 +423,19 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
             // finding chain starting from hitI
             for (let j=i+1; j<track.hitObjects.length; ++j)
             {
-                if (stacked[j]) {
-                    // intersecting with a previous chain.
-                    // this shouldn't happen in a usual beatmap.
-                    console.error("Error while stacking");
-                    // quit stacking
-                    return;
-                }
                 let hitJ = track.hitObjects[j];
                 if (hitJ.type == "spinner") break;
                 if (getintv(newchain[newchain.length-1], hitJ) > stackThreshold) break;
                 // append hitJ to the chain if it's close in space & time
                 if (getdist(newchain[newchain.length-1], hitJ) <= stackDistance) {
+                    // first check if hitJ is already stacked
+                    if (stacked[j]) {
+                        // intersecting with a previous chain.
+                        // this shouldn't happen in a usual beatmap.
+                        console.error("Error while stacking", i, j);
+                        // quit stacking
+                        return;
+                    }
                     stacked[j] = true;
                     newchain.push(hitJ);
                 }
