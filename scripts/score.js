@@ -70,9 +70,9 @@ define(["skin"], function(Skin)
             return a;
         }
 
-        this.scoreDigits = this.newSpriteArray(7, 1, 0xddffff); // 1000000
-        this.comboDigits = this.newSpriteArray(5, 0.5, 0xddffff); // 1000x
-        this.accuracyDigits = this.newSpriteArray(7, 0.5, 0xddffff); // 100.00%
+        this.scoreDigits = this.newSpriteArray(7, 0.5, 0xddffff); // 1000000
+        this.comboDigits = this.newSpriteArray(5, 0.25, 0xddffff); // 1000x
+        this.accuracyDigits = this.newSpriteArray(7, 0.25, 0xddffff); // 100.00%
 
         this.HPbar = this.newSpriteArray(3, 0.5);
         this.HPbar[0].texture = Skin["hpbarleft.png"];
@@ -118,6 +118,8 @@ define(["skin"], function(Skin)
             this.HP4display.set(time, this.HP);
         }
 
+        this.charspacing = 10; // in texture pixel
+
         this.setSpriteArrayText = function(arr, str) {
             let width = 0;
             if (str.length > arr.length)
@@ -125,7 +127,7 @@ define(["skin"], function(Skin)
             for (let i=0; i<str.length; ++i) {
                 let textname = "score-" + str[i] + ".png";
                 arr[i].texture = Skin[textname];
-                arr[i].knownwidth = arr[i].scale.x * Skin[textname].width;
+                arr[i].knownwidth = arr[i].scale.x * (Skin[textname].width + this.charspacing);
                 arr[i].visible = true;
                 width += arr[i].knownwidth;
             }
@@ -141,7 +143,7 @@ define(["skin"], function(Skin)
             if (arr.useLength > 0) {} // TODO
                 else throw "wtf!";
             for (let i=0; i<arr.useLength; ++i) {
-                arr[i].x = curx;
+                arr[i].x = curx + arr[i].scale.x * this.charspacing / 2;
                 arr[i].y = y;
                 curx += arr[i].knownwidth;
             }
