@@ -241,6 +241,14 @@ function() {
     SliderMesh.prototype.constructor = SliderMesh;
 
 
+    SliderMesh.prototype.reTransform = function reTransform (view)
+    {
+        this.uniforms.dx = 2 / view.osuWidth * view.width / view.windowWidth;
+        this.uniforms.dy = -2 / view.osuHeight * view.height / view.windowHeight;
+        this.uniforms.ox = -1 + 2 * view.x / view.windowWidth;
+        this.uniforms.oy = 1 - 2 * view.y / view.windowHeight;
+    };
+
     // Standard renderer draw.
     SliderMesh.prototype._render = function _render (renderer)
     {

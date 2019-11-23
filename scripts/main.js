@@ -101,7 +101,7 @@ function(Osu, _, Skin, sound, Playback) {
 
 
     // load app
-    let app = new PIXI.Application({
+    let app = window.app = new PIXI.Application({
         width: window.innerWidth,
         height: window.innerHeight,
         resolution: window.devicePixelRatio || 1,

@@ -42,7 +42,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             gfx.height *= 0.8;
             gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
             gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
-            console.log("gfx: ", gfx)
+            console.log("gfx: ", gfx.xoffset, gfx.yoffset, gfx.width, gfx.height);
             // deal with difficulties
             self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
             self.circleRadiusPixel = self.circleRadius * gfx.width / 512;
@@ -52,25 +52,76 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         };
         self.calcSize();
 
-        self.replaceHit = function(hit) {
+        self.replaceHit = function(hit, zoom) {
+            if (hit.destoryed)
+                return;
             switch (hit.type) {
                 case "circle":
-                    self.createHitCircle(hit);
+                    hit.basex = gfx.xoffset + hit.x * gfx.width;
+                    hit.basey = gfx.yoffset + hit.y * gfx.height;
+                    for (let i=0; i<hit.objects.length; ++i) {
+                        hit.objects[i].x = gfx.xoffset + hit.x * gfx.width;
+                        hit.objects[i].y = gfx.yoffset + hit.y * gfx.height;
+                        hit.objects[i].scale.x *= zoom;
+                        hit.objects[i].scale.y *= zoom;
+                    }
                     break;
                 case "slider":
-                    self.createSlider(hit);
+                    hit.basex = gfx.xoffset + hit.x * gfx.width;
+                    hit.basey = gfx.yoffset + hit.y * gfx.height;
+                    for (let i=0; i<hit.hitcircleObjects.length; ++i) {
+                        hit.hitcircleObjects[i].x = gfx.xoffset + hit.x * gfx.width;
+                        hit.hitcircleObjects[i].y = gfx.yoffset + hit.y * gfx.height;
+                        hit.hitcircleObjects[i].scale.x *= zoom;
+                        hit.hitcircleObjects[i].scale.y *= zoom;
+                    }
+                    hit.ball.scale.x *= zoom;
+                    hit.ball.scale.y *= zoom;
+                    hit.burst.x = gfx.xoffset + hit.x * gfx.width;
+                    hit.burst.y = gfx.yoffset + hit.y * gfx.height;
+                    
+                    hit.body.reTransform({
+                        x: gfx.xoffset, y: gfx.yoffset,
+                        width: gfx.width, height: gfx.height,
+                        osuWidth: 512, osuHeight: 384,
+                        windowWidth: game.window.innerWidth,
+                        windowHeight: game.window.innerHeight
+                    });
+
+                    if (hit.repeat > 1) {
+                        hit.reverse.scale.x *= zoom;
+                        hit.reverse.scale.y *= zoom;
+                        let endPoint = hit.curve.curve[hit.curve.curve.length-1];
+                        hit.reverse.x = gfx.xoffset + endPoint.x * gfx.width;
+                        hit.reverse.y = gfx.yoffset + endPoint.y * gfx.height;
+                    }
+                    if (hit.repeat > 2) {
+                        hit.reverse_b.scale.x *= zoom;
+                        hit.reverse_b.scale.y *= zoom;
+                        let startPoint = hit.curve.curve[0];
+                        reverse.x = gfx.xoffset + startPoint.x * gfx.width;
+                        reverse.y = gfx.yoffset + startPoint.y * gfx.height;
+                    }
                     break;
                 case "spinner":
-                    self.createSpinner(hit);
+                    // TODO
                     break;
             }
         }
 
         self.game.window.onresize = function() {
+            window.app.renderer.resize(window.innerWidth, window.innerHeight);
             self.pause();
+            let oldwidth = gfx.width;
             self.calcSize();
+            console.log("new gfx", gfx);
+
+            self.background.width = self.game.window.innerWidth;
+            self.background.height = self.game.window.innerHeight;
+           
+            let zoom = gfx.width / oldwidth;
             for (let i=0; i<self.hits.length; ++i)
-                self.replaceHit(self.hits[i]);
+                self.replaceHit(self.hits[i], zoom);
         }
 
         // deal with difficulties
@@ -258,16 +309,15 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.burst = newHitSprite("hitburst.png", 6.9999 - 0.0001 * hit.hitIndex);
             hit.burst.visible = false;
 
-            if (index > 0) { // index == -1 is used for slider ends
-                hit.approach = newHitSprite("approachcircle.png", 8 + 0.0001 * hit.hitIndex);
-                hit.approach.tint = combos[hit.combo % combos.length];
-            }
+            hit.approach = newHitSprite("approachcircle.png", 8 + 0.0001 * hit.hitIndex);
+            hit.approach.tint = combos[hit.combo % combos.length];
+
             hit.judgements.push(this.newJudgement(hit.x, hit.y, 5, hit.time + this.MehTime)); // TODO depth
 
             // create combo number
-            if (index <= 9 && index > 0) {
+            if (index <= 9) {
                 newHitSprite("default-" + index + ".png", 4.9999-0.0001*hit.hitIndex);
-            } else if (index <= 99 && index > 0) {
+            } else if (index <= 99) {
                 newHitSprite("default-" + (index % 10) + ".png", 4.9999-0.0001*hit.hitIndex, 0.9, 0.1);
                 newHitSprite("default-" + ((index - (index % 10)) / 10) + ".png", 4.9999-0.0001*hit.hitIndex, 0.9, 1.1);
             }
@@ -292,7 +342,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.followSize = 1; // [1,2] current follow circle size relative to hitcircle
 
             // create slider body
-            var body = new SliderMesh(hit.curve.curve,
+            var body = hit.body = new SliderMesh(hit.curve.curve,
                 this.circleRadius,
                 {
                     x: gfx.xoffset, y: gfx.yoffset,
@@ -321,6 +371,13 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.hitcircleObjects = new Array();
             self.createHitCircle(hit, hit.hitcircleObjects); // Near end
             _.each(hit.hitcircleObjects, function(o){hit.objects.push(o);});
+            _.each(hit.hitcircleObjects, function(o){
+                if (o.transform == null) {
+                    console.error("Wtf");
+                    throw "null";
+                }
+            });
+
 
             var burst = hit.burst = new PIXI.Sprite(Skin["hitburst.png"]);
             burst.scale.x = burst.scale.y = this.hitSpriteScale;
@@ -515,6 +572,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     i--;
                     _.each(hit.objects, function(o) { self.game.stage.removeChild(o); o.destroy(); });
                     _.each(hit.judgements, function(o) { self.game.stage.removeChild(o); o.destroy(); });
+                    hit.destoryed = true;
                 }
             }
         }
