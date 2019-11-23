@@ -101,8 +101,8 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                         hit.reverse_b.scale.x *= zoom;
                         hit.reverse_b.scale.y *= zoom;
                         let startPoint = hit.curve.curve[0];
-                        reverse.x = gfx.xoffset + startPoint.x * gfx.width;
-                        reverse.y = gfx.yoffset + startPoint.y * gfx.height;
+                        hit.reverse_b.x = gfx.xoffset + startPoint.x * gfx.width;
+                        hit.reverse_b.y = gfx.yoffset + startPoint.y * gfx.height;
                     }
                     break;
                 case "spinner":
