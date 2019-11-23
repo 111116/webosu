@@ -17,7 +17,7 @@ define(["skin"], function(Skin)
         this.target = value;
         this.lasttime = 0;
     }
-    LazyNumber.prototype.lag = 400;
+    LazyNumber.prototype.lag = 300;
     // param time must be non-decreasing
     LazyNumber.prototype.update = function(time) {
         this.value += (this.target - this.value) * (1 - Math.exp((this.lasttime - time) / this.lag));
@@ -125,7 +125,7 @@ define(["skin"], function(Skin)
         }
 
         this.hit = function(result, time) {
-            this.score += result;
+            this.score += result * (1 + this.combo / 25);
             this.maxscore += 300;
             // any zero-score result is a miss
             this.combo = (result > 0)? this.combo+1 : 0;
