@@ -319,7 +319,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.basex = hit.base.x;
             hit.basey = hit.base.y;
 
-            newHitSprite("hitcircleoverlay.png", 4.9999 - 0.0001 * hit.hitIndex);
+            newHitSprite("hitcircleoverlay.png", 4.9999 - 0.0001 * hit.hitIndex, 0.5);
             hit.burst = newHitSprite("hitburst.png", 6.9999 - 0.0001 * hit.hitIndex);
             hit.burst.visible = false;
 
