@@ -127,6 +127,7 @@ function(Osu, _, Skin, sound, Playback) {
             e.preventDefault();
             return false;
         });
+        document.body.classList.add("gaming");
         // load cursor
         game.cursor = new PIXI.Sprite(Skin["cursor.png"]);
         game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
