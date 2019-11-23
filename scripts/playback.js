@@ -47,10 +47,10 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
             self.circleRadiusPixel = self.circleRadius * gfx.width / 512;
             self.hitSpriteScale = self.circleRadiusPixel / 60;
-            self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, track.difficulty.HPDrainRate);
-            self.scoreOverlay.depth = 23333333333; // score overlay is at top of screen
         };
         self.calcSize();
+        self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, track.difficulty.HPDrainRate);
+        self.scoreOverlay.depth = 23333333333; // score overlay is at top of screen
 
         self.replaceHit = function(hit, zoom) {
             if (hit.destoryed)

@@ -88,9 +88,19 @@ define(["skin"], function(Skin)
         // value initialization ends
         
         this.resize = function(windowfield) {
-            console.log("resize called", windowfield);
             this.field = windowfield;
             this.scaleMul = windowfield.height / 800;
+
+            let f = function(a, mul) {
+                for (let i=0; i<a.length; ++i) {
+                    a[i].scale.x = a[i].scale.y = mul;
+                }
+            };
+            f(this.scoreDigits, this.scaleMul * 0.5);
+            f(this.comboDigits, this.scaleMul * 0.25);
+            f(this.accuracyDigits, this.scaleMul * 0.25);
+            f(this.HPbar, this.scaleMul * 0.5);
+
             this.HPbar[0].scale.x = this.field.width;
             this.HPbar[1].scale.x = this.field.width;
             this.HPbar[0].y = 10 * this.scaleMul;
@@ -168,7 +178,6 @@ define(["skin"], function(Skin)
             this.setSpriteArrayText(this.scoreDigits, Math.round(this.score4display.valueAt(time)).toString().padStart(6,'0'));
             this.setSpriteArrayText(this.comboDigits, Math.round(this.combo4display.valueAt(time)).toString() + "X");
             this.setSpriteArrayText(this.accuracyDigits, (this.accuracy4display.valueAt(time) * 100).toFixed(2) + "%");
-            console.log((this.accuracy4display.valueAt(time) * 100).toFixed(2) + "%");
            
             let basex = this.field.width * 0.5;
             let basey = this.field.height * 0.035;
