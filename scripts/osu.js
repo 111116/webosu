@@ -456,6 +456,10 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                     hit.keyframes[j].x += scaleX * dep;
                     hit.keyframes[j].y += scaleY * dep;
                 }
+                for (let j=0; j<hit.curve.curve.length; ++j) {
+                    hit.curve.curve[j].x += scaleX * dep;
+                    hit.curve.curve[j].y += scaleY * dep;
+                }
             }
         }
         for (let i=0; i<chains.length; ++i) {
