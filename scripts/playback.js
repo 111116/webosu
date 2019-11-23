@@ -9,8 +9,8 @@
 *       [8,9) approach circle, bottom to top
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "skin", "hash", "playerActions", "SliderMesh"],
-function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
+define(["osu", "skin", "hash", "playerActions", "SliderMesh", "score"],
+function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
     function Playback(game, osu, track) {
         var self = this;
         window.playback = this;
@@ -47,6 +47,8 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
             self.circleRadiusPixel = self.circleRadius * gfx.width / 512;
             self.hitSpriteScale = self.circleRadiusPixel / 60;
+            self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, track.difficulty.HPDrainRate);
+            self.scoreOverlay.depth = 23333333333; // score overlay is at top of screen
         };
         calcSize();
         self.game.window.onresize = function() {
@@ -148,6 +150,9 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
                 timeAfter = time - judgement.clickTime;
             }
             else if (time > judgement.finalTime) {
+                // missed
+                this.scoreOverlay.hit(0, time);
+                judgement.clickTime = judgement.finalTime;
                 timeAfter = time - judgement.finalTime;
             }
             if (timeAfter >= 0) {
@@ -209,30 +214,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
                         ((+color[2]) << 0));
         }
 
-        this.createScoreOverlay = function(){
-            // 5-digit score
-            self.scoreDigit = [];
-            for (let i=1; i<=5; ++i)
-            {
-                var digit = new PIXI.Sprite(Skin['score-0.png']);
-                digit.anchor.x = digit.anchor.y = 0.5;
-                digit.x = game.window.innerWidth - (i * scoreCharWidth);
-                digit.y = scoreCharHeight;
-                self.game.stage.addChild(digit);
-                self.scoreDigit[i-1] = digit;
-            }
-        };
-        self.createScoreOverlay();
-
-        this.updateScoreOverlay = function(){
-            var numbers = self.game.score.points.toString().split('').reverse();
-            var len = numbers.length;
-            for (let i=0; i<5; ++i) {
-                if (len > i) {
-                    self.scoreDigit[i].texture = Skin["score-" + numbers[i] + '.png'];
-                }
-            }
-        }
+        self.game.stage.addChild(this.scoreOverlay);
 
         // creating hit objects
         this.createHitCircle = function(hit, objects = hit.objects) {
@@ -503,11 +485,11 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
         };
 
         this.hitSuccess = function hitSuccess(hit, points, time){
+            this.scoreOverlay.hit(points, time);
             self.playHitsound(hit, 0);
             hit.score = points;
             self.game.score.points += points;
             self.game.score.goodClicks += 1;
-            self.updateScoreOverlay();
             hit.clickTime = time;
             hit.judgements[0].clickTime = time;
             hit.judgements[0].dir *= -0.5;
@@ -740,6 +722,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
                     hit.judgements[hit.lastrep].clickTime = time;
                     hit.judgements[hit.lastrep].texture = Skin["hit300.png"];
                     hit.judgements[hit.lastrep].dir *= -0.5;
+                    this.scoreOverlay.hit(300, time);
                     self.playHitsound(hit, hit.lastrep);
                 }
 
@@ -857,6 +840,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh) {
             this.updateBackground(time);
             if (time !== 0) {
                 self.updateHitObjects(time);
+                this.scoreOverlay.update(time);
                 self.game.updatePlayerActions(time);
                 if (self.osu.audio.playing && false) { // TODO: Better way of updating this
                     Hash.timestamp(Math.floor(time));
