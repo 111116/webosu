@@ -2,19 +2,18 @@
 
 osu! that can be played in a browser
 
-(under development, currently **not playable**)
+(under development)
 
 It runs on Firefox & Chrome. It doesn't run on Safari currently.
 
-Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). It has nothing to do with @ppy.
+Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). It has nothing to do with @ppy. Scoring and judgement rules can differ from that of official osu!.
 
-## Running
+## Hosting
 
 Just set up a local web server with root directory located where `index.html` is in.
 
 ## Current functions
 
-- menu: no
 - scroll to change volume: yes
 - keyboard button: yes (z x)
 - Hit circle: yes
@@ -25,10 +24,12 @@ Just set up a local web server with root directory located where `index.html` is
 
 - CS: yes
 - AR: yes
-- OD: no
-- star calculation: no
-- life drain: no
-- scoring: no
+- OD: yes
+- star: yes (thanks to sayobot)
+- life drain: yes
+- score: yes
+- accuracy: yes
+- combo: yes
 
 #### graphics
 
@@ -40,11 +41,11 @@ currently mixing lazer & stable osu! styled visual elements.
 - object fade in/out: yes
 - slider snake-in: no
 - slider snake-out: no
-- hit burst light: no
-- hit lighting: no
-- beatmap color: yes
+- hit burst light: yes
+- hit ring glow: no
+- beatmap combo color: yes
 - beatmap skin: no
-- custom skin: unchecked
+- custom skin: no
 
 #### Hit sounds
 
