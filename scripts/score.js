@@ -45,7 +45,8 @@ define(["skin"], function(Skin)
 
         this.score = 0;
         this.combo = 0;
-        this.maxscore = 0;
+        this.judgeTotal = 0;
+        this.maxJudgeTotal = 0;
         this.HP = 1;
         // accuracy = score / maxscore
 
@@ -125,8 +126,9 @@ define(["skin"], function(Skin)
         }
 
         this.hit = function(result, time) {
+            this.judgeTotal += result;
+            this.maxJudgeTotal += 300;
             this.score += result * (1 + this.combo / 25);
-            this.maxscore += 300;
             // any zero-score result is a miss
             this.combo = (result > 0)? this.combo+1 : 0;
             this.HP += this.HPincreasefor(result);
@@ -134,7 +136,7 @@ define(["skin"], function(Skin)
 
             this.score4display.set(time, this.score);
             this.combo4display.set(time, this.combo);
-            this.accuracy4display.set(time, this.score / this.maxscore);
+            this.accuracy4display.set(time, this.judgeTotal / this.maxJudgeTotal);
             this.HP4display.set(time, this.HP);
         }
 
