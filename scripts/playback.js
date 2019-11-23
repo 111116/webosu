@@ -109,7 +109,13 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     }
                     break;
                 case "spinner":
-                    // TODO
+                    hit.basescale = gfx.height / 1280;
+                    for (let i=0; i<hit.objects.length; ++i) {
+                        hit.objects[i].x = gfx.xoffset + hit.x * gfx.width;
+                        hit.objects[i].y = gfx.yoffset + hit.y * gfx.height;
+                        hit.objects[i].scale.x = hit.basescale;
+                        hit.objects[i].scale.y = hit.basescale;
+                    }
                     break;
             }
         }
