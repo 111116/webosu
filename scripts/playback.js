@@ -330,10 +330,10 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
 
             // create combo number
             if (index <= 9) {
-                newHitSprite("default-" + index + ".png", 4.9999-0.0001*hit.hitIndex);
+                newHitSprite("score-" + index + ".png", 4.9999-0.0001*hit.hitIndex, 0.5, 0.5, 0.47);
             } else if (index <= 99) {
-                newHitSprite("default-" + (index % 10) + ".png", 4.9999-0.0001*hit.hitIndex, 0.9, 0.1);
-                newHitSprite("default-" + ((index - (index % 10)) / 10) + ".png", 4.9999-0.0001*hit.hitIndex, 0.9, 1.1);
+                newHitSprite("score-" + (index % 10) + ".png", 4.9999-0.0001*hit.hitIndex, 0.45, 0, 0.47);
+                newHitSprite("score-" + ((index - (index % 10)) / 10) + ".png", 4.9999-0.0001*hit.hitIndex, 0.45, 1, 0.47);
             }
             // Note: combos > 99 hits are unsupported
         }
