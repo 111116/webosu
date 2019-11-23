@@ -55,10 +55,14 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.replaceHit = function(hit, zoom) {
             if (hit.destoryed)
                 return;
+            hit.basex = gfx.xoffset + hit.x * gfx.width;
+            hit.basey = gfx.yoffset + hit.y * gfx.height;
+            for (let i=0; i<hit.judgements.length; ++i) {
+                hit.judgements[i].scale.x *= zoom;
+                hit.judgements[i].scale.y *= zoom;
+            }
             switch (hit.type) {
                 case "circle":
-                    hit.basex = gfx.xoffset + hit.x * gfx.width;
-                    hit.basey = gfx.yoffset + hit.y * gfx.height;
                     for (let i=0; i<hit.objects.length; ++i) {
                         hit.objects[i].x = gfx.xoffset + hit.x * gfx.width;
                         hit.objects[i].y = gfx.yoffset + hit.y * gfx.height;
@@ -67,8 +71,6 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     }
                     break;
                 case "slider":
-                    hit.basex = gfx.xoffset + hit.x * gfx.width;
-                    hit.basey = gfx.yoffset + hit.y * gfx.height;
                     for (let i=0; i<hit.hitcircleObjects.length; ++i) {
                         hit.hitcircleObjects[i].x = gfx.xoffset + hit.x * gfx.width;
                         hit.hitcircleObjects[i].y = gfx.yoffset + hit.y * gfx.height;
@@ -114,7 +116,6 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             self.pause();
             let oldwidth = gfx.width;
             self.calcSize();
-            console.log("new gfx", gfx);
 
             self.background.width = self.game.window.innerWidth;
             self.background.height = self.game.window.innerHeight;
@@ -244,7 +245,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             self.backgroundDim = new PIXI.Graphics();
             self.backgroundDim.alpha = 0;
             self.backgroundDim.beginFill(0);
-            self.backgroundDim.drawRect(0, 0, self.game.window.innerWidth, self.game.window.innerHeight);
+            self.backgroundDim.drawRect(0, 0, 233333, 233333); // make it infinite big
             self.backgroundDim.endFill();
             self.game.stage.addChild(self.backgroundDim);
             if (self.track.events.length != 0) {
