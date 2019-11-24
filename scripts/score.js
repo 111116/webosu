@@ -82,9 +82,9 @@ define(["skin"], function(Skin)
         this.HPbar[0].anchor.x = 1;
         this.HPbar[0].scale.x = this.field.width;
         this.HPbar[1].scale.x = this.field.width;
-        this.HPbar[0].y = 10 * this.scaleMul;
-        this.HPbar[1].y = 10 * this.scaleMul;
-        this.HPbar[2].y = 10 * this.scaleMul;
+        this.HPbar[0].y = -7 * this.scaleMul;
+        this.HPbar[1].y = -7 * this.scaleMul;
+        this.HPbar[2].y = -7 * this.scaleMul;
 
         // value initialization ends
         
@@ -104,9 +104,9 @@ define(["skin"], function(Skin)
 
             this.HPbar[0].scale.x = this.field.width;
             this.HPbar[1].scale.x = this.field.width;
-            this.HPbar[0].y = 10 * this.scaleMul;
-            this.HPbar[1].y = 10 * this.scaleMul;
-            this.HPbar[2].y = 10 * this.scaleMul;
+            this.HPbar[0].y = -7 * this.scaleMul;
+            this.HPbar[1].y = -7 * this.scaleMul;
+            this.HPbar[2].y = -7 * this.scaleMul;
         }
 
         this.HPincreasefor = function(result) {
@@ -184,7 +184,7 @@ define(["skin"], function(Skin)
             this.setSpriteArrayText(this.accuracyDigits, (this.accuracy4display.valueAt(time) * 100).toFixed(2) + "%");
            
             let basex = this.field.width * 0.5;
-            let basey = this.field.height * 0.04;
+            let basey = this.field.height * 0.017;
             let unit = Math.min(this.field.width / 640, this.field.height / 480);
             this.setSpriteArrayPos(this.scoreDigits, basex - this.scoreDigits.width / 2, basey);
             this.setSpriteArrayPos(this.accuracyDigits, basex - this.scoreDigits.width / 2 - this.accuracyDigits.width - 16*unit, basey + 3*unit);
