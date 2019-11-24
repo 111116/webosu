@@ -20,7 +20,7 @@ define([], function() {
             "default-8.png", "default-9.png",
             "score-0.png", "score-1.png", "score-2.png", "score-3.png", "score-4.png",
             "score-5.png", "score-6.png", "score-7.png", "score-8.png", "score-9.png",
-            "score-%.png", "score-X.png", "score-..png",
+            "score-percent.png", "score-x.png", "score-..png",
             "hit0.png", "hit50.png", "hit100.png", "hit300.png",
             "hpbarleft.png", "hpbarmid.png", "hpbarright.png",
         ];

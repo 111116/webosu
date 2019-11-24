@@ -147,7 +147,9 @@ define(["skin"], function(Skin)
             if (str.length > arr.length)
                 console.error("displaying string failed");
             for (let i=0; i<str.length; ++i) {
-                let textname = "score-" + str[i] + ".png";
+                let ch = str[i];
+                if (ch == "%") ch = "percent";
+                let textname = "score-" + ch + ".png";
                 arr[i].texture = Skin[textname];
                 arr[i].knownwidth = arr[i].scale.x * (Skin[textname].width + this.charspacing);
                 arr[i].visible = true;
@@ -178,7 +180,7 @@ define(["skin"], function(Skin)
             this.HPbar[2].x = HPpos;
 
             this.setSpriteArrayText(this.scoreDigits, Math.round(this.score4display.valueAt(time)).toString().padStart(6,'0'));
-            this.setSpriteArrayText(this.comboDigits, Math.round(this.combo4display.valueAt(time)).toString() + "X");
+            this.setSpriteArrayText(this.comboDigits, Math.round(this.combo4display.valueAt(time)).toString() + "x");
             this.setSpriteArrayText(this.accuracyDigits, (this.accuracy4display.valueAt(time) * 100).toFixed(2) + "%");
            
             let basex = this.field.width * 0.5;
