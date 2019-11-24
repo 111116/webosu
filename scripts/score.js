@@ -71,9 +71,9 @@ define(["skin"], function(Skin)
             return a;
         }
 
-        this.scoreDigits = this.newSpriteArray(7, 0.5, 0xddffff); // 1000000
-        this.comboDigits = this.newSpriteArray(5, 0.25, 0xddffff); // 1000x
-        this.accuracyDigits = this.newSpriteArray(7, 0.25, 0xddffff); // 100.00%
+        this.scoreDigits = this.newSpriteArray(7, 0.4, 0xddffff); // 1000000
+        this.comboDigits = this.newSpriteArray(5, 0.2, 0xddffff); // 1000x
+        this.accuracyDigits = this.newSpriteArray(7, 0.2, 0xddffff); // 100.00%
 
         this.HPbar = this.newSpriteArray(3, 0.5);
         this.HPbar[0].texture = Skin["hpbarleft.png"];
@@ -97,9 +97,9 @@ define(["skin"], function(Skin)
                     a[i].scale.x = a[i].scale.y = mul;
                 }
             };
-            f(this.scoreDigits, this.scaleMul * 0.5);
-            f(this.comboDigits, this.scaleMul * 0.25);
-            f(this.accuracyDigits, this.scaleMul * 0.25);
+            f(this.scoreDigits, this.scaleMul * 0.4);
+            f(this.comboDigits, this.scaleMul * 0.2);
+            f(this.accuracyDigits, this.scaleMul * 0.2);
             f(this.HPbar, this.scaleMul * 0.5);
 
             this.HPbar[0].scale.x = this.field.width;
