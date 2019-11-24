@@ -31,13 +31,7 @@ function(Osu, _, Skin, sound, Playback) {
         M2down: false,
         down: false,
 
-        lastFrameTime: -1,
         finished : false,
-        score: {
-          nbClicks: 0,
-          goodClicks: 0,
-          points: 0
-        },
         sample: [{}, {}, {}, {}],
         sampleSet: 1
     };
@@ -141,7 +135,6 @@ function(Osu, _, Skin, sound, Playback) {
         playback.start();
 
         function gameLoop(timestamp) {
-            var timediff = timestamp - game.lastFrameTime;
             if (game.cursor) {
                 // Handle cursor
                 game.cursor.x = game.mouseX;
@@ -152,7 +145,6 @@ function(Osu, _, Skin, sound, Playback) {
                 game.scene.render(timestamp);
             }
             app.renderer.render(game.stage);
-            game.lastFrameTime = timestamp;
             window.requestAnimationFrame(gameLoop);
         }
         window.requestAnimationFrame(gameLoop);

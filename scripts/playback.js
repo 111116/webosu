@@ -501,7 +501,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     self.game.sample[additionSet].hitclap.play();
                 }
             }
-            if (hit.type == 'circle') {
+            if (hit.type == 'circle' || hit.type == 'spinner') {
                 let toplay = hit.hitSound;
                 let normalSet = hit.hitSample.normalSet || defaultSet;
                 let additionSet = hit.hitSample.additionSet || normalSet;
@@ -517,13 +517,13 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
 
         this.hitSuccess = function hitSuccess(hit, points, time){
             this.scoreOverlay.hit(points, time);
-            self.playHitsound(hit, 0);
+            if (points > 0)
+                self.playHitsound(hit, 0);
             hit.score = points;
-            self.game.score.points += points;
-            self.game.score.goodClicks += 1;
             hit.clickTime = time;
             hit.judgements[0].clickTime = time;
-            hit.judgements[0].dir *= -0.5;
+            if (points > 0)
+                hit.judgements[0].dir *= -0.5;
             hit.judgements[0].texture = Skin["hit" + points + ".png"];
         };
 
@@ -857,12 +857,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     if (progress >= 1) points = 300; else
                     if (progress >= 0.9) points = 100; else
                     if (progress >= 0.75) points = 50;
-                    this.scoreOverlay.hit(points, time);
-                    hit.judgements[0].clickTime = hit.endTime;
-                    if (points > 0)
-                        hit.judgements[0].dir *= -0.5;
-                    hit.judgements[0].texture = Skin["hit" + points + ".png"];
-                    hit.score = points;
+                    this.hitSuccess(hit, points, hit.endTime);
                 }
             }
             this.updateJudgement(hit.judgements[0], time);
