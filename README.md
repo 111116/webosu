@@ -198,6 +198,8 @@ In addition, the free osu beatmap mirror site `sayobot.cn` is used for displayin
 
 - About mesh antialiasing: just blur the texture a little bit...
 
+- layering: approach circle > hit circle > slider ball > follow circle > slider body
+
 
 ## Future Plan
 
