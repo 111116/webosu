@@ -314,7 +314,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             }
             var index = hit.index + 1;
 
-            hit.base = newHitSprite("hitcircle.png", 4.9999 - 0.0001 * hit.hitIndex);
+            hit.base = newHitSprite("disc.png", 4.9999 - 0.0001 * hit.hitIndex, 0.5);
             hit.base.tint = combos[hit.combo % combos.length];
             hit.basex = hit.base.x;
             hit.basey = hit.base.y;
