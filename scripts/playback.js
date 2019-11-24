@@ -81,7 +81,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 }
             }
             switch (hit.type) {
-                
+
                 case "circle":
                     placecircle(hit);
                     break;
@@ -156,6 +156,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.approachFadeInTime = self.approachTime; // time of approach circles fading in, at beginning of approaching
         self.sliderFadeOutTime = 300; // time of slidebody fading out
         self.circleFadeOutTime = 150;
+        self.glowFadeOutTime = 220;
         self.scoreFadeOutTime = 600;
         self.followZoomInTime = 100; // TODO related to AR
         self.followFadeOutTime = 100;
@@ -331,11 +332,11 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.basey = hit.base.y;
 
             hit.circle = newHitSprite("hitcircleoverlay.png", basedep, 0.5);
+            hit.glow = newHitSprite("ring-glow.png", basedep+2, 0.46);
+            hit.glow.tint = combos[hit.combo % combos.length];
+            hit.glow.blendMode = PIXI.BLEND_MODES.ADD;
             hit.burst = newHitSprite("hitburst.png", basedep+2);
             hit.burst.visible = false;
-            hit.glow = newHitSprite("ring-glow.png", basedep+2, 0.5);
-            hit.glow.blendMode = PIXI.BLEND_MODES.ADD;
-            hit.glow.visible = false;
 
             hit.approach = newHitSprite("approachcircle.png", 8 + 0.0001 * hit.hitIndex);
             hit.approach.tint = combos[hit.combo % combos.length];
@@ -588,7 +589,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 hit.circle.alpha = alpha;
                 for (let i=0; i<hit.numbers.length; ++i)
                     hit.numbers[i].alpha = alpha;
-                hit.glow.alpha = alpha;
+                hit.glow.alpha = alpha * 0.6;
             }
 
             if (diff <= this.approachTime && diff > noteFullAppear) { // fading in
@@ -607,10 +608,11 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 }
                 // burst light
                 let timeAfter = time - hit.clickTime;
-                let alpha = Math.max(0, 1 - timeAfter / this.circleFadeOutTime);
                 let scale = (1 + 0.4 * timeAfter / this.circleFadeOutTime) * this.hitSpriteScale;
-                hit.burst.alpha = alpha;
+                hit.burst.alpha = Math.max(0, 1 - timeAfter / this.circleFadeOutTime);
+                hit.glow.alpha = 0.6 * Math.max(0, 1 - timeAfter / this.glowFadeOutTime);
                 hit.burst.scale.x = hit.burst.scale.y = scale;
+                hit.glow.scale.x = hit.glow.scale.y = scale * 0.46;
             }
             else if (diff <= noteFullAppear && -diff <= this.MehTime) { // before click
                 setcircleAlpha(1);
@@ -727,8 +729,14 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     }
                     hit.glow.x = atx;
                     hit.glow.y = aty;
+                    hit.burst.x = atx;
+                    hit.burst.y = aty;
                     hit.approach.x = atx;
                     hit.approach.y = aty;
+                    if (hit.base.alpha == 1) {
+                        hit.judgements[0].basex = at.x;
+                        hit.judgements[0].basey = at.y;
+                    }
                 }
 
                 let dx = game.mouseX - atx;
