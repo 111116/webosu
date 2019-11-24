@@ -129,7 +129,7 @@ function(Osu, _, Skin, sound, Playback) {
         // load cursor
         game.cursor = new PIXI.Sprite(Skin["cursor.png"]);
         game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
-        game.cursor.scale.x = game.cursor.scale.y = 0.6 * game.cursorSize;
+        game.cursor.scale.x = game.cursor.scale.y = 0.3 * game.cursorSize;
         game.stage.addChild(game.cursor);
         // switch page to game view
         pGameArea.appendChild(app.view);
