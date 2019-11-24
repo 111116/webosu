@@ -6,7 +6,7 @@ define([], function() {
         var skinResource = [
             "cursor.png",
             "approachcircle.png",
-            "hitcircle.png", "hitcircleoverlay.png", "disc.png",
+            "hitcircleoverlay.png", "disc.png",
             "hitburst.png", "ring-glow.png",
             "sliderb.png", "sliderfollowcircle.png",
             "reversearrow.png",
