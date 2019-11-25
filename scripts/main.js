@@ -254,10 +254,18 @@ function(Osu, _, Skin, sound, Playback) {
     var pMainPage = document.getElementById("main-page");
     var beatmapFileList = [];
 
+    // load beatmap from local
     localforage.getItem("beatmapfilelist", function(err, names){
         if (!err && names && typeof names.length !== undefined) {
             console.log("local beatmap list:", names);
             document.getElementById('bm-total-counter').innerText = names.length;
+            var tempbox = [];
+            for (let i=0; i<names.length; ++i) {
+                let box = document.createElement("div");
+                box.className = "beatmapbox";
+                pBeatmapList.insertBefore(box, pDragbox);
+                tempbox.push(box);
+            }
             var loadingCounter = document.getElementById('bm-loaded-counter');
             var loadingn = 0;
             beatmapFileList = beatmapFileList.concat(names);
@@ -266,9 +274,13 @@ function(Osu, _, Skin, sound, Playback) {
                 localforage.getItem(names[i], function(err, blob){
                     if (!err && blob) {
                         let fs = new zip.fs.FS();
+                        fs.filename = names[i];
                         fs.root.importBlob(blob,
                             function(){
-                                oszLoaded(fs);
+                                addbeatmap(fs, function(box){
+                                    pBeatmapList.replaceChild(box, tempbox[i]);
+                                    pDragboxHint.innerText = pDragboxHint.defaultHint;
+                                });
                                 loadingCounter.innerText = ++loadingn;
                             },
                             function(err) {
@@ -289,11 +301,12 @@ function(Osu, _, Skin, sound, Playback) {
         }
     });
 
-    function oszLoaded(osz) {
+    function addbeatmap(osz,f) {
         // Verify that this has all the pieces we need
         var map = new BeatmapController();
         map.osu = new Osu(osz.root);
         map.filename = osz.filename;
+        console.log("adding beatmap filename:", osz.filename)
 
         // ask sayobot of star ratings of beatmaps immediately when decoded
         map.osu.ondecoded = function() {
@@ -307,8 +320,7 @@ function(Osu, _, Skin, sound, Playback) {
             }
             // add the beatmap to page & restore drag box
             let pBeatmapBox = map.createBeatmapBox();
-            pBeatmapList.insertBefore(pBeatmapBox, pDragbox);
-            pDragboxHint.innerText = pDragboxHint.defaultHint;
+            f(pBeatmapBox);
             // save the beatmap locally TODO
             if (!beatmapFileList.includes(map.filename)) {
                 beatmapFileList.push(map.filename);
@@ -349,7 +361,13 @@ function(Osu, _, Skin, sound, Playback) {
                     }
                 })
                 console.log(fs);
-                fs.root.importBlob(raw_file, function(){oszLoaded(fs)},
+                fs.root.importBlob(raw_file,
+                    function(){
+                        addbeatmap(fs, function(box){
+                            pBeatmapList.insertBefore(box, pDragbox);
+                            pDragboxHint.innerText = pDragboxHint.defaultHint;
+                        })
+                    },
                     function(err) {
                         pDragboxHint.innerText = pDragboxHint.nonValidHint;
                     });
