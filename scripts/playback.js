@@ -162,7 +162,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.followFadeOutTime = 100;
         self.ballFadeOutTime = 100;
         self.objectDespawnTime = 2000;
-        self.backgroundFadeTime = 3000;
+        self.backgroundFadeTime = 2000;
         self.spinnerAppearTime = 1500;
         self.spinnerZoomInTime = 300;
         self.spinnerFadeOutTime = 150;
@@ -479,7 +479,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         for (var i = 0; i < this.hits.length; i++) {
             this.populateHit(this.hits[i]); // Prepare sprites and such
         }
-        this.wait = Math.max(0, 2000-this.hits[0].time);
+        this.wait = Math.max(0, 1500-this.hits[0].time);
 
         // hit result handling
         this.playHitsound = function playHitsound(hit, id) {
@@ -883,16 +883,9 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         }
 
         this.updateBackground = function(time) {
-            var fade = self.game.backgroundDimRate;
-            if (self.track.general.PreviewTime !== 0 && time < self.track.general.PreviewTime) {
-                var diff = self.track.general.PreviewTime - time;
-                if (diff < self.backgroundFadeTime) {
-                    fade = 1 - diff / (self.backgroundFadeTime);
-                    fade *= self.game.backgroundDimRate;
-                } else {
-                    fade = 0;
-                }
-            }
+            let fade = self.game.backgroundDimRate;
+            if (time < -self.wait)
+                fade *= Math.max(0, 1 - (-self.wait - time) / self.backgroundFadeTime);
             self.backgroundDim.alpha = fade;
         }
 
@@ -918,7 +911,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             if (!self.ready) {
                 return;
             }
-            self.osu.audio.play(self.offset, 1000 + self.wait);
+            self.osu.audio.play(self.offset, self.backgroundFadeTime + self.wait);
         };
 
         self.start();
