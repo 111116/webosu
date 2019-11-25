@@ -245,7 +245,6 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                 if (self.ondecoded !== null) {
                     self.ondecoded(this);
                 }
-                load_mp3();
             }
         };
 
@@ -321,7 +320,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
             });
         }
 
-        function load_mp3() {
+        this.load_mp3 = function load_mp3() {
             var mp3_raw = _.find(self.zip.children, function(c) { return c.name.toLowerCase() === self.tracks[0].general.AudioFilename.toLowerCase(); });
             mp3_raw.getBlob("audio/mpeg", function(blob) {
                 var reader = new FileReader();

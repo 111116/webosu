@@ -130,7 +130,7 @@ function(Osu, _, Skin, sound, Playback) {
 
         var playback = new Playback(window.game, this.osu, this.osu.tracks[trackid]);
         game.scene = playback;
-        playback.start();
+        playback.load();
 
         function gameLoop(timestamp) {
             if (game.cursor) {
@@ -170,11 +170,10 @@ function(Osu, _, Skin, sound, Playback) {
         map.osu = new Osu(osz.root);
 
         // ask sayobot of star ratings of beatmaps immediately when decoded
-        map.osu.ondecoded = map.osu.requestStar;
-
-        map.osu.onready = function() {
+        map.osu.ondecoded = function() {
             map.osu.filterTracks();
             map.osu.sortTracks();
+            map.osu.requestStar;
             map.osuReady = true;
             if (!_.some(map.osu.tracks, function(t) { return t.general.Mode === 0; })) {
                 pDragboxHint.innerText = pDragboxHint.modeErrHint;

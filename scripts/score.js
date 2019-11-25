@@ -174,6 +174,10 @@ define(["skin"], function(Skin)
         }
 
         this.update = function(time) {
+            if (Number.isNaN(time)) {
+                console.error("score overlay update with time = NaN");
+                return;
+            }
             let HPpos = this.HP4display.valueAt(time) * this.field.width;
             this.HPbar[0].x = HPpos;
             this.HPbar[1].x = HPpos;

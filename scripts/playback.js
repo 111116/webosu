@@ -30,8 +30,17 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.currentHitIndex = 0; // index for all hit objects
         self.autoplay = false;
         self.approachScale = 3;
+        self.audioReady = false;
         var scoreCharWidth = 35;
         var scoreCharHeight = 45;
+
+        self.osu.onready = function() {
+            self.audioReady = true;
+            self.start();
+        }
+        self.load = function() {
+            self.osu.load_mp3();
+        }
 
         var gfx = {}; // game field area
         self.calcSize = function() {
@@ -198,7 +207,6 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 // TODO: Visualization
             });
         }
-        self.osu.audio.gain.gain.value = self.game.musicVolume * self.game.masterVolume;
 
         // pause
         window.addEventListener("keyup", function(e) {
@@ -285,7 +293,6 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                         var uri = URL.createObjectURL(blob);
                         loadBackground(uri);
                         self.ready = true;
-                        self.start();
                     });
                 } else  {
                     loadBackground("skin/defaultbg.jpg");
@@ -890,15 +897,21 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         }
 
         this.render = function(timestamp) {
-            var time = osu.audio.getPosition() * 1000 + self.offset;
-            this.updateBackground(time);
-            if (time !== 0) {
+            var time;
+            if (this.audioReady) {
+                time = osu.audio.getPosition() * 1000 + self.offset;
+            }
+            if (typeof time !== 'undefined') {
+                this.updateBackground(time);
                 self.updateHitObjects(time);
                 this.scoreOverlay.update(time);
                 self.game.updatePlayerActions(time);
                 if (self.osu.audio.playing && false) { // TODO: Better way of updating this
                     Hash.timestamp(Math.floor(time));
                 }
+            }
+            else {
+                this.updateBackground(-100000);
             }
         }
 
@@ -907,14 +920,15 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         }
 
         this.start = function() {
+            console.log("start playback")
             self.started = true;
+            self.osu.audio.gain.gain.value = self.game.musicVolume * self.game.masterVolume;
             if (!self.ready) {
                 return;
             }
             self.osu.audio.play(self.offset, self.backgroundFadeTime + self.wait);
         };
 
-        self.start();
     }
     
     return Playback;
