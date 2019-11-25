@@ -96,6 +96,7 @@ function(Osu, _, Skin, sound, Playback) {
     function BeatmapController(){
         this.osuReady = false;
     }
+
     BeatmapController.prototype.startGame = function(trackid){
         // load app
         let app = window.app = new PIXI.Application({
@@ -148,6 +149,96 @@ function(Osu, _, Skin, sound, Playback) {
         window.requestAnimationFrame(gameLoop);
     }
 
+    BeatmapController.prototype.createBeatmapBox = function(){
+        let map = this;
+        // create container of beatmap on web page
+        let pBeatmapBox = document.createElement("div");
+        let pBeatmapCover = document.createElement("img");
+        let pBeatmapTitle = document.createElement("div");
+        let pBeatmapAuthor = document.createElement("div");
+        pBeatmapBox.className = "beatmapbox";
+        pBeatmapCover.className = "beatmapcover";
+        pBeatmapTitle.className = "beatmaptitle";
+        pBeatmapAuthor.className = "beatmapauthor";
+        pBeatmapBox.appendChild(pBeatmapCover);
+        pBeatmapBox.appendChild(pBeatmapTitle);
+        pBeatmapBox.appendChild(pBeatmapAuthor);
+        // set beatmap title & artist display (prefer ascii title)
+        var title = map.osu.tracks[0].metadata.Title;
+        var artist = map.osu.tracks[0].metadata.Artist;
+        var creator = map.osu.tracks[0].metadata.Creator;
+        pBeatmapTitle.innerText = title;
+        pBeatmapAuthor.innerText = artist + " / " + creator;
+        // set beatmap cover display
+        pBeatmapCover.alt = "beatmap cover";
+        map.osu.getCoverSrc(pBeatmapCover);
+        // display beatmap length
+        if (map.osu.tracks[0].length) {
+            let pBeatmapLength = document.createElement("div");
+            pBeatmapLength.className = "beatmaplength";
+            pBeatmapBox.appendChild(pBeatmapLength);
+            let length = map.osu.tracks[0].length;
+            pBeatmapLength.innerText = Math.floor(length/60) + ":" + (length%60<10?"0":"") + (length%60);
+        }
+
+        // click Beatmap box to show difficulty selection menu
+        pBeatmapBox.onclick = function(e) {
+            // allow only one selection menu at a time
+            if (!window.showingDifficultyBox) {
+                e.stopPropagation();
+                // create difficulty seleciton menu
+                // set menu position
+                let difficultyBox = document.createElement("div");
+                difficultyBox.className = "difficulty-box";
+                let rect = this.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top; 
+                difficultyBox.style.left = x + "px";
+                difficultyBox.style.top = y + "px";
+                // close menu callback
+                var closeDifficultyMenu = function() {
+                    pBeatmapBox.removeChild(difficultyBox);
+                    window.showingDifficultyBox = false;
+                    window.removeEventListener('click', closeDifficultyMenu, false);
+                };
+                // create difficulty list items
+                for (let i=0; i<map.osu.tracks.length; ++i) {
+                    let difficultyItem = document.createElement("div");
+                    let difficultyRing = document.createElement("div");
+                    let difficultyText = document.createElement("span");
+                    difficultyItem.className = "difficulty-item";
+                    difficultyRing.className = "difficulty-ring";
+                    // color ring acoording to Star; gray ring if unavailable
+                    let star = map.osu.tracks[i].difficulty.star;
+                    if (star) {
+                        if (star<2) difficultyRing.classList.add("easy"); else
+                        if (star<2.7) difficultyRing.classList.add("normal"); else
+                        if (star<4) difficultyRing.classList.add("hard"); else
+                        if (star<5.3) difficultyRing.classList.add("insane"); else
+                        if (star<6.5) difficultyRing.classList.add("expert"); else
+                            difficultyRing.classList.add("expert-plus");
+                    }
+                    difficultyText.innerText = map.osu.tracks[i].metadata.Version;
+                    difficultyItem.appendChild(difficultyRing);
+                    difficultyItem.appendChild(difficultyText);
+                    difficultyBox.appendChild(difficultyItem);
+                    // launch game if clicked inside
+                    difficultyItem.onclick = function(e) {
+                        e.stopPropagation();
+                        closeDifficultyMenu();
+                        map.startGame(i);
+                    }
+                }
+                pBeatmapBox.appendChild(difficultyBox);
+                window.showingDifficultyBox = true;
+                // close menu if clicked outside
+                window.addEventListener("click", closeDifficultyMenu, false);
+            }
+        }
+        return pBeatmapBox;
+    }
+
+
 
     // web page elements
     var pDragbox = document.getElementById("beatmap-dragbox");
@@ -173,99 +264,17 @@ function(Osu, _, Skin, sound, Playback) {
         map.osu.ondecoded = function() {
             map.osu.filterTracks();
             map.osu.sortTracks();
-            map.osu.requestStar;
+            map.osu.requestStar();
             map.osuReady = true;
             if (!_.some(map.osu.tracks, function(t) { return t.general.Mode === 0; })) {
                 pDragboxHint.innerText = pDragboxHint.modeErrHint;
                 return;
             }
-            // create container of beatmap on web page
-            let pBeatmapBox = document.createElement("div");
-            let pBeatmapCover = document.createElement("img");
-            let pBeatmapTitle = document.createElement("div");
-            let pBeatmapAuthor = document.createElement("div");
-            pBeatmapBox.className = "beatmapbox";
-            pBeatmapCover.className = "beatmapcover";
-            pBeatmapTitle.className = "beatmaptitle";
-            pBeatmapAuthor.className = "beatmapauthor";
-            pBeatmapBox.appendChild(pBeatmapCover);
-            pBeatmapBox.appendChild(pBeatmapTitle);
-            pBeatmapBox.appendChild(pBeatmapAuthor);
-            // set beatmap title & artist display (prefer ascii title)
-            var title = map.osu.tracks[0].metadata.Title;
-            var artist = map.osu.tracks[0].metadata.Artist;
-            var creator = map.osu.tracks[0].metadata.Creator;
-            pBeatmapTitle.innerText = title;
-            pBeatmapAuthor.innerText = artist + " / " + creator;
-            // set beatmap cover display
-            pBeatmapCover.alt = "beatmap cover";
-            map.osu.getCoverSrc(pBeatmapCover);
-            // display beatmap length
-            if (map.osu.tracks[0].length) {
-                let pBeatmapLength = document.createElement("div");
-                pBeatmapLength.className = "beatmaplength";
-                pBeatmapBox.appendChild(pBeatmapLength);
-                let length = map.osu.tracks[0].length;
-                pBeatmapLength.innerText = Math.floor(length/60) + ":" + (length%60<10?"0":"") + (length%60);
-            }
-
-            // add the container to page & restore drag box
+            // add the beatmap to page & restore drag box
+            let pBeatmapBox = map.createBeatmapBox();
             pBeatmapList.insertBefore(pBeatmapBox, pDragbox);
             pDragboxHint.innerText = pDragboxHint.defaultHint;
-            // click Beatmap box to show difficulty selection menu
-            pBeatmapBox.onclick = function(e) {
-                // allow only one selection menu at a time
-                if (!window.showingDifficultyBox) {
-                    e.stopPropagation();
-                    // create difficulty seleciton menu
-                    // set menu position
-                    let difficultyBox = document.createElement("div");
-                    difficultyBox.className = "difficulty-box";
-                    let rect = this.getBoundingClientRect();
-                    let x = e.clientX - rect.left;
-                    let y = e.clientY - rect.top; 
-                    difficultyBox.style.left = x + "px";
-                    difficultyBox.style.top = y + "px";
-                    // close menu callback
-                    var closeDifficultyMenu = function() {
-                        pBeatmapBox.removeChild(difficultyBox);
-                        window.showingDifficultyBox = false;
-                        window.removeEventListener('click', closeDifficultyMenu, false);
-                    };
-                    // create difficulty list items
-                    for (let i=0; i<map.osu.tracks.length; ++i) {
-                        let difficultyItem = document.createElement("div");
-                        let difficultyRing = document.createElement("div");
-                        let difficultyText = document.createElement("span");
-                        difficultyItem.className = "difficulty-item";
-                        difficultyRing.className = "difficulty-ring";
-                        // color ring acoording to Star; gray ring if unavailable
-                        let star = map.osu.tracks[i].difficulty.star;
-                        if (star) {
-                            if (star<2) difficultyRing.classList.add("easy"); else
-                            if (star<2.7) difficultyRing.classList.add("normal"); else
-                            if (star<4) difficultyRing.classList.add("hard"); else
-                            if (star<5.3) difficultyRing.classList.add("insane"); else
-                            if (star<6.5) difficultyRing.classList.add("expert"); else
-                                difficultyRing.classList.add("expert-plus");
-                        }
-                        difficultyText.innerText = map.osu.tracks[i].metadata.Version;
-                        difficultyItem.appendChild(difficultyRing);
-                        difficultyItem.appendChild(difficultyText);
-                        difficultyBox.appendChild(difficultyItem);
-                        // launch game if clicked inside
-                        difficultyItem.onclick = function(e) {
-                            e.stopPropagation();
-                            closeDifficultyMenu();
-                            map.startGame(i);
-                        }
-                    }
-                    pBeatmapBox.appendChild(difficultyBox);
-                    window.showingDifficultyBox = true;
-                    // close menu if clicked outside
-                    window.addEventListener("click", closeDifficultyMenu, false);
-                }
-            }
+            // save the beatmap locally TODO
         };
         map.osu.onerror = function(error) {
             console.error("osu load error");
@@ -287,6 +296,11 @@ function(Osu, _, Skin, sound, Playback) {
             // check suffix name
             if (raw_file.name.indexOf(".osz") === raw_file.name.length - 4) {
                 let fs = new zip.fs.FS();
+                fs.filename = raw_file.name;
+                localforage.setItem(raw_file.name, raw_file, function(err,val) {
+                    // do nothing
+                })
+                console.log(fs);
                 fs.root.importBlob(raw_file, function(){oszLoaded(fs)},
                     function(err) {
                         pDragboxHint.innerText = pDragboxHint.nonValidHint;

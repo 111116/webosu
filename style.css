@@ -113,7 +113,8 @@ canvas {
 }
 .beatmapcover {
   object-fit: cover;
-  background: #ccc;
+  background: #eee;
+  color: gray;
   width: 245px;
   height: 130px;
   border-radius: 5px 5px 0 0;
