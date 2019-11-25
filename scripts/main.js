@@ -239,7 +239,6 @@ function(Osu, _, Skin, sound, Playback) {
     }
 
 
-
     // web page elements
     var pDragbox = document.getElementById("beatmap-dragbox");
     var pDragboxInner = document.getElementById("beatmap-dragbox-inner");
@@ -253,12 +252,48 @@ function(Osu, _, Skin, sound, Playback) {
     pDragboxHint.loadingHint = "loading...";
     var pGameArea = document.getElementById("game-area");
     var pMainPage = document.getElementById("main-page");
-    // controller
+    var beatmapFileList = [];
+
+    localforage.getItem("beatmapfilelist", function(err, names){
+        if (!err && names && typeof names.length !== undefined) {
+            console.log("local beatmap list:", names);
+            document.getElementById('bm-total-counter').innerText = names.length;
+            var loadingCounter = document.getElementById('bm-loaded-counter');
+            var loadingn = 0;
+            beatmapFileList = beatmapFileList.concat(names);
+            for (let i=0; i<names.length; ++i) {
+                // load blobs of these beatmaps
+                localforage.getItem(names[i], function(err, blob){
+                    if (!err && blob) {
+                        let fs = new zip.fs.FS();
+                        fs.root.importBlob(blob,
+                            function(){
+                                oszLoaded(fs);
+                                loadingCounter.innerText = ++loadingn;
+                            },
+                            function(err) {
+                                pDragboxHint.innerText = pDragboxHint.nonValidHint;
+                            }
+                        );
+                    }
+                    else {
+                        console.error("error while loading beatmap:", names[i], err);
+                    }
+                });
+            }
+        } else {
+            if (!names)
+                console.log("no local beatmap list found.");
+            else
+                console.error("error while loading beatmap list:", err, names);
+        }
+    });
 
     function oszLoaded(osz) {
         // Verify that this has all the pieces we need
         var map = new BeatmapController();
         map.osu = new Osu(osz.root);
+        map.filename = osz.filename;
 
         // ask sayobot of star ratings of beatmaps immediately when decoded
         map.osu.ondecoded = function() {
@@ -275,6 +310,17 @@ function(Osu, _, Skin, sound, Playback) {
             pBeatmapList.insertBefore(pBeatmapBox, pDragbox);
             pDragboxHint.innerText = pDragboxHint.defaultHint;
             // save the beatmap locally TODO
+            if (!beatmapFileList.includes(map.filename)) {
+                beatmapFileList.push(map.filename);
+                localforage.setItem("beatmapfilelist", beatmapFileList, function(err, val){
+                    if (!err) {
+                        console.log("local beatmap list set to", val);
+                    }
+                    else {
+                        console.error("Error while saving beatmap list");
+                    }
+                });
+            }
         };
         map.osu.onerror = function(error) {
             console.error("osu load error");
@@ -298,7 +344,9 @@ function(Osu, _, Skin, sound, Playback) {
                 let fs = new zip.fs.FS();
                 fs.filename = raw_file.name;
                 localforage.setItem(raw_file.name, raw_file, function(err,val) {
-                    // do nothing
+                    if (err) {
+                        console.error("Error while saving beatmap", fs.filename);
+                    }
                 })
                 console.log(fs);
                 fs.root.importBlob(raw_file, function(){oszLoaded(fs)},

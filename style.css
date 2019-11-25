@@ -26,7 +26,7 @@ canvas {
 
 .main-page {
 	width: 1240px;
-	height: 1000px;
+	min-height: 800px;
 	margin:auto;
 }
 
