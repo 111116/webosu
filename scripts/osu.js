@@ -465,14 +465,20 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
         for (let i=0; i<chains.length; ++i) {
             if (chains[i][0].type == "slider") {
                 // fix this slider and move objects below
-                for (let j=0; j<chains[i].length; ++j) {
-                    movehit(chains[i][j], j);
+                for (let j=0, dep=0; j<chains[i].length; ++j) {
+                    movehit(chains[i][j], dep);
+                    if (chains[i][j].type != "slider" || chains[i][j].repeat%2==0)
+                        dep++;
                 }
             }
             else {
                 // fix object at bottom
-                for (let j=0; j<chains[i].length; ++j) {
-                    movehit(chains[i][chains[i].length-1-j], -j);
+                for (let j=0, dep=0; j<chains[i].length; ++j) {
+                    let cur = chains[i].length-1-j;
+                    if (j>0 && (chains[i][cur].type == "slider" && chains[i][cur].repeat%2==1))
+                        dep--;
+                    movehit(chains[i][cur], -dep);
+                    dep++;
                 }
             }
         }
