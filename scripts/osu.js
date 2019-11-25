@@ -369,7 +369,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                 }
                 else {
                     if (hit.sliderType == "C")
-                        console.error("Catmull curve unsupported. fallback to bezier");
+                        console.warn("Catmull curve unsupported. fallback to bezier");
                     hit.curve = new LinearBezier(hit, hit.sliderType === "L");
                 }
                 if (hit.curve.length < 2) // (not sure here)
