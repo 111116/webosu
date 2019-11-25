@@ -217,6 +217,8 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                     last = point;
                 }
             }
+            // just give an estimated track length
+            this.length = Math.round((this.hitObjects[this.hitObjects.length-1].time)/1000+2);
 
             preallocateTiming(this);
             calculateCurve(this);
