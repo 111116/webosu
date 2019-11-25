@@ -479,6 +479,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         for (var i = 0; i < this.hits.length; i++) {
             this.populateHit(this.hits[i]); // Prepare sprites and such
         }
+        this.wait = Math.max(0, 2000-this.hits[0].time);
 
         // hit result handling
         this.playHitsound = function playHitsound(hit, id) {
@@ -917,9 +918,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             if (!self.ready) {
                 return;
             }
-            setTimeout(function() {
-                self.osu.audio.play(self.offset);
-            }, 1000);
+            self.osu.audio.play(self.offset, 1000 + self.wait);
         };
 
         self.start();

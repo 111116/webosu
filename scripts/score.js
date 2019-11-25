@@ -15,7 +15,7 @@ define(["skin"], function(Skin)
     function LazyNumber(value = 0) {
         this.value = value;
         this.target = value;
-        this.lasttime = 0;
+        this.lasttime = -1000000; // playback can start before time=0
     }
     LazyNumber.prototype.lag = 300;
     // param time must be non-decreasing

@@ -31,6 +31,7 @@ define([], function() {
         self.audio = new AudioContext();
         self.gain = self.audio.createGain();
         self.gain.connect(self.audio.destination);
+        self.wait = 0;
 
         function decode(node) {
             self.audio.decodeAudioData(node.buf, function(decoded) {
@@ -51,19 +52,36 @@ define([], function() {
 
         this.getPosition = function getPosition() {
             if (!self.playing) {
-                return self.position;
+                return self.position - self.wait/1000;
             } else {
-                return self.audio.currentTime - self.started;
+                return self.audio.currentTime - self.started - self.wait/1000;
             }
         };
 
-        this.play = function play(offset) {
+        this.play = function play(offset, wait) {
             self.source = self.audio.createBufferSource();
             self.source.buffer = self.decoded;
             self.source.connect(self.gain);
             self.started = self.audio.currentTime;
+            this.wait = wait;
             if (typeof offset !== "undefined") {
-                self.source.start(self.audio.currentTime, offset / 1000);
+                if (wait > 0) {
+                    this.wait = wait;
+                    var intervalId;
+                    var start;
+                    var checktime = function() {
+                        let time = new Date().getTime() - start;
+                        if (time >= wait) {
+                            self.source.start(self.audio.currentTime, 0);
+                            window.clearInterval(intervalId);
+                        }
+                    }
+                    start = new Date().getTime();
+                    intervalId = window.setInterval(checktime, 1);
+                }
+                else {
+                    self.source.start(self.audio.currentTime, offset / 1000);
+                }
             } else {
                 self.source.start(self.audio.currentTime, self.position);
             }
