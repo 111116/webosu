@@ -73,8 +73,6 @@ function(Osu, _, Skin, sound, Playback) {
         'hitsounds/drum-hitfinish.mp3',
         'hitsounds/drum-hitclap.mp3'
     ];
-    console.log("Loading hit sounds:");
-    console.log(sample);
     sounds.whenLoaded = function(){
         game.sample[1].hitnormal = sounds['hitsounds/normal-hitnormal.mp3'];
         game.sample[1].hitwhistle = sounds['hitsounds/normal-hitwhistle.mp3'];
@@ -166,10 +164,10 @@ function(Osu, _, Skin, sound, Playback) {
     var pMainPage = document.getElementById("main-page");
     // controller
 
-    function oszLoaded() {
+    function oszLoaded(osz) {
         // Verify that this has all the pieces we need
         var map = new BeatmapController();
-        map.osu = new Osu(window.osz.root);
+        map.osu = new Osu(osz.root);
 
         // ask sayobot of star ratings of beatmaps immediately when decoded
         map.osu.ondecoded = map.osu.requestStar;
@@ -280,20 +278,23 @@ function(Osu, _, Skin, sound, Playback) {
         e.stopPropagation();
         e.preventDefault();
         pDragboxHint.innerText = pDragboxHint.loadingHint;
-        var raw_file = e.dataTransfer.files[0];
-        if (!raw_file) {
-            pDragboxHint.innerText = pDragboxHint.noTransferHint;
-            return;
-        }
-        // check suffix name
-        if (raw_file.name.indexOf(".osz") === raw_file.name.length - 4) {
-            var fs = window.osz = new zip.fs.FS();
-            fs.root.importBlob(raw_file, oszLoaded,
-                function(err) {
-                    pDragboxHint.innerText = pDragboxHint.nonValidHint;
-                });
-        } else {
-            pDragboxHint.innerText = pDragboxHint.nonOszHint;
+        for (let i=0; i<e.dataTransfer.files.length; ++i) {
+            let raw_file = e.dataTransfer.files[i];
+            console.log("importing file", raw_file.name);
+            if (!raw_file) {
+                pDragboxHint.innerText = pDragboxHint.noTransferHint;
+                return;
+            }
+            // check suffix name
+            if (raw_file.name.indexOf(".osz") === raw_file.name.length - 4) {
+                let fs = new zip.fs.FS();
+                fs.root.importBlob(raw_file, function(){oszLoaded(fs)},
+                    function(err) {
+                        pDragboxHint.innerText = pDragboxHint.nonValidHint;
+                    });
+            } else {
+                pDragboxHint.innerText = pDragboxHint.nonOszHint;
+            }
         }
     }
     pDragbox.ondrop = handleDragDrop;

@@ -40,7 +40,7 @@ define([], function() {
     Skin.load = function(blob, name) {
         if (name.indexOf(".png") === name.length - 4) {
             var url = URL.createObjectURL(blob);
-            var texture = PIXI.Texture.fromImage(url);
+            var texture = PIXI.Texture.from(url);
             Skin[name] = texture;
         }
     };

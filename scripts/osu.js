@@ -249,8 +249,8 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
             }
         };
 
-        this.load = _.bind(function load() {
-            self.raw_tracks = _.filter(zip.children, function(c) {
+        this.load = function load() {
+            self.raw_tracks = _.filter(this.zip.children, function(c) {
                 return c.name.indexOf(".osu") === c.name.length - 4;
             });
 
@@ -259,14 +259,14 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
             } else {
                 _.each(self.raw_tracks, function (t) {
                     t.getText(function (text) {
-                        var track = new Track(zip, text);
+                        var track = new Track(this.zip, text);
                         self.tracks.push(track);
                         track.ondecoded = self.track_decoded;
                         track.decode();
                     })
                 });
             }
-        });
+        };
 
         this.getCoverSrc = function(img) {
             let fileentry = null;
