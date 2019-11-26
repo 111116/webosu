@@ -22,6 +22,7 @@ function(Osu, _, Skin, sound, Playback) {
         K1keycode: 90,
         K2keycode: 88,
         autoplay: false,
+        showhwmouse: false,
 
         // cursor info
         mouseX: 0, // in absolute pixel
@@ -117,12 +118,26 @@ function(Osu, _, Skin, sound, Playback) {
         });
         document.body.classList.add("gaming");
         // load cursor
-        game.cursor = new PIXI.Sprite(Skin["cursor.png"]);
-        game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
-        game.cursor.scale.x = game.cursor.scale.y = 0.3 * game.cursorSize;
-        game.stage.addChild(game.cursor);
+        if (!game.showhwmouse || game.autoplay) {
+            game.cursor = new PIXI.Sprite(Skin["cursor.png"]);
+            game.cursor.anchor.x = game.cursor.anchor.y = 0.5;
+            game.cursor.scale.x = game.cursor.scale.y = 0.3 * game.cursorSize;
+            game.stage.addChild(game.cursor);
+        }
         // switch page to game view
         pGameArea.appendChild(app.view);
+        if (game.autoplay) {
+            pGameArea.classList.remove("shownomouse");
+            pGameArea.classList.remove("showhwmouse");
+        }
+        else if (game.showhwmouse) {
+            pGameArea.classList.remove("shownomouse");
+            pGameArea.classList.add("showhwmouse");
+        }
+        else {
+            pGameArea.classList.remove("showhwmouse");
+            pGameArea.classList.add("shownomouse");
+        }
         pMainPage.setAttribute("hidden","");
         pGameArea.removeAttribute("hidden");
 

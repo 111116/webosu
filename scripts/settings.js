@@ -48,6 +48,7 @@ function setOptionPanel() {
 		audiooffset: 0,
 		beatmapHitsound: false,
 		autoplay: false,
+		showhwmouse: false,
 	};
 	loadFromLocal();
 
@@ -61,6 +62,7 @@ function setOptionPanel() {
         window.game.effectVolume = this.effectvolume / 100;
         window.game.musicVolume = this.musicvolume / 100;
         window.game.autoplay = this.autoplay;
+        window.game.showhwmouse = this.showhwmouse;
         // window.game.K1keycode: 90,
         // window.game.K2keycode: 88,
 	}
@@ -127,6 +129,14 @@ function setOptionPanel() {
 	autoplayCheck.onclick = function() {
 		gamesettings.autoplay = autoplayCheck.checked;
         window.game.autoplay = gamesettings.autoplay;
+        saveToLocal();
+	}
+
+	let showhwmouseCheck = document.getElementById("showhwmouse-check");
+	showhwmouseCheck.checked = gamesettings.showhwmouse;
+	showhwmouseCheck.onclick = function() {
+		gamesettings.showhwmouse = showhwmouseCheck.checked;
+        window.game.showhwmouse = gamesettings.showhwmouse;
         saveToLocal();
 	}
 

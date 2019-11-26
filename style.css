@@ -16,11 +16,15 @@ html, body {
 }
 
 canvas {
-  cursor: none !important;
   display: block;
 }
-
 .game-area {
+}
+.game-area.showhwmouse {
+  cursor: url("skin/cursorsmall.cur") 40 40, crosshair !important;
+}
+.game-area.shownomouse {
+  cursor: none !important;
 }
 
 
