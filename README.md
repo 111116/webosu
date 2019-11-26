@@ -10,6 +10,8 @@ It runs on Firefox & Chrome. It doesn't run on Safari currently.
 
 Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). It has nothing to do with @ppy. Scoring and judgement rules can differ from that of official osu!.
 
+Modes other than osu! (std) are unsupported.
+
 ## Screenshots
 
 web page:
@@ -26,53 +28,14 @@ Just set up a local web server with root directory located where `index.html` is
 
 ## Current functions
 
-#### general
-
-- scroll to change volume: yes
-- keyboard button: yes (z x)
-- Hit circle: yes
-- Slider: yes
-- Spinner: yes
-
-#### difficulties
-
-- CS: yes
-- AR: yes
-- OD: yes
-- star: yes (thanks to sayobot)
-- life drain: yes
-- score: yes
-- accuracy: yes
-- combo: yes
-
-#### graphics
-
-currently mixing lazer & stable osu! styled visual elements.
-
-- background: yes
-- background dim: yes
+- custom keyboard button: no
+- audio offset: no
+- input offset: no
 - background blur: no
-- object fade in/out: yes
 - slider snake-in: no
 - slider snake-out: no
-- hit burst light: yes
-- hit ring glow: yes
-- beatmap combo color: yes
-- beatmap skin: no
 - custom skin: no
-
-#### Hit sounds
-
-currently using lazer hit sounds.
-
-- beatmap general sampleset: yes
-- edgeAdditions: yes
-- slider reverse & end: always
-- slider tick: yes
-- timing point sample: yes
-- timing point volume: yes
-- hit-specific sample: yes
-- hit-specific volume: yes
+- beatmap skin: no
 - beatmap hitsounds: no
 
 ## Rules
@@ -214,20 +177,6 @@ play: check for skin & hitsounds -> launch PIXI app & audiocontext -> set gaming
 
 - layering: approach circle > hit circle > slider ball > follow circle > slider body
 
-
-## Future Plan
-
-First I'll work on core gaming experience, including:
-
-- corrent rendering of hit circles, sliders and spinners
-- accurate music & hitsounds
-- accurate hit grading
-
-Latency should be adjustable.
-
-Scoring, deaths, skins and some of mods might be implemented later on, depending on code complexity.
-
-Modes other than STD (osu) will not be implemented.
 
 ## Notes from ddevault/osuweb
 
