@@ -10,6 +10,16 @@ It runs on Firefox & Chrome. It doesn't run on Safari currently.
 
 Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). It has nothing to do with @ppy. Scoring and judgement rules can differ from that of official osu!.
 
+## Screenshots
+
+web page:
+
+![web page](screenshots/page1.jpg)
+
+game in action:
+
+![play in action](screenshots/clip.gif)
+
 ## Hosting
 
 Just set up a local web server with root directory located where `index.html` is in.

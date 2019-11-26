@@ -172,7 +172,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.sliderFadeOutTime = 300; // time of slidebody fading out
         self.circleFadeOutTime = 150;
         self.glowFadeOutTime = 220;
-        self.scoreFadeOutTime = 600;
+        self.scoreFadeOutTime = 500;
         self.followZoomInTime = 100; // TODO related to AR
         self.followFadeOutTime = 100;
         self.ballFadeOutTime = 100;
