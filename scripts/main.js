@@ -131,14 +131,14 @@ function(Osu, _, Skin, sound, Playback) {
         playback.load();
 
         function gameLoop(timestamp) {
+            if (game.scene) {
+                game.scene.render(timestamp);
+            }
             if (game.cursor) {
                 // Handle cursor
                 game.cursor.x = game.mouseX;
                 game.cursor.y = game.mouseY;
                 game.cursor.bringToFront();
-            }
-            if (game.scene) {
-                game.scene.render(timestamp);
             }
             app.renderer.render(game.stage);
             window.requestAnimationFrame(gameLoop);
