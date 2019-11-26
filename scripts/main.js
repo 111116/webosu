@@ -62,28 +62,34 @@ function(Osu, _, Skin, sound, Playback) {
         'hitsounds/normal-hitwhistle.mp3',
         'hitsounds/normal-hitfinish.mp3',
         'hitsounds/normal-hitclap.mp3',
+        'hitsounds/normal-slidertick.mp3',
         'hitsounds/soft-hitnormal.mp3',
         'hitsounds/soft-hitwhistle.mp3',
         'hitsounds/soft-hitfinish.mp3',
         'hitsounds/soft-hitclap.mp3',
+        'hitsounds/soft-slidertick.mp3',
         'hitsounds/drum-hitnormal.mp3',
         'hitsounds/drum-hitwhistle.mp3',
         'hitsounds/drum-hitfinish.mp3',
-        'hitsounds/drum-hitclap.mp3'
+        'hitsounds/drum-hitclap.mp3',
+        'hitsounds/drum-slidertick.mp3',
     ];
     sounds.whenLoaded = function(){
         game.sample[1].hitnormal = sounds['hitsounds/normal-hitnormal.mp3'];
         game.sample[1].hitwhistle = sounds['hitsounds/normal-hitwhistle.mp3'];
         game.sample[1].hitfinish = sounds['hitsounds/normal-hitfinish.mp3'];
         game.sample[1].hitclap = sounds['hitsounds/normal-hitclap.mp3'];
+        game.sample[1].slidertick = sounds['hitsounds/normal-slidertick.mp3'];
         game.sample[2].hitnormal = sounds['hitsounds/soft-hitnormal.mp3'];
         game.sample[2].hitwhistle = sounds['hitsounds/soft-hitwhistle.mp3'];
         game.sample[2].hitfinish = sounds['hitsounds/soft-hitfinish.mp3'];
         game.sample[2].hitclap = sounds['hitsounds/soft-hitclap.mp3'];
+        game.sample[2].slidertick = sounds['hitsounds/soft-slidertick.mp3'];
         game.sample[3].hitnormal = sounds['hitsounds/drum-hitnormal.mp3'];
         game.sample[3].hitwhistle = sounds['hitsounds/drum-hitwhistle.mp3'];
         game.sample[3].hitfinish = sounds['hitsounds/drum-hitfinish.mp3'];
         game.sample[3].hitclap = sounds['hitsounds/drum-hitclap.mp3'];
+        game.sample[3].slidertick = sounds['hitsounds/drum-slidertick.mp3'];
         window.soundReady = true;
         document.getElementById("sound-progress").innerText += " Done";
     };

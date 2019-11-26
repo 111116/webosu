@@ -9,7 +9,7 @@ define([], function() {
             "hitcircleoverlay.png", "disc.png",
             "hitburst.png", "ring-glow.png",
             "sliderb.png", "sliderfollowcircle.png",
-            "reversearrow.png",
+            "reversearrow.png", "sliderscorepoint.png",
             "spinnertop.png", "spinnerprogress.png", "spinnerbase.png",
             "score-0.png", "score-1.png", "score-2.png", "score-3.png", "score-4.png",
             "score-5.png", "score-6.png", "score-7.png", "score-8.png", "score-9.png",

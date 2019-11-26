@@ -207,14 +207,18 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
             }
 
             // calculate inherited timing points
+            // trueMillisecondsPerBeat represents BPM for song, which affects tick rate
+            // millisecondsPerBeat, which affects slider velocity
             var last = this.timingPoints[0];
-            for (var i = 1; i < this.timingPoints.length; i++) {
+            for (var i = 0; i < this.timingPoints.length; i++) {
                 var point = this.timingPoints[i];
                 if (point.uninherited === 0) {
                     point.uninherited = 1;
                     point.millisecondsPerBeat *= -0.01 * last.millisecondsPerBeat;
+                    point.trueMillisecondsPerBeat = last.trueMillisecondsPerBeat;
                 } else {
                     last = point;
+                    point.trueMillisecondsPerBeat = point.millisecondsPerBeat;
                 }
             }
             // just give an estimated track length

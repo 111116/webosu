@@ -14,6 +14,10 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
+    function repeatclamp(a) {
+        a%=2;
+        return a>1? 2-a: a;
+    }
     function Playback(game, osu, track) {
         var self = this;
         window.playback = this;
@@ -366,6 +370,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         this.createSlider = function(hit) {
 
             hit.lastrep = 0; // for current-repeat counting
+            hit.nexttick = 0; // for tick hit counting
             hit.sliderTime = hit.timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
             hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
             hit.endTime = hit.time + hit.sliderTimeTotal;
@@ -395,6 +400,21 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 sprite.alpha = 0;
                 hit.objects.push(sprite);
                 return sprite;
+            }
+
+            // add slider ticks
+            hit.ticks = [];
+            let tickDuration = hit.timing.trueMillisecondsPerBeat / this.track.difficulty.SliderTickRate;
+            let nticks = Math.floor(hit.sliderTimeTotal / tickDuration) + 1;
+            for (let i=0; i<nticks; ++i) {
+                let t = hit.time + i * tickDuration;
+                // Question: are ticks offset to the slider start or its timing point?
+                let pos = repeatclamp(i * tickDuration / hit.sliderTime);
+                if (pos < 0.001 || pos > 0.999) // omit tick at slider edge
+                    continue;
+                let at = hit.curve.pointAt(pos);
+                hit.ticks.push(newSprite("sliderscorepoint.png", at.x, at.y));
+                hit.ticks[hit.ticks.length-1].time = t;
             }
 
             // add reverse symbol
@@ -495,9 +515,28 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         this.wait = Math.max(0, 1500-this.hits[0].time);
 
         // hit result handling
-        this.playHitsound = function playHitsound(hit, id) {
-            let volume = self.game.masterVolume * self.game.effectVolume * (hit.hitSample.volume || hit.timing.volume) / 100;
-            let defaultSet = hit.timing.sampleSet || self.game.sampleSet;
+        // use separate timing for hitsounds, since volume may change inside a slider or spinner
+        // note: time is expected time of object hit, not real time
+        this.curtimingid = 0;
+        this.playTicksound = function playTicksound(hit, time) {
+            while (this.curtimingid+1 < this.track.timingPoints.length && this.track.timingPoints[this.curtimingid+1].offset <= time)
+                this.curtimingid++;
+            while (this.curtimingid>0 && this.track.timingPoints[this.curtimingid].offset > time)
+                this.curtimingid--;
+            let timing = this.track.timingPoints[this.curtimingid];
+            let volume = self.game.masterVolume * self.game.effectVolume * (hit.hitSample.volume || timing.volume) / 100;
+            let defaultSet = timing.sampleSet || self.game.sampleSet;
+            self.game.sample[defaultSet].slidertick.volume = volume;
+            self.game.sample[defaultSet].slidertick.play();
+        };
+        this.playHitsound = function playHitsound(hit, id, time) {
+            while (this.curtimingid+1 < this.track.timingPoints.length && this.track.timingPoints[this.curtimingid+1].offset <= time)
+                this.curtimingid++;
+            while (this.curtimingid>0 && this.track.timingPoints[this.curtimingid].offset > time)
+                this.curtimingid--;
+            let timing = this.track.timingPoints[this.curtimingid];
+            let volume = self.game.masterVolume * self.game.effectVolume * (hit.hitSample.volume || timing.volume) / 100;
+            let defaultSet = timing.sampleSet || self.game.sampleSet;
             function playHit(bitmask, normalSet, additionSet) {
                 // The normal sound is always played
                 self.game.sample[normalSet].hitnormal.volume = volume;
@@ -531,8 +570,12 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
 
         this.hitSuccess = function hitSuccess(hit, points, time){
             this.scoreOverlay.hit(points, time);
-            if (points > 0)
-                self.playHitsound(hit, 0);
+            if (points > 0) {
+                if (hit.type == "spinner")
+                    self.playHitsound(hit, 0, hit.endTime); // hit happen at end of spinner
+                else
+                    self.playHitsound(hit, 0, hit.time);
+            }
             hit.score = points;
             hit.clickTime = time;
             hit.judgements[0].clickTime = time;
@@ -669,6 +712,8 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     hit.reverse.alpha = alpha;
                 if (hit.reverse_b)
                     hit.reverse_b.alpha = alpha;
+                for (let i=0; i<hit.ticks.length; ++i)
+                    hit.ticks[i].alpha = alpha;
             }
             let diff = hit.time - time; // milliseconds before hit.time
             if (diff <= this.approachTime && diff > noteFullAppear) {
@@ -700,6 +745,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 if (hit.repeat > 1) {
                     hit.currentRepeat = Math.ceil(t);
                 }
+                // check for slider edge hit
                 let atEnd = false;
                 if (Math.floor(t) > hit.lastrep)
                 {
@@ -708,19 +754,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                         atEnd = true;
                 }
                 // clamp t
-                if (t > hit.repeat)
-                    t = hit.repeat;
-                if (hit.repeat > 1) {
-                    if (t - Math.floor(t) == 0) {
-                        t = t % 2;
-                    }
-                    else {
-                        if (hit.currentRepeat % 2 == 0) {
-                            t = -t
-                        }
-                        t = t - Math.floor(t);
-                    }
-                }
+                t = repeatclamp(Math.min(t, hit.repeat));
 
                 // Update ball and follow circle position
                 let at = hit.curve.pointAt(t);
@@ -757,15 +791,25 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 let dy = game.mouseY - aty;
                 let followPixelSize = hit.followSize * this.circleRadiusPixel;
                 let isfollowing = dx*dx + dy*dy <= followPixelSize * followPixelSize;
+                let activated = this.game.down && isfollowing || hit.followSize > 1.01;
+
+
+                // slider tick judgement
+                if (hit.nexttick < hit.ticks.length && time >= hit.ticks[hit.nexttick].time && activated) {
+                    // TODO this.scoreOverlay.hit tick
+                    hit.ticks[hit.nexttick].visible = false;
+                    self.playTicksound(hit, hit.ticks[hit.nexttick].time);
+                    hit.nexttick++;
+                }
 
                 // slider edge judgement
                 // Note: being tolerant if follow circle hasn't shrinked to minimum
-                if (atEnd && (this.game.down && isfollowing || hit.followSize > 1.01)) {
+                if (atEnd && activated) {
                     hit.judgements[hit.lastrep].clickTime = time;
                     hit.judgements[hit.lastrep].texture = Skin["hit300.png"];
                     hit.judgements[hit.lastrep].dir *= -0.5;
                     this.scoreOverlay.hit(300, time);
-                    self.playHitsound(hit, hit.lastrep);
+                    self.playHitsound(hit, hit.lastrep, hit.time + hit.lastrep * hit.sliderTime);
                 }
 
                 // sliderball & follow circle Animation
