@@ -47,6 +47,7 @@ function setOptionPanel() {
 		musicvolume: 100,
 		audiooffset: 0,
 		beatmapHitsound: false,
+		autoplay: false,
 	};
 	loadFromLocal();
 
@@ -59,6 +60,7 @@ function setOptionPanel() {
         window.game.masterVolume = this.mastervolume / 100;
         window.game.effectVolume = this.effectvolume / 100;
         window.game.musicVolume = this.musicvolume / 100;
+        window.game.autoplay = this.autoplay;
         // window.game.K1keycode: 90,
         // window.game.K2keycode: 88,
 	}
@@ -117,6 +119,14 @@ function setOptionPanel() {
 	disableButtonCheck.onclick = function() {
 		gamesettings.disableButton = disableButtonCheck.checked;
         window.game.allowMouseButton = !gamesettings.disableButton;
+        saveToLocal();
+	}
+
+	let autoplayCheck = document.getElementById("autoplay-check");
+	autoplayCheck.checked = gamesettings.autoplay;
+	autoplayCheck.onclick = function() {
+		gamesettings.autoplay = autoplayCheck.checked;
+        window.game.autoplay = gamesettings.autoplay;
         saveToLocal();
 	}
 

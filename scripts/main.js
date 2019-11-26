@@ -21,6 +21,7 @@ function(Osu, _, Skin, sound, Playback) {
 
         K1keycode: 90,
         K2keycode: 88,
+        autoplay: false,
 
         // cursor info
         mouseX: 0, // in absolute pixel
@@ -41,10 +42,6 @@ function(Osu, _, Skin, sound, Playback) {
     window.skinReady = false;
     window.soundReady = false;
     window.scriptReady = false;
-    window.addEventListener("mousemove", function(e) {
-        game.mouseX = e.clientX;
-        game.mouseY = e.clientY;
-    });
     game.stage = new PIXI.Container();
     game.cursor = null;
 

@@ -1,7 +1,13 @@
 define([], function() {
     // TODO: support OD
 
-    var checkHit = function checkHit(upcoming, click){
+    var checkClickdown = function checkClickdown(){
+        var upcoming = playback.upcomingHits;
+        var click = {
+            x: playback.game.mouseX,
+            y: playback.game.mouseY,
+            time: playback.osu.audio.getPosition() * 1000
+        };
         var hit = upcoming.find(inUpcoming(click));
         if (hit){
             if (hit.type == "circle" || hit.type == "slider") {
@@ -30,26 +36,73 @@ define([], function() {
 
     var playerActions = function(playback){
         
+        if (playback.autoplay) {
+            playback.auto = {
+                currentObject: null,
+                lastx: playback.game.mouseX,
+                lasty: playback.game.mouseY,
+                lasttime: 0
+            }
+        }
         playback.game.updatePlayerActions = function(time){
             if (playback.autoplay) {
-                let good = playback.upcomingHits.find(function(hit){return hit.score < 0 && Math.abs(time - hit.time) < playback.MehTime});
-                if (good){
-                    let diff = time - good.time;
-                    if (diff > -8)
-                        playback.hitSuccess(good, 300);
+                const spinRadius = 60;
+                let cur = playback.auto.currentObject;
+                if (!cur) {
+                    cur = playback.upcomingHits.find(function(hit){return hit.score < 0});
+                    playback.auto.currentObject = cur;
+                }
+                if (!cur || cur.time > time + playback.approachTime) {
+                    // no object to click, just rest
+                    playback.auto.lasttime = time;
+                    return;
+                }
+                // auto move cursor
+                if (playback.game.down) { // already on an object
+                    if (cur.type == "circle" || time > cur.endTime) {
+                        // release cursor
+                        playback.game.down = false;
+                        playback.auto.currentObject = null;
+                        playback.auto.lasttime = time;
+                        playback.auto.lastx = playback.game.mouseX;
+                        playback.auto.lasty = playback.game.mouseY;
+                    }
+                    else if (cur.type == "slider") { // follow slider ball
+                        playback.game.mouseX = cur.ball.x || cur.x;
+                        playback.game.mouseY = cur.ball.y || cur.y;
+                    }
+                    else { // spin
+                        let currentAngle = Math.atan2(playback.game.mouseY - cur.basey, playback.game.mouseX - cur.basex);
+                        currentAngle += 0.8;
+                        playback.game.mouseY = cur.basey + spinRadius * Math.sin(currentAngle);
+                        playback.game.mouseX = cur.basex + spinRadius * Math.cos(currentAngle);
+                    }
+                }
+                else {
+                    // move toward the object
+                    let targX = cur.basex;
+                    let targY = cur.basey;
+                    if (cur.type == "spinner")
+                        targY -= spinRadius;
+                    let t = (time - playback.auto.lasttime) / (cur.time - playback.auto.lasttime);
+                    t = Math.max(0, Math.min(1, t));
+                    t = 0.5-Math.sin((Math.pow(1-t,1.5)-0.5)*Math.PI)/2;
+                    playback.game.mouseX = t * targX + (1-t) * playback.auto.lastx;
+                    playback.game.mouseY = t * targY + (1-t) * playback.auto.lasty;
+
+                    let diff = time - cur.time;
+                    if (diff > -8) {
+                        // click the object
+                        playback.game.down = true;
+                        checkClickdown();
+                    }
                 }
             }
         };
 
         // set eventlisteners
         if (!playback.autoplay) {
-            function clickInfos() {
-                return {
-                    'x': playback.game.mouseX,
-                    'y': playback.game.mouseY,
-                    'time': playback.osu.audio.getPosition() * 1000
-                };
-            }
+
             playback.game.window.addEventListener("mousemove", function(e) {
                 playback.game.mouseX = e.clientX;
                 playback.game.mouseY = e.clientY;
@@ -75,7 +128,7 @@ define([], function() {
                     e.stopPropagation();
                     playback.game.down = playback.game.K1down || playback.game.K2down
                                       || playback.game.M1down || playback.game.M2down;
-                    checkHit(playback.upcomingHits, clickInfos());
+                    checkClickdown();
                 });
                 playback.game.window.addEventListener("mouseup", function(e) {
                     playback.game.mouseX = e.clientX;
@@ -107,7 +160,7 @@ define([], function() {
                 e.stopPropagation();
                 playback.game.down = playback.game.K1down || playback.game.K2down
                                   || playback.game.M1down || playback.game.M2down;
-                checkHit(playback.upcomingHits, clickInfos());
+                checkClickdown();
             });
             playback.game.window.addEventListener("keyup", function(e) {
                 if (e.keyCode == playback.game.K1keycode) playback.game.K1down = false; else

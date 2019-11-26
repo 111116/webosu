@@ -28,7 +28,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.hits = self.track.hitObjects.slice(0); // creating a copy of hitobjects
         self.offset = 0;
         self.currentHitIndex = 0; // index for all hit objects
-        self.autoplay = false;
+        self.autoplay = game.autoplay;
         self.approachScale = 3;
         self.audioReady = false;
         var scoreCharWidth = 35;
@@ -61,6 +61,8 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             self.hitSpriteScale = self.circleRadiusPixel / 60;
         };
         self.calcSize();
+        game.mouseX = game.window.innerWidth / 2;
+        game.mouseY = game.window.innerHeight / 2;
         self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, track.difficulty.HPDrainRate);
         self.scoreOverlay.depth = 23333333333; // score overlay is at top of screen
 
@@ -366,6 +368,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.lastrep = 0; // for current-repeat counting
             hit.sliderTime = hit.timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
             hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
+            hit.endTime = hit.time + hit.sliderTimeTotal;
 
             // create slider body
             var body = hit.body = new SliderMesh(hit.curve.curve,
@@ -436,6 +439,9 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         this.createSpinner = function(hit) {
             hit.x = 0.5;
             hit.y = 0.5;
+            // absolute position
+            hit.basex = gfx.xoffset + hit.x * gfx.width;
+            hit.basey = gfx.yoffset + hit.y * gfx.height;
             hit.rotation = 0;
             hit.rotationProgress = 0;
             hit.clicked = false;
@@ -449,8 +455,8 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 var sprite = new PIXI.Sprite(Skin[spritename]);
                 sprite.scale.x = sprite.scale.y = hit.basescale;
                 sprite.anchor.x = sprite.anchor.y = 0.5;
-                sprite.x = gfx.xoffset + hit.x * gfx.width;
-                sprite.y = gfx.yoffset + hit.y * gfx.height;
+                sprite.x = hit.basex;
+                sprite.y = hit.basey;
                 sprite.depth = 4.9999 - 0.0001 * (hit.hitIndex || 1);
                 sprite.alpha = 0;
                 hit.objects.push(sprite);
