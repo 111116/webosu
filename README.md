@@ -31,8 +31,8 @@ Just set up a local web server with root directory located where `index.html` is
 - scroll to change volume: yes
 - keyboard button: yes (z x)
 - Hit circle: yes
-- Slider: partial
-- Spinner: no
+- Slider: yes
+- Spinner: yes
 
 #### difficulties
 
@@ -56,7 +56,7 @@ currently mixing lazer & stable osu! styled visual elements.
 - slider snake-in: no
 - slider snake-out: no
 - hit burst light: yes
-- hit ring glow: no
+- hit ring glow: yes
 - beatmap combo color: yes
 - beatmap skin: no
 - custom skin: no
@@ -68,7 +68,7 @@ currently using lazer hit sounds.
 - beatmap general sampleset: yes
 - edgeAdditions: yes
 - slider reverse & end: always
-- slider tick: no
+- slider tick: yes
 - timing point sample: yes
 - timing point volume: yes
 - hit-specific sample: yes
