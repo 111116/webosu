@@ -128,7 +128,7 @@ Everything runs at clientside. just to make it easier to deploy.
 `playback.js`
 
 	defines `Playback` class, which creates & updates shapes in realtime, controls game update, judgement & display.
-	
+
 `playerActions.js`
 
 	check hits (only hitcircles and start of sliders), called by playback.js. also handles input events
@@ -186,7 +186,11 @@ In addition, the free osu beatmap mirror site `sayobot.cn` is used for displayin
 
 #### Execution sequence
 
-	main -> playback
+`main.js` loads other scripts needed -> load skin & hitsounds & local beatmaps
+
+import a beatmap: get blob -> zip import -> osu decode -> put on webpage
+
+play: check for skin & hitsounds -> launch PIXI app & audiocontext -> set gaming area on page -> start game loop, enter playback & start loading music
 
 ## Notes
 
