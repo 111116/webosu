@@ -84,6 +84,8 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 o.y = gfx.yoffset + hit.y * gfx.height;
                 o.scale.x *= zoom;
                 o.scale.y *= zoom;
+                if (o.initialscale)
+                    o.initialscale *= zoom;
             }
             function placecircle(hit) {
                 place(hit.base);
@@ -171,13 +173,17 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.approachFadeInTime = self.approachTime; // time of approach circles fading in, at beginning of approaching
         self.sliderFadeOutTime = 300; // time of slidebody fading out
         self.circleFadeOutTime = 150;
-        self.glowFadeOutTime = 220;
+        self.glowFadeOutTime = 300;
+        self.glowMaxOpacity = 0.5;
+        self.flashFadeInTime = 40;
+        self.flashFadeOutTime = 120;
+        self.flashMaxOpacity = 0.8;
         self.scoreFadeOutTime = 500;
         self.followZoomInTime = 100; // TODO related to AR
         self.followFadeOutTime = 100;
         self.ballFadeOutTime = 100;
         self.objectDespawnTime = 2000;
-        self.backgroundFadeTime = 2000;
+        self.backgroundFadeTime = 1500;
         self.spinnerAppearTime = 1500;
         self.spinnerZoomInTime = 300;
         self.spinnerFadeOutTime = 150;
@@ -326,7 +332,8 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
 
             function newHitSprite(spritename, depth, scalemul = 1, anchorx = 0.5, anchory = 0.5) {
                 let sprite = new PIXI.Sprite(Skin[spritename]);
-                sprite.scale.x = sprite.scale.y = self.hitSpriteScale * scalemul;
+                sprite.initialscale = self.hitSpriteScale * scalemul;
+                sprite.scale.x = sprite.scale.y = sprite.initialscale;
                 sprite.anchor.x = anchorx;
                 sprite.anchor.y = anchory;
                 sprite.x = gfx.xoffset + hit.x * gfx.width;
@@ -646,7 +653,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 hit.circle.alpha = alpha;
                 for (let i=0; i<hit.numbers.length; ++i)
                     hit.numbers[i].alpha = alpha;
-                hit.glow.alpha = alpha * 0.6;
+                hit.glow.alpha = alpha * this.glowMaxOpacity;
             }
 
             if (diff <= this.approachTime && diff > noteFullAppear) { // fading in
@@ -654,22 +661,31 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 setcircleAlpha(alpha);
             }
             else if (hit.score > 0) { // clicked
-                if (hit.base.visible) {
-                    // hide circle
-                    hit.base.visible = false;
-                    hit.circle.visible = false;
-                    for (let i=0; i<hit.numbers.length; ++i)
-                        hit.numbers[i].visible = false;
-                    hit.approach.visible = false;
-                    hit.burst.visible = true;
-                }
-                // burst light
+                hit.burst.visible = true;
                 let timeAfter = time - hit.clickTime;
-                let scale = (1 + 0.4 * timeAfter / this.circleFadeOutTime) * this.hitSpriteScale;
-                hit.burst.alpha = Math.max(0, 1 - timeAfter / this.circleFadeOutTime);
-                hit.glow.alpha = 0.6 * Math.max(0, 1 - timeAfter / this.glowFadeOutTime);
-                hit.burst.scale.x = hit.burst.scale.y = scale;
-                hit.glow.scale.x = hit.glow.scale.y = scale * 0.46;
+                let t = timeAfter / this.glowFadeOutTime;
+                let newscale = 1 + 0.5 * t * (2-t);
+                hit.burst.scale.set(newscale * hit.burst.initialscale);
+                hit.glow.scale.set(newscale * hit.glow.initialscale);
+                hit.burst.alpha = this.flashMaxOpacity * clamp01((timeAfter < this.flashFadeInTime)? (timeAfter / this.flashFadeInTime): (1 - (timeAfter - this.flashFadeInTime) / this.flashFadeOutTime));
+                hit.glow.alpha = clamp01(1 - timeAfter / this.glowFadeOutTime) * this.glowMaxOpacity;
+                
+                if (hit.base.visible) {
+                    if (timeAfter < this.flashFadeInTime) {
+                        hit.base.scale = newscale * hit.base.initialscale;
+                        hit.circle.scale = newscale * hit.circle.initialscale;
+                        for (let i=0; i<hit.numbers.length; ++i)
+                            hit.numbers[i].scale = newscale * hit.numbers[i].initialscale;
+                    }
+                    else {
+                        // hide circle
+                        hit.base.visible = false;
+                        hit.circle.visible = false;
+                        for (let i=0; i<hit.numbers.length; ++i)
+                            hit.numbers[i].visible = false;
+                        hit.approach.visible = false;
+                    }
+                }
             }
             else if (diff <= noteFullAppear && -diff <= this.MehTime) { // before click
                 setcircleAlpha(1);
