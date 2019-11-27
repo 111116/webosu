@@ -134,6 +134,13 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                         hit.reverse_b.x = gfx.xoffset + startPoint.x * gfx.width;
                         hit.reverse_b.y = gfx.yoffset + startPoint.y * gfx.height;
                     }
+                    for (let i=0; i<hit.ticks.length; ++i) {
+                        hit.ticks[i].scale.x *= zoom;
+                        hit.ticks[i].scale.y *= zoom;
+                        let at = hit.curve.pointAt(repeatclamp((hit.ticks[i].time - hit.time) / hit.sliderTime));
+                        hit.ticks[i].x = gfx.xoffset + at.x * gfx.width;
+                        hit.ticks[i].y = gfx.yoffset + at.y * gfx.height;
+                    }
                     break;
                 case "spinner":
                     hit.basescale = gfx.height / 1280;
@@ -653,7 +660,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 hit.circle.alpha = alpha;
                 for (let i=0; i<hit.numbers.length; ++i)
                     hit.numbers[i].alpha = alpha;
-                hit.glow.alpha = alpha * this.glowMaxOpacity;
+                hit.glow.alpha = alpha * self.glowMaxOpacity;
             }
 
             if (diff <= this.approachTime && diff > noteFullAppear) { // fading in
