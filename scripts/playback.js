@@ -180,7 +180,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.approachFadeInTime = self.approachTime; // time of approach circles fading in, at beginning of approaching
         self.sliderFadeOutTime = 300; // time of slidebody fading out
         self.circleFadeOutTime = 150;
-        self.glowFadeOutTime = 300;
+        self.glowFadeOutTime = 350;
         self.glowMaxOpacity = 0.5;
         self.flashFadeInTime = 40;
         self.flashFadeOutTime = 120;
@@ -362,7 +362,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.glow = newHitSprite("ring-glow.png", basedep+2, 0.46);
             hit.glow.tint = combos[hit.combo % combos.length];
             hit.glow.blendMode = PIXI.BLEND_MODES.ADD;
-            hit.burst = newHitSprite("hitburst.png", basedep+2);
+            hit.burst = newHitSprite("hitburst.png", 8.00005 + 0.0001 * hit.hitIndex);
             hit.burst.visible = false;
 
             hit.approach = newHitSprite("approachcircle.png", 8 + 0.0001 * hit.hitIndex);
@@ -679,10 +679,10 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 
                 if (hit.base.visible) {
                     if (timeAfter < this.flashFadeInTime) {
-                        hit.base.scale = newscale * hit.base.initialscale;
-                        hit.circle.scale = newscale * hit.circle.initialscale;
+                        hit.base.scale.set(newscale * hit.base.initialscale);
+                        hit.circle.scale.set(newscale * hit.circle.initialscale);
                         for (let i=0; i<hit.numbers.length; ++i)
-                            hit.numbers[i].scale = newscale * hit.numbers[i].initialscale;
+                            hit.numbers[i].scale.set(newscale * hit.numbers[i].initialscale);
                     }
                     else {
                         // hide circle
@@ -789,7 +789,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 hit.ball.x = atx;
                 hit.ball.y = aty;
 
-                if (hit.base.visible) {
+                if (hit.base.visible && hit.score<=0) {
                     hit.base.x = atx;
                     hit.base.y = aty;
                     hit.circle.x = atx;
