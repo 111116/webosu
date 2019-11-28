@@ -10,7 +10,7 @@
 *   
 */
 
-define(["skin"], function(Skin)
+define([], function()
 {
     function LazyNumber(value = 0) {
         this.value = value;
@@ -80,8 +80,8 @@ define(["skin"], function(Skin)
         this.HPbar[1].texture = Skin["hpbarright.png"];
         this.HPbar[2].texture = Skin["hpbarmid.png"];
         this.HPbar[0].anchor.x = 1;
-        this.HPbar[0].scale.x = this.field.width;
-        this.HPbar[1].scale.x = this.field.width;
+        this.HPbar[0].scale.x = this.field.width / 500;
+        this.HPbar[1].scale.x = this.field.width / 500;
         this.HPbar[0].y = -7 * this.scaleMul;
         this.HPbar[1].y = -7 * this.scaleMul;
         this.HPbar[2].y = -7 * this.scaleMul;
@@ -102,8 +102,8 @@ define(["skin"], function(Skin)
             f(this.accuracyDigits, this.scaleMul * 0.2);
             f(this.HPbar, this.scaleMul * 0.5);
 
-            this.HPbar[0].scale.x = this.field.width;
-            this.HPbar[1].scale.x = this.field.width;
+            this.HPbar[0].scale.x = this.field.width / 500;
+            this.HPbar[1].scale.x = this.field.width / 500;
             this.HPbar[0].y = -7 * this.scaleMul;
             this.HPbar[1].y = -7 * this.scaleMul;
             this.HPbar[2].y = -7 * this.scaleMul;

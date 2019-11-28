@@ -1,5 +1,5 @@
-require(["osu", "underscore", "skin", "sound", "playback"],
-function(Osu, _, Skin, sound, Playback) {
+require(["osu", "underscore", "sound", "playback"],
+function(Osu, _, sound, Playback) {
 
     // initialize global game
     var game = {
@@ -48,11 +48,11 @@ function(Osu, _, Skin, sound, Playback) {
 
 
     // load skin & game cursor
-    Skin.oncomplete = function() {
+    PIXI.Loader.shared.add("sprites.json").load(function() {
         window.skinReady = true;
         document.getElementById("skin-progress").innerText += " Done";
-    };
-    Skin.loadDefault();
+        Skin = PIXI.Loader.shared.resources["sprites.json"].textures;
+    });
 
 
     // load sounds

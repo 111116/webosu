@@ -9,8 +9,8 @@
 *       [8,9) approach circle, bottom to top
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "skin", "hash", "playerActions", "SliderMesh", "score"],
-function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
+define(["osu", "hash", "playerActions", "SliderMesh", "score"],
+function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -923,7 +923,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             if (time < hit.endTime) {
                 // top zoom in first
                 hit.top.scale.set(hit.basescale * clamp01((time - (hit.time - self.spinnerZoomInTime - self.spinnerAppearTime)) / self.spinnerZoomInTime));
-                hit.base.scale.set(hit.basescale * clamp01((time - (hit.time - self.spinnerZoomInTime)) / self.spinnerZoomInTime));
+                hit.base.scale.set(2 * hit.basescale * clamp01((time - (hit.time - self.spinnerZoomInTime)) / self.spinnerZoomInTime));
             }
             if (time < hit.time) {
                 let t = (hit.time - time) / (self.spinnerZoomInTime + self.spinnerAppearTime);
@@ -931,7 +931,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     hit.top.rotation = -t*t*10;
             }
             let progress = hit.rotationProgress / hit.rotationRequired;
-            hit.progress.scale.set(hit.basescale * clamp01(progress));
+            hit.progress.scale.set(2 * hit.basescale * clamp01(progress));
             if (time > hit.time) {
                 hit.base.rotation = hit.rotation / 2;
                 hit.top.rotation = hit.rotation / 2;
