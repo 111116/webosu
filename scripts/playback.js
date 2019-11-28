@@ -605,6 +605,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         }
         this.updateUpcoming = function(timestamp) {
             // Cache the next ten seconds worth of hit objects
+            console.time("add objects");
             while (current < self.hits.length && futuremost < timestamp + 10000) {
                 var hit = self.hits[current++];
                 let findindex = function(i) { // returning smallest j satisfying (self.game.stage.children[j].depth || 0)>=i
@@ -629,6 +630,8 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     futuremost = hit.time;
                 }
             }
+            console.timeEnd("add objects");
+            console.time("destroy objects");
             for (var i = 0; i < self.upcomingHits.length; i++) {
                 var hit = self.upcomingHits[i];
                 var diff = hit.time - timestamp;
@@ -647,6 +650,7 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     hit.destoryed = true;
                 }
             }
+            console.timeEnd("destroy objects");
         }
 
         this.updateHitCircle = function(hit, time) {

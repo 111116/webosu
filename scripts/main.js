@@ -152,16 +152,20 @@ function(Osu, _, Skin, sound, Playback) {
         playback.load();
 
         function gameLoop(timestamp) {
+            console.time("scene render");
             if (game.scene) {
                 game.scene.render(timestamp);
             }
+            console.timeEnd("scene render");
             if (game.cursor) {
                 // Handle cursor
                 game.cursor.x = game.mouseX;
                 game.cursor.y = game.mouseY;
                 game.cursor.bringToFront();
             }
+            console.time("app render");
             app.renderer.render(game.stage);
+            console.timeEnd("app render");
             window.requestAnimationFrame(gameLoop);
         }
         window.requestAnimationFrame(gameLoop);

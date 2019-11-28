@@ -253,7 +253,9 @@ function() {
     SliderMesh.prototype._render = function _render (renderer)
     {
         // not batchable. manual rendering
+        console.time("slider render");
         this._renderDefault(renderer);
+        console.timeEnd("slider render");
     };
 
     // Standard non-batching way of rendering.
