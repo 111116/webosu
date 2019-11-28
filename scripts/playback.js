@@ -143,12 +143,13 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     }
                     break;
                 case "spinner":
+                    let t = hit.basescale;
                     hit.basescale = gfx.height / 1280;
                     for (let i=0; i<hit.objects.length; ++i) {
                         hit.objects[i].x = gfx.xoffset + hit.x * gfx.width;
                         hit.objects[i].y = gfx.yoffset + hit.y * gfx.height;
-                        hit.objects[i].scale.x = hit.basescale;
-                        hit.objects[i].scale.y = hit.basescale;
+                        hit.objects[i].scale.x *= hit.basescale / t;
+                        hit.objects[i].scale.y *= hit.basescale / t;
                     }
                     break;
             }
@@ -485,9 +486,9 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             spinRequiredPerSec *= 0.8; // make it easier
             hit.rotationRequired = 2 * Math.PI * spinRequiredPerSec * (hit.endTime - hit.time)/1000;
 
-            function newsprite(spritename) {
+            function newsprite(spritename, scalemul) {
                 var sprite = new PIXI.Sprite(Skin[spritename]);
-                sprite.scale.x = sprite.scale.y = hit.basescale;
+                sprite.scale.x = sprite.scale.y = hit.basescale * scalemul;
                 sprite.anchor.x = sprite.anchor.y = 0.5;
                 sprite.x = hit.basex;
                 sprite.y = hit.basey;
@@ -496,8 +497,8 @@ function(Osu, Skin, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 hit.objects.push(sprite);
                 return sprite;
             }
-            hit.base = newsprite("spinnerbase.png");
-            hit.progress = newsprite("spinnerprogress.png");
+            hit.base = newsprite("spinnerbase.png", 2);
+            hit.progress = newsprite("spinnerprogress.png", 2);
             hit.top = newsprite("spinnertop.png");
 
             hit.judgements.push(this.newJudgement(hit.x, hit.y, 5, hit.endTime + 233)); // TODO depth
