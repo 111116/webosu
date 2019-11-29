@@ -75,10 +75,6 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 return;
             hit.basex = gfx.xoffset + hit.x * gfx.width;
             hit.basey = gfx.yoffset + hit.y * gfx.height;
-            for (let i=0; i<hit.judgements.length; ++i) {
-                hit.judgements[i].scale.x *= zoom;
-                hit.judgements[i].scale.y *= zoom;
-            }
             function place(o) {
                 o.x = gfx.xoffset + hit.x * gfx.width;
                 o.y = gfx.yoffset + hit.y * gfx.height;
@@ -248,38 +244,133 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             return 1 - Math.sin(t * Math.PI/2);
         }
 
-        this.newJudgement = function(x, y, depth, finalTime) {
-            let judgement = new PIXI.Sprite(Skin["hit0.png"]);
-            judgement.scale.x = judgement.scale.y = this.hitSpriteScale;
-            judgement.anchor.x = judgement.anchor.y = 0.5;
-            judgement.basex = x;
-            judgement.basey = y;
-            judgement.x = gfx.xoffset + x * gfx.width;
-            judgement.y = gfx.yoffset + y * gfx.height;
-            judgement.depth = depth; 
-            judgement.alpha = 0;
-            judgement.clickTime = -1;
-            judgement.finalTime = finalTime;
-            judgement.dir = 0.000000000001;
-            return judgement;
+
+        function judgementText(points) {
+            switch (points) {
+                case 0: return "miss";
+                case 50: return "meh";
+                case 100: return "good";
+                case 300: return "great";
+                default: throw "no such judgement";
+            }
+        }
+        function judgementColor(points) {
+            switch (points) {
+                case 0: return 0xed1121;
+                case 50: return 0xffcc22;
+                case 100: return 0x88b300;
+                case 300: return 0x66ccff;
+                default: throw "no such judgement";
+            }
         }
 
-        this.updateJudgement = function(judgement, time) {
-            let timeAfter = -1;
-            if (judgement.clickTime >= 0) {
-                timeAfter = time - judgement.clickTime;
+        this.createJudgement = function(x, y, depth, finalTime) {
+            let container = new PIXI.Container();
+            container.visible = false;
+            container.scalemul = this.hitSpriteScale;
+            container.basex = x;
+            container.basey = y;
+            container.depth = depth; 
+            container.points = -1;
+            container.finalTime = finalTime;
+            container.widths = [];
+            container.totalWidth = 0;
+            return container;
+        }
+
+        this.invokeJudgement = function(container, points, time) {
+            container.visible = true;
+            container.points = points;
+            container.t0 = time;
+            let str = judgementText(points);
+            let color = judgementColor(points);
+            for (let i=0; i<str.length; ++i) {
+                let ch = new PIXI.Sprite(Skin[str[i] + ".png"]);
+                ch.tint = color;
+                ch.anchor.set(0,0.5);
+                container.addChild(ch);
+                container.widths.push(Skin[str[i] + ".png"].width);
+                container.totalWidth += container.widths[container.widths.length-1];
             }
-            else if (time > judgement.finalTime) {
-                // missed
+            console.log("total width", container.children.length);
+            this.updateJudgement(container, time);
+        }
+
+        this.updateJudgement = function(container, time)
+        {
+            if (container.points < 0 && time >= container.finalTime) // miss
+            {
                 this.scoreOverlay.hit(0, time);
-                judgement.clickTime = judgement.finalTime;
-                timeAfter = time - judgement.finalTime;
+                this.invokeJudgement(container, 0, time);
+                return;
             }
-            if (timeAfter >= 0) {
-                judgement.alpha = Math.max(0, 1 - timeAfter / this.scoreFadeOutTime);
-                judgement.x = gfx.xoffset + judgement.basex * gfx.width;
-                judgement.y = gfx.yoffset + (judgement.basey + judgement.dir * Math.pow(timeAfter,4)) * gfx.height;
+            if (!container.visible) return;
+            console.log("upd judge");
+
+            let t = time - container.t0;
+
+            if (container.points == 0) // miss
+            {
+                // set visibility & alpha
+                if (t > 800) {
+                    container.visible = false;
+                    return;
+                }
+                if (t <= 100)
+                    container.alpha = t / 100;
+                else
+                    container.alpha = (t>600)? 1-(t-600)/200: 1;
+                // set position
+                let x = gfx.xoffset + gfx.width * container.basex;
+                let y = gfx.yoffset + gfx.height * container.basey;
+                let scale = 0.2;
+                let spacing = 20;
+                let w0 = (spacing * (container.widths.length-1) + container.totalWidth) * scale;
+                x -= w0/2;
+                let curx = x;
+            if (this.wtf<100) console.log(curx, y);
+                for (let i=0; i<container.widths.length; ++i) {
+                    container.children[i].setTransform(curx, y, scale, scale);
+                    curx += (container.widths[i] + spacing) * scale;
+                }
             }
+            else // meh, good, great
+            {
+                // set visibility & alpha
+                if (t > 500) {
+                    container.visible = false;
+                    return;
+                }
+                if (t <= 100)
+                    container.alpha = t / 100;
+                else
+                    container.alpha = 1-(t-100)/400;
+                // set position
+                let x = gfx.xoffset + gfx.width * container.basex;
+                let y = gfx.yoffset + gfx.height * container.basey;
+                let scale = 0.2;
+                let spacing = 20;
+                let w0 = (spacing * (container.widths.length-1) + container.totalWidth) * scale;
+                x -= w0/2;
+                let curx = x;
+                for (let i=0; i<container.widths.length; ++i) {
+                    container.children[i].setTransform(curx, y, scale, scale);
+                    curx += (container.widths[i] + spacing) * scale;
+                }
+            }
+            // test
+            // container.alpha = 1;
+            // container.visible = true;
+            // container.children[0].x = 500;
+            // container.children[0].y = 500;
+            // container.children[0].alpha = 1;
+            // container.children[0].scale.x = 1;
+            // container.children[0].scale.y = 1;
+            // container.children[0].visible = true;
+            if (!this.wtf) this.wtf = 0;
+            this.wtf++;
+            if (this.wtf<100)
+            console.log(gfx);
         }
 
         this.createBackground = function(){
@@ -369,7 +460,7 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.approach = newHitSprite("approachcircle.png", 8 + 0.0001 * hit.hitIndex);
             hit.approach.tint = combos[hit.combo % combos.length];
 
-            hit.judgements.push(this.newJudgement(hit.x, hit.y, 5, hit.time + this.MehTime)); // TODO depth
+            hit.judgements.push(this.createJudgement(hit.x, hit.y, 5, hit.time + this.MehTime)); // TODO depth
 
             // create combo number
             hit.numbers = [];
@@ -467,7 +558,7 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             for (let i=1; i<=hit.repeat; ++i) {
                 let x = (i%2==1)? endPoint.x: hit.x;
                 let y = (i%2==1)? endPoint.y: hit.y;
-                hit.judgements.push(this.newJudgement(x, y, 5, hit.time + i * hit.sliderTime));
+                hit.judgements.push(this.createJudgement(x, y, 5, hit.time + i * hit.sliderTime));
             }
         }
 
@@ -501,7 +592,7 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.progress = newsprite("spinnerprogress.png", 2);
             hit.top = newsprite("spinnertop.png");
 
-            hit.judgements.push(this.newJudgement(hit.x, hit.y, 5, hit.endTime + 233)); // TODO depth
+            hit.judgements.push(this.createJudgement(hit.x, hit.y, 5, hit.endTime + 233)); // TODO depth
         }
 
         this.populateHit = function(hit) {
@@ -593,10 +684,7 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             }
             hit.score = points;
             hit.clickTime = time;
-            hit.judgements[0].clickTime = time;
-            if (points > 0)
-                hit.judgements[0].dir *= -0.5;
-            hit.judgements[0].texture = Skin["hit" + points + ".png"];
+            self.invokeJudgement(hit.judgements[0], points, time);
         };
 
         // hit object updating
@@ -606,7 +694,6 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         }
         this.updateUpcoming = function(timestamp) {
             // Cache the next ten seconds worth of hit objects
-            console.time("add objects");
             while (current < self.hits.length && futuremost < timestamp + 10000) {
                 var hit = self.hits[current++];
                 let findindex = function(i) { // returning smallest j satisfying (self.game.stage.children[j].depth || 0)>=i
@@ -631,8 +718,6 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     futuremost = hit.time;
                 }
             }
-            console.timeEnd("add objects");
-            console.time("destroy objects");
             for (var i = 0; i < self.upcomingHits.length; i++) {
                 var hit = self.upcomingHits[i];
                 var diff = hit.time - timestamp;
@@ -651,7 +736,6 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     hit.destoryed = true;
                 }
             }
-            console.timeEnd("destroy objects");
         }
 
         this.updateHitCircle = function(hit, time) {
@@ -833,10 +917,7 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 // slider edge judgement
                 // Note: being tolerant if follow circle hasn't shrinked to minimum
                 if (atEnd && activated) {
-                    hit.judgements[hit.lastrep].clickTime = time;
-                    hit.judgements[hit.lastrep].texture = Skin["hit300.png"];
-                    hit.judgements[hit.lastrep].dir *= -0.5;
-                    this.scoreOverlay.hit(300, time);
+                    self.invokeJudgement(hit.judgements[hit.lastrep], 300, time);
                     self.playHitsound(hit, hit.lastrep, hit.time + hit.lastrep * hit.sliderTime);
                 }
 
