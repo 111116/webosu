@@ -48,7 +48,9 @@ function(Osu, _, sound, Playback) {
 
 
     // load skin & game cursor
-    PIXI.Loader.shared.add("sprites.json").load(function() {
+    PIXI.Loader.shared
+    .add('fonts/venera.fnt')
+    .add("sprites.json").load(function() {
         window.skinReady = true;
         document.getElementById("skin-progress").innerText += " Done";
         Skin = PIXI.Loader.shared.resources["sprites.json"].textures;

@@ -83,6 +83,8 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 if (o.initialscale)
                     o.initialscale *= zoom;
             }
+            for (let i=0; i<hit.judgements.length; ++i)
+                hit.judgements[i].scale.set(0.85 * this.hitSpriteScale, 1 * this.hitSpriteScale);
             function placecircle(hit) {
                 place(hit.base);
                 place(hit.circle);
@@ -265,112 +267,62 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         }
 
         this.createJudgement = function(x, y, depth, finalTime) {
-            let container = new PIXI.Container();
-            container.visible = false;
-            container.scalemul = this.hitSpriteScale;
-            container.basex = x;
-            container.basey = y;
-            container.depth = depth; 
-            container.points = -1;
-            container.finalTime = finalTime;
-            container.widths = [];
-            container.totalWidth = 0;
-            return container;
+            let judge = new PIXI.BitmapText('', {font: {name: 'Venera', size: 20}});
+            judge.anchor.set(0.5);
+            judge.scale.set(0.85 * this.hitSpriteScale, 1 * this.hitSpriteScale);
+            judge.visible = false;
+            judge.basex = x;
+            judge.basey = y;
+            judge.depth = depth;
+            judge.points = -1;
+            judge.finalTime = finalTime;
+            return judge;
         }
 
-        this.invokeJudgement = function(container, points, time) {
-            container.visible = true;
-            container.points = points;
-            container.t0 = time;
-            let str = judgementText(points);
-            let color = judgementColor(points);
-            for (let i=0; i<str.length; ++i) {
-                let ch = new PIXI.Sprite(Skin[str[i] + ".png"]);
-                ch.tint = color;
-                ch.anchor.set(0,0.5);
-                container.addChild(ch);
-                container.widths.push(Skin[str[i] + ".png"].width);
-                container.totalWidth += container.widths[container.widths.length-1];
-            }
-            console.log("total width", container.children.length);
-            this.updateJudgement(container, time);
+        this.invokeJudgement = function(judge, points, time) {
+            judge.visible = true;
+            judge.points = points;
+            judge.t0 = time;
+            judge.text = judgementText(points);
+            judge.tint = judgementColor(points);
+            this.updateJudgement(judge, time);
         }
 
-        this.updateJudgement = function(container, time)
+        this.updateJudgement = function(judge, time) // set transform of judgement text
         {
-            if (container.points < 0 && time >= container.finalTime) // miss
+            if (judge.points < 0 && time >= judge.finalTime) // miss
             {
                 this.scoreOverlay.hit(0, time);
-                this.invokeJudgement(container, 0, time);
+                this.invokeJudgement(judge, 0, time);
                 return;
             }
-            if (!container.visible) return;
-            console.log("upd judge");
+            if (!judge.visible) return;
 
-            let t = time - container.t0;
+            let t = time - judge.t0;
 
-            if (container.points == 0) // miss
+            if (judge.points == 0) // miss
             {
-                // set visibility & alpha
                 if (t > 800) {
-                    container.visible = false;
+                    judge.visible = false;
                     return;
                 }
-                if (t <= 100)
-                    container.alpha = t / 100;
-                else
-                    container.alpha = (t>600)? 1-(t-600)/200: 1;
-                // set position
-                let x = gfx.xoffset + gfx.width * container.basex;
-                let y = gfx.yoffset + gfx.height * container.basey;
-                let scale = 0.2;
-                let spacing = 20;
-                let w0 = (spacing * (container.widths.length-1) + container.totalWidth) * scale;
-                x -= w0/2;
-                let curx = x;
-            if (this.wtf<100) console.log(curx, y);
-                for (let i=0; i<container.widths.length; ++i) {
-                    container.children[i].setTransform(curx, y, scale, scale);
-                    curx += (container.widths[i] + spacing) * scale;
-                }
+                judge.alpha = (t<100)? t/100: (t<600)? 1: 1-(t-600)/200;
+                judge.x = gfx.xoffset + gfx.width * judge.basex;
+                judge.y = gfx.yoffset + gfx.height * judge.basey;
+                judge.y += 100 * Math.pow(t/800, 5) * this.hitSpriteScale;
+                judge.rotation = 0.7 * Math.pow(t/800, 5);
             }
             else // meh, good, great
             {
-                // set visibility & alpha
                 if (t > 500) {
-                    container.visible = false;
+                    judge.visible = false;
                     return;
                 }
-                if (t <= 100)
-                    container.alpha = t / 100;
-                else
-                    container.alpha = 1-(t-100)/400;
-                // set position
-                let x = gfx.xoffset + gfx.width * container.basex;
-                let y = gfx.yoffset + gfx.height * container.basey;
-                let scale = 0.2;
-                let spacing = 20;
-                let w0 = (spacing * (container.widths.length-1) + container.totalWidth) * scale;
-                x -= w0/2;
-                let curx = x;
-                for (let i=0; i<container.widths.length; ++i) {
-                    container.children[i].setTransform(curx, y, scale, scale);
-                    curx += (container.widths[i] + spacing) * scale;
-                }
+                judge.alpha = (t<100)? t/100: 1-(t-100)/400;
+                judge.x = gfx.xoffset + gfx.width * judge.basex;
+                judge.y = gfx.yoffset + gfx.height * judge.basey;
+                judge.letterSpacing = 70 *(Math.pow(t/1800-1,5)+1);
             }
-            // test
-            // container.alpha = 1;
-            // container.visible = true;
-            // container.children[0].x = 500;
-            // container.children[0].y = 500;
-            // container.children[0].alpha = 1;
-            // container.children[0].scale.x = 1;
-            // container.children[0].scale.y = 1;
-            // container.children[0].visible = true;
-            if (!this.wtf) this.wtf = 0;
-            this.wtf++;
-            if (this.wtf<100)
-            console.log(gfx);
         }
 
         this.createBackground = function(){
