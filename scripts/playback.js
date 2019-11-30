@@ -45,7 +45,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             self.osu.load_mp3();
         }
 
-        var gfx = {}; // game field area
+        var gfx = window.gfx = {}; // game field area
+        self.gamefield = new PIXI.Container();
         self.calcSize = function() {
             gfx.width = game.window.innerWidth;
             gfx.height = game.window.innerHeight;
@@ -58,116 +59,39 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
             gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
             console.log("gfx: ", gfx.xoffset, gfx.yoffset, gfx.width, gfx.height);
-            // deal with difficulties
-            self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
-            self.circleRadiusPixel = self.circleRadius * gfx.width / 512;
-            self.hitSpriteScale = self.circleRadiusPixel / 60;
+            self.gamefield.x = gfx.xoffset;
+            self.gamefield.y = gfx.yoffset;
+            self.gamefield.scale.set(gfx.width / 512);
         };
         self.calcSize();
-        game.mouseX = game.window.innerWidth / 2;
-        game.mouseY = game.window.innerHeight / 2;
+        game.mouseX = 512 / 2;
+        game.mouseY = 384 / 2;
         self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, track.difficulty.HPDrainRate);
         self.scoreOverlay.depth = 23333333333; // score overlay is at top of screen
-
-        self.replaceHit = function(hit, zoom) {
-            if (hit.destoryed)
-                return;
-            hit.basex = gfx.xoffset + hit.x * gfx.width;
-            hit.basey = gfx.yoffset + hit.y * gfx.height;
-            function place(o) {
-                o.x = gfx.xoffset + hit.x * gfx.width;
-                o.y = gfx.yoffset + hit.y * gfx.height;
-                o.scale.x *= zoom;
-                o.scale.y *= zoom;
-                if (o.initialscale)
-                    o.initialscale *= zoom;
-            }
-            for (let i=0; i<hit.judgements.length; ++i)
-                hit.judgements[i].scale.set(0.85 * this.hitSpriteScale, 1 * this.hitSpriteScale);
-            function placecircle(hit) {
-                place(hit.base);
-                place(hit.circle);
-                place(hit.burst);
-                place(hit.glow);
-                place(hit.approach);
-                for (let i=0; i<hit.numbers.length; ++i) {
-                    place(hit.numbers[i]);
-                }
-            }
-            switch (hit.type) {
-
-                case "circle":
-                    placecircle(hit);
-                    break;
-
-                case "slider":
-                    placecircle(hit);
-                    // this will place hitcircle of the slider to its start,
-                    // but if the circle has started to move, it will be updated in render loop.
-                    // so the position set here will be overwritten.
-
-                    hit.ball.scale.x *= zoom;
-                    hit.ball.scale.y *= zoom;
-                    
-                    hit.body.reTransform({
-                        x: gfx.xoffset, y: gfx.yoffset,
-                        width: gfx.width, height: gfx.height,
-                        osuWidth: 512, osuHeight: 384,
-                        windowWidth: game.window.innerWidth,
-                        windowHeight: game.window.innerHeight
-                    });
-
-                    if (hit.repeat > 1) {
-                        hit.reverse.scale.x *= zoom;
-                        hit.reverse.scale.y *= zoom;
-                        let endPoint = hit.curve.curve[hit.curve.curve.length-1];
-                        hit.reverse.x = gfx.xoffset + endPoint.x * gfx.width;
-                        hit.reverse.y = gfx.yoffset + endPoint.y * gfx.height;
-                    }
-                    if (hit.repeat > 2) {
-                        hit.reverse_b.scale.x *= zoom;
-                        hit.reverse_b.scale.y *= zoom;
-                        let startPoint = hit.curve.curve[0];
-                        hit.reverse_b.x = gfx.xoffset + startPoint.x * gfx.width;
-                        hit.reverse_b.y = gfx.yoffset + startPoint.y * gfx.height;
-                    }
-                    for (let i=0; i<hit.ticks.length; ++i) {
-                        hit.ticks[i].scale.x *= zoom;
-                        hit.ticks[i].scale.y *= zoom;
-                        let at = hit.curve.pointAt(repeatclamp((hit.ticks[i].time - hit.time) / hit.sliderTime));
-                        hit.ticks[i].x = gfx.xoffset + at.x * gfx.width;
-                        hit.ticks[i].y = gfx.yoffset + at.y * gfx.height;
-                    }
-                    break;
-                case "spinner":
-                    let t = hit.basescale;
-                    hit.basescale = gfx.height / 1280;
-                    for (let i=0; i<hit.objects.length; ++i) {
-                        hit.objects[i].x = gfx.xoffset + hit.x * gfx.width;
-                        hit.objects[i].y = gfx.yoffset + hit.y * gfx.height;
-                        hit.objects[i].scale.x *= hit.basescale / t;
-                        hit.objects[i].scale.y *= hit.basescale / t;
-                    }
-                    break;
-            }
-        }
 
         self.game.window.onresize = function() {
             window.app.renderer.resize(window.innerWidth, window.innerHeight);
             self.pause();
-            let oldwidth = gfx.width;
             self.calcSize();
             self.scoreOverlay.resize({width: window.innerWidth, height: window.innerHeight});
 
             self.background.width = self.game.window.innerWidth;
             self.background.height = self.game.window.innerHeight;
            
-            let zoom = gfx.width / oldwidth;
-            for (let i=0; i<self.hits.length; ++i)
-                self.replaceHit(self.hits[i], zoom);
+            for (let i=0; i<self.hits.length; ++i) {
+                if (self.hits[i].type == "slider")
+                    self.hits[i].body.resetTransform({
+                        dx: 2 * gfx.width / window.innerWidth / 512,
+                        ox: -1 + 2 * gfx.xoffset / window.innerWidth,
+                        dy: -2 * gfx.height / window.innerHeight / 384,
+                        oy: 1 - 2 * gfx.yoffset / window.innerHeight,
+                    });
+            }
         }
 
         // deal with difficulties
+        self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
+        self.hitSpriteScale = self.circleRadius / 60;
         let OD = track.difficulty.OverallDifficulty;
         self.MehTime = 200 - 10 * OD;
         self.GoodTime = 140 - 8 * OD;
@@ -267,8 +191,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             judge.anchor.set(0.5);
             judge.scale.set(0.85 * this.hitSpriteScale, 1 * this.hitSpriteScale);
             judge.visible = false;
-            judge.basex = x;
-            judge.basey = y;
+            judge.basex = judge.x = x;
+            judge.basey = judge.y = y;
             judge.depth = depth;
             judge.points = -1;
             judge.finalTime = finalTime;
@@ -303,9 +227,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
                     return;
                 }
                 judge.alpha = (t<100)? t/100: (t<600)? 1: 1-(t-600)/200;
-                judge.x = gfx.xoffset + gfx.width * judge.basex;
-                judge.y = gfx.yoffset + gfx.height * judge.basey;
-                judge.y += 100 * Math.pow(t/800, 5) * this.hitSpriteScale;
+                judge.y = judge.basey + 100 * Math.pow(t/800, 5) * this.hitSpriteScale;
                 judge.rotation = 0.7 * Math.pow(t/800, 5);
             }
             else // meh, good, great
@@ -315,8 +237,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
                     return;
                 }
                 judge.alpha = (t<100)? t/100: 1-(t-100)/400;
-                judge.x = gfx.xoffset + gfx.width * judge.basex;
-                judge.y = gfx.yoffset + gfx.height * judge.basey;
                 judge.letterSpacing = 70 *(Math.pow(t/1800-1,5)+1);
             }
         }
@@ -372,6 +292,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
                         ((+color[2]) << 0));
         }
 
+        self.game.stage.addChild(this.gamefield);
         self.game.stage.addChild(this.scoreOverlay);
 
         // creating hit objects
@@ -383,8 +304,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
                 sprite.scale.x = sprite.scale.y = sprite.initialscale;
                 sprite.anchor.x = anchorx;
                 sprite.anchor.y = anchory;
-                sprite.x = gfx.xoffset + hit.x * gfx.width;
-                sprite.y = gfx.yoffset + hit.y * gfx.height;
+                sprite.x = hit.x;
+                sprite.y = hit.y;
                 sprite.depth = depth;
                 sprite.alpha = 0;
                 hit.objects.push(sprite);
@@ -395,8 +316,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
 
             hit.base = newHitSprite("disc.png", basedep, 0.5);
             hit.base.tint = combos[hit.combo % combos.length];
-            hit.basex = hit.base.x;
-            hit.basey = hit.base.y;
 
             hit.circle = newHitSprite("hitcircleoverlay.png", basedep, 0.5);
             hit.glow = newHitSprite("ring-glow.png", basedep+2, 0.46);
@@ -422,7 +341,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
         }
 
         this.createSlider = function(hit) {
-
             hit.lastrep = 0; // for current-repeat counting
             hit.nexttick = 0; // for tick hit counting
             hit.sliderTime = hit.timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
@@ -430,14 +348,15 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.endTime = hit.time + hit.sliderTimeTotal;
 
             // create slider body
+            // manually set transform osupixel -> gl coordinate
+
             var body = hit.body = new SliderMesh(hit.curve.curve,
                 this.circleRadius,
                 {
-                    x: gfx.xoffset, y: gfx.yoffset,
-                    width: gfx.width, height: gfx.height,
-                    osuWidth: 512, osuHeight: 384,
-                    windowWidth: game.window.innerWidth,
-                    windowHeight: game.window.innerHeight
+                    dx: 2 * gfx.width / window.innerWidth / 512,
+                    ox: -1 + 2 * gfx.xoffset / window.innerWidth,
+                    dy: -2 * gfx.height / window.innerHeight / 384,
+                    oy: 1 - 2 * gfx.yoffset / window.innerHeight,
                 },
                 combos[hit.combo % combos.length]);
             body.alpha = 0;
@@ -448,8 +367,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
                 let sprite = new PIXI.Sprite(Skin[spritename]);
                 sprite.scale.set(self.hitSpriteScale * scalemul);
                 sprite.anchor.set(0.5);
-                sprite.x = gfx.xoffset + x * gfx.width;
-                sprite.y = gfx.yoffset + y * gfx.height;
+                sprite.x = x;
+                sprite.y = y;
                 sprite.depth = 4.9999-0.0001*hit.hitIndex;
                 sprite.alpha = 0;
                 hit.objects.push(sprite);
@@ -513,33 +432,29 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
         }
 
         this.createSpinner = function(hit) {
-            hit.x = 0.5;
-            hit.y = 0.5;
+            hit.x = 512/2;
+            hit.y = 384/2;
             // absolute position
-            hit.basex = gfx.xoffset + hit.x * gfx.width;
-            hit.basey = gfx.yoffset + hit.y * gfx.height;
             hit.rotation = 0;
             hit.rotationProgress = 0;
             hit.clicked = false;
-            hit.basescale = gfx.height / 1280;
             let OD = track.difficulty.OverallDifficulty;
             let spinRequiredPerSec = OD<5? 3+0.4*OD: 2.5+0.5*OD;
             spinRequiredPerSec *= 0.8; // make it easier
             hit.rotationRequired = 2 * Math.PI * spinRequiredPerSec * (hit.endTime - hit.time)/1000;
 
-            function newsprite(spritename, scalemul) {
+            function newsprite(spritename) {
                 var sprite = new PIXI.Sprite(Skin[spritename]);
-                sprite.scale.x = sprite.scale.y = hit.basescale * scalemul;
-                sprite.anchor.x = sprite.anchor.y = 0.5;
-                sprite.x = hit.basex;
-                sprite.y = hit.basey;
+                sprite.anchor.set(0.5);
+                sprite.x = hit.x;
+                sprite.y = hit.y;
                 sprite.depth = 4.9999 - 0.0001 * (hit.hitIndex || 1);
                 sprite.alpha = 0;
                 hit.objects.push(sprite);
                 return sprite;
             }
-            hit.base = newsprite("spinnerbase.png", 2);
-            hit.progress = newsprite("spinnerprogress.png", 2);
+            hit.base = newsprite("spinnerbase.png");
+            hit.progress = newsprite("spinnerprogress.png");
             hit.top = newsprite("spinnertop.png");
 
             hit.judgements.push(this.createJudgement(hit.x, hit.y, 4, hit.endTime + 233));
@@ -566,12 +481,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             container.t2 = hit.time;
             hit.objects.push(container);
             hit.followpoints = container;
-            
-            x1 = gfx.xoffset + gfx.width * x1;
-            y1 = gfx.yoffset + gfx.height * y1;
-            let x2 = gfx.xoffset + gfx.width * hit.x;
-            let y2 = gfx.yoffset + gfx.height * hit.y;
-            const distance = Math.hypot(x1-x2, y1-y2);
+
+            const distance = Math.hypot(x1-container.x2, y1-container.y2);
             const spacing = this.hitSpriteScale;
             const preempt = this.approachTime;
             for (let d = spacing * 1.5; d < distance - spacing; d += spacing)
@@ -690,10 +601,10 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
         this.updateUpcoming = function(timestamp) {
             // Cache the next 5 seconds worth of hit objects
             function findindex(i) { // returning smallest j satisfying (self.game.stage.children[j].depth || 0)>=i
-                let l = 0, r = self.game.stage.children.length;
+                let l = 0, r = self.gamefield.children.length;
                 while (l+1<r) {
                     let m = Math.floor((l+r)/2)-1;
-                    if ((self.game.stage.children[m].depth || 0) < i)
+                    if ((self.gamefield.children[m].depth || 0) < i)
                         l = m+1;
                     else
                         r = m+1;
@@ -703,10 +614,10 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             while (current < self.hits.length && futuremost < timestamp + 5000) {
                 var hit = self.hits[current++];
                 for (let i = hit.judgements.length - 1; i >= 0; i--) {
-                    self.game.stage.addChildAt(hit.judgements[i], findindex(hit.judgements[i].depth || 0.0001));
+                    self.gamefield.addChildAt(hit.judgements[i], findindex(hit.judgements[i].depth || 0.0001));
                 }
                 for (let i = hit.objects.length - 1; i >= 0; i--) {
-                    self.game.stage.addChildAt(hit.objects[i], findindex(hit.objects[i].depth || 0.0001));
+                    self.gamefield.addChildAt(hit.objects[i], findindex(hit.objects[i].depth || 0.0001));
                 }
                 self.upcomingHits.push(hit);
                 if (hit.time > futuremost) {
@@ -726,15 +637,15 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
                 if (diff < despawn) {
                     self.upcomingHits.splice(i, 1);
                     i--;
-                    _.each(hit.objects, function(o) { self.game.stage.removeChild(o); o.destroy(); });
-                    _.each(hit.judgements, function(o) { self.game.stage.removeChild(o); o.destroy(); });
+                    _.each(hit.objects, function(o) { self.gamefield.removeChild(o); o.destroy(); });
+                    _.each(hit.judgements, function(o) { self.gamefield.removeChild(o); o.destroy(); });
                     hit.destoryed = true;
                 }
             }
         }
 
         this.updateFollowPoints = function(container, time) {
-            
+
         }
 
         this.updateHitCircle = function(hit, time) {
@@ -871,35 +782,33 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
 
                 // Update ball and follow circle position
                 let at = hit.curve.pointAt(t);
-                let atx = at.x * gfx.width + gfx.xoffset;
-                let aty = at.y * gfx.height + gfx.yoffset;
 
-                hit.follow.x = atx;
-                hit.follow.y = aty;
-                hit.ball.x = atx;
-                hit.ball.y = aty;
+                hit.follow.x = at.x;
+                hit.follow.y = at.y;
+                hit.ball.x = at.x;
+                hit.ball.y = at.y;
 
                 if (hit.base.visible && hit.score<=0) {
                     // the hit circle at start of slider will move if not hit
-                    hit.base.x = atx;
-                    hit.base.y = aty;
-                    hit.circle.x = atx;
-                    hit.circle.y = aty;
+                    hit.base.x = at.x;
+                    hit.base.y = at.y;
+                    hit.circle.x = at.x;
+                    hit.circle.y = at.y;
                     for (let i=0; i<hit.numbers.length; ++i) {
-                        hit.numbers[i].x = atx;
-                        hit.numbers[i].y = aty;
+                        hit.numbers[i].x = at.x;
+                        hit.numbers[i].y = at.y;
                     }
-                    hit.glow.x = atx;
-                    hit.glow.y = aty;
-                    hit.burst.x = atx;
-                    hit.burst.y = aty;
-                    hit.approach.x = atx;
-                    hit.approach.y = aty;
+                    hit.glow.x = at.x;
+                    hit.glow.y = at.y;
+                    hit.burst.x = at.x;
+                    hit.burst.y = at.y;
+                    hit.approach.x = at.x;
+                    hit.approach.y = at.y;
                 }
 
-                let dx = game.mouseX - atx;
-                let dy = game.mouseY - aty;
-                let followPixelSize = hit.followSize * this.circleRadiusPixel;
+                let dx = game.mouseX - at.x;
+                let dy = game.mouseY - at.y;
+                let followPixelSize = hit.followSize * this.circleRadius;
                 let isfollowing = dx*dx + dy*dy <= followPixelSize * followPixelSize;
                 let activated = this.game.down && isfollowing || hit.followSize > 1.01;
 
@@ -989,8 +898,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             // update rotation
             if (time >= hit.time && time <= hit.endTime) {
                 if (this.game.down) {
-                    let Xr = this.game.mouseX - gfx.xoffset - gfx.width/2;
-                    let Yr = this.game.mouseY - gfx.yoffset - gfx.height/2;
+                    let Xr = this.game.mouseX - hit.x;
+                    let Yr = this.game.mouseY - hit.y;
                     let mouseAngle = Math.atan2(Yr, Xr);
                     if (!hit.clicked) {
                         hit.clicked = true;
@@ -1025,8 +934,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             // calculate scales of components
             if (time < hit.endTime) {
                 // top zoom in first
-                hit.top.scale.set(hit.basescale * clamp01((time - (hit.time - self.spinnerZoomInTime - self.spinnerAppearTime)) / self.spinnerZoomInTime));
-                hit.base.scale.set(2 * hit.basescale * clamp01((time - (hit.time - self.spinnerZoomInTime)) / self.spinnerZoomInTime));
+                hit.top.scale.set(0.3 * clamp01((time - (hit.time - self.spinnerZoomInTime - self.spinnerAppearTime)) / self.spinnerZoomInTime));
+                hit.base.scale.set(0.6 * clamp01((time - (hit.time - self.spinnerZoomInTime)) / self.spinnerZoomInTime));
             }
             if (time < hit.time) {
                 let t = (hit.time - time) / (self.spinnerZoomInTime + self.spinnerAppearTime);
@@ -1034,7 +943,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
                     hit.top.rotation = -t*t*10;
             }
             let progress = hit.rotationProgress / hit.rotationRequired;
-            hit.progress.scale.set(2 * hit.basescale * clamp01(progress));
+            hit.progress.scale.set(0.6 * clamp01(progress));
             if (time > hit.time) {
                 hit.base.rotation = hit.rotation / 2;
                 hit.top.rotation = hit.rotation / 2;

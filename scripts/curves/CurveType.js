@@ -11,7 +11,7 @@ define([], function() {
     }
     CurveType.prototype.init = function init(approxLength) {
         // Subdivide the curve
-        this.ncurve = Math.floor(approxLength * 80) + 2;
+        this.ncurve = Math.floor(approxLength/5) + 2;
         for (var i = 0; i < this.ncurve; i++) {
             this.curve.push(this.pointAt(i / (this.ncurve - 1)));
         }
@@ -22,7 +22,7 @@ define([], function() {
             } else {
                 var dx = this.curve[i].x - this.curve[i-1].x;
                 var dy = this.curve[i].y - this.curve[i-1].y;
-                this.curveDistance.push(Math.hypot(512 * dx, 384 * dy));
+                this.curveDistance.push(Math.hypot(dx, dy));
                 this.totalDistance += this.curveDistance[i];
             }
         }

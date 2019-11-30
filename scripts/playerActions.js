@@ -25,11 +25,11 @@ define([], function() {
 
     var inUpcoming = function (click){
         return function (hit){
-            var dx = click.x - hit.basex;
-            var dy = click.y - hit.basey;
+            var dx = click.x - hit.x;
+            var dy = click.y - hit.y;
             return ( 
                 hit.score < 0
-                && dx*dx + dy*dy < playback.circleRadiusPixel * playback.circleRadiusPixel 
+                && dx*dx + dy*dy < playback.circleRadius * playback.circleRadius
                 && Math.abs(click.time - hit.time) < playback.MehTime);
             }
     }
@@ -104,15 +104,15 @@ define([], function() {
         if (!playback.autoplay) {
 
             playback.game.window.addEventListener("mousemove", function(e) {
-                playback.game.mouseX = e.clientX;
-                playback.game.mouseY = e.clientY;
+                playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
+                playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
             });
 
             // mouse click handling for gameplay
             if (playback.game.allowMouseButton) {
                 playback.game.window.addEventListener("mousedown", function(e) {
-                    playback.game.mouseX = e.clientX;
-                    playback.game.mouseY = e.clientY;
+                    playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
+                    playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
                     if (e.button == 0) {
                         if (playback.game.M1down) return;
                         playback.game.M1down = true;
@@ -131,8 +131,8 @@ define([], function() {
                     checkClickdown();
                 });
                 playback.game.window.addEventListener("mouseup", function(e) {
-                    playback.game.mouseX = e.clientX;
-                    playback.game.mouseY = e.clientY;
+                    playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
+                    playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
                     if (e.button == 0) playback.game.M1down = false; else
                     if (e.button == 2) playback.game.M2down = false; else
                     return;

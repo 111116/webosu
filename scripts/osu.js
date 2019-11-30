@@ -23,7 +23,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
         this.decode = _.bind(function decode() {
             // Decodes a .osu file
             var lines = self.track.replace("\r", "").split("\n");
-            if (lines[0] != "osu file format v13") {
+            if (lines[0] != "osu file format v14") {
                 // TODO: Do we care?
             }
             var section = null;
@@ -92,8 +92,8 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                     case "[HitObjects]":
                         var parts = line.split(",");
                         var hit = {
-                            x: (+parts[0]) / 512,
-                            y: (+parts[1]) / 384,
+                            x: +parts[0],
+                            y: +parts[1],
                             time: +parts[2],
                             type: +parts[3],
                             hitSound: +parts[4]
@@ -125,7 +125,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                             hit.keyframes = [];
                             for (var j = 1; j < sliderKeys.length; j++) {
                                 var p = sliderKeys[j].split(":");
-                                hit.keyframes.push({ x: (+p[0]) / 512, y: (+p[1]) / 384 });
+                                hit.keyframes.push({ x: +p[0], y: +p[1] });
                             }
                             hit.repeat = +parts[6];
                             hit.pixelLength = +parts[7];
@@ -367,7 +367,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                     // if (Math.abs(norb.x * nora.y - norb.y * nora.x) < 0.00001)
                     //     return new LinearBezier(this, false, scaled);  // vectors parallel, use linear bezier instead
                     // else
-                    hit.curve = new CircumscribedCircle(hit, 512 / 384);
+                    hit.curve = new CircumscribedCircle(hit);
                     if (hit.curve.length == 0) // (not sure here) fallback
                         hit.curve = new LinearBezier(hit, hit.sliderType === "L");
                 }
@@ -402,7 +402,6 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
             return B.time - endTime;
         }
         // distance (in osu! pixels) between hitobject A and hitobject B
-        // coordinates have been normalized to [0,1], so we have to restore them to 512*384
         // (it's guaranteed that A and B are not spinners)
         function getdist(A, B) {
             let x = A.x;
@@ -411,7 +410,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                 x = A.curve.curve[A.curve.curve.length-1].x;
                 y = A.curve.curve[A.curve.curve.length-1].y;
             }
-            return Math.hypot(512*(x-B.x), 384*(y-B.y));
+            return Math.hypot(x-B.x, y-B.y);
         }
 
         let chains = new Array(); // array of chains represented by array of index
@@ -451,8 +450,8 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
         }
         // stack offset
         const stackScale = (1.0 - 0.7 * (track.difficulty.CircleSize - 5) / 5) / 2;
-        const scaleX = stackScale * 6.4 / 512;
-        const scaleY = stackScale * 6.4 / 384;
+        const scaleX = stackScale * 6.4;
+        const scaleY = stackScale * 6.4;
         function movehit(hit, dep) {
             hit.x += scaleX * dep;
             hit.y += scaleY * dep;

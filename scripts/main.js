@@ -25,7 +25,7 @@ function(Osu, _, sound, Playback) {
         showhwmouse: false,
 
         // cursor info
-        mouseX: 0, // in absolute pixel
+        mouseX: 0, // in osu pixel, probably negative or exceeding 512
         mouseY: 0,
         K1down: false,
         K2down: false,
@@ -159,8 +159,8 @@ function(Osu, _, sound, Playback) {
             }
             if (game.cursor) {
                 // Handle cursor
-                game.cursor.x = game.mouseX;
-                game.cursor.y = game.mouseY;
+                game.cursor.x = game.mouseX / 512 * gfx.width + gfx.xoffset;
+                game.cursor.y = game.mouseY / 384 * gfx.height + gfx.yoffset;
                 game.cursor.bringToFront();
             }
             app.renderer.render(game.stage);

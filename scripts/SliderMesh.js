@@ -4,15 +4,10 @@
 * properties: alpha
 *
 * constructor params
-*   curve: array of points, in osu relative coordinate
+*   curve: array of points, in osu pixels
 *   radius: radius of hit circle, in osu! pixels
-*   view: info object with properties (in system pixels if not otherwise specified):
-*       x, y: offset of osu field, relative to real inner window
-*       width, height: dimensions of osu field
-*       osuWidth, osuHeight: dimensions of osu field, in osu pixels
-*       windowWidth, windowWidth: dimensions of inner window
+*   transform: {dx,ox,dy,oy} (x,y)->(x*dx+ox, y*dy+oy) [-1,1]x[-1,1]
 *   tint: 24-bit integer color of inner slider body, RGB from highbits to lowbits
-*   
 */
 
 define([],
@@ -110,22 +105,19 @@ function() {
 
 
     // create mesh from control curve
-    // given osucurve: in osu relative coordinate
+    // given curve0: in osu pixels
     // given radius: in osu pixels
     // output mesh: in osu pixels
-    function curveGeometry(curveRelative, view, radius) // returning PIXI.Geometry object
+    function curveGeometry(curve0, radius) // returning PIXI.Geometry object
     {
         // osu relative coordinate -> osu pixels
         curve = new Array();
-        // filter out coinciding points & convert curve to osu pixel
-        for (let i=0; i<curveRelative.length; ++i)
+        // filter out coinciding points
+        for (let i=0; i<curve0.length; ++i)
             if (i==0 || 
-                Math.abs(curveRelative[i].x - curveRelative[i-1].x) > 0.00001 || 
-                Math.abs(curveRelative[i].y - curveRelative[i-1].y) > 0.00001)
-            curve.push({
-                x: curveRelative[i].x * view.osuWidth,
-                y: curveRelative[i].y * view.osuHeight
-            });
+                Math.abs(curve0[i].x - curve0[i-1].x) > 0.00001 || 
+                Math.abs(curve0[i].y - curve0[i-1].y) > 0.00001)
+            curve.push(curve0[i]);
 
         let vert = new Array();
         let index = new Array();
@@ -198,24 +190,20 @@ function() {
         return new PIXI.Geometry().addAttribute('position', vert, 3).addIndex(index)
     }
 
-    function SliderMesh(curve, radius, view, tint) // constructor. 
+    function SliderMesh(curve, radius, transform, tint) // constructor. 
     {
         Container.call(this);
-        this.geometry = curveGeometry(curve, view, radius);
+        this.geometry = curveGeometry(curve, radius);
         this.tint = tint || 0;
         // FIXME NOTE: setting this.tint has no effect
 
-        // osu pixel -> gl coordinate
-        // input mesh: [0, 512] x [0, 384]
-        // view in system pixels: [x, x + width] x [y, y + height]
-        // system pixel [0,windowWidth] x [0,windowHeight] -> gl coordinate [-1,1] x [1,-1]
         this.uniforms = {
             uSampler2: newTexture(this.tint),
             alpha: 1.0,
-            dx: 2 / view.osuWidth * view.width / view.windowWidth,
-            dy: -2 / view.osuHeight * view.height / view.windowHeight,
-            ox: -1 + 2 * view.x / view.windowWidth,
-            oy: 1 - 2 * view.y / view.windowHeight,
+            dx: transform.dx,
+            dy: transform.dy,
+            ox: transform.ox,
+            oy: transform.oy,
         };
         this.shader = PIXI.Shader.from(vertexSrc, fragmentSrc, this.uniforms);
 
@@ -241,12 +229,12 @@ function() {
     SliderMesh.prototype.constructor = SliderMesh;
 
 
-    SliderMesh.prototype.reTransform = function reTransform (view)
+    SliderMesh.prototype.resetTransform = function resetTransform (transform)
     {
-        this.uniforms.dx = 2 / view.osuWidth * view.width / view.windowWidth;
-        this.uniforms.dy = -2 / view.osuHeight * view.height / view.windowHeight;
-        this.uniforms.ox = -1 + 2 * view.x / view.windowWidth;
-        this.uniforms.oy = 1 - 2 * view.y / view.windowHeight;
+        this.uniforms.dx = transform.dx;
+        this.uniforms.dy = transform.dy;
+        this.uniforms.ox = transform.ox;
+        this.uniforms.oy = transform.oy;
     };
 
     // Standard renderer draw.

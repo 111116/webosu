@@ -2,16 +2,11 @@
 define([],
 function() {
     // Adapted from CircumscribedCircle.java @ github.com/itdelatrisu/opsu
-    function CircumscribedCircle(hit, xscale) {
+    function CircumscribedCircle(hit) {
 
         var start = { x: hit.x, y: hit.y };
         var mid = { x: hit.keyframes[0].x, y: hit.keyframes[0].y };
         var end = { x: hit.keyframes[1].x, y: hit.keyframes[1].y };
-
-        // fix distortion due to aspect ratio
-        start.x *= xscale;
-        mid.x *= xscale;
-        end.x *= xscale;
 
         // find the circle center
         var mida = vecmid(start, mid);
@@ -50,7 +45,7 @@ function() {
         // find an angle with an arc length of pixelLength along this circle
         var radius = veclen(startAngPoint);
         var arcAng = Math.abs(startAng - endAng);
-        let expectAng = hit.pixelLength / radius / 384;
+        let expectAng = hit.pixelLength / radius;
         if (arcAng > expectAng * 0.97) {
             // console.log("truncating arc to ", expectAng / arcAng);
             arcAng = expectAng; // truncate to given len
@@ -70,7 +65,7 @@ function() {
             if (t > 1) t = 1;
             var ang = lerp(startAng, endAng, t);
             return {
-                x: (Math.cos(ang) * radius + circleCenter.x) / xscale,
+                x: Math.cos(ang) * radius + circleCenter.x,
                 y: Math.sin(ang) * radius + circleCenter.y
             };
         };
@@ -83,7 +78,7 @@ function() {
         for (let i=1; i<curve.length; ++i) {
             let dx = curve[i].x - curve[i-1].x;
             let dy = curve[i].y - curve[i-1].y;
-            l += Math.hypot(512 * dx, 384 * dy);
+            l += Math.hypot(dx, dy);
         }
         return {curve: curve, pointAt: pointAt, totalDistance: l};
     };
