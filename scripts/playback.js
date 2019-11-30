@@ -1,12 +1,5 @@
 /*
 *   object layering:
-*       [0,1) background / storyboard
-*       [2,3) hit score, bottom to top
-*       [4,5) hit objects, top to bottom
-*       [5,6) hit score, top to bottom
-*       [6,7) hit burst
-*       [7,8) follow circle, slider ball, one visible instance at a time (add blend)
-*       [8,9) approach circle, bottom to top
 *       assuming number of possible hits doesn't exceed 9998
 */
 define(["osu", "playerActions", "SliderMesh", "score"],
@@ -191,7 +184,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.flashFadeOutTime = 120;
         self.flashMaxOpacity = 0.8;
         self.scoreFadeOutTime = 500;
-        self.followZoomInTime = 100; // TODO related to AR
+        self.followZoomInTime = 100;
         self.followFadeOutTime = 100;
         self.ballFadeOutTime = 100;
         self.objectDespawnTime = 2000;
@@ -415,7 +408,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.approach = newHitSprite("approachcircle.png", 8 + 0.0001 * hit.hitIndex);
             hit.approach.tint = combos[hit.combo % combos.length];
 
-            hit.judgements.push(this.createJudgement(hit.x, hit.y, 4, hit.time + this.MehTime)); // TODO depth
+            hit.judgements.push(this.createJudgement(hit.x, hit.y, 4, hit.time + this.MehTime));
 
             // create combo number
             hit.numbers = [];
@@ -549,7 +542,48 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.progress = newsprite("spinnerprogress.png", 2);
             hit.top = newsprite("spinnertop.png");
 
-            hit.judgements.push(this.createJudgement(hit.x, hit.y, 5, hit.endTime + 233)); // TODO depth
+            hit.judgements.push(this.createJudgement(hit.x, hit.y, 4, hit.endTime + 233));
+        }
+
+        this.createFollowPoint = function(hitBefore, hit) {
+            var x1 = hitBefore.x;
+            var y1 = hitBefore.y;
+            var t1 = hitBefore.time;
+            if (hitBefore.type == "slider") {
+                t1 += hitBefore.sliderTimeTotal;
+                if (hitBefore.repeat % 2 == 1) {
+                    x1 = hitBefore.curve.curve[hitBefore.curve.curve.length-1].x;
+                    y1 = hitBefore.curve.curve[hitBefore.curve.curve.length-1].y;
+                }
+            }
+            var container = new PIXI.Container();
+            container.depth = 3;
+            container.x1 = x1;
+            container.y1 = y1;
+            container.t1 = t1;
+            container.x2 = hit.x;
+            container.y2 = hit.y;
+            container.t2 = hit.time;
+            hit.objects.push(container);
+            hit.followpoints = container;
+            
+            x1 = gfx.xoffset + gfx.width * x1;
+            y1 = gfx.yoffset + gfx.height * y1;
+            let x2 = gfx.xoffset + gfx.width * hit.x;
+            let y2 = gfx.yoffset + gfx.height * hit.y;
+            const distance = Math.hypot(x1-x2, y1-y2);
+            const spacing = this.hitSpriteScale;
+            const preempt = this.approachTime;
+            for (let d = spacing * 1.5; d < distance - spacing; d += spacing)
+            {
+                let p = new PIXI.Sprite(Skin["followpoint.png"]);
+                p.scale = this.hitSpriteScale;
+                p.fraction = d / distance;
+                p.alpha = 0;
+                // TODO update this on resize
+                // TODO rotation
+                container.addChild(p);
+            }
         }
 
         this.populateHit = function(hit) {
@@ -572,8 +606,12 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             }
         }
 
-        for (var i = 0; i < this.hits.length; i++) {
+        for (let i = 0; i < this.hits.length; i++) {
             this.populateHit(this.hits[i]); // Prepare sprites and such
+        }
+        for (let i=0; i<this.hits.length-1; i++) {
+            if (this.hits[i].type != "spinner" && this.hits[i+1].type != "spinner" && this.hits[i+1].combo == this.hits[i].combo)
+                this.createFollowPoint(this.hits[i], this.hits[i+1]);
         }
         this.wait = Math.max(0, 1500-this.hits[0].time);
 
@@ -695,7 +733,13 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             }
         }
 
+        this.updateFollowPoints = function(container, time) {
+            
+        }
+
         this.updateHitCircle = function(hit, time) {
+            if (hit.followPoints)
+                this.updateFollowPoints(hit.followPoints, time);
             let diff = hit.time - time; // milliseconds before time of circle
             // calculate opacity of circle
             let noteFullAppear = this.approachTime - this.objectFadeInTime; // duration of opaque hit circle when approaching
