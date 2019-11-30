@@ -14,6 +14,12 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
+    function colorLerp(rgb1, rgb2, t) {
+        let r = (1-t) * ((rgb1>>16)/255) + t * ((rgb2>>16)/255);
+        let g = (1-t) * (((rgb1>>8)&255)/255) + t * (((rgb2>>8)&255)/255);
+        let b = (1-t) * ((rgb1&255)/255) + t * ((rgb2&255)/255);
+        return Math.round(r*255)<<16 | Math.round(g*255)<<8 | Math.round(b*255);
+    }
     function repeatclamp(a) {
         a%=2;
         return a>1? 2-a: a;
@@ -472,7 +478,10 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     continue;
                 let at = hit.curve.pointAt(pos);
                 hit.ticks.push(newSprite("sliderscorepoint.png", at.x, at.y));
+                hit.ticks[hit.ticks.length-1].appeartime = t - 2 * tickDuration;
                 hit.ticks[hit.ticks.length-1].time = t;
+                hit.ticks[hit.ticks.length-1].result = false;
+                hit.ticks[hit.ticks.length-1].scale.set(this.hitSpriteScale);
             }
 
             // add reverse symbol
@@ -831,6 +840,7 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 hit.ball.y = aty;
 
                 if (hit.base.visible && hit.score<=0) {
+                    // the hit circle at start of slider will move if not hit
                     hit.base.x = atx;
                     hit.base.y = aty;
                     hit.circle.x = atx;
@@ -855,10 +865,11 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
 
 
                 // slider tick judgement
-                if (hit.nexttick < hit.ticks.length && time >= hit.ticks[hit.nexttick].time && activated) {
-                    // TODO this.scoreOverlay.hit tick
-                    hit.ticks[hit.nexttick].visible = false;
-                    self.playTicksound(hit, hit.ticks[hit.nexttick].time);
+                if (hit.nexttick < hit.ticks.length && time >= hit.ticks[hit.nexttick].time) {
+                    if (activated) {
+                        hit.ticks[hit.nexttick].result = true;
+                        self.playTicksound(hit, hit.ticks[hit.nexttick].time);
+                    }
                     hit.nexttick++;
                 }
 
@@ -903,6 +914,25 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     if (hit.reverse_b)
                         hit.reverse_b.visible = (hit.currentRepeat < finalrepfromB);
                     // TODO reverse arrow fade out animation
+                }
+            }
+            
+            // calculate ticks fade in/out
+            for (let i=0; i<hit.ticks.length; ++i) {
+                if (time < hit.ticks[i].appeartime) { // fade in
+                    let dt = hit.ticks[i].appeartime - time;
+                    hit.ticks[i].alpha *= clamp01(1-dt/500);
+                }
+                if (time >= hit.ticks[i].time) {
+                    let dt = time - hit.ticks[i].time;
+                    if (hit.ticks[i].result) { // hit
+                        hit.ticks[i].alpha *= clamp01(-Math.pow(dt/150-1,5));
+                        hit.ticks[i].scale.set(this.hitSpriteScale * (1+0.5*(dt/150)*(2-dt/150)));
+                    }
+                    else { // missed
+                        hit.ticks[i].alpha *= clamp01(1-dt/150);
+                        hit.ticks[i].tint = colorLerp(0xffffff, 0xff0000, clamp01(dt/75));
+                    }
                 }
             }
             
