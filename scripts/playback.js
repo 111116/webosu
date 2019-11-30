@@ -645,8 +645,8 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             futuremost = self.track.hitObjects[0].time;
         }
         this.updateUpcoming = function(timestamp) {
-            // Cache the next ten seconds worth of hit objects
-            while (current < self.hits.length && futuremost < timestamp + 10000) {
+            // Cache the next 5 seconds worth of hit objects
+            while (current < self.hits.length && futuremost < timestamp + 5000) {
                 var hit = self.hits[current++];
                 let findindex = function(i) { // returning smallest j satisfying (self.game.stage.children[j].depth || 0)>=i
                     let l = 0, r = self.game.stage.children.length;
