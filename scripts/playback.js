@@ -195,7 +195,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.followFadeOutTime = 100;
         self.ballFadeOutTime = 100;
         self.objectDespawnTime = 2000;
-        self.backgroundFadeTime = 1500;
+        self.backgroundFadeTime = 800;
         self.spinnerAppearTime = 1500;
         self.spinnerZoomInTime = 300;
         self.spinnerFadeOutTime = 150;
@@ -205,12 +205,13 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
 
         self.paused = false;
         this.pause = function() {
-            // this.osu.audio.pause();
-            // this.game.paused = true;
+            if (this.osu.audio.pause()) { // pause music success
+                this.game.paused = true;
+            }
         };
         this.resume = function() {
-            // this.osu.audio.resume();
-            // this.game.paused = false;
+            this.osu.audio.play();
+            this.game.paused = false;
         };
 
         // adjust volume
@@ -1059,7 +1060,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             if (!self.ready) {
                 return;
             }
-            self.osu.audio.play(self.offset, self.backgroundFadeTime + self.wait);
+            self.osu.audio.play(self.backgroundFadeTime + self.wait);
         };
 
     }
