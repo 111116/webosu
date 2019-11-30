@@ -646,19 +646,19 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         }
         this.updateUpcoming = function(timestamp) {
             // Cache the next 5 seconds worth of hit objects
+            function findindex(i) { // returning smallest j satisfying (self.game.stage.children[j].depth || 0)>=i
+                let l = 0, r = self.game.stage.children.length;
+                while (l+1<r) {
+                    let m = Math.floor((l+r)/2)-1;
+                    if ((self.game.stage.children[m].depth || 0) < i)
+                        l = m+1;
+                    else
+                        r = m+1;
+                }
+                return l;
+            }
             while (current < self.hits.length && futuremost < timestamp + 5000) {
                 var hit = self.hits[current++];
-                let findindex = function(i) { // returning smallest j satisfying (self.game.stage.children[j].depth || 0)>=i
-                    let l = 0, r = self.game.stage.children.length;
-                    while (l+1<r) {
-                        let m = Math.floor((l+r)/2)-1;
-                        if ((self.game.stage.children[m].depth || 0) < i)
-                            l = m+1;
-                        else
-                            r = m+1;
-                    }
-                    return l;
-                }
                 for (let i = hit.judgements.length - 1; i >= 0; i--) {
                     self.game.stage.addChildAt(hit.judgements[i], findindex(hit.judgements[i].depth || 0.0001));
                 }
