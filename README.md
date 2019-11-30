@@ -20,7 +20,7 @@ web page:
 
 game in action:
 
-![play in action](screenshots/clip.gif)
+![play in action](screenshots/clip2.gif)
 
 ## Hosting
 
