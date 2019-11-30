@@ -9,8 +9,8 @@
 *       [8,9) approach circle, bottom to top
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "hash", "playerActions", "SliderMesh", "score"],
-function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
+define(["osu", "playerActions", "SliderMesh", "score"],
+function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -199,10 +199,6 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
         self.spinnerAppearTime = 1500;
         self.spinnerZoomInTime = 300;
         self.spinnerFadeOutTime = 150;
-
-        if (Hash.timestamp()) {
-            self.offset = +Hash.timestamp();
-        }
 
         setPlayerActions(self);
 
@@ -1046,9 +1042,6 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 self.updateHitObjects(time);
                 this.scoreOverlay.update(time);
                 self.game.updatePlayerActions(time);
-                if (self.osu.audio.playing && false) { // TODO: Better way of updating this
-                    Hash.timestamp(Math.floor(time));
-                }
             }
             else {
                 this.updateBackground(-100000);
