@@ -412,7 +412,7 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.approach = newHitSprite("approachcircle.png", 8 + 0.0001 * hit.hitIndex);
             hit.approach.tint = combos[hit.combo % combos.length];
 
-            hit.judgements.push(this.createJudgement(hit.x, hit.y, 5, hit.time + this.MehTime)); // TODO depth
+            hit.judgements.push(this.createJudgement(hit.x, hit.y, 4, hit.time + this.MehTime)); // TODO depth
 
             // create combo number
             hit.numbers = [];
@@ -510,7 +510,7 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
             for (let i=1; i<=hit.repeat; ++i) {
                 let x = (i%2==1)? endPoint.x: hit.x;
                 let y = (i%2==1)? endPoint.y: hit.y;
-                hit.judgements.push(this.createJudgement(x, y, 5, hit.time + i * hit.sliderTime));
+                hit.judgements.push(this.createJudgement(x, y, 4, hit.time + i * hit.sliderTime));
             }
         }
 
@@ -845,10 +845,6 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                     hit.burst.y = aty;
                     hit.approach.x = atx;
                     hit.approach.y = aty;
-                    if (hit.base.alpha == 1) {
-                        hit.judgements[0].basex = at.x;
-                        hit.judgements[0].basey = at.y;
-                    }
                 }
 
                 let dx = game.mouseX - atx;
