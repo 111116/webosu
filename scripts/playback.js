@@ -481,7 +481,6 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 hit.ticks[hit.ticks.length-1].appeartime = t - 2 * tickDuration;
                 hit.ticks[hit.ticks.length-1].time = t;
                 hit.ticks[hit.ticks.length-1].result = false;
-                hit.ticks[hit.ticks.length-1].scale.set(this.hitSpriteScale);
             }
 
             // add reverse symbol
@@ -922,12 +921,16 @@ function(Osu, Hash, setPlayerActions, SliderMesh, ScoreOverlay) {
                 if (time < hit.ticks[i].appeartime) { // fade in
                     let dt = hit.ticks[i].appeartime - time;
                     hit.ticks[i].alpha *= clamp01(1-dt/500);
+                    hit.ticks[i].scale.set(0.5 * this.hitSpriteScale * (0.5 + 0.5 * clamp01((1-dt/500)*(1+dt/500))));
+                }
+                else {
+                    hit.ticks[i].scale.set(0.5 * this.hitSpriteScale);
                 }
                 if (time >= hit.ticks[i].time) {
                     let dt = time - hit.ticks[i].time;
                     if (hit.ticks[i].result) { // hit
                         hit.ticks[i].alpha *= clamp01(-Math.pow(dt/150-1,5));
-                        hit.ticks[i].scale.set(this.hitSpriteScale * (1+0.5*(dt/150)*(2-dt/150)));
+                        hit.ticks[i].scale.set(0.5 * this.hitSpriteScale * (1+0.5*(dt/150)*(2-dt/150)));
                     }
                     else { // missed
                         hit.ticks[i].alpha *= clamp01(1-dt/150);
