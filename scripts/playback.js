@@ -460,6 +460,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             hit.judgements.push(this.createJudgement(hit.x, hit.y, 4, hit.endTime + 233));
         }
 
+        // create a follow point connection between two hit objects & store it in the latter object
+        // this should be called after these hit objects be initialized, but before they're added to the stage
         this.createFollowPoint = function(hitBefore, hit) {
             var x1 = hitBefore.x;
             var y1 = hitBefore.y;
@@ -476,25 +478,30 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             container.x1 = x1;
             container.y1 = y1;
             container.t1 = t1;
-            container.x2 = hit.x;
-            container.y2 = hit.y;
-            container.t2 = hit.time;
+            container.dx = hit.x - x1;
+            container.dy = hit.y - y1;
+            container.dt = hit.time - t1;
+            container.preempt = this.approachTime;
             hit.objects.push(container);
-            hit.followpoints = container;
+            hit.followPoints = container;
 
-            const distance = Math.hypot(x1-container.x2, y1-container.y2);
-            const spacing = this.hitSpriteScale;
-            const preempt = this.approachTime;
-            for (let d = spacing * 1.5; d < distance - spacing; d += spacing)
+            const spacing = this.circleRadius * 0.7;
+            const rotation = Math.atan2(container.dy, container.dx);
+            const distance = Math.hypot(container.dx, container.dy);
+            for (let d = spacing * 2; d < distance - 1.5 * spacing; d += spacing)
             {
                 let p = new PIXI.Sprite(Skin["followpoint.png"]);
-                p.scale = this.hitSpriteScale;
-                p.fraction = d / distance;
+                p.scale.set(this.hitSpriteScale*0.3);
+                p.x = x1 + container.dx * d/distance;
+                p.y = y1 + container.dy * d/distance;
+                p.blendMode = PIXI.BLEND_MODES.ADD;
+                p.rotation = rotation;
+                p.anchor.set(0.5);
                 p.alpha = 0;
-                // TODO update this on resize
-                // TODO rotation
+                p.fraction = d / distance; // store for convenience
                 container.addChild(p);
             }
+            console.log("connection point cnt=", container.children.length);
         }
 
         this.populateHit = function(hit) {
@@ -600,7 +607,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
         }
         this.updateUpcoming = function(timestamp) {
             // Cache the next 5 seconds worth of hit objects
-            function findindex(i) { // returning smallest j satisfying (self.game.stage.children[j].depth || 0)>=i
+            function findindex(i) { // returning smallest j satisfying (self.gamefield.children[j].depth || 0)>=i
                 let l = 0, r = self.gamefield.children.length;
                 while (l+1<r) {
                     let m = Math.floor((l+r)/2)-1;
@@ -644,8 +651,23 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
             }
         }
 
-        this.updateFollowPoints = function(container, time) {
-
+        // this should be called on a follow point connection every frame when it's valid
+        this.updateFollowPoints = function(f, time) {
+            for (let i=0; i<f.children.length; ++i)
+            {
+                let o = f.children[i];
+                let startx = f.x1 + (o.fraction - 0.1) * f.dx;
+                let starty = f.y1 + (o.fraction - 0.1) * f.dy;
+                let endx = f.x1 + o.fraction * f.dx;
+                let endy = f.y1 + o.fraction * f.dy;
+                let fadeOutTime = f.t1 + o.fraction * f.dt;
+                let fadeInTime = fadeOutTime - f.preempt;
+                let relpos = clamp01((time-fadeInTime) / self.objectFadeInTime);
+                relpos *= 2-relpos; // ease out
+                o.x = startx + (endx - startx) * relpos;
+                o.y = starty + (endy - starty) * relpos;
+                o.alpha = 0.5 * ((time<fadeOutTime)? clamp01((time-fadeInTime) / self.objectFadeInTime): 1-clamp01((time-fadeOutTime) / self.objectFadeInTime));
+            }
         }
 
         this.updateHitCircle = function(hit, time) {
