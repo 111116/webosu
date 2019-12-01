@@ -2,8 +2,8 @@
 *   object layering:
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "playerActions", "SliderMesh", "score", "pause"],
-function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu) {
+define(["osu", "playerActions", "SliderMesh", "score", "pause", "volumemenu"],
+function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -68,6 +68,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu) {
         game.mouseY = 384 / 2;
         self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, track.difficulty.HPDrainRate);
         self.pauseMenu = new PauseMenu({width: game.window.innerWidth, height: game.window.innerHeight});
+        self.volumeMenu = new VolumeMenu({width: game.window.innerWidth, height: game.window.innerHeight});
 
         self.game.window.onresize = function() {
             window.app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -75,6 +76,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu) {
             self.calcSize();
             self.scoreOverlay.resize({width: window.innerWidth, height: window.innerHeight});
             self.pauseMenu.resize({width: window.innerWidth, height: window.innerHeight});
+            self.volumeMenu.resize({width: window.innerWidth, height: window.innerHeight});
 
             self.background.width = self.game.window.innerWidth;
             self.background.height = self.game.window.innerHeight;
@@ -137,7 +139,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu) {
         // adjust volume
         if (game.allowMouseScroll) {
             self.game.window.addEventListener('wheel', function(e) {
-                self.game.masterVolume -= e.deltaY * 0.01;
+                self.game.masterVolume -= e.deltaY * 0.002;
                 if (self.game.masterVolume < 0) {
                     self.game.masterVolume = 0;
                 } 
@@ -145,7 +147,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu) {
                     self.game.masterVolume = 1;
                 }
                 self.osu.audio.gain.gain.value = self.game.musicVolume * self.game.masterVolume;
-                // TODO: Visualization
+                self.volumeMenu.setVolume(self.game.masterVolume * 100);
             });
         }
 
@@ -297,6 +299,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu) {
         self.game.stage.addChild(this.gamefield);
         self.game.stage.addChild(this.scoreOverlay);
         self.game.stage.addChild(this.pauseMenu);
+        self.game.stage.addChild(this.volumeMenu);
 
         // creating hit objects
         this.createHitCircle = function(hit) {
@@ -1025,6 +1028,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu) {
             else {
                 this.updateBackground(-100000);
             }
+            this.volumeMenu.update(timestamp);
         }
 
         this.teardown = function() {
