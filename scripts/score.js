@@ -3,7 +3,7 @@
 * responsible for calculating & displaying combo, score, HP, accuracy...
 * 
 * Construct params
-*   gamefield: {width, height, xoffset, yxoffset} in real pixels
+*   gamefield: {width, height} in real pixels
 *
 * properties
 *   tint: 24-bit integer color of display

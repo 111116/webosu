@@ -1,5 +1,4 @@
 define([], function() {
-    // TODO: support OD
 
     var checkClickdown = function checkClickdown(){
         var upcoming = playback.upcomingHits;
@@ -16,9 +15,6 @@ define([], function() {
                 if (Math.abs(diff) < playback.GoodTime) points = 100;
                 if (Math.abs(diff) < playback.GreatTime) points = 300;
                 playback.hitSuccess(hit, points, click.time);
-            }
-            else { // spinner
-
             }
         }
     };

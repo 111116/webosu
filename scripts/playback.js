@@ -2,8 +2,8 @@
 *   object layering:
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "playerActions", "SliderMesh", "score"],
-function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
+define(["osu", "playerActions", "SliderMesh", "score", "pause"],
+function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -67,13 +67,14 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
         game.mouseX = 512 / 2;
         game.mouseY = 384 / 2;
         self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, track.difficulty.HPDrainRate);
-        self.scoreOverlay.depth = 23333333333; // score overlay is at top of screen
+        self.pauseMenu = new PauseMenu({width: game.window.innerWidth, height: game.window.innerHeight});
 
         self.game.window.onresize = function() {
             window.app.renderer.resize(window.innerWidth, window.innerHeight);
             self.pause();
             self.calcSize();
             self.scoreOverlay.resize({width: window.innerWidth, height: window.innerHeight});
+            self.pauseMenu.resize({width: window.innerWidth, height: window.innerHeight});
 
             self.background.width = self.game.window.innerWidth;
             self.background.height = self.game.window.innerHeight;
@@ -124,11 +125,13 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
         this.pause = function() {
             if (this.osu.audio.pause()) { // pause music success
                 this.game.paused = true;
+                this.pauseMenu.pause();
             }
         };
         this.resume = function() {
             this.osu.audio.play();
             this.game.paused = false;
+            this.pauseMenu.resume();
         };
 
         // adjust volume
@@ -156,7 +159,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
                     self.resume();
                 }
             }
-            // TODO: Visualization
         });
 
 
@@ -294,6 +296,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay) {
 
         self.game.stage.addChild(this.gamefield);
         self.game.stage.addChild(this.scoreOverlay);
+        self.game.stage.addChild(this.pauseMenu);
 
         // creating hit objects
         this.createHitCircle = function(hit) {
