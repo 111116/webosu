@@ -72,16 +72,16 @@ define([], function() {
                         playback.game.mouseY = cur.ball.y || cur.y;
                     }
                     else { // spin
-                        let currentAngle = Math.atan2(playback.game.mouseY - cur.basey, playback.game.mouseX - cur.basex);
+                        let currentAngle = Math.atan2(playback.game.mouseY - cur.y, playback.game.mouseX - cur.x);
                         currentAngle += 0.8;
-                        playback.game.mouseY = cur.basey + spinRadius * Math.sin(currentAngle);
-                        playback.game.mouseX = cur.basex + spinRadius * Math.cos(currentAngle);
+                        playback.game.mouseY = cur.y + spinRadius * Math.sin(currentAngle);
+                        playback.game.mouseX = cur.x + spinRadius * Math.cos(currentAngle);
                     }
                 }
                 else {
                     // move toward the object
-                    let targX = cur.basex;
-                    let targY = cur.basey;
+                    let targX = cur.x;
+                    let targY = cur.y;
                     if (cur.type == "spinner")
                         targY -= spinRadius;
                     let t = (time - playback.auto.lasttime) / (cur.time - playback.auto.lasttime);
