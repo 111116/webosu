@@ -64,7 +64,7 @@ define([], function() {
             self.started = self.audio.currentTime;
             if (wait > 0) {
                 self.position = -wait/1000;
-                window.setTimeout(function(){self.source.start(0, 0);}, wait);
+                window.setTimeout(function(){self.source.start(Math.max(0, self.getPosition()), 0);}, wait);
             }
             else {
                 self.source.start(0, self.position);

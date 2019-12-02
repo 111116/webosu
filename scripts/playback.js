@@ -511,7 +511,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 p.fraction = d / distance; // store for convenience
                 container.addChild(p);
             }
-            console.log("connection point cnt=", container.children.length);
         }
 
         this.populateHit = function(hit) {
