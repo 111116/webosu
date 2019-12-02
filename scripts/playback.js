@@ -95,6 +95,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             }
         }
 
+        window.addEventListener("blur", function(e){self.pause();});
+
         // deal with difficulties
         self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
         self.hitSpriteScale = self.circleRadius / 60;
