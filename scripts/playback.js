@@ -2,8 +2,8 @@
 *   object layering:
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "playerActions", "SliderMesh", "score", "pause", "volumemenu"],
-function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu) {
+define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/pause", "overlay/volume", "overlay/loading"],
+function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -38,6 +38,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu)
         var scoreCharHeight = 45;
 
         self.osu.onready = function() {
+            self.loadingMenu.hide();
             self.audioReady = true;
             self.start();
         }
@@ -68,6 +69,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu)
         game.mouseY = 384 / 2;
         self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, track.difficulty.HPDrainRate);
         self.pauseMenu = new PauseMenu({width: game.window.innerWidth, height: game.window.innerHeight});
+        self.loadingMenu = new LoadingMenu({width: game.window.innerWidth, height: game.window.innerHeight}, track);
         self.volumeMenu = new VolumeMenu({width: game.window.innerWidth, height: game.window.innerHeight});
 
         self.game.window.onresize = function() {
@@ -76,6 +78,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu)
             self.calcSize();
             self.scoreOverlay.resize({width: window.innerWidth, height: window.innerHeight});
             self.pauseMenu.resize({width: window.innerWidth, height: window.innerHeight});
+            self.loadingMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.volumeMenu.resize({width: window.innerWidth, height: window.innerHeight});
 
             self.background.width = self.game.window.innerWidth;
@@ -300,6 +303,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu)
         self.game.stage.addChild(this.scoreOverlay);
         self.game.stage.addChild(this.pauseMenu);
         self.game.stage.addChild(this.volumeMenu);
+        self.game.stage.addChild(this.loadingMenu);
 
         // creating hit objects
         this.createHitCircle = function(hit) {
@@ -1029,6 +1033,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu)
                 this.updateBackground(-100000);
             }
             this.volumeMenu.update(timestamp);
+            this.loadingMenu.update(timestamp);
         }
 
         this.teardown = function() {
