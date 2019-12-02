@@ -15,23 +15,21 @@ define([], function()
 
         this.pausetext = new PIXI.BitmapText('PAUSED', {font: {name: 'Venera', size: 50}});
         this.pausetext.anchor.set(0.5);
-        this.pausetext.x = windowfield.width/2;
-        this.pausetext.y = windowfield.height/2;
-        this.pausetextshadow = new PIXI.BitmapText('PAUSED', {font: {name: 'Venera', size: 50}});
-        this.pausetextshadow.anchor.set(0.5);
-        this.pausetextshadow.x = windowfield.width/2;
-        this.pausetextshadow.y = windowfield.height/2 + 2;
-        this.pausetextshadow.alpha = 0.3;
-        this.pausetextshadow.tint = 0;
-        this.addChild(this.pausetextshadow);
+        this.bg = new PIXI.Sprite(Skin['hpbarright.png']);
+        this.bg.rotation = Math.PI/2;
+        this.bg.anchor.set(0.5);
+        this.bg.scale.set(0.3,500);
+        this.bg.alpha = 0.8;
+        this.addChild(this.bg);
         this.addChild(this.pausetext);
         
         this.resize = function(windowfield) {
             this.pausetext.x = windowfield.width/2;
             this.pausetext.y = windowfield.height/2;
-            this.pausetextshadow.x = windowfield.width/2;
-            this.pausetextshadow.y = windowfield.height/2 + 2;
+            this.bg.x = windowfield.width/2;
+            this.bg.y = windowfield.height/2;
         }
+        this.resize(windowfield);
 
         this.pause = function() {
             this.visible = true;

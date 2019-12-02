@@ -15,10 +15,10 @@ define([], function()
         this.alpha = 1;
         this.hidden = false;
 
-        this.bg = new PIXI.Sprite(Skin['followpoint.png']);
-        this.bg.tint = 0;
+        this.bg = new PIXI.Sprite(Skin['hpbarright.png']);
+        this.bg.rotation = Math.PI/2;
         this.bg.anchor.set(0.5);
-        this.bg.scale.set(18);
+        this.bg.scale.set(0.6,500);
         this.bg.alpha = 0.8;
         this.addChild(this.bg);
 
@@ -39,9 +39,9 @@ define([], function()
         this.addChild(this.sourcetext);
         this.addChild(this.mappertext);
 
-        this.loading = new PIXI.Sprite(Skin['8.png']);
-        this.loading.anchor.set(0.5);
-        this.loading.scale.set(0.6);
+        this.loading = new PIXI.Sprite(Skin['dot.png']);
+        this.loading.anchor.set(0.5,0.3);
+        this.loading.scale.set(1,0.6);
         this.addChild(this.loading);
         
         this.resize = function(windowfield) {
@@ -67,7 +67,7 @@ define([], function()
         }
 
         this.updateloading = function(timestamp) {
-            this.loading.rotation = timestamp/200;
+            this.loading.rotation = timestamp/128;
         }
 
         this.update = function(timestamp) {
