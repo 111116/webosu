@@ -277,12 +277,16 @@ input[type=button] {
   margin-left: 5px;
   /*padding-left: 12px;*/
   /*padding-right: 12px;*/
-  width: 70px;
+  min-width: 70px;
   background: #eee;
   border: none;
 }
 input[type=button]:hover {
   background: #888;
+  color: #fff;
+}
+input[type=button].using {
+  background: #fc7bb4;
   color: #fff;
 }
 

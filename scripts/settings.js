@@ -26,7 +26,10 @@ function setOptionPanel() {
 
 	function loadFromLocal() {
 		let str = window.localStorage.getItem("osugamesettings");
-		if (str) window.gamesettings = JSON.parse(str);
+		if (str) {
+			let s = JSON.parse(str);
+			if (s) Object.assign(gamesettings, s);
+		}
 	}
 
 	function saveToLocal() {
@@ -49,23 +52,32 @@ function setOptionPanel() {
 		beatmapHitsound: false,
 		autoplay: false,
 		showhwmouse: false,
+		K1name: 'Z',
+		K2name: 'X',
+		K1keycode: 90,
+		K2keycode: 88,
 	};
 	loadFromLocal();
 
 	window.gamesettings.loadToGame = function() {
-        window.game.backgroundDimRate = this.dim / 100;
-        window.game.backgroundBlurRate = this.blur / 100;
-        window.game.cursorSize = this.cursorsize;
-        window.game.allowMouseScroll = !this.disableWheel;
-        window.game.allowMouseButton = !this.disableButton;
-        window.game.masterVolume = this.mastervolume / 100;
-        window.game.effectVolume = this.effectvolume / 100;
-        window.game.musicVolume = this.musicvolume / 100;
-        window.game.autoplay = this.autoplay;
-        window.game.showhwmouse = this.showhwmouse;
-        // window.game.K1keycode: 90,
-        // window.game.K2keycode: 88,
+		if (window.game) {
+	        window.game.backgroundDimRate = this.dim / 100;
+	        window.game.backgroundBlurRate = this.blur / 100;
+	        window.game.cursorSize = this.cursorsize;
+	        window.game.allowMouseScroll = !this.disableWheel;
+	        window.game.allowMouseButton = !this.disableButton;
+	        window.game.masterVolume = this.mastervolume / 100;
+	        window.game.effectVolume = this.effectvolume / 100;
+	        window.game.musicVolume = this.musicvolume / 100;
+	        window.game.autoplay = this.autoplay;
+	        window.game.showhwmouse = this.showhwmouse;
+	        window.game.K1keycode = this.K1keycode;
+	        window.game.K2keycode = this.K2keycode;
+		}
 	}
+	gamesettings.loadToGame();
+	// this will also be called on game side. The latter call makes effect
+
 
 	// gameplay settings
 
@@ -78,7 +90,7 @@ function setOptionPanel() {
 	dimRange.oninput();
 	dimRange.onchange = function() {
 		gamesettings.dim = dimRange.value;
-        window.game.backgroundDimRate = gamesettings.dim / 100;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
 
@@ -91,7 +103,7 @@ function setOptionPanel() {
 	blurRange.oninput();
 	blurRange.onchange = function() {
 		gamesettings.blur = blurRange.value;
-        window.game.backgroundBlurRate = gamesettings.blur / 100;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
 
@@ -104,7 +116,7 @@ function setOptionPanel() {
 	cursorsizeRange.oninput();
 	cursorsizeRange.onchange = function() {
 		gamesettings.cursorsize = cursorsizeRange.value;
-        window.game.cursorSize = gamesettings.cursorsize;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
 
@@ -112,7 +124,7 @@ function setOptionPanel() {
 	disableWheelCheck.checked = gamesettings.disableWheel;
 	disableWheelCheck.onclick = function() {
 		gamesettings.disableWheel = disableWheelCheck.checked;
-        window.game.allowMouseScroll = !gamesettings.disableWheel;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
 
@@ -120,7 +132,7 @@ function setOptionPanel() {
 	disableButtonCheck.checked = gamesettings.disableButton;
 	disableButtonCheck.onclick = function() {
 		gamesettings.disableButton = disableButtonCheck.checked;
-        window.game.allowMouseButton = !gamesettings.disableButton;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
 
@@ -128,7 +140,7 @@ function setOptionPanel() {
 	autoplayCheck.checked = gamesettings.autoplay;
 	autoplayCheck.onclick = function() {
 		gamesettings.autoplay = autoplayCheck.checked;
-        window.game.autoplay = gamesettings.autoplay;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
 
@@ -136,9 +148,60 @@ function setOptionPanel() {
 	showhwmouseCheck.checked = gamesettings.showhwmouse;
 	showhwmouseCheck.onclick = function() {
 		gamesettings.showhwmouse = showhwmouseCheck.checked;
-        window.game.showhwmouse = gamesettings.showhwmouse;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
+
+	// keyboard binding settings
+
+	// left button 1
+	let lbutton1select = document.getElementById("lbutton1select");
+	let l1f = function() {
+		let f1l = function() {
+			lbutton1select.onclick = l1f;
+			lbutton1select.classList.remove("using");
+			document.removeEventListener("keydown",f);
+		}
+		let f = function(e) {
+			e = e || window.event;
+			gamesettings.K1keycode = e.keyCode;
+			gamesettings.K1name = e.key.toUpperCase();
+			lbutton1select.value = gamesettings.K1name;
+			gamesettings.loadToGame();
+	        saveToLocal();
+			f1l();
+		}
+		lbutton1select.classList.add("using");
+		document.addEventListener("keydown",f);
+		lbutton1select.onclick = f1l;
+	}
+	lbutton1select.onclick = l1f;
+	lbutton1select.value = gamesettings.K1name;
+
+
+	// right button 1
+	let rbutton1select = document.getElementById("rbutton1select");
+	let r1f = function() {
+		let f1r = function() {
+			rbutton1select.onclick = r1f;
+			rbutton1select.classList.remove("using");
+			document.removeEventListener("keydown",f);
+		}
+		let f = function(e) {
+			e = e || window.event;
+			gamesettings.K2keycode = e.keyCode;
+			gamesettings.K2name = e.key.toUpperCase();
+			rbutton1select.value = gamesettings.K2name;
+			gamesettings.loadToGame();
+	        saveToLocal();
+			f1r();
+		}
+		rbutton1select.classList.add("using");
+		document.addEventListener("keydown",f);
+		rbutton1select.onclick = f1r;
+	}
+	rbutton1select.onclick = r1f;
+	rbutton1select.value = gamesettings.K2name;
 
 	// audio settings
 
@@ -151,7 +214,7 @@ function setOptionPanel() {
 	mastervolumeRange.oninput();
 	mastervolumeRange.onchange = function() {
 		gamesettings.mastervolume = mastervolumeRange.value;
-        window.game.masterVolume = gamesettings.mastervolume / 100;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
 
@@ -164,7 +227,7 @@ function setOptionPanel() {
 	effectvolumeRange.oninput();
 	effectvolumeRange.onchange = function() {
 		gamesettings.effectvolume = effectvolumeRange.value;
-        window.game.effectVolume = gamesettings.effectvolume / 100;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
 
@@ -177,7 +240,7 @@ function setOptionPanel() {
 	musicvolumeRange.oninput();
 	musicvolumeRange.onchange = function() {
 		gamesettings.musicvolume = musicvolumeRange.value;
-        window.game.musicVolume = gamesettings.musicvolume / 100;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
 
@@ -190,6 +253,7 @@ function setOptionPanel() {
 	audiooffsetRange.oninput();
 	audiooffsetRange.onchange = function() {
 		gamesettings.audiooffset = audiooffsetRange.value;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
 
@@ -197,6 +261,7 @@ function setOptionPanel() {
 	beatmapHitsoundCheck.checked = gamesettings.beatmapHitsound;
 	beatmapHitsoundCheck.onclick = function() {
 		gamesettings.beatmapHitsound = beatmapHitsoundCheck.checked;
+		gamesettings.loadToGame();
         saveToLocal();
 	}
 
