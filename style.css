@@ -109,6 +109,7 @@ canvas {
   margin-bottom: 20px;
   margin-right: 17px;
   position: relative;
+  cursor: pointer;
   /* shouldn't hide overflow because we have to show difficulty selection box */
   /* but we must ensure content don't get outside this box */
 }
@@ -167,6 +168,12 @@ td:nth-child(2){
   text-align: right;
   width: 40px;
 }
+
+input {
+  cursor: pointer;
+}
+
+input:focus {outline:0;}
 
 input[type=checkbox] {
   height: 20px;
@@ -318,6 +325,7 @@ div[hidden=""] {
   height: 18px;
   white-space: nowrap;
   font-size: 16px;
+  cursor: pointer;
 }
 .difficulty-item span {
   top: -4px;
