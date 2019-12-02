@@ -10,7 +10,7 @@ function(Osu, _, sound, Playback) {
 
         // note: preference values here will be overwritten by gamesettings (in settings.js)
         backgroundDimRate: 0.7,
-        backgroundBlurRate: 0.0, // not yet implemented
+        backgroundBlurRate: 0.0,
         allowMouseButton: false,
         allowMouseScroll: true,
         cursorSize: 1.0,
@@ -112,7 +112,7 @@ function(Osu, _, sound, Playback) {
             autoResize: true,
         });
         app.renderer.autoResize = true;
-        app.renderer.backgroundColor = 0xFFFFFF;
+        app.renderer.backgroundColor = 0x111111;
         // load audio context
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
 

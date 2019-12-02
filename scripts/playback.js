@@ -257,14 +257,33 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             function loadBackground(uri) {
                 var loader = new PIXI.Loader();
                 loader.add("bg", uri, {loadType: PIXI.LoaderResource.LOAD_TYPE.IMAGE}).load(function(loader, resources) {
-                    self.background = new PIXI.Sprite(resources.bg.texture);
+                    let sprite = new PIXI.Sprite(resources.bg.texture);
+                    // apply gaussian blur if enabled
+                    if (self.game.backgroundBlurRate > 0.0001) {
+                        let width = resources.bg.texture.width;
+                        let height = resources.bg.texture.height;
+                        sprite.anchor.set(0.5);
+                        sprite.x = width/2;
+                        sprite.y = height/2;
+                        let blurstrength = self.game.backgroundBlurRate * Math.min(width, height);
+                        t = Math.max(Math.min(width, height), Math.max(10,blurstrength)*3);
+                        // zoom in the image a little bit to hide the dark edges
+                        // (since filter clamping somehow doesn't work here)
+                        sprite.scale.set(t/(t-2*Math.max(10,blurstrength)));
+                        let blurFilter = new PIXI.filters.BlurFilter(blurstrength,14);
+                        blurFilter.autoFit = false;
+                        sprite.filters = [blurFilter];
+                    }
+                    let texture = PIXI.RenderTexture.create(resources.bg.texture.width, resources.bg.texture.height);
+                    window.app.renderer.render(sprite, texture);
+
+                    self.background = new PIXI.Sprite(texture);
                     self.background.anchor.set(0.5);
-                    self.background.x = window.innerWidth / 2;
-                    self.background.y = window.innerHeight / 2;
-                    // var blurFilter = new PIXI.filters.KawaseBlurFilter(4,3,true);
-                    // self.background.filters = [blurFilter];
-                    self.game.stage.addChildAt(self.background, 0);
+                    self.background.x = window.innerWidth/2;
+                    self.background.y = window.innerHeight/2;
+                    // fit the background (preserve aspect)
                     self.background.scale.set(Math.max(window.innerWidth / self.background.texture.width, window.innerHeight / self.background.texture.height));
+                    self.game.stage.addChildAt(self.background, 0);
                 });
             }
             if (self.track.events.length != 0) {
