@@ -24,7 +24,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.osu = osu;
         self.track = track;
         self.background = null;
-        self.backgroundOverlay = null;
         self.ready = true;
         self.started = false;
         self.upcomingHits = [];
@@ -81,8 +80,11 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             self.loadingMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.volumeMenu.resize({width: window.innerWidth, height: window.innerHeight});
 
-            self.background.width = self.game.window.innerWidth;
-            self.background.height = self.game.window.innerHeight;
+            if (self.background && self.background.texture) {
+                self.background.x = window.innerWidth / 2;
+                self.background.y = window.innerHeight / 2;
+                self.background.scale.set(Math.max(window.innerWidth / self.background.texture.width, window.innerHeight / self.background.texture.height));
+            }
            
             for (let i=0; i<self.hits.length; ++i) {
                 if (self.hits[i].type == "slider")
@@ -253,21 +255,18 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         this.createBackground = function(){
             // Load background if possible
             function loadBackground(uri) {
-                var image = PIXI.Texture.fromImage(uri);
-                self.background = new PIXI.Sprite(image);
-                self.background.x = self.background.y = 0;
-                self.background.width = self.game.window.innerWidth;
-                self.background.height = self.game.window.innerHeight;
-                // var blurFilter = new PIXI.filters.KawaseBlurFilter(4,3,true);
-                // self.background.filters = [blurFilter];
-                self.game.stage.addChildAt(self.background, 0);
+                var loader = new PIXI.Loader();
+                loader.add("bg", uri, {loadType: PIXI.LoaderResource.LOAD_TYPE.IMAGE}).load(function(loader, resources) {
+                    self.background = new PIXI.Sprite(resources.bg.texture);
+                    self.background.anchor.set(0.5);
+                    self.background.x = window.innerWidth / 2;
+                    self.background.y = window.innerHeight / 2;
+                    // var blurFilter = new PIXI.filters.KawaseBlurFilter(4,3,true);
+                    // self.background.filters = [blurFilter];
+                    self.game.stage.addChildAt(self.background, 0);
+                    self.background.scale.set(Math.max(window.innerWidth / self.background.texture.width, window.innerHeight / self.background.texture.height));
+                });
             }
-            self.backgroundDim = new PIXI.Graphics();
-            self.backgroundDim.alpha = 0;
-            self.backgroundDim.beginFill(0);
-            self.backgroundDim.drawRect(0, 0, 233333, 233333); // make it infinite big
-            self.backgroundDim.endFill();
-            self.game.stage.addChild(self.backgroundDim);
             if (self.track.events.length != 0) {
                 self.ready = false;
                 var file = self.track.events[0][2];
@@ -1013,10 +1012,11 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         }
 
         this.updateBackground = function(time) {
+            if (!self.background) return;
             let fade = self.game.backgroundDimRate;
             if (time < -self.wait)
                 fade *= Math.max(0, 1 - (-self.wait - time) / self.backgroundFadeTime);
-            self.backgroundDim.alpha = fade;
+            self.background.tint = colorLerp(0xffffff, 0, fade);
         }
 
         this.render = function(timestamp) {
