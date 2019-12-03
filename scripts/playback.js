@@ -436,14 +436,14 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 // curve points are of about-same distance, so these 2 points should be different
                 let p = hit.curve.curve[hit.curve.curve.length-1];
                 let p2 = hit.curve.curve[hit.curve.curve.length-2];
-                hit.reverse = newSprite("reversearrow.png", p.x, p.y);
+                hit.reverse = newSprite("reversearrow.png", p.x, p.y, 0.36);
                 hit.reverse.rotation = Math.atan2(p2.y - p.y, p2.x - p.x);
             }
             if (hit.repeat > 2) {
                 // curve points are of about-same distance, so these 2 points should be different
                 let p = hit.curve.curve[0];
                 let p2 = hit.curve.curve[1];
-                hit.reverse_b = newSprite("reversearrow.png", p.x, p.y);
+                hit.reverse_b = newSprite("reversearrow.png", p.x, p.y, 0.36);
                 hit.reverse_b.rotation = Math.atan2(p2.y - p.y, p2.x - p.x);
                 hit.reverse_b.visible = false; // Only visible when it's the next end to hit
             }
@@ -455,7 +455,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             hit.followSize = 1; // [1,2] current follow circle size relative to hitcircle
 
             // Add slider ball (above follow circle)
-            hit.ball = newSprite("sliderb.png", hit.x, hit.y);
+            hit.ball = newSprite("sliderb.png", hit.x, hit.y, 0.5);
             hit.ball.visible = false;
 
             // A slider contains a complete hit circle at its start, so we just make use of this
@@ -913,7 +913,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                     hit.follow.scale.x = hit.follow.scale.y = followscale;
                     hit.follow.alpha = hit.followSize - 1;
                     hit.ball.alpha = this.fadeOutEasing(timeAfter / this.ballFadeOutTime);
-                    let ballscale = (1 + 0.15 * timeAfter / this.ballFadeOutTime) * this.hitSpriteScale;
+                    let ballscale = (1 + 0.15 * timeAfter / this.ballFadeOutTime) * 0.5 * this.hitSpriteScale;
                     hit.ball.scale.x = hit.ball.scale.y = ballscale;
                 }
 
