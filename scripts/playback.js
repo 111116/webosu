@@ -2,8 +2,8 @@
 *   object layering:
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/pause", "overlay/volume", "overlay/loading"],
-function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu) {
+define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/pause", "overlay/volume", "overlay/loading", "overlay/grade"],
+function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu, GradeMenu) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -33,6 +33,14 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.autoplay = game.autoplay;
         self.approachScale = 3;
         self.audioReady = false;
+        self.endTime = (function() {
+            let hit = self.hits[self.hits.length-1];
+            if (hit.type == "circle") return hit.time;
+            if (hit.type == "spinner") return hit.endTime;
+            hit.sliderTime = hit.timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
+            hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
+            return hit.time + hit.sliderTimeTotal;
+        })() + 1500;
         var scoreCharWidth = 35;
         var scoreCharHeight = 45;
 
@@ -79,6 +87,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             self.pauseMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.loadingMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.volumeMenu.resize({width: window.innerWidth, height: window.innerHeight});
+            if (self.gradeMenu) self.gradeMenu.resize({width: window.innerWidth, height: window.innerHeight});
 
             if (self.background && self.background.texture) {
                 self.background.x = window.innerWidth / 2;
@@ -1056,6 +1065,15 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             }
             this.volumeMenu.update(timestamp);
             this.loadingMenu.update(timestamp);
+
+            if (time > this.endTime) {
+                // game ends
+                if (!this.gradeMenu) {
+                    this.gradeMenu = new GradeMenu({width: game.window.innerWidth, height: game.window.innerHeight}, this.scoreOverlay);
+                    self.game.stage.addChild(this.gradeMenu);
+                }
+                this.gradeMenu.alpha = clamp01((time - this.endTime) / 200);
+            }
         }
 
         this.teardown = function() {

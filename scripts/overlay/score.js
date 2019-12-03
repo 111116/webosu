@@ -45,12 +45,19 @@ define([], function()
 
         this.score = 0;
         this.combo = 0;
+        this.maxcombo = 0;
         this.judgeTotal = 0;
         this.maxJudgeTotal = 0;
         this.HP = 1;
         // accuracy = score / maxscore
 
         this.onfail = null;
+        this.judgecnt = {
+            great: 0,
+            good: 0,
+            meh: 0,
+            miss: 0,
+        }
 
         this.score4display = new LazyNumber(this.score);
         this.combo4display = new LazyNumber(this.combo);
@@ -129,11 +136,18 @@ define([], function()
         // maxresult: 300 for a hitcircle / slider start & end of every repeat
         // maxresult: 10 for a tick
         this.hit = function(result, maxresult, time) {
+            if (maxresult == 300) {
+                if (result == 300) this.judgecnt.great++;
+                if (result == 100) this.judgecnt.good++;
+                if (result == 50) this.judgecnt.meh++;
+                if (result == 0) this.judgecnt.miss++;
+            }
             this.judgeTotal += result;
             this.maxJudgeTotal += maxresult;
             this.score += result * (1 + this.combo / 25);
             // any zero-score result is a miss
             this.combo = (result > 0)? this.combo+1 : 0;
+            this.maxcombo = Math.max(this.maxcombo, this.combo);
             this.HP += this.HPincreasefor(result);
             this.HP = Math.min(1, Math.max(0, this.HP));
 
@@ -210,6 +224,5 @@ define([], function()
     };
 
     return ScoreOverlay;
-
 
 });
