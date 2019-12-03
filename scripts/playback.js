@@ -2,8 +2,8 @@
 *   object layering:
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/pause", "overlay/volume", "overlay/loading", "overlay/grade"],
-function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu, GradeMenu) {
+define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/pause", "overlay/volume", "overlay/loading", "overlay/grade", "overlay/break"],
+function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu, GradeMenu, BreakOverlay) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -33,14 +33,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.autoplay = game.autoplay;
         self.approachScale = 3;
         self.audioReady = false;
-        self.endTime = (function() {
-            let hit = self.hits[self.hits.length-1];
-            if (hit.type == "circle") return hit.time;
-            if (hit.type == "spinner") return hit.endTime;
-            hit.sliderTime = hit.timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
-            hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
-            return hit.time + hit.sliderTimeTotal;
-        })() + 1500;
+        self.endTime = self.hits[self.hits.length-1].endTime + 1500;
         var scoreCharWidth = 35;
         var scoreCharHeight = 45;
 
@@ -78,6 +71,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.pauseMenu = new PauseMenu({width: game.window.innerWidth, height: game.window.innerHeight});
         self.loadingMenu = new LoadingMenu({width: game.window.innerWidth, height: game.window.innerHeight}, track);
         self.volumeMenu = new VolumeMenu({width: game.window.innerWidth, height: game.window.innerHeight});
+        self.breakOverlay = new BreakOverlay({width: game.window.innerWidth, height: game.window.innerHeight});
 
         self.game.window.onresize = function() {
             window.app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -87,6 +81,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             self.pauseMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.loadingMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.volumeMenu.resize({width: window.innerWidth, height: window.innerHeight});
+            self.breakOverlay.resize({width: window.innerWidth, height: window.innerHeight});
             if (self.gradeMenu) self.gradeMenu.resize({width: window.innerWidth, height: window.innerHeight});
 
             if (self.background && self.background.texture) {
@@ -330,6 +325,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
 
         self.game.stage.addChild(this.gamefield);
         self.game.stage.addChild(this.scoreOverlay);
+        self.game.stage.addChild(this.breakOverlay);
         self.game.stage.addChild(this.pauseMenu);
         self.game.stage.addChild(this.volumeMenu);
         self.game.stage.addChild(this.loadingMenu);
@@ -643,8 +639,10 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         if (self.track.hitObjects.length > 0) {
             futuremost = self.track.hitObjects[0].time;
         }
-        this.updateUpcoming = function(timestamp) {
-            // Cache the next 5 seconds worth of hit objects
+        var waitinghitid = 0; // the first object that's not ended
+        this.updateUpcoming = function(time) {
+            while (waitinghitid < self.hits.length && self.hits[waitinghitid].endTime < time)
+                waitinghitid++;
             function findindex(i) { // returning smallest j satisfying (self.gamefield.children[j].depth || 0)>=i
                 let l = 0, r = self.gamefield.children.length;
                 while (l+1<r) {
@@ -656,7 +654,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 }
                 return l;
             }
-            while (current < self.hits.length && futuremost < timestamp + 5000) {
+            // Cache hit objects in the next 5 seconds
+            while (current < self.hits.length && futuremost < time + 5000) {
                 var hit = self.hits[current++];
                 for (let i = hit.judgements.length - 1; i >= 0; i--) {
                     self.gamefield.addChildAt(hit.judgements[i], findindex(hit.judgements[i].depth || 0.0001));
@@ -671,7 +670,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             }
             for (var i = 0; i < self.upcomingHits.length; i++) {
                 var hit = self.upcomingHits[i];
-                var diff = hit.time - timestamp;
+                var diff = hit.time - time;
                 var despawn = -this.objectDespawnTime;
                 if (hit.type === "slider") {
                     despawn -= hit.sliderTimeTotal;
@@ -1063,6 +1062,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             else {
                 this.updateBackground(-100000);
             }
+            let nextapproachtime = (waitinghitid < this.hits.length && this.hits[waitinghitid].time - this.approachTime > time)? this.hits[waitinghitid].time - this.approachTime: -1;
+            this.breakOverlay.countdown(nextapproachtime, time);
             this.volumeMenu.update(timestamp);
             this.loadingMenu.update(timestamp);
 

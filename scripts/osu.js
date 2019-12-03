@@ -221,10 +221,21 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                     point.trueMillisecondsPerBeat = point.millisecondsPerBeat;
                 }
             }
-            // just give an estimated track length
-            this.length = Math.round((this.hitObjects[this.hitObjects.length-1].time)/1000+2);
-
             preallocateTiming(this);
+            // calculate end time of each hit object
+            for (let i = 0; i < this.hitObjects.length; i++) {
+                let hit = this.hitObjects[i];
+                if (hit.type == "circle") hit.endTime = hit.time;
+                if (hit.type == "slider") {
+                    hit.sliderTime = hit.timing.millisecondsPerBeat * (hit.pixelLength / this.difficulty.SliderMultiplier) / 100;
+                    hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
+                    hit.endTime = hit.time + hit.sliderTimeTotal;
+                }
+                // spinners already have an endTime
+            }
+            // just give an estimated track length
+            this.length = Math.round((this.hitObjects[this.hitObjects.length-1].endTime)/1000+1.5);
+
             calculateCurve(this);
             // stack hitobjects
             stackHitObjects(this);

@@ -69,7 +69,7 @@ define([], function()
         }
         let acc = score.judgeTotal / score.maxJudgeTotal;
         this.gradetext = new PIXI.BitmapText(grade(acc), {font: {name: 'Venera', size: 100}, tint: gradeColor(acc)});
-        this.gradetext.letterSpacing = -15;
+        this.gradetext.letterSpacing = -10;
         this.addChild(this.gradetext);
         this.gradetext.anchor.set(0.5);
         this.gradetext.x = 210;
@@ -81,8 +81,8 @@ define([], function()
         this.acctext.x = 210;
         this.acctext.y = 20;
 
-        this.scoretext = new PIXI.BitmapText(Math.round(score.score).toString(), {font: {name: 'Venera', size: 40}});
-        this.gradetext.letterSpacing = 5;
+        this.scoretext = new PIXI.BitmapText(Math.round(score.score).toString(), {font: {name: 'Venera', size: 40}, tint: 0xddffff});
+        this.scoretext.letterSpacing = 5;
         this.addChild(this.scoretext);
         this.scoretext.anchor.set(0.5);
         this.scoretext.x = 210;
