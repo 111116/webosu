@@ -17,7 +17,7 @@ define([], function()
         this.target = value;
         this.lasttime = -1000000; // playback can start before time=0
     }
-    LazyNumber.prototype.lag = 300;
+    LazyNumber.prototype.lag = 200;
     // param time must be non-decreasing
     LazyNumber.prototype.update = function(time) {
         this.value += (this.target - this.value) * (1 - Math.exp((this.lasttime - time) / this.lag));
@@ -125,9 +125,12 @@ define([], function()
             }
         }
 
-        this.hit = function(result, time) {
+        // should be called when note is hit or missed
+        // maxresult: 300 for a hitcircle / slider start & end of every repeat
+        // maxresult: 10 for a tick
+        this.hit = function(result, maxresult, time) {
             this.judgeTotal += result;
-            this.maxJudgeTotal += 300;
+            this.maxJudgeTotal += maxresult;
             this.score += result * (1 + this.combo / 25);
             // any zero-score result is a miss
             this.combo = (result > 0)? this.combo+1 : 0;

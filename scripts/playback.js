@@ -223,7 +223,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         {
             if (judge.points < 0 && time >= judge.finalTime) // miss
             {
-                this.scoreOverlay.hit(0, time);
+                this.scoreOverlay.hit(0, 300, time);
                 this.invokeJudgement(judge, 0, time);
                 return;
             }
@@ -617,7 +617,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         };
 
         this.hitSuccess = function hitSuccess(hit, points, time){
-            this.scoreOverlay.hit(points, time);
+            this.scoreOverlay.hit(points, 300, time);
             if (points > 0) {
                 if (hit.type == "spinner")
                     self.playHitsound(hit, 0, hit.endTime); // hit happen at end of spinner
@@ -870,6 +870,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                         hit.ticks[hit.nexttick].result = true;
                         self.playTicksound(hit, hit.ticks[hit.nexttick].time);
                     }
+                    self.scoreOverlay.hit(activated?10:0, 10, time);
                     hit.nexttick++;
                 }
 
@@ -877,6 +878,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 // Note: being tolerant if follow circle hasn't shrinked to minimum
                 if (atEnd && activated) {
                     self.invokeJudgement(hit.judgements[hit.lastrep], 300, time);
+                    self.scoreOverlay.hit(300, 300, time);
                     self.playHitsound(hit, hit.lastrep, hit.time + hit.lastrep * hit.sliderTime);
                 }
 
