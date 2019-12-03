@@ -277,6 +277,7 @@ function(Osu, _, sound, Playback) {
     // load beatmap from local
     localforage.getItem("beatmapfilelist", function(err, names){
         if (!err && names && typeof names.length !== undefined) {
+            names = names.filter(function(t){return t;});
             console.log("local beatmap list:", names);
             document.getElementById('bm-total-counter').innerText = names.length;
             var tempbox = [];

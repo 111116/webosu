@@ -12,7 +12,7 @@ define([], function()
     {
         PIXI.Container.call(this);
         this.fadetime = 200;
-        this.appearthreshold = 1000;
+        this.appearthreshold = 1500;
         this.visible = false;
 
         this.barmid = new PIXI.Sprite(Skin['bar.png']);

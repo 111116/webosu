@@ -467,6 +467,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         }
 
         this.createSpinner = function(hit) {
+            hit.approachTime = self.spinnerAppearTime + self.spinnerZoomInTime;
             hit.x = 512/2;
             hit.y = 384/2;
             // absolute position
@@ -1004,10 +1005,13 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                     hit.top.rotation = -t*t*10;
             }
             let progress = hit.rotationProgress / hit.rotationRequired;
-            hit.progress.scale.set(0.6 * clamp01(progress));
             if (time > hit.time) {
                 hit.base.rotation = hit.rotation / 2;
                 hit.top.rotation = hit.rotation / 2;
+                hit.progress.scale.set(0.6 * (0.13 + 0.87 * clamp01(progress)));
+            }
+            else {
+                hit.progress.scale.set(0);
             }
 
             if (time >= hit.endTime) {
@@ -1062,7 +1066,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             else {
                 this.updateBackground(-100000);
             }
-            let nextapproachtime = (waitinghitid < this.hits.length && this.hits[waitinghitid].time - this.approachTime > time)? this.hits[waitinghitid].time - this.approachTime: -1;
+            let nextapproachtime = (waitinghitid < this.hits.length && this.hits[waitinghitid].time - (this.hits[waitinghitid].approachTime || this.approachTime) > time)? this.hits[waitinghitid].time - (this.hits[waitinghitid].approachTime || this.approachTime): -1;
             this.breakOverlay.countdown(nextapproachtime, time);
             this.volumeMenu.update(timestamp);
             this.loadingMenu.update(timestamp);
