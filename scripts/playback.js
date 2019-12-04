@@ -2,8 +2,8 @@
 *   object layering:
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/pause", "overlay/volume", "overlay/loading", "overlay/grade", "overlay/break", "overlay/progress"],
-function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu, GradeMenu, BreakOverlay, ProgressOverlay) {
+define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/pause", "overlay/volume", "overlay/loading", "overlay/grade", "overlay/break", "overlay/progress", "overlay/hiterrormeter"],
+function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu, GradeMenu, BreakOverlay, ProgressOverlay, ErrorMeter) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -80,6 +80,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             self.pause();
             self.calcSize();
             self.scoreOverlay.resize({width: window.innerWidth, height: window.innerHeight});
+            self.errorMeter.resize({width: window.innerWidth, height: window.innerHeight});
             self.pauseMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.loadingMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.volumeMenu.resize({width: window.innerWidth, height: window.innerHeight});
@@ -110,6 +111,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.MehTime = 200 - 10 * OD;
         self.GoodTime = 140 - 8 * OD;
         self.GreatTime = 80 - 6 * OD;
+        self.errorMeter = new ErrorMeter({width: game.window.innerWidth, height: game.window.innerHeight}, this.GreatTime, this.GoodTime, this.MehTime);
         let AR = track.difficulty.ApproachRate;
         self.approachTime = AR<5? 1800-120*AR: 1950-150*AR; // time of sliders/hitcircles and approach circles approaching
         self.objectFadeInTime = Math.min(350, self.approachTime); // time of sliders/hitcircles fading in, at beginning of approaching
@@ -325,6 +327,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
 
         self.game.stage.addChild(this.gamefield);
         self.game.stage.addChild(this.scoreOverlay);
+        self.game.stage.addChild(this.errorMeter);
         self.game.stage.addChild(this.progressOverlay);
         self.game.stage.addChild(this.breakOverlay);
         self.game.stage.addChild(this.pauseMenu);
