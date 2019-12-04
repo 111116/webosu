@@ -393,7 +393,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                     dy: -2 * gfx.height / window.innerHeight / 384,
                     oy: 1 - 2 * gfx.yoffset / window.innerHeight,
                 },
-                combos[hit.combo % combos.length]);
+                hit.combo % combos.length);
             body.alpha = 0;
             body.depth = 4.9999-0.0001*hit.hitIndex;
             hit.objects.push(body);
@@ -559,6 +559,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             }
         }
 
+        SliderMesh.prototype.setColor(combos); // prepare texture of sliders
         for (let i = 0; i < this.hits.length; i++) {
             this.populateHit(this.hits[i]); // Prepare sprites and such
         }

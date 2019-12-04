@@ -34,73 +34,78 @@ function() {
     varying float dist;
     uniform sampler2D uSampler2;
     uniform float alpha;
+    uniform float texturepos;
     void main() {
-        gl_FragColor = alpha * texture2D(uSampler2, vec2(dist, 0.0));
+        gl_FragColor = alpha * texture2D(uSampler2, vec2(dist, texturepos));
     }`;
 
     // create line texture for slider from tint color
-    function newTexture(tint) {
+    function newTexture(colors) {
 
         const borderwidth = 0.128;
         const innerPortion = 1 - borderwidth;
         const edgeOpacity = 0.8;
         const centerOpacity = 0.3;
-        const borderR = 1.0;
-        const borderG = 1.0;
-        const borderB = 1.0;
-        const borderA = 1.0;
-        const innerR = (tint>>16)/255;
-        const innerG = ((tint>>8)&255)/255;
-        const innerB = (tint&255)/255;
-        const innerA = 1.0;
         const blurrate = 0.012;
         const width = 200;
 
-        let buff = new Uint8Array(width * 4);
-        for (let i = 0; i < width; i++) {
-            let position = i / width;
-            let R,G,B,A;
-            if (position >= innerPortion) // draw border color
-            {
-                R = borderR;
-                G = borderG;
-                B = borderB;
-                A = borderA;
+        let buff = new Uint8Array(colors.length * width * 4);
+
+        for (let k=0; k<colors.length; ++k) {
+            let tint = colors[k];
+            let borderR = 1.0;
+            let borderG = 1.0;
+            let borderB = 1.0;
+            let borderA = 1.0;
+            let innerR = (tint>>16)/255;
+            let innerG = ((tint>>8)&255)/255;
+            let innerB = (tint&255)/255;
+            let innerA = 1.0;
+            for (let i = 0; i < width; i++) {
+                let position = i / width;
+                let R,G,B,A;
+                if (position >= innerPortion) // draw border color
+                {
+                    R = borderR;
+                    G = borderG;
+                    B = borderB;
+                    A = borderA;
+                }
+                else // draw inner color
+                {
+                    R = innerR;
+                    G = innerG;
+                    B = innerB;
+                    // TODO: tune this to make opacity transition smoother at center
+                    A = innerA * ((edgeOpacity - centerOpacity) * position / innerPortion + centerOpacity);
+                }
+                // pre-multiply alpha
+                R*=A;
+                G*=A;
+                B*=A;
+                // blur at edge for "antialiasing" without supersampling
+                if (1-position < blurrate) // outer edge
+                {
+                    R *= (1-position) / blurrate;
+                    G *= (1-position) / blurrate;
+                    B *= (1-position) / blurrate;
+                    A *= (1-position) / blurrate;
+                }
+                if (innerPortion - position > 0 && innerPortion - position < blurrate)
+                {
+                    let mu = (innerPortion - position) / blurrate;
+                    R = mu * R + (1-mu) * borderR * borderA;
+                    G = mu * G + (1-mu) * borderG * borderA;
+                    B = mu * B + (1-mu) * borderB * borderA;
+                    A = mu * innerA + (1-mu) * borderA;
+                }
+                buff[(k*width+i)*4] = R*255;
+                buff[(k*width+i)*4+1] = G*255;
+                buff[(k*width+i)*4+2] = B*255;
+                buff[(k*width+i)*4+3] = A*255;
             }
-            else // draw inner color
-            {
-                R = innerR;
-                G = innerG;
-                B = innerB;
-                // tune this to make opacity transition smoother at center
-                A = innerA * ((edgeOpacity - centerOpacity) * position / innerPortion + centerOpacity);
-            }
-            // pre-multiply alpha
-            R*=A;
-            G*=A;
-            B*=A;
-            // blur at edge for "antialiasing" without supersampling
-            if (1-position < blurrate) // outer edge
-            {
-                R *= (1-position) / blurrate;
-                G *= (1-position) / blurrate;
-                B *= (1-position) / blurrate;
-                A *= (1-position) / blurrate;
-            }
-            if (innerPortion - position > 0 && innerPortion - position < blurrate)
-            {
-                let mu = (innerPortion - position) / blurrate;
-                R = mu * R + (1-mu) * borderR * borderA;
-                G = mu * G + (1-mu) * borderG * borderA;
-                B = mu * B + (1-mu) * borderB * borderA;
-                A = mu * innerA + (1-mu) * borderA;
-            }
-            buff[i*4] = R*255;
-            buff[i*4+1] = G*255;
-            buff[i*4+2] = B*255;
-            buff[i*4+3] = A*255;
         }
-        return PIXI.Texture.fromBuffer(buff, width, 1);
+        return PIXI.Texture.fromBuffer(buff, width, colors.length);
     }
 
 
@@ -190,21 +195,22 @@ function() {
         return new PIXI.Geometry().addAttribute('position', vert, 3).addIndex(index)
     }
 
-    function SliderMesh(curve, radius, transform, tint) // constructor. 
+    function SliderMesh(curve, radius, transform, tintid) // constructor. 
     {
         Container.call(this);
         this.geometry = curveGeometry(curve, radius);
-        this.tint = tint || 0;
         // FIXME NOTE: setting this.tint has no effect
 
         this.uniforms = {
-            uSampler2: newTexture(this.tint),
+            uSampler2: this.uSampler2,
             alpha: 1.0,
             dx: transform.dx,
             dy: transform.dy,
             ox: transform.ox,
             oy: transform.oy,
+            texturepos: tintid / this.ncolors,
         };
+        console.log("usample", this.uSampler2);
         this.shader = PIXI.Shader.from(vertexSrc, fragmentSrc, this.uniforms);
 
         // blend mode, culling, depth testing, direction of rendering triangles, backface, etc.
@@ -228,6 +234,11 @@ function() {
     SliderMesh.prototype = Object.create( Container && Container.prototype );
     SliderMesh.prototype.constructor = SliderMesh;
 
+    // this should be called directly on prototype as we only need ONE texture
+    SliderMesh.prototype.setColor = function(colors) {
+        this.ncolors = colors.length;
+        this.uSampler2 = newTexture(colors);
+    }
 
     SliderMesh.prototype.resetTransform = function resetTransform (transform)
     {
