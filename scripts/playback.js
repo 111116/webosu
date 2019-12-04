@@ -2,8 +2,8 @@
 *   object layering:
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/pause", "overlay/volume", "overlay/loading", "overlay/grade", "overlay/break"],
-function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu, GradeMenu, BreakOverlay) {
+define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/pause", "overlay/volume", "overlay/loading", "overlay/grade", "overlay/break", "overlay/progress"],
+function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu, GradeMenu, BreakOverlay, ProgressOverlay) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -36,6 +36,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.endTime = self.hits[self.hits.length-1].endTime + 1500;
         var scoreCharWidth = 35;
         var scoreCharHeight = 45;
+        this.wait = Math.max(0, 1500-this.hits[0].time);
 
         self.osu.onready = function() {
             self.loadingMenu.hide();
@@ -72,6 +73,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.loadingMenu = new LoadingMenu({width: game.window.innerWidth, height: game.window.innerHeight}, track);
         self.volumeMenu = new VolumeMenu({width: game.window.innerWidth, height: game.window.innerHeight});
         self.breakOverlay = new BreakOverlay({width: game.window.innerWidth, height: game.window.innerHeight});
+        self.progressOverlay = new ProgressOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, this.hits[0].time - 1500, this.hits[this.hits.length-1].endTime);
 
         self.game.window.onresize = function() {
             window.app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -82,6 +84,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             self.loadingMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.volumeMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.breakOverlay.resize({width: window.innerWidth, height: window.innerHeight});
+            self.progressOverlay.resize({width: window.innerWidth, height: window.innerHeight});
             if (self.gradeMenu) self.gradeMenu.resize({width: window.innerWidth, height: window.innerHeight});
 
             if (self.background && self.background.texture) {
@@ -322,6 +325,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
 
         self.game.stage.addChild(this.gamefield);
         self.game.stage.addChild(this.scoreOverlay);
+        self.game.stage.addChild(this.progressOverlay);
         self.game.stage.addChild(this.breakOverlay);
         self.game.stage.addChild(this.pauseMenu);
         self.game.stage.addChild(this.volumeMenu);
@@ -561,7 +565,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             if (this.hits[i].type != "spinner" && this.hits[i+1].type != "spinner" && this.hits[i+1].combo == this.hits[i].combo)
                 this.createFollowPoint(this.hits[i], this.hits[i+1]);
         }
-        this.wait = Math.max(0, 1500-this.hits[0].time);
 
         // hit result handling
         // use separate timing for hitsounds, since volume may change inside a slider or spinner
@@ -1065,6 +1068,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             this.breakOverlay.countdown(nextapproachtime, time);
             this.volumeMenu.update(timestamp);
             this.loadingMenu.update(timestamp);
+            this.progressOverlay.update(time);
 
             if (time > this.endTime) {
                 // game ends
