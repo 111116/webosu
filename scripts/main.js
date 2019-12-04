@@ -21,8 +21,11 @@ function(Osu, _, sound, Playback) {
 
         K1keycode: 90,
         K2keycode: 88,
-        autoplay: false,
         showhwmouse: false,
+
+        autoplay: false,
+        nightcore: false,
+        daycore: false,
 
         // cursor info
         mouseX: 0, // in osu pixel, probably negative or exceeding 512

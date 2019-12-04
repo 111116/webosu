@@ -31,6 +31,7 @@ define([], function() {
         self.audio = new AudioContext();
         self.gain = self.audio.createGain();
         self.gain.connect(self.audio.destination);
+        self.playbackRate = 1.0;
 
         function decode(node) {
             self.audio.decodeAudioData(node.buf, function(decoded) {
@@ -53,18 +54,19 @@ define([], function() {
             if (!self.playing) {
                 return self.position;
             } else {
-                return self.position + self.audio.currentTime - self.started;
+                return self.position + (self.audio.currentTime - self.started) * self.playbackRate;
             }
         };
 
         this.play = function play(wait = 0) {
             self.source = self.audio.createBufferSource();
+            self.source.playbackRate.value = self.playbackRate;
             self.source.buffer = self.decoded;
             self.source.connect(self.gain);
             self.started = self.audio.currentTime;
             if (wait > 0) {
                 self.position = -wait/1000;
-                window.setTimeout(function(){self.source.start(Math.max(0, self.getPosition()), 0);}, wait);
+                window.setTimeout(function(){self.source.start(Math.max(0, self.getPosition()), 0);}, wait / self.playbackRate);
             }
             else {
                 self.source.start(0, self.position);
@@ -75,7 +77,7 @@ define([], function() {
         // return value true: success
         this.pause = function pause() {
             if (!self.playing || self.getPosition()<=0) return false;
-            self.position += self.audio.currentTime - self.started;
+            self.position += (self.audio.currentTime - self.started) * self.playbackRate;
             self.source.stop();
             self.playing = false;
             return true;

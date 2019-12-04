@@ -30,7 +30,12 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.hits = self.track.hitObjects.slice(0); // creating a copy of hitobjects
         self.offset = 0;
         self.currentHitIndex = 0; // index for all hit objects
+        // mods
         self.autoplay = game.autoplay;
+        self.playbackRate = 1.0;
+        if (self.game.nightcore) self.playbackRate *= 1.5;
+        if (self.game.daycore) self.playbackRate *= 0.75;
+
         self.approachScale = 3;
         self.audioReady = false;
         self.endTime = self.hits[self.hits.length-1].endTime + 1500;
@@ -116,6 +121,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.approachTime = AR<5? 1800-120*AR: 1950-150*AR; // time of sliders/hitcircles and approach circles approaching
         self.objectFadeInTime = Math.min(350, self.approachTime); // time of sliders/hitcircles fading in, at beginning of approaching
         self.approachFadeInTime = self.approachTime; // time of approach circles fading in, at beginning of approaching
+
         self.sliderFadeOutTime = 300; // time of slidebody fading out
         self.circleFadeOutTime = 150;
         self.glowFadeOutTime = 350;
@@ -1094,6 +1100,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             if (!self.ready) {
                 return;
             }
+            self.osu.audio.playbackRate = self.playbackRate;
             self.osu.audio.play(self.backgroundFadeTime + self.wait);
         };
 
