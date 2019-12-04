@@ -32,6 +32,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.currentHitIndex = 0; // index for all hit objects
         // mods
         self.autoplay = game.autoplay;
+        self.modhidden = game.hidden;
         self.playbackRate = 1.0;
         if (self.game.nightcore) self.playbackRate *= 1.5;
         if (self.game.daycore) self.playbackRate *= 0.75;
@@ -386,6 +387,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
 
             hit.approach = newHitSprite("approachcircle.png", 8 + 0.0001 * hit.hitIndex);
             hit.approach.tint = combos[hit.combo % combos.length];
+            if (this.modhidden) hit.approach.visible = false;
 
             hit.judgements.push(this.createJudgement(hit.x, hit.y, 4, hit.time + this.MehTime));
 
@@ -508,6 +510,10 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             hit.base = newsprite("spinnerbase.png");
             hit.progress = newsprite("spinnerprogress.png");
             hit.top = newsprite("spinnertop.png");
+            if (this.modhidden) {
+                hit.progress.visible = false;
+                hit.base.visible = false;
+            }
 
             hit.judgements.push(this.createJudgement(hit.x, hit.y, 4, hit.endTime + 233));
         }

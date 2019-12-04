@@ -28,6 +28,7 @@ function(Osu, _, sound, Playback) {
         daycore: false,
         hardrock: false,
         easy: false,
+        hidden: true,
 
         // cursor info
         mouseX: 0, // in osu pixel, probably negative or exceeding 512
