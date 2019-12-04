@@ -203,7 +203,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                 this.difficulty.CircleSize = this.difficulty.CircleSize || this.difficulty.OverallDifficulty;
                 this.difficulty.ApproachRate = this.difficulty.ApproachRate || this.difficulty.OverallDifficulty;
             } else {
-                console.log("Error: OverallDifficulty undefined");
+                console.warn("Overall Difficulty undefined");
             }
 
             // calculate inherited timing points
@@ -384,7 +384,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                 }
                 else {
                     if (hit.sliderType == "C")
-                        console.warn("Catmull curve unsupported. fallback to bezier");
+                        console.warn(track.metadata.BeatmapID || track.metadata.Title + ':' + track.metadata.Version, "Catmull curve unsupported. fallback to bezier");
                     hit.curve = new LinearBezier(hit, hit.sliderType === "L");
                 }
                 if (hit.curve.length < 2) // (not sure here)
@@ -447,9 +447,9 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                     if (stacked[j]) {
                         // intersecting with a previous chain.
                         // this shouldn't happen in a usual beatmap.
-                        console.error("Error while stacking", i, j);
+                        console.warn(track.metadata.BeatmapID || track.metadata.Title + ':' + track.metadata.Version, "object stacks intersecting", i, j);
                         // quit stacking
-                        return;
+                        break;
                     }
                     stacked[j] = true;
                     newchain.push(hitJ);
