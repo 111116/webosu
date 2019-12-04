@@ -73,7 +73,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.calcSize();
         game.mouseX = 512 / 2;
         game.mouseY = 384 / 2;
-        self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, track.difficulty.HPDrainRate);
         self.pauseMenu = new PauseMenu({width: game.window.innerWidth, height: game.window.innerHeight});
         self.loadingMenu = new LoadingMenu({width: game.window.innerWidth, height: game.window.innerHeight}, track);
         self.volumeMenu = new VolumeMenu({width: game.window.innerWidth, height: game.window.innerHeight});
@@ -110,15 +109,31 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         window.addEventListener("blur", function(e){self.pause();});
 
         // deal with difficulties
-        self.circleRadius = (109 - 9 * track.difficulty.CircleSize)/2; // unit: osu! pixel
+        this.OD = track.difficulty.OverallDifficulty;
+        this.CS = track.difficulty.CircleSize;
+        this.AR = track.difficulty.ApproachRate;
+        this.HP = track.difficulty.HPDrainRate;
+        if (game.hardrock) {
+            this.OD = Math.min(this.OD * 1.4, 10);
+            this.CS = Math.min(this.CS * 1.3, 10);
+            this.AR = Math.min(this.AR * 1.4, 10);
+            this.HP = Math.min(this.HP * 1.4, 10);
+        }
+        if (game.easy) {
+            this.OD = this.OD * 0.5;
+            this.CS = this.CS * 0.5;
+            this.AR = this.AR * 0.5;
+            this.HP = this.HP * 0.5;
+        }
+
+        self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, this.HP);
+        self.circleRadius = (109 - 9 * this.CS)/2; // unit: osu! pixel
         self.hitSpriteScale = self.circleRadius / 60;
-        let OD = track.difficulty.OverallDifficulty;
-        self.MehTime = 200 - 10 * OD;
-        self.GoodTime = 140 - 8 * OD;
-        self.GreatTime = 80 - 6 * OD;
+        self.MehTime = 200 - 10 * this.OD;
+        self.GoodTime = 140 - 8 * this.OD;
+        self.GreatTime = 80 - 6 * this.OD;
         self.errorMeter = new ErrorMeter({width: game.window.innerWidth, height: game.window.innerHeight}, this.GreatTime, this.GoodTime, this.MehTime);
-        let AR = track.difficulty.ApproachRate;
-        self.approachTime = AR<5? 1800-120*AR: 1950-150*AR; // time of sliders/hitcircles and approach circles approaching
+        self.approachTime = this.AR<5? 1800-120*this.AR: 1950-150*this.AR; // time of sliders/hitcircles and approach circles approaching
         self.objectFadeInTime = Math.min(350, self.approachTime); // time of sliders/hitcircles fading in, at beginning of approaching
         self.approachFadeInTime = self.approachTime; // time of approach circles fading in, at beginning of approaching
 
@@ -476,8 +491,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             hit.rotation = 0;
             hit.rotationProgress = 0;
             hit.clicked = false;
-            let OD = track.difficulty.OverallDifficulty;
-            let spinRequiredPerSec = OD<5? 3+0.4*OD: 2.5+0.5*OD;
+            let spinRequiredPerSec = this.OD<5? 3+0.4*this.OD: 2.5+0.5*this.OD;
             spinRequiredPerSec *= 0.8; // make it easier
             hit.rotationRequired = 2 * Math.PI * spinRequiredPerSec * (hit.endTime - hit.time)/1000;
 
