@@ -46,7 +46,7 @@ function() {
         const innerPortion = 1 - borderwidth;
         const edgeOpacity = 0.8;
         const centerOpacity = 0.3;
-        const blurrate = 0.012;
+        const blurrate = 0.015;
         const width = 200;
 
         let buff = new Uint8Array(colors.length * width * 4);
@@ -155,7 +155,7 @@ function() {
 
         function addArc(c, p1, p2) // c as center, sector from c-p1 to c-p2 counterclockwise
         {
-            const DIVIDES = 40; // approximate a circle with a polygon of DEVIDES sides
+            const DIVIDES = 64; // approximate a circle with a polygon of DEVIDES sides
             let theta_1 = Math.atan2(vert[3*p1+1]-vert[3*c+1], vert[3*p1]-vert[3*c])
             let theta_2 = Math.atan2(vert[3*p2+1]-vert[3*c+1], vert[3*p2]-vert[3*c])
             if (theta_1 > theta_2)
@@ -195,38 +195,20 @@ function() {
         return new PIXI.Geometry().addAttribute('position', vert, 3).addIndex(index)
     }
 
-    function SliderMesh(curve, radius, transform, tintid) // constructor. 
+    function SliderMesh(curve, radius, tintid) // constructor. 
     {
         Container.call(this);
+
         this.geometry = curveGeometry(curve, radius);
-        // FIXME NOTE: setting this.tint has no effect
-
-        this.uniforms = {
-            uSampler2: this.uSampler2,
-            alpha: 1.0,
-            dx: transform.dx,
-            dy: transform.dy,
-            ox: transform.ox,
-            oy: transform.oy,
-            texturepos: tintid / this.ncolors,
-        };
-        console.log("usample", this.uSampler2);
-        this.shader = PIXI.Shader.from(vertexSrc, fragmentSrc, this.uniforms);
-
+        this.alpha = 1.0;
+        this.tintid = tintid;
+        
         // blend mode, culling, depth testing, direction of rendering triangles, backface, etc.
         this.state = PIXI.State.for2d();
         this.drawMode = PIXI.DRAW_MODES.TRIANGLES;
-
         // Inherited from DisplayMode, set defaults
         this.blendMode = PIXI.BLEND_MODES.NORMAL;
         this._roundPixels = PIXI.settings.ROUND_PIXELS;
-
-        Object.defineProperties(this, {
-            "alpha": {
-                get: function() { return this.uniforms.alpha },
-                set: function(b) { this.uniforms.alpha = b }
-            }
-        });
     }
     
 
@@ -234,12 +216,24 @@ function() {
     SliderMesh.prototype = Object.create( Container && Container.prototype );
     SliderMesh.prototype.constructor = SliderMesh;
 
-    // this should be called directly on prototype as we only need ONE texture
-    SliderMesh.prototype.setColor = function(colors) {
+    // This should be called directly on prototype before any draw
+    // as we only need ONE texture & ONE shader
+    SliderMesh.prototype.initialize = function(colors, transform) {
         this.ncolors = colors.length;
         this.uSampler2 = newTexture(colors);
+        this.uniforms = {
+            uSampler2: this.uSampler2,
+            alpha: 1.0,
+            dx: transform.dx,
+            dy: transform.dy,
+            ox: transform.ox,
+            oy: transform.oy,
+            texturepos: 0,
+        };
+        this.shader = PIXI.Shader.from(vertexSrc, fragmentSrc, this.uniforms);
     }
 
+    // this should be called directly on prototype when window resizes
     SliderMesh.prototype.resetTransform = function resetTransform (transform)
     {
         this.uniforms.dx = transform.dx;
@@ -265,6 +259,10 @@ function() {
             shader.update();
         }
         renderer.batch.flush();
+
+        // upload color info to shared shader uniform
+        this.uniforms.alpha = this.alpha;
+        this.uniforms.texturepos = this.tintid / this.ncolors;
         
         // translation is not supported
         renderer.state.set(this.state); // set state

@@ -90,15 +90,12 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 self.background.scale.set(Math.max(window.innerWidth / self.background.texture.width, window.innerHeight / self.background.texture.height));
             }
            
-            for (let i=0; i<self.hits.length; ++i) {
-                if (self.hits[i].type == "slider")
-                    self.hits[i].body.resetTransform({
-                        dx: 2 * gfx.width / window.innerWidth / 512,
-                        ox: -1 + 2 * gfx.xoffset / window.innerWidth,
-                        dy: -2 * gfx.height / window.innerHeight / 384,
-                        oy: 1 - 2 * gfx.yoffset / window.innerHeight,
-                    });
-            }
+            SliderMesh.prototype.resetTransform({
+                dx: 2 * gfx.width / window.innerWidth / 512,
+                ox: -1 + 2 * gfx.xoffset / window.innerWidth,
+                dy: -2 * gfx.height / window.innerHeight / 384,
+                oy: 1 - 2 * gfx.yoffset / window.innerHeight,
+            });
         }
 
         window.addEventListener("blur", function(e){self.pause();});
@@ -385,15 +382,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             // create slider body
             // manually set transform osupixel -> gl coordinate
 
-            var body = hit.body = new SliderMesh(hit.curve.curve,
-                this.circleRadius,
-                {
-                    dx: 2 * gfx.width / window.innerWidth / 512,
-                    ox: -1 + 2 * gfx.xoffset / window.innerWidth,
-                    dy: -2 * gfx.height / window.innerHeight / 384,
-                    oy: 1 - 2 * gfx.yoffset / window.innerHeight,
-                },
-                hit.combo % combos.length);
+            var body = hit.body = new SliderMesh(hit.curve.curve, this.circleRadius, hit.combo % combos.length);
             body.alpha = 0;
             body.depth = 4.9999-0.0001*hit.hitIndex;
             hit.objects.push(body);
@@ -558,8 +547,13 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                     break;
             }
         }
-
-        SliderMesh.prototype.setColor(combos); // prepare texture of sliders
+        
+        SliderMesh.prototype.initialize(combos, {
+            dx: 2 * gfx.width / window.innerWidth / 512,
+            ox: -1 + 2 * gfx.xoffset / window.innerWidth,
+            dy: -2 * gfx.height / window.innerHeight / 384,
+            oy: 1 - 2 * gfx.yoffset / window.innerHeight,
+        }); // prepare sliders
         for (let i = 0; i < this.hits.length; i++) {
             this.populateHit(this.hits[i]); // Prepare sprites and such
         }
