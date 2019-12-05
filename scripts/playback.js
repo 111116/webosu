@@ -36,6 +36,9 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.playbackRate = 1.0;
         if (self.game.nightcore) self.playbackRate *= 1.5;
         if (self.game.daycore) self.playbackRate *= 0.75;
+        self.hideNumbers = game.hideNumbers;
+        self.hideGreat = game.hideGreat;
+        self.hideFollowPoints = game.hideFollowPoints;
 
         self.approachScale = 3;
         self.audioReady = false;
@@ -175,7 +178,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.ballFadeOutTime = 100;
         self.objectDespawnTime = 2000;
         self.backgroundFadeTime = 800;
-        self.spinnerAppearTime = 1500;
+        self.spinnerAppearTime = self.approachTime;
         self.spinnerZoomInTime = 300;
         self.spinnerFadeOutTime = 150;
 
@@ -266,7 +269,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             judge.visible = true;
             judge.points = points;
             judge.t0 = time;
-            judge.text = judgementText(points);
+            if (!this.hideGreat || points!=300)
+                judge.text = judgementText(points);
             judge.tint = judgementColor(points);
             this.updateJudgement(judge, time);
         }
@@ -617,9 +621,24 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                     this.hits[i].approach.visible = false;
             }
         }
+        if (this.hideNumbers) {
+            for (let i=0; i < this.hits.length; i++) {
+                if (this.hits[i].numbers) {
+                    for (let j=0; j<this.hits[i].numbers.length; ++j)
+                        this.hits[i].numbers[j].visible = false;
+                }
+            }
+        }
         for (let i=0; i<this.hits.length-1; i++) {
             if (this.hits[i].type != "spinner" && this.hits[i+1].type != "spinner" && this.hits[i+1].combo == this.hits[i].combo)
                 this.createFollowPoint(this.hits[i], this.hits[i+1]);
+        }
+        if (this.hideFollowPoints) {
+            for (let i=0; i < this.hits.length; i++) {
+                if (this.hits[i].followPoints) {
+                    this.hits[i].followPoints.visible = false;
+                }
+            }
         }
 
         // hit result handling
@@ -796,7 +815,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             }
             else if (diff <= noteFullAppear) {
                 if (-diff > hit.objectFadeOutOffset) { // fading out
-                    console.log("fading out", hit.objectFadeOutOffset);
                     let timeAfter = -diff - hit.objectFadeOutOffset;
                     setcircleAlpha(clamp01(1 - timeAfter / hit.circleFadeOutTime));
                     hit.approach.alpha = clamp01(1 - timeAfter / 50);
