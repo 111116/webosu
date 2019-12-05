@@ -69,7 +69,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             gfx.height *= 0.8;
             gfx.xoffset = (game.window.innerWidth - gfx.width) / 2;
             gfx.yoffset = (game.window.innerHeight - gfx.height) / 2;
-            console.log("gfx: ", gfx.xoffset, gfx.yoffset, gfx.width, gfx.height);
             self.gamefield.x = gfx.xoffset;
             self.gamefield.y = gfx.yoffset;
             self.gamefield.scale.set(gfx.width / 512);
@@ -85,7 +84,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
 
         self.game.window.onresize = function() {
             window.app.renderer.resize(window.innerWidth, window.innerHeight);
-            self.pause();
+            if (self.audioReady) self.pause();
             self.calcSize();
             self.scoreOverlay.resize({width: window.innerWidth, height: window.innerHeight});
             self.errorMeter.resize({width: window.innerWidth, height: window.innerHeight});
@@ -110,7 +109,10 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             });
         }
 
-        window.addEventListener("blur", function(e){self.pause();});
+        window.addEventListener("blur", function(e){
+            if (self.audioReady)
+                self.pause();
+        });
 
         // deal with difficulties
         this.OD = track.difficulty.OverallDifficulty;
