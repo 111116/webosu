@@ -43,19 +43,27 @@ function setOptionPanel() {
 		dim: 50,
 		blur: 0,
 		cursorsize: 1.0,
+		showhwmouse: false,
+
 		disableWheel: false,
 		disableButton: false,
+		K1name: 'Z',
+		K2name: 'X',
+		K1keycode: 90,
+		K2keycode: 88,
+
 		mastervolume: 60,
 		effectvolume: 100,
 		musicvolume: 100,
 		audiooffset: 0,
 		beatmapHitsound: false,
+
+        easy: false,
+        daycore: false,
+        hardrock: false,
+        nightcore: false,
+        hidden: false,
 		autoplay: false,
-		showhwmouse: false,
-		K1name: 'Z',
-		K2name: 'X',
-		K1keycode: 90,
-		K2keycode: 88,
 	};
 	loadFromLocal();
 
@@ -64,15 +72,23 @@ function setOptionPanel() {
 	        window.game.backgroundDimRate = this.dim / 100;
 	        window.game.backgroundBlurRate = this.blur / 100;
 	        window.game.cursorSize = this.cursorsize;
+	        window.game.showhwmouse = this.showhwmouse;
+
 	        window.game.allowMouseScroll = !this.disableWheel;
 	        window.game.allowMouseButton = !this.disableButton;
+	        window.game.K1keycode = this.K1keycode;
+	        window.game.K2keycode = this.K2keycode;
+
 	        window.game.masterVolume = this.mastervolume / 100;
 	        window.game.effectVolume = this.effectvolume / 100;
 	        window.game.musicVolume = this.musicvolume / 100;
+
+	        window.game.easy = this.easy;
+	        window.game.daycore = this.daycore;
+	        window.game.hardrock = this.hardrock;
+	        window.game.nightcore = this.nightcore;
+	        window.game.hidden = this.hidden;
 	        window.game.autoplay = this.autoplay;
-	        window.game.showhwmouse = this.showhwmouse;
-	        window.game.K1keycode = this.K1keycode;
-	        window.game.K2keycode = this.K2keycode;
 		}
 	}
 	gamesettings.loadToGame();
@@ -132,14 +148,6 @@ function setOptionPanel() {
 	disableButtonCheck.checked = gamesettings.disableButton;
 	disableButtonCheck.onclick = function() {
 		gamesettings.disableButton = disableButtonCheck.checked;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	let autoplayCheck = document.getElementById("autoplay-check");
-	autoplayCheck.checked = gamesettings.autoplay;
-	autoplayCheck.onclick = function() {
-		gamesettings.autoplay = autoplayCheck.checked;
 		gamesettings.loadToGame();
         saveToLocal();
 	}
@@ -261,6 +269,68 @@ function setOptionPanel() {
 	beatmapHitsoundCheck.checked = gamesettings.beatmapHitsound;
 	beatmapHitsoundCheck.onclick = function() {
 		gamesettings.beatmapHitsound = beatmapHitsoundCheck.checked;
+		gamesettings.loadToGame();
+        saveToLocal();
+	}
+
+
+	// mods
+
+	let easyCheck = document.getElementById("easy-check");
+	let hardrockCheck = document.getElementById("hardrock-check");
+
+	easyCheck.checked = gamesettings.easy;
+	easyCheck.onclick = function() {
+		gamesettings.easy = easyCheck.checked;
+		gamesettings.hardrock = false;
+		hardrockCheck.checked = false;
+		gamesettings.loadToGame();
+        saveToLocal();
+	}
+
+	hardrockCheck.checked = gamesettings.hardrock;
+	hardrockCheck.onclick = function() {
+		gamesettings.hardrock = hardrockCheck.checked;
+		gamesettings.easy = false;
+		easyCheck.checked = false;
+		gamesettings.loadToGame();
+        saveToLocal();
+	}
+
+
+	let daycoreCheck = document.getElementById("daycore-check");
+	let nightcoreCheck = document.getElementById("nightcore-check");
+	daycoreCheck.checked = gamesettings.daycore;
+	daycoreCheck.onclick = function() {
+		gamesettings.daycore = daycoreCheck.checked;
+		gamesettings.nightcore = false;
+		nightcoreCheck.checked = false;
+		gamesettings.loadToGame();
+        saveToLocal();
+	}
+
+	nightcoreCheck.checked = gamesettings.nightcore;
+	nightcoreCheck.onclick = function() {
+		gamesettings.nightcore = nightcoreCheck.checked;
+		gamesettings.daycore = false;
+		daycoreCheck.checked = false;
+		gamesettings.loadToGame();
+        saveToLocal();
+	}
+
+
+	let hiddenCheck = document.getElementById("hidden-check");
+	hiddenCheck.checked = gamesettings.hidden;
+	hiddenCheck.onclick = function() {
+		gamesettings.hidden = hiddenCheck.checked;
+		gamesettings.loadToGame();
+        saveToLocal();
+	}
+
+	let autoplayCheck = document.getElementById("autoplay-check");
+	autoplayCheck.checked = gamesettings.autoplay;
+	autoplayCheck.onclick = function() {
+		gamesettings.autoplay = autoplayCheck.checked;
 		gamesettings.loadToGame();
         saveToLocal();
 	}
