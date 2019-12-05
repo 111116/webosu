@@ -9,20 +9,24 @@ function(Osu, _, sound, Playback) {
         updatePlayerActions: null,
 
         // note: preference values here will be overwritten by gamesettings (in settings.js)
+        // display
         backgroundDimRate: 0.7,
         backgroundBlurRate: 0.0,
-        allowMouseButton: false,
-        allowMouseScroll: true,
         cursorSize: 1.0,
+        showhwmouse: false,
 
+        // audio
         masterVolume: 0.7,
         effectVolume: 1.0,
         musicVolume: 1.0,
 
+        // input
+        allowMouseButton: false,
+        allowMouseScroll: true,
         K1keycode: 90,
         K2keycode: 88,
-        showhwmouse: false,
 
+        // mods
         autoplay: false,
         nightcore: false,
         daycore: false,
@@ -30,6 +34,7 @@ function(Osu, _, sound, Playback) {
         easy: false,
         hidden: false,
 
+        // skin mods
         hideNumbers: false,
         hideGreat: false,
         hideFollowPoints: false,

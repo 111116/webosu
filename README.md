@@ -28,10 +28,8 @@ Just set up a local web server with root directory located where `index.html` is
 
 ## Current functions
 
-- custom keyboard button: no
 - audio offset: no
 - input offset: no
-- background blur: no
 - slider snake-in: no
 - slider snake-out: no
 - custom skin: no
