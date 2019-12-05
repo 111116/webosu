@@ -1,29 +1,5 @@
 function setOptionPanel() {
 
-	function updateIndicator(range, indicator, show) {
-		return function() {
-			let min = parseFloat(range.min);
-			let max = parseFloat(range.max);
-			let val = parseFloat(range.value);
-			let pos = (val-min) / (max-min);
-			let length = range.clientWidth - 20;
-			indicator.style.left = (pos * length + 13) + "px";
-			indicator.innerText = show(val);
-		}
-	}
-
-	function hideIndicator(indicator) {
-		return function() {
-	    	indicator.setAttribute("hidden", "");
-		}
-	}
-
-	function showIndicator(indicator) {
-		return function() {
-	    	indicator.removeAttribute("hidden");
-		}
-	}
-
 	function loadFromLocal() {
 		let str = window.localStorage.getItem("osugamesettings");
 		if (str) {
@@ -64,6 +40,10 @@ function setOptionPanel() {
         nightcore: false,
         hidden: false,
 		autoplay: false,
+
+        hideNumbers: false,
+        hideGreat: false,
+        hideFollowPoints: false,
 	};
 	loadFromLocal();
 
@@ -89,252 +69,128 @@ function setOptionPanel() {
 	        window.game.nightcore = this.nightcore;
 	        window.game.hidden = this.hidden;
 	        window.game.autoplay = this.autoplay;
+
+	        window.game.hideNumbers = this.hideNumbers;
+	        window.game.hideGreat = this.hideGreat;
+	        window.game.hideFollowPoints = this.hideFollowPoints;
 		}
 	}
 	gamesettings.loadToGame();
 	// this will also be called on game side. The latter call makes effect
 
 
+	function bindcheck(id, item) {
+		let c = document.getElementById(id);
+		id.checked = gamesettings[item];
+		c.onclick = function() {
+			gamesettings[item] = c.checked;
+			gamesettings.loadToGame();
+	        saveToLocal();
+		}
+	}
+
+	function bindExclusiveCheck(id1, item1, id2, item2) {
+		let c1 = document.getElementById(id1);
+		let c2 = document.getElementById(id2);
+		c1.checked = gamesettings[item1];
+		c2.checked = gamesettings[item2];
+		c1.onclick = function() {
+			gamesettings[item1] = c1.checked;
+			gamesettings[item2] = false;
+			c2.checked = false;
+			gamesettings.loadToGame();
+	        saveToLocal();
+		}
+		c2.onclick = function() {
+			gamesettings[item2] = c2.checked;
+			gamesettings[item1] = false;
+			c1.checked = false;
+			gamesettings.loadToGame();
+	        saveToLocal();
+		}
+	}
+
+	function bindrange(id, item, feedback) {
+		let range = document.getElementById(id);
+		let indicator = document.getElementById(id + "-indicator");
+		range.onmousedown = function() {
+	    	indicator.removeAttribute("hidden");
+		}
+		range.onmouseup = function() {
+			indicator.setAttribute("hidden", "");
+		};
+		range.oninput = function() {
+			let min = parseFloat(range.min);
+			let max = parseFloat(range.max);
+			let val = parseFloat(range.value);
+			let pos = (val-min) / (max-min);
+			let length = range.clientWidth - 20;
+			indicator.style.left = (pos * length + 13) + "px";
+			indicator.innerText = feedback(val);
+		}
+		range.value = gamesettings[item];
+		range.oninput();
+		range.onchange = function() {
+			gamesettings[item] = range.value;
+			gamesettings.loadToGame();
+	        saveToLocal();
+		}
+	}
+
+	function bindkeyselector(id, keynameitem, keycodeitem) {
+		let btn = document.getElementById(id);
+		let activate = function() {
+			let deactivate = function() {
+				btn.onclick = activate;
+				btn.classList.remove("using");
+				document.removeEventListener("keydown", listenkey);
+			}
+			let listenkey = function(e) {
+				e = e || window.event;
+				gamesettings[keycodeitem] = e.keyCode;
+				gamesettings[keynameitem] = e.key.toUpperCase();
+				btn.value = gamesettings[keynameitem];
+				gamesettings.loadToGame();
+		        saveToLocal();
+				deactivate();
+			}
+			btn.classList.add("using");
+			document.addEventListener("keydown", listenkey);
+			btn.onclick = deactivate;
+		}
+		btn.onclick = activate;
+		btn.value = gamesettings[keynameitem];
+	}
+
 	// gameplay settings
+	bindrange("dim-range", "dim", function(v){return v+"%"});
+	bindrange("blur-range", "blur", function(v){return v+"%"});
+	bindrange("cursorsize-range", "cursorsize", function(v){return v.toFixed(2)+"x"});
+	bindcheck("showhwmouse-check", "showhwmouse");
 
-	let dimRange = document.getElementById("dim-range");
-	let dimRangeIndicator = document.getElementById("dim-range-indicator");
-	dimRange.onmousedown = showIndicator(dimRangeIndicator);
-	dimRange.onmouseup = hideIndicator(dimRangeIndicator);
-	dimRange.oninput = updateIndicator(dimRange, dimRangeIndicator, function(v){return v+"%"});
-	dimRange.value = gamesettings.dim;
-	dimRange.oninput();
-	dimRange.onchange = function() {
-		gamesettings.dim = dimRange.value;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	let blurRange = document.getElementById("blur-range");
-	let blurRangeIndicator = document.getElementById("blur-range-indicator");
-	blurRange.onmousedown = showIndicator(blurRangeIndicator);
-	blurRange.onmouseup = hideIndicator(blurRangeIndicator);
-	blurRange.oninput = updateIndicator(blurRange, blurRangeIndicator, function(v){return v+"%"});
-	blurRange.value = gamesettings.blur;
-	blurRange.oninput();
-	blurRange.onchange = function() {
-		gamesettings.blur = blurRange.value;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	let cursorsizeRange = document.getElementById("cursorsize-range");
-	let cursorsizeRangeIndicator = document.getElementById("cursorsize-range-indicator");
-	cursorsizeRange.onmousedown = showIndicator(cursorsizeRangeIndicator);
-	cursorsizeRange.onmouseup = hideIndicator(cursorsizeRangeIndicator);
-	cursorsizeRange.oninput = updateIndicator(cursorsizeRange, cursorsizeRangeIndicator, function(v){return v.toFixed(2)+"x"});
-	cursorsizeRange.value = gamesettings.cursorsize;
-	cursorsizeRange.oninput();
-	cursorsizeRange.onchange = function() {
-		gamesettings.cursorsize = cursorsizeRange.value;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	let disableWheelCheck = document.getElementById("disable-wheel-check");
-	disableWheelCheck.checked = gamesettings.disableWheel;
-	disableWheelCheck.onclick = function() {
-		gamesettings.disableWheel = disableWheelCheck.checked;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	let disableButtonCheck = document.getElementById("disable-button-check");
-	disableButtonCheck.checked = gamesettings.disableButton;
-	disableButtonCheck.onclick = function() {
-		gamesettings.disableButton = disableButtonCheck.checked;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	let showhwmouseCheck = document.getElementById("showhwmouse-check");
-	showhwmouseCheck.checked = gamesettings.showhwmouse;
-	showhwmouseCheck.onclick = function() {
-		gamesettings.showhwmouse = showhwmouseCheck.checked;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	// keyboard binding settings
-
-	// left button 1
-	let lbutton1select = document.getElementById("lbutton1select");
-	let l1f = function() {
-		let f1l = function() {
-			lbutton1select.onclick = l1f;
-			lbutton1select.classList.remove("using");
-			document.removeEventListener("keydown",f);
-		}
-		let f = function(e) {
-			e = e || window.event;
-			gamesettings.K1keycode = e.keyCode;
-			gamesettings.K1name = e.key.toUpperCase();
-			lbutton1select.value = gamesettings.K1name;
-			gamesettings.loadToGame();
-	        saveToLocal();
-			f1l();
-		}
-		lbutton1select.classList.add("using");
-		document.addEventListener("keydown",f);
-		lbutton1select.onclick = f1l;
-	}
-	lbutton1select.onclick = l1f;
-	lbutton1select.value = gamesettings.K1name;
-
-
-	// right button 1
-	let rbutton1select = document.getElementById("rbutton1select");
-	let r1f = function() {
-		let f1r = function() {
-			rbutton1select.onclick = r1f;
-			rbutton1select.classList.remove("using");
-			document.removeEventListener("keydown",f);
-		}
-		let f = function(e) {
-			e = e || window.event;
-			gamesettings.K2keycode = e.keyCode;
-			gamesettings.K2name = e.key.toUpperCase();
-			rbutton1select.value = gamesettings.K2name;
-			gamesettings.loadToGame();
-	        saveToLocal();
-			f1r();
-		}
-		rbutton1select.classList.add("using");
-		document.addEventListener("keydown",f);
-		rbutton1select.onclick = f1r;
-	}
-	rbutton1select.onclick = r1f;
-	rbutton1select.value = gamesettings.K2name;
+	// input settings
+	bindcheck("disable-wheel-check", "disableWheel");
+	bindcheck("disable-button-check", "disableButton");
+	bindkeyselector("lbutton1select", "K1name", "K1keycode");
+	bindkeyselector("rbutton1select", "K2name", "K2keycode");
 
 	// audio settings
-
-	let mastervolumeRange = document.getElementById("mastervolume-range");
-	let mastervolumeRangeIndicator = document.getElementById("mastervolume-range-indicator");
-	mastervolumeRange.onmousedown = showIndicator(mastervolumeRangeIndicator);
-	mastervolumeRange.onmouseup = hideIndicator(mastervolumeRangeIndicator);
-	mastervolumeRange.oninput = updateIndicator(mastervolumeRange, mastervolumeRangeIndicator, function(v){return v+"%"});
-	mastervolumeRange.value = gamesettings.mastervolume;
-	mastervolumeRange.oninput();
-	mastervolumeRange.onchange = function() {
-		gamesettings.mastervolume = mastervolumeRange.value;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	let effectvolumeRange = document.getElementById("effectvolume-range");
-	let effectvolumeRangeIndicator = document.getElementById("effectvolume-range-indicator");
-	effectvolumeRange.onmousedown = showIndicator(effectvolumeRangeIndicator);
-	effectvolumeRange.onmouseup = hideIndicator(effectvolumeRangeIndicator);
-	effectvolumeRange.oninput = updateIndicator(effectvolumeRange, effectvolumeRangeIndicator, function(v){return v+"%"});
-	effectvolumeRange.value = gamesettings.effectvolume;
-	effectvolumeRange.oninput();
-	effectvolumeRange.onchange = function() {
-		gamesettings.effectvolume = effectvolumeRange.value;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	let musicvolumeRange = document.getElementById("musicvolume-range");
-	let musicvolumeRangeIndicator = document.getElementById("musicvolume-range-indicator");
-	musicvolumeRange.onmousedown = showIndicator(musicvolumeRangeIndicator);
-	musicvolumeRange.onmouseup = hideIndicator(musicvolumeRangeIndicator);
-	musicvolumeRange.oninput = updateIndicator(musicvolumeRange, musicvolumeRangeIndicator, function(v){return v+"%"});
-	musicvolumeRange.value = gamesettings.musicvolume;
-	musicvolumeRange.oninput();
-	musicvolumeRange.onchange = function() {
-		gamesettings.musicvolume = musicvolumeRange.value;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	let audiooffsetRange = document.getElementById("audiooffset-range");
-	let audiooffsetRangeIndicator = document.getElementById("audiooffset-range-indicator");
-	audiooffsetRange.onmousedown = showIndicator(audiooffsetRangeIndicator);
-	audiooffsetRange.onmouseup = hideIndicator(audiooffsetRangeIndicator);
-	audiooffsetRange.oninput = updateIndicator(audiooffsetRange, audiooffsetRangeIndicator, function(v){return v+"ms"});
-	audiooffsetRange.value = gamesettings.audiooffset;
-	audiooffsetRange.oninput();
-	audiooffsetRange.onchange = function() {
-		gamesettings.audiooffset = audiooffsetRange.value;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	let beatmapHitsoundCheck = document.getElementById("beatmap-hitsound-check");
-	beatmapHitsoundCheck.checked = gamesettings.beatmapHitsound;
-	beatmapHitsoundCheck.onclick = function() {
-		gamesettings.beatmapHitsound = beatmapHitsoundCheck.checked;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
+	bindrange("mastervolume-range", "mastervolume", function(v){return v+"%"});
+	bindrange("effectvolume-range", "effectvolume", function(v){return v+"%"});
+	bindrange("musicvolume-range", "musicvolume", function(v){return v+"%"});
+	bindrange("audiooffset-range", "audiooffset", function(v){return v+"ms"});
+	bindcheck("beatmap-hitsound-check", "beatmapHitsound")
 
 	// mods
+	bindExclusiveCheck("easy-check", "easy", "hardrock-check", "hardrock");
+	bindExclusiveCheck("daycore-check", "daycore", "nightcore-check", "nightcore");
+	bindcheck("hidden-check", "hidden");
+	bindcheck("autoplay-check", "autoplay");
 
-	let easyCheck = document.getElementById("easy-check");
-	let hardrockCheck = document.getElementById("hardrock-check");
-
-	easyCheck.checked = gamesettings.easy;
-	easyCheck.onclick = function() {
-		gamesettings.easy = easyCheck.checked;
-		gamesettings.hardrock = false;
-		hardrockCheck.checked = false;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	hardrockCheck.checked = gamesettings.hardrock;
-	hardrockCheck.onclick = function() {
-		gamesettings.hardrock = hardrockCheck.checked;
-		gamesettings.easy = false;
-		easyCheck.checked = false;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-
-	let daycoreCheck = document.getElementById("daycore-check");
-	let nightcoreCheck = document.getElementById("nightcore-check");
-	daycoreCheck.checked = gamesettings.daycore;
-	daycoreCheck.onclick = function() {
-		gamesettings.daycore = daycoreCheck.checked;
-		gamesettings.nightcore = false;
-		nightcoreCheck.checked = false;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	nightcoreCheck.checked = gamesettings.nightcore;
-	nightcoreCheck.onclick = function() {
-		gamesettings.nightcore = nightcoreCheck.checked;
-		gamesettings.daycore = false;
-		daycoreCheck.checked = false;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-
-	let hiddenCheck = document.getElementById("hidden-check");
-	hiddenCheck.checked = gamesettings.hidden;
-	hiddenCheck.onclick = function() {
-		gamesettings.hidden = hiddenCheck.checked;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
-	let autoplayCheck = document.getElementById("autoplay-check");
-	autoplayCheck.checked = gamesettings.autoplay;
-	autoplayCheck.onclick = function() {
-		gamesettings.autoplay = autoplayCheck.checked;
-		gamesettings.loadToGame();
-        saveToLocal();
-	}
-
+	// skin
+	bindcheck("hidenumbers-check", "hideNumbers");
+	bindcheck("hidegreat-check", "hideGreat");
+	bindcheck("hidefollowpoints-check", "hideFollowPoints");
 }
 
 window.addEventListener('DOMContentLoaded', setOptionPanel);
