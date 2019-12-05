@@ -30,7 +30,7 @@ canvas {
 
 .main-page {
 	width: 1240px;
-	min-height: 800px;
+	min-height: 1200px;
 	margin:auto;
 }
 
@@ -158,6 +158,9 @@ table {
 }
 tr{
   height: 2.7em;
+}
+tr:last-child {
+  text-align: center;
 }
 td{
   /*border-bottom:1px solid #f6f6f6;*/
@@ -287,6 +290,20 @@ input[type=button]:hover {
 }
 input[type=button].using {
   background: #fc7bb4;
+  color: #fff;
+}
+input[type=button].warnbtn {
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+  color: #000;
+  font-size:16px;
+  text-align: center;
+  padding: 12px 20px 14px;
+  height: auto;
+}
+input[type=button].warnbtn:hover {
+  background: #a00;
   color: #fff;
 }
 

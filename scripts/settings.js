@@ -15,7 +15,7 @@ function setOptionPanel() {
 	// give inputs initial value; set their callback on change
 	// give range inputs a visual feedback (a hovering indicator that shows on drag)
 
-	window.gamesettings = {
+	let defaultsettings = {
 		dim: 50,
 		blur: 0,
 		cursorsize: 1.0,
@@ -45,6 +45,8 @@ function setOptionPanel() {
         hideGreat: false,
         hideFollowPoints: false,
 	};
+	window.gamesettings = {};
+	Object.assign(gamesettings, defaultsettings);
 	loadFromLocal();
 
 	window.gamesettings.loadToGame = function() {
@@ -78,10 +80,14 @@ function setOptionPanel() {
 	gamesettings.loadToGame();
 	// this will also be called on game side. The latter call makes effect
 
+	// functions that get called when settings are restored to default
+	// used for refreshing widgets on the page
+	gamesettings.restoreCallbacks = [];
 
 	function bindcheck(id, item) {
 		let c = document.getElementById(id);
-		id.checked = gamesettings[item];
+		c.checked = gamesettings[item];
+		gamesettings.restoreCallbacks.push(function(){c.checked = gamesettings[item];});
 		c.onclick = function() {
 			gamesettings[item] = c.checked;
 			gamesettings.loadToGame();
@@ -94,6 +100,8 @@ function setOptionPanel() {
 		let c2 = document.getElementById(id2);
 		c1.checked = gamesettings[item1];
 		c2.checked = gamesettings[item2];
+		gamesettings.restoreCallbacks.push(function(){c1.checked = gamesettings[item1];});
+		gamesettings.restoreCallbacks.push(function(){c2.checked = gamesettings[item2];});
 		c1.onclick = function() {
 			gamesettings[item1] = c1.checked;
 			gamesettings[item2] = false;
@@ -129,6 +137,7 @@ function setOptionPanel() {
 			indicator.innerText = feedback(val);
 		}
 		range.value = gamesettings[item];
+		gamesettings.restoreCallbacks.push(function(){range.value = gamesettings[item];});
 		range.oninput();
 		range.onchange = function() {
 			gamesettings[item] = range.value;
@@ -160,6 +169,7 @@ function setOptionPanel() {
 		}
 		btn.onclick = activate;
 		btn.value = gamesettings[keynameitem];
+		gamesettings.restoreCallbacks.push(function(){btn.value = gamesettings[keynameitem];});
 	}
 
 	// gameplay settings
@@ -191,6 +201,14 @@ function setOptionPanel() {
 	bindcheck("hidenumbers-check", "hideNumbers");
 	bindcheck("hidegreat-check", "hideGreat");
 	bindcheck("hidefollowpoints-check", "hideFollowPoints");
+
+	document.getElementById("restoredefault-btn").onclick = function() {
+		Object.assign(gamesettings, defaultsettings);
+		for (let i=0; i<gamesettings.restoreCallbacks.length; ++i)
+			gamesettings.restoreCallbacks[i]();
+		gamesettings.loadToGame();
+		saveToLocal();
+	}
 }
 
 window.addEventListener('DOMContentLoaded', setOptionPanel);
