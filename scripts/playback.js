@@ -135,11 +135,35 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.GreatTime = 80 - 6 * this.OD;
         self.errorMeter = new ErrorMeter({width: game.window.innerWidth, height: game.window.innerHeight}, this.GreatTime, this.GoodTime, this.MehTime);
         self.approachTime = this.AR<5? 1800-120*this.AR: 1950-150*this.AR; // time of sliders/hitcircles and approach circles approaching
-        self.objectFadeInTime = Math.min(350, self.approachTime); // time of sliders/hitcircles fading in, at beginning of approaching
-        self.approachFadeInTime = self.approachTime; // time of approach circles fading in, at beginning of approaching
+        self.approachFadeInTime = Math.min(800, self.approachTime); // duration of approach circles fading in, at beginning of approaching
+        for (let i=0; i<self.hits.length; ++i) {
+            let hit = self.hits[i];
+            if (self.modhidden && i>0) { // don't hide the first one
+                hit.objectFadeInTime = 0.4 * self.approachTime;
+                hit.objectFadeOutOffset = -0.6 * self.approachTime;
+                hit.circleFadeOutTime = 0.3 * self.approachTime;
+            }
+            else {
+                hit.enableflash = true;
+                hit.objectFadeInTime = Math.min(400, self.approachTime); // duration of sliders/hitcircles fading in, at beginning of approaching
+                hit.circleFadeOutTime = 100;
+                hit.objectFadeOutOffset = self.MehTime;
+            }
+        }
+        
+        for (let i=0; i<self.hits.length; ++i) {
+            if (self.hits[i].type == "slider") {
+                if (self.modhidden && i>0) {
+                    self.hits[i].fadeOutOffset = -0.6 * self.approachTime;
+                    self.hits[i].fadeOutDuration = self.hits[i].sliderTimeTotal - self.hits[i].fadeOutOffset;
+                }
+                else {
+                    self.hits[i].fadeOutOffset = self.hits[i].sliderTimeTotal;
+                    self.hits[i].fadeOutDuration = 300;
+                }
+            }
+        }
 
-        self.sliderFadeOutTime = 300; // time of slidebody fading out
-        self.circleFadeOutTime = 150;
         self.glowFadeOutTime = 350;
         self.glowMaxOpacity = 0.5;
         self.flashFadeInTime = 40;
@@ -387,7 +411,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
 
             hit.approach = newHitSprite("approachcircle.png", 8 + 0.0001 * hit.hitIndex);
             hit.approach.tint = combos[hit.combo % combos.length];
-            if (this.modhidden) hit.approach.visible = false;
 
             hit.judgements.push(this.createJudgement(hit.x, hit.y, 4, hit.time + this.MehTime));
 
@@ -405,9 +428,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         this.createSlider = function(hit) {
             hit.lastrep = 0; // for current-repeat counting
             hit.nexttick = 0; // for tick hit counting
-            hit.sliderTime = hit.timing.millisecondsPerBeat * (hit.pixelLength / track.difficulty.SliderMultiplier) / 100;
-            hit.sliderTimeTotal = hit.sliderTime * hit.repeat;
-            hit.endTime = hit.time + hit.sliderTimeTotal;
 
             // create slider body
             // manually set transform osupixel -> gl coordinate
@@ -540,6 +560,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             container.dy = hit.y - y1;
             container.dt = hit.time - t1;
             container.preempt = this.approachTime;
+            container.hit = hit;
             hit.objects.push(container);
             hit.followPoints = container;
 
@@ -589,6 +610,12 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         }); // prepare sliders
         for (let i = 0; i < this.hits.length; i++) {
             this.populateHit(this.hits[i]); // Prepare sprites and such
+        }
+        if (this.modhidden) {
+            for (let i=1; i < this.hits.length; i++) {
+                if (this.hits[i].approach)
+                    this.hits[i].approach.visible = false;
+            }
         }
         for (let i=0; i<this.hits.length-1; i++) {
             if (this.hits[i].type != "spinner" && this.hits[i+1].type != "spinner" && this.hits[i+1].combo == this.hits[i].combo)
@@ -727,11 +754,11 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 let endy = f.y1 + o.fraction * f.dy;
                 let fadeOutTime = f.t1 + o.fraction * f.dt;
                 let fadeInTime = fadeOutTime - f.preempt;
-                let relpos = clamp01((time-fadeInTime) / self.objectFadeInTime);
+                let relpos = clamp01((time-fadeInTime) / f.hit.objectFadeInTime);
                 relpos *= 2-relpos; // ease out
                 o.x = startx + (endx - startx) * relpos;
                 o.y = starty + (endy - starty) * relpos;
-                o.alpha = 0.5 * ((time<fadeOutTime)? clamp01((time-fadeInTime) / self.objectFadeInTime): 1-clamp01((time-fadeOutTime) / self.objectFadeInTime));
+                o.alpha = 0.5 * ((time<fadeOutTime)? clamp01((time-fadeInTime) / f.hit.objectFadeInTime): 1-clamp01((time-fadeOutTime) / f.hit.objectFadeInTime));
             }
         }
 
@@ -739,9 +766,22 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             if (hit.followPoints)
                 this.updateFollowPoints(hit.followPoints, time);
             let diff = hit.time - time; // milliseconds before time of circle
-            // calculate opacity of circle
-            let noteFullAppear = this.approachTime - this.objectFadeInTime; // duration of opaque hit circle when approaching
+            // update approach circle
             let approachFullAppear = this.approachTime - this.approachFadeInTime; // duration of opaque approach circle when approaching
+            if (diff <= this.approachTime && diff > 0) { // approaching
+                let scalemul = diff / this.approachTime * this.approachScale + 1;
+                hit.approach.scale.set(0.5 * this.hitSpriteScale * scalemul);
+            } else {
+                hit.approach.scale.set(0.5 * this.hitSpriteScale);
+            }
+            if (diff <= this.approachTime && diff > approachFullAppear) { // approach circle fading in
+                hit.approach.alpha = (this.approachTime - diff) / this.approachFadeInTime;
+            }
+            else if (diff <= approachFullAppear && hit.score<0) { // approach circle opaque, just shrinking
+                hit.approach.alpha = 1;
+            }
+            // calculate opacity of circle
+            let noteFullAppear = this.approachTime -hit.objectFadeInTime; // duration of opaque hit circle when approaching
 
             function setcircleAlpha(alpha) {
                 hit.base.alpha = alpha;
@@ -750,12 +790,23 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                     hit.numbers[i].alpha = alpha;
                 hit.glow.alpha = alpha * self.glowMaxOpacity;
             }
-
             if (diff <= this.approachTime && diff > noteFullAppear) { // fading in
-                let alpha = (this.approachTime - diff) / this.objectFadeInTime;
+                let alpha = (this.approachTime - diff) /hit.objectFadeInTime;
                 setcircleAlpha(alpha);
             }
-            else if (hit.score > 0) { // clicked
+            else if (diff <= noteFullAppear) {
+                if (-diff > hit.objectFadeOutOffset) { // fading out
+                    console.log("fading out", hit.objectFadeOutOffset);
+                    let timeAfter = -diff - hit.objectFadeOutOffset;
+                    setcircleAlpha(clamp01(1 - timeAfter / hit.circleFadeOutTime));
+                    hit.approach.alpha = clamp01(1 - timeAfter / 50);
+                }
+                else {
+                    setcircleAlpha(1);
+                }
+            }
+            // flash out if clicked
+            if (hit.score > 0 && hit.enableflash) {
                 hit.burst.visible = true;
                 let timeAfter = time - hit.clickTime;
                 let t = timeAfter / this.glowFadeOutTime;
@@ -782,31 +833,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                     }
                 }
             }
-            else if (diff <= noteFullAppear && -diff <= this.MehTime) { // before click
-                setcircleAlpha(1);
-            }
-            else if (-diff > this.MehTime) { // missed
-                hit.score = 0;
-                let timeAfter = time - hit.time - this.MehTime;
-                let alpha = this.fadeOutEasing(timeAfter / this.circleFadeOutTime);
-                setcircleAlpha(alpha);
-                hit.approach.alpha = alpha;
-            }
-
-            // update approach circle
-            if (diff <= this.approachTime && diff > 0) { // approaching
-                let scalemul = diff / this.approachTime * this.approachScale + 1;
-                hit.approach.scale.set(0.5 * this.hitSpriteScale * scalemul);
-            } else {
-                hit.approach.scale.set(0.5 * this.hitSpriteScale);
-            }
-            if (diff <= this.approachTime && diff > approachFullAppear) { // approach circle fading in
-                hit.approach.alpha = (this.approachTime - diff) / this.approachFadeInTime;
-            }
-            else if (diff <= approachFullAppear && hit.score<0) { // approach circle opaque, just shrinking
-                hit.approach.alpha = 1;
-            }
-
             this.updateJudgement(hit.judgements[0], time);
         }
 
@@ -814,28 +840,30 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             // just make use of the duplicate part
             this.updateHitCircle(hit, time);
 
-            let noteFullAppear = this.approachTime - this.objectFadeInTime; // duration of opaque hit circle when approaching
+            let noteFullAppear = this.approachTime - hit.objectFadeInTime; // duration of opaque hit circle when approaching
 
             // set opacity of slider body
             function setbodyAlpha(alpha) {
                 hit.body.alpha = alpha;
-                if (hit.reverse)
-                    hit.reverse.alpha = alpha;
-                if (hit.reverse_b)
-                    hit.reverse_b.alpha = alpha;
                 for (let i=0; i<hit.ticks.length; ++i)
                     hit.ticks[i].alpha = alpha;
             }
             let diff = hit.time - time; // milliseconds before hit.time
             if (diff <= this.approachTime && diff > noteFullAppear) {
                 // Fade in (before hit)
-                setbodyAlpha((this.approachTime - diff) / this.objectFadeInTime);
-            } else if (diff <= noteFullAppear && diff > -hit.sliderTimeTotal) {
-                // approaching or During slide
-                setbodyAlpha(1);
-            } else if (-diff > 0 && -diff < this.sliderFadeOutTime + hit.sliderTimeTotal) {
-                // Fade out (after slide)
-                setbodyAlpha(this.fadeOutEasing((-diff - hit.sliderTimeTotal) / this.sliderFadeOutTime));
+                setbodyAlpha((this.approachTime - diff) / hit.objectFadeInTime);
+                if (hit.reverse) hit.reverse.alpha = hit.body.alpha;
+                if (hit.reverse_b) hit.reverse_b.alpha = hit.body.alpha;
+            } else if (diff <= noteFullAppear) {
+                if (-diff > hit.fadeOutOffset) {
+                    let t = clamp01((-diff - hit.fadeOutOffset) / hit.fadeOutDuration);
+                    setbodyAlpha(1-t*(2-t));
+                }
+                else {
+                    setbodyAlpha(1);
+                    if (hit.reverse) hit.reverse.alpha = 1;
+                    if (hit.reverse_b) hit.reverse_b.alpha = 1;
+                }
             }
 
             // set position of slider ball & follow circle
@@ -850,7 +878,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 hit.followLasttime = time;
             }
 
-            if (-diff >= 0 && -diff <= this.sliderFadeOutTime + hit.sliderTimeTotal) { // after hit.time & before slider disappears
+            if (-diff >= 0 && -diff <= hit.fadeOutDuration + hit.sliderTimeTotal) { // after hit.time & before slider disappears
                 // t: position relative to slider duration
                 let t = -diff / hit.sliderTime;
                 if (hit.repeat > 1) {
