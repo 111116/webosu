@@ -101,6 +101,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                         // Handle combos
                         if ((hit.type & HIT_TYPE_NEWCOMBO) > 0) {
                             combo++;
+                            combo += (hit.type>>4)&7; // combo skip
                             index = 0;
                         }
                         hit.combo = combo;
