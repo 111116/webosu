@@ -3,7 +3,7 @@
 *       assuming number of possible hits doesn't exceed 9998
 */
 define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/pause", "overlay/volume", "overlay/loading", "overlay/grade", "overlay/break", "overlay/progress", "overlay/hiterrormeter"],
-function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu, GradeMenu, BreakOverlay, ProgressOverlay, ErrorMeter) {
+function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu, GradeMenu, BreakOverlay, ProgressOverlay, ErrorMeterOverlay) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -136,7 +136,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.MehTime = 200 - 10 * this.OD;
         self.GoodTime = 140 - 8 * this.OD;
         self.GreatTime = 80 - 6 * this.OD;
-        self.errorMeter = new ErrorMeter({width: game.window.innerWidth, height: game.window.innerHeight}, this.GreatTime, this.GoodTime, this.MehTime);
+        self.errorMeter = new ErrorMeterOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, this.GreatTime, this.GoodTime, this.MehTime);
         self.approachTime = this.AR<5? 1800-120*this.AR: 1950-150*this.AR; // time of sliders/hitcircles and approach circles approaching
         self.approachFadeInTime = Math.min(800, self.approachTime); // duration of approach circles fading in, at beginning of approaching
         for (let i=0; i<self.hits.length; ++i) {
@@ -700,8 +700,10 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             if (points > 0) {
                 if (hit.type == "spinner")
                     self.playHitsound(hit, 0, hit.endTime); // hit happen at end of spinner
-                else
+                else {
                     self.playHitsound(hit, 0, hit.time);
+                    self.errorMeter.hit(time - hit.time, time);
+                }
             }
             hit.score = points;
             hit.clickTime = time;
@@ -1131,19 +1133,20 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 time = osu.audio.getPosition() * 1000 + self.offset;
             }
             if (typeof time !== 'undefined') {
+                let nextapproachtime = (waitinghitid < this.hits.length && this.hits[waitinghitid].time - (this.hits[waitinghitid].approachTime || this.approachTime) > time)? this.hits[waitinghitid].time - (this.hits[waitinghitid].approachTime || this.approachTime): -1;
+                this.breakOverlay.countdown(nextapproachtime, time);
                 this.updateBackground(time);
-                self.updateHitObjects(time);
+                this.updateHitObjects(time);
                 this.scoreOverlay.update(time);
-                self.game.updatePlayerActions(time);
+                this.game.updatePlayerActions(time);
+                this.progressOverlay.update(time);
+                this.errorMeter.update(time);
             }
             else {
                 this.updateBackground(-100000);
             }
-            let nextapproachtime = (waitinghitid < this.hits.length && this.hits[waitinghitid].time - (this.hits[waitinghitid].approachTime || this.approachTime) > time)? this.hits[waitinghitid].time - (this.hits[waitinghitid].approachTime || this.approachTime): -1;
-            this.breakOverlay.countdown(nextapproachtime, time);
             this.volumeMenu.update(timestamp);
             this.loadingMenu.update(timestamp);
-            this.progressOverlay.update(time);
 
             if (time > this.endTime) {
                 // game ends
