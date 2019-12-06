@@ -40,7 +40,7 @@ function() {
     }`;
 
     // create line texture for slider from tint color
-    function newTexture(colors) {
+    function newTexture(colors, SliderTrackOverride, SliderBorder) {
 
         const borderwidth = 0.128;
         const innerPortion = 1 - borderwidth;
@@ -52,10 +52,11 @@ function() {
         let buff = new Uint8Array(colors.length * width * 4);
 
         for (let k=0; k<colors.length; ++k) {
-            let tint = colors[k];
-            let borderR = 1.0;
-            let borderG = 1.0;
-            let borderB = 1.0;
+            let tint = SliderTrackOverride || colors[k];
+            let bordertint = SliderBorder || 0xffffff;
+            let borderR = (bordertint>>16)/255;
+            let borderG = ((bordertint>>8)&255)/255;
+            let borderB = (bordertint&255)/255;
             let borderA = 1.0;
             let innerR = (tint>>16)/255;
             let innerG = ((tint>>8)&255)/255;
@@ -218,9 +219,9 @@ function() {
 
     // This should be called directly on prototype before any draw
     // as we only need ONE texture & ONE shader
-    SliderMesh.prototype.initialize = function(colors, transform) {
+    SliderMesh.prototype.initialize = function(colors, transform, SliderTrackOverride, SliderBorder) {
         this.ncolors = colors.length;
-        this.uSampler2 = newTexture(colors);
+        this.uSampler2 = newTexture(colors, SliderTrackOverride, SliderBorder);
         this.uniforms = {
             uSampler2: this.uSampler2,
             alpha: 1.0,

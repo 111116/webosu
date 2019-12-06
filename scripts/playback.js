@@ -369,13 +369,20 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.createBackground();
 
         // load combo colors
+        function convertcolor(color) {
+            return ((+color[0]) << 16) | ((+color[1]) << 8) | ((+color[2]) << 0);
+        }
         var combos = [];
         for (var i = 0; i < track.colors.length; i++) {
-            var color = track.colors[i];
-            combos.push(((+color[0]) << 16) |
-                        ((+color[1]) << 8) |
-                        ((+color[2]) << 0));
+            combos.push(convertcolor(track.colors[i]));
         }
+        var SliderTrackOverride;
+        var SliderBorder;
+        // leave them undefined if they're undefined in the beatmap
+        if (track.colors.SliderTrackOverride)
+            SliderTrackOverride = convertcolor(track.colors.SliderTrackOverride);
+        if (track.colors.SliderBorder)
+            SliderBorder = convertcolor(track.colors.SliderBorder);
 
         self.game.stage.addChild(this.gamefield);
         self.game.stage.addChild(this.scoreOverlay);
@@ -613,7 +620,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             ox: -1 + 2 * gfx.xoffset / window.innerWidth,
             dy: -2 * gfx.height / window.innerHeight / 384,
             oy: 1 - 2 * gfx.yoffset / window.innerHeight,
-        }); // prepare sliders
+        }, SliderTrackOverride, SliderBorder); // prepare sliders
         for (let i = 0; i < this.hits.length; i++) {
             this.populateHit(this.hits[i]); // Prepare sprites and such
         }

@@ -86,8 +86,13 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                         break;
                     case "[Colours]":
                         var parts = line.split(":");
+                        var key = parts[0].trim();
                         var value = parts[1].trim();
-                        self.colors.push(value.split(','));
+                        if (key == "SliderTrackOverride")
+                            self.colors.SliderTrackOverride = value.split(',');
+                        else if (key == "SliderBorder")
+                            self.colors.SliderBorder = value.split(',');
+                        else self.colors.push(value.split(','));
                         break;
                     case "[HitObjects]":
                         var parts = line.split(",");
