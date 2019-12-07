@@ -470,7 +470,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 let t = hit.time + i * tickDuration;
                 // Question: are ticks offset to the slider start or its timing point?
                 let pos = repeatclamp(i * tickDuration / hit.sliderTime);
-                if (pos < 0.001 || pos > 0.999) // omit tick at slider edge
+                if (Math.min(pos,1-pos) * hit.sliderTime < 0.05 * tickDuration) // omit tick at slider edge
                     continue;
                 let at = hit.curve.pointAt(pos);
                 hit.ticks.push(newSprite("sliderscorepoint.png", at.x, at.y));
