@@ -35,6 +35,7 @@ define([], function() {
         if (playback.autoplay) {
             playback.auto = {
                 currentObject: null,
+                curid: 0,
                 lastx: playback.game.mouseX,
                 lasty: playback.game.mouseY,
                 lasttime: 0
@@ -44,17 +45,8 @@ define([], function() {
             if (playback.autoplay) {
                 const spinRadius = 60;
                 let cur = playback.auto.currentObject;
-                if (!cur) {
-                    cur = playback.upcomingHits.find(function(hit){return hit.score < 0});
-                    playback.auto.currentObject = cur;
-                }
-                if (!cur || cur.time > time + playback.approachTime) {
-                    // no object to click, just rest
-                    playback.auto.lasttime = time;
-                    return;
-                }
                 // auto move cursor
-                if (playback.game.down) { // already on an object
+                if (playback.game.down && cur) { // already on an object
                     if (cur.type == "circle" || time > cur.endTime) {
                         // release cursor
                         playback.game.down = false;
@@ -74,7 +66,29 @@ define([], function() {
                         playback.game.mouseX = cur.x + spinRadius * Math.cos(currentAngle);
                     }
                 }
-                else {
+                // looking for next target
+                cur = playback.auto.currentObject;
+                while (playback.auto.curid < playback.hits.length && playback.hits[playback.auto.curid].endTime < time) {
+                    if (playback.hits[playback.auto.curid].score < 0) {
+                        playback.game.mouseX = playback.hits[playback.auto.curid].x;
+                        playback.game.mouseY = playback.hits[playback.auto.curid].y;
+                        if (playback.hits[playback.auto.curid].type == "spinner")
+                            playback.game.mouseY -= spinRadius;
+                        playback.game.down = true;
+                        checkClickdown();
+                    }
+                    ++playback.auto.curid;
+                }
+                if (!cur && playback.auto.curid < playback.hits.length) {
+                    cur = playback.hits[playback.auto.curid];
+                    playback.auto.currentObject = cur;
+                }
+                if (!cur || cur.time > time + playback.approachTime) {
+                    // no object to click, just rest
+                    playback.auto.lasttime = time;
+                    return;
+                }
+                if (!playback.game.down) {
                     // move toward the object
                     let targX = cur.x;
                     let targY = cur.y;

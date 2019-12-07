@@ -178,7 +178,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.followZoomInTime = 100;
         self.followFadeOutTime = 100;
         self.ballFadeOutTime = 100;
-        self.objectDespawnTime = 2000;
+        self.objectDespawnTime = 1500;
         self.backgroundFadeTime = 800;
         self.spinnerAppearTime = self.approachTime;
         self.spinnerZoomInTime = 300;
@@ -739,8 +739,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 }
                 return l;
             }
-            // Cache hit objects in the next 5 seconds
-            while (current < self.hits.length && futuremost < time + 5000) {
+            // Cache hit objects in the next 3 seconds
+            while (current < self.hits.length && futuremost < time + 3000) {
                 var hit = self.hits[current++];
                 for (let i = hit.judgements.length - 1; i >= 0; i--) {
                     self.gamefield.addChildAt(hit.judgements[i], findindex(hit.judgements[i].depth || 0.0001));
