@@ -51,7 +51,7 @@ function() {
             arcAng = expectAng; // truncate to given len
         }
         else {
-            console.log("Warning: P slider too short! ", expectAng / arcAng);
+            console.warn("[curve] P shorter than given", arcAng / expectAng);
         }
 
         // now use it for our new end angle
@@ -122,7 +122,7 @@ function() {
 
         var des = tb.x * ta.y - tb.y * ta.x;
         if (Math.abs(des) < 0.00001) {
-            console.log("Vectors are parallel.");
+            console.warn("[curve] encountering straight P slider");
             return undefined;
         }
         var u = ((b.y - a.y) * ta.x + (a.x - b.x) * ta.y) / des;

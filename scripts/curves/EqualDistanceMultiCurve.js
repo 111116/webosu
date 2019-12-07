@@ -38,7 +38,7 @@ define(["curves/Curve"], function(Curve) {
                         curPoint = curCurve.ncurve - 1;
                         if (lastDistanceAt === distanceAt) {
                             if (distanceAt < pixelLength * 0.97) {
-                                console.warn("EqualDistanceMultiCurve: slider shorter than expected ", distanceAt, pixelLength);
+                                console.warn("[curve] L/B shorter than given", distanceAt / pixelLength);
                             }
                             // out of points even though the preferred distance hasn't been reached
                             break;

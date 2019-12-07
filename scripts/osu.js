@@ -209,7 +209,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                 this.difficulty.CircleSize = this.difficulty.CircleSize || this.difficulty.OverallDifficulty;
                 this.difficulty.ApproachRate = this.difficulty.ApproachRate || this.difficulty.OverallDifficulty;
             } else {
-                console.warn("Overall Difficulty undefined");
+                console.warn("[preproc]","Overall Difficulty undefined");
             }
 
             // calculate inherited timing points
@@ -390,11 +390,11 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                 }
                 else {
                     if (hit.sliderType == "C")
-                        console.warn(track.metadata.BeatmapID || track.metadata.Title + ':' + track.metadata.Version, "Catmull curve unsupported. fallback to bezier");
+                        console.warn("[curve]",track.metadata.BeatmapID || track.metadata.Title + '/' + track.metadata.Version, "Catmull curve unsupported. fallback to bezier");
                     hit.curve = new LinearBezier(hit, hit.sliderType === "L");
                 }
                 if (hit.curve.length < 2) // (not sure here)
-                    console.error("slider curve calculation failed");
+                    console.error("[curve] slider curve calculation failed");
             }
         }
     }
@@ -453,7 +453,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                     if (stacked[j]) {
                         // intersecting with a previous chain.
                         // this shouldn't happen in a usual beatmap.
-                        console.warn(track.metadata.BeatmapID || track.metadata.Title + ':' + track.metadata.Version, "object stacks intersecting", i, j);
+                        console.warn("[preproc]",track.metadata.BeatmapID || track.metadata.Title + '/' + track.metadata.Version, "object stacks intersecting", i, j);
                         // quit stacking
                         break;
                     }
