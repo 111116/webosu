@@ -28,6 +28,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
             }
             var section = null;
             var combo = 0, index = 0;
+            var forceNewCombo = false;
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i].trim();
                 if (line === "") continue;
@@ -104,11 +105,12 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                             hitSound: +parts[4]
                         };
                         // Handle combos
-                        if ((hit.type & HIT_TYPE_NEWCOMBO) > 0) {
+                        if ((hit.type & HIT_TYPE_NEWCOMBO) > 0 || forceNewCombo) {
                             combo++;
                             combo += (hit.type>>4)&7; // combo skip
                             index = 0;
                         }
+                        forceNewCombo = false;
                         hit.combo = combo;
                         hit.index = index++;
 
@@ -169,6 +171,10 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                                 filename: hitSample[4]
                             };
                         } else if ((hit.type & HIT_TYPE_SPINNER) > 0) {
+                            if (hit.type & HIT_TYPE_NEWCOMBO)
+                                combo--;
+                            hit.combo = combo - ((hit.type>>4)&7); // force in same combo
+                            forceNewCombo = true; // force next object in new combo
                             hit.type = "spinner";
                             hit.endTime = +parts[5];
                             if (hit.endTime < hit.time)
