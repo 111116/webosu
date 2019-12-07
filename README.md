@@ -16,11 +16,7 @@ Modes other than osu! (std) are unsupported.
 
 web page:
 
-![web page](screenshots/page1.jpg)
-
 game in action:
-
-![play in action](screenshots/clip2.gif)
 
 ## Hosting
 
@@ -33,8 +29,8 @@ Just set up a local web server with root directory located where `index.html` is
 - slider snake-in: no
 - slider snake-out: no
 - custom skin: no
-- beatmap skin: no
 - beatmap hitsounds: no
+- supported mods: EZ DC HR NC HD AT
 
 ## Rules
 
