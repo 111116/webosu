@@ -78,8 +78,8 @@ define([], function()
             return a;
         }
 
-        this.scoreDigits = this.newSpriteArray(7, 0.4, 0xddffff); // 1000000
-        this.comboDigits = this.newSpriteArray(5, 0.2, 0xddffff); // 1000x
+        this.scoreDigits = this.newSpriteArray(10, 0.4, 0xddffff); // 9999999999
+        this.comboDigits = this.newSpriteArray(6, 0.2, 0xddffff); // 99999x
         this.accuracyDigits = this.newSpriteArray(7, 0.2, 0xddffff); // 100.00%
 
         this.HPbar = this.newSpriteArray(3, 0.5);
