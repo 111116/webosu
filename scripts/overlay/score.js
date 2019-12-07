@@ -35,21 +35,22 @@ define([], function()
     }
 
 
-    function ScoreOverlay(windowfield, HPdrain) // constructor. 
+    function ScoreOverlay(windowfield, HPdrain, scoreMultiplier) // constructor. 
     {
         PIXI.Container.call(this);
 
         this.field = windowfield;
         this.HPdrain = HPdrain;
         this.scaleMul = windowfield.height / 800;
+        this.scoreMultiplier = scoreMultiplier;
 
-        this.score = 0;
+        this.score = 0; // this have been multiplied by scoreMultiplier
         this.combo = 0;
         this.maxcombo = 0;
         this.judgeTotal = 0;
         this.maxJudgeTotal = 0;
         this.HP = 1;
-        // accuracy = score / maxscore
+        // accuracy = judgeTotal / maxJudgeTotal
 
         this.onfail = null;
         this.judgecnt = {
@@ -144,7 +145,7 @@ define([], function()
             }
             this.judgeTotal += result;
             this.maxJudgeTotal += maxresult;
-            this.score += result * (1 + this.combo / 25);
+            this.score += this.scoreMultiplier * result * (1 + this.combo / 25);
             // any zero-score result is a miss
             this.combo = (result > 0)? this.combo+1 : 0;
             this.maxcombo = Math.max(this.maxcombo, this.combo);

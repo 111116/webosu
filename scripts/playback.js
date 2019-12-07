@@ -43,8 +43,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.approachScale = 3;
         self.audioReady = false;
         self.endTime = self.hits[self.hits.length-1].endTime + 1500;
-        var scoreCharWidth = 35;
-        var scoreCharHeight = 45;
         this.wait = Math.max(0, 1500-this.hits[0].time);
 
         self.osu.onready = function() {
@@ -132,7 +130,14 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             this.HP = this.HP * 0.5;
         }
 
-        self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, this.HP);
+        let scoreModMultiplier = 1.0;
+        if (game.easy) scoreModMultiplier *= 0.50;
+        if (game.daycore) scoreModMultiplier *= 0.30;
+        if (game.hardrock) scoreModMultiplier *= 1.06;
+        if (game.nightcore) scoreModMultiplier *= 1.12;
+        if (game.hidden) scoreModMultiplier *= 1.06;
+
+        self.scoreOverlay = new ScoreOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, this.HP, scoreModMultiplier);
         self.circleRadius = (109 - 9 * this.CS)/2; // unit: osu! pixel
         self.hitSpriteScale = self.circleRadius / 60;
         self.MehTime = 200 - 10 * this.OD;
