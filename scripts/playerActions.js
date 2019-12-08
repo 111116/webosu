@@ -96,7 +96,7 @@ define([], function() {
                         targY -= spinRadius;
                     let t = (time - playback.auto.lasttime) / (cur.time - playback.auto.lasttime);
                     t = Math.max(0, Math.min(1, t));
-                    t = 0.5-Math.sin((Math.pow(1-t,1.5)-0.5)*Math.PI)/2;
+                    t = 0.5-Math.sin((Math.pow(1-t,1.5)-0.5)*Math.PI)/2; // easing
                     playback.game.mouseX = t * targX + (1-t) * playback.auto.lastx;
                     playback.game.mouseY = t * targY + (1-t) * playback.auto.lasty;
 
