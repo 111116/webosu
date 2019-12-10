@@ -52,8 +52,8 @@ function() {
         let buff = new Uint8Array(colors.length * width * 4);
 
         for (let k=0; k<colors.length; ++k) {
-            let tint = SliderTrackOverride || colors[k];
-            let bordertint = SliderBorder || 0xffffff;
+            let tint = (typeof(SliderTrackOverride) != 'undefined')? SliderTrackOverride: colors[k];
+            let bordertint = (typeof(SliderBorder) != 'undefined')? SliderBorder: 0xffffff;
             let borderR = (bordertint>>16)/255;
             let borderG = ((bordertint>>8)&255)/255;
             let borderB = (bordertint&255)/255;
