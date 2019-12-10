@@ -68,7 +68,7 @@ define([], function() {
                 }
                 // looking for next target
                 cur = playback.auto.currentObject;
-                while (playback.auto.curid < playback.hits.length && playback.hits[playback.auto.curid].endTime < time) {
+                while (playback.auto.curid < playback.hits.length && playback.hits[playback.auto.curid].time < time) {
                     if (playback.hits[playback.auto.curid].score < 0) {
                         playback.game.mouseX = playback.hits[playback.auto.curid].x;
                         playback.game.mouseY = playback.hits[playback.auto.curid].y;
