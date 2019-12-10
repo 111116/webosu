@@ -59,7 +59,8 @@ define(["curves/Curve"], function(Curve) {
                 let t = (prefDistance - lastDistanceAt) / (distanceAt - lastDistanceAt);
                 this.curve[i] = {
                     x: Curve.lerp(lastCurve.x, thisCurve.x, t),
-                    y: Curve.lerp(lastCurve.y, thisCurve.y, t)
+                    y: Curve.lerp(lastCurve.y, thisCurve.y, t),
+                    t: t,
                 };
             }
         }

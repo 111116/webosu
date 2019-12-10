@@ -18,12 +18,12 @@ function() {
     // vertex shader source
     const vertexSrc = `
     precision mediump float;
-    attribute vec3 position;
+    attribute vec4 position;
     varying float dist;
     uniform float dx,dy,ox,oy;
     void main() {
-        dist = position[2];
-        gl_Position = vec4(position, 1.0);
+        dist = position[3];
+        gl_Position = vec4(position[0], position[1], position[3], 1.0);
         gl_Position.x = gl_Position.x * dx + ox;
         gl_Position.y = gl_Position.y * dy + oy;
     }`;
@@ -128,25 +128,27 @@ function() {
         let vert = new Array();
         let index = new Array();
 
-        vert.push(curve[0].x, curve[0].y, 0.0); // first point on curve
+        vert.push(curve[0].x, curve[0].y, curve[0].t, 0.0); // first point on curve
 
         // add rectangles around each segment of curve
         for (let i = 1; i < curve.length; ++i) {
             let x = curve[i].x;
             let y = curve[i].y;
+            let t = curve[i].t;
             let lx = curve[i-1].x;
             let ly = curve[i-1].y;
+            let lt = curve[i-1].t;
             let dx = x - lx;
             let dy = y - ly;
             let length = Math.hypot(dx, dy);
             let ox = radius * -dy / length;
             let oy = radius * dx / length;
 
-            vert.push(lx+ox, ly+oy, 1.0);
-            vert.push(lx-ox, ly-oy, 1.0);
-            vert.push(x+ox, y+oy, 1.0);
-            vert.push(x-ox, y-oy, 1.0);
-            vert.push(x, y, 0.0);
+            vert.push(lx+ox, ly+oy, lt, 1.0);
+            vert.push(lx-ox, ly-oy, lt, 1.0);
+            vert.push(x+ox, y+oy, t, 1.0);
+            vert.push(x-ox, y-oy, t, 1.0);
+            vert.push(x, y, t, 0.0);
 
             let n = 5*i+1;
             // indices for 4 triangles composing 2 rectangles
@@ -154,11 +156,11 @@ function() {
             index.push(n-6, n-4, n-1, n-4, n-1, n-2);
         }
 
-        function addArc(c, p1, p2) // c as center, sector from c-p1 to c-p2 counterclockwise
+        function addArc(c, p1, p2, t) // c as center, sector from c-p1 to c-p2 counterclockwise
         {
             const DIVIDES = 64; // approximate a circle with a polygon of DEVIDES sides
-            let theta_1 = Math.atan2(vert[3*p1+1]-vert[3*c+1], vert[3*p1]-vert[3*c])
-            let theta_2 = Math.atan2(vert[3*p2+1]-vert[3*c+1], vert[3*p2]-vert[3*c])
+            let theta_1 = Math.atan2(vert[4*p1+1]-vert[4*c+1], vert[4*p1]-vert[4*c])
+            let theta_2 = Math.atan2(vert[4*p2+1]-vert[4*c+1], vert[4*p2]-vert[4*c])
             if (theta_1 > theta_2)
                 theta_2 += 2*Math.PI;
             let theta = theta_2 - theta_1;
@@ -166,9 +168,9 @@ function() {
             theta /= divs;
             let last = p1;
             for (let i=1; i<divs; ++i) {
-                vert.push(vert[3*c] + radius * Math.cos(theta_1 + i * theta),
-                        vert[3*c+1] + radius * Math.sin(theta_1 + i * theta), 1.0);
-                let newv = vert.length/3 - 1;
+                vert.push(vert[4*c] + radius * Math.cos(theta_1 + i * theta),
+                        vert[4*c+1] + radius * Math.sin(theta_1 + i * theta), t, 1.0);
+                let newv = vert.length/4 - 1;
                 index.push(c, last, newv);
                 last = newv;
             }
@@ -176,8 +178,8 @@ function() {
         }
 
         // add half-circle for head & tail of curve
-        addArc(0,1,2);
-        addArc(5*curve.length-5, 5*curve.length-6, 5*curve.length-7);
+        addArc(0,1,2, curve[0].t);
+        addArc(5*curve.length-5, 5*curve.length-6, 5*curve.length-7, curve[curve.length-1].t);
 
         // add sectors for turning points of curve
         for (let i=1; i<curve.length-1; ++i) {
@@ -193,7 +195,7 @@ function() {
                 addArc(5*i, 5*i+1, 5*i-2);
             }
         }
-        return new PIXI.Geometry().addAttribute('position', vert, 3).addIndex(index)
+        return new PIXI.Geometry().addAttribute('position', vert, 4).addIndex(index)
     }
 
     function SliderMesh(curve, radius, tintid) // constructor. 

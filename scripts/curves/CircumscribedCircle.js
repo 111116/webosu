@@ -66,7 +66,8 @@ function() {
             var ang = lerp(startAng, endAng, t);
             return {
                 x: Math.cos(ang) * radius + circleCenter.x,
-                y: Math.sin(ang) * radius + circleCenter.y
+                y: Math.sin(ang) * radius + circleCenter.y,
+                t: t,
             };
         };
         for (var i = 0; i < curve.length; i++) {
