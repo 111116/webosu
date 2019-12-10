@@ -20,6 +20,8 @@ function setOptionPanel() {
 		blur: 0,
 		cursorsize: 1.0,
 		showhwmouse: false,
+		snakein: true,
+		snakeout: true,
 
 		disableWheel: false,
 		disableButton: false,
@@ -55,6 +57,8 @@ function setOptionPanel() {
 	        window.game.backgroundBlurRate = this.blur / 100;
 	        window.game.cursorSize = this.cursorsize;
 	        window.game.showhwmouse = this.showhwmouse;
+	        window.game.snakein = this.snakein;
+	        window.game.snakeout = this.snakeout;
 
 	        window.game.allowMouseScroll = !this.disableWheel;
 	        window.game.allowMouseButton = !this.disableButton;
@@ -177,6 +181,8 @@ function setOptionPanel() {
 	bindrange("blur-range", "blur", function(v){return v+"%"});
 	bindrange("cursorsize-range", "cursorsize", function(v){return v.toFixed(2)+"x"});
 	bindcheck("showhwmouse-check", "showhwmouse");
+	bindcheck("snakein-check", "snakein");
+	bindcheck("snakeout-check", "snakeout");
 
 	// input settings
 	bindcheck("disable-wheel-check", "disableWheel");
