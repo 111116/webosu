@@ -50,11 +50,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                     case "[Metadata]":
                         var key = line.substr(0, line.indexOf(":"));
                         var value = line.substr(line.indexOf(":") + 1).trim();
-                        if (isNaN(value)) {
-                            self.metadata[key] = value;
-                        } else {
-                            self.metadata[key] = (+value);
-                        }
+                        self.metadata[key] = value;
                         break;
                     case "[Events]":
                         self.events.push(line.split(","));
