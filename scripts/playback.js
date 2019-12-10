@@ -876,6 +876,9 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
 
             let noteFullAppear = this.approachTime - hit.objectFadeInTime; // duration of opaque hit circle when approaching
 
+            hit.body.startt = 0.0;
+            hit.body.endt = 1.0;
+
             // set opacity of slider body
             function setbodyAlpha(alpha) {
                 hit.body.alpha = alpha;
@@ -888,6 +891,9 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 setbodyAlpha((this.approachTime - diff) / hit.objectFadeInTime);
                 if (hit.reverse) hit.reverse.alpha = hit.body.alpha;
                 if (hit.reverse_b) hit.reverse_b.alpha = hit.body.alpha;
+                if (this.game.snakein) {
+
+                }
             } else if (diff <= noteFullAppear) {
                 if (-diff > hit.fadeOutOffset) {
                     let t = clamp01((-diff - hit.fadeOutOffset) / hit.fadeOutDuration);
@@ -915,9 +921,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             if (-diff >= 0 && -diff <= hit.fadeOutDuration + hit.sliderTimeTotal) { // after hit.time & before slider disappears
                 // t: position relative to slider duration
                 let t = -diff / hit.sliderTime;
-                if (hit.repeat > 1) {
-                    hit.currentRepeat = Math.ceil(t);
-                }
+                hit.currentRepeat = Math.min(Math.ceil(t), hit.repeat);
                 // check for slider edge hit
                 let atEnd = false;
                 if (Math.floor(t) > hit.lastrep)
@@ -1007,13 +1011,27 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 }
 
                 // reverse arrow
-                if (hit.currentRepeat) {
+                if (hit.repeat > 1) {
                     let finalrepfromA = hit.repeat - hit.repeat % 2; // even
                     let finalrepfromB = hit.repeat-1 + hit.repeat % 2; // odd
                     hit.reverse.visible = (hit.currentRepeat < finalrepfromA);
                     if (hit.reverse_b)
                         hit.reverse_b.visible = (hit.currentRepeat < finalrepfromB);
                     // TODO reverse arrow fade out animation
+                }
+
+                // update snaking out portion
+                if (this.game.snakeout) {
+                    if (hit.currentRepeat == hit.repeat) {
+                        if (hit.repeat%2==1) {
+                            hit.body.startt = t;
+                            hit.body.endt = 1.0;
+                        }
+                        else {
+                            hit.body.startt = 0.0;
+                            hit.body.endt = t;
+                        }
+                    }
                 }
             }
             

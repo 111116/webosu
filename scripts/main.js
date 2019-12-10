@@ -14,6 +14,8 @@ function(Osu, _, sound, Playback) {
         backgroundBlurRate: 0.0,
         cursorSize: 1.0,
         showhwmouse: false,
+        snakein: true,
+        snakeout: true,
 
         // audio
         masterVolume: 0.7,
