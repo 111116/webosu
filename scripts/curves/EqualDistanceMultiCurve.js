@@ -60,9 +60,9 @@ define(["curves/Curve"], function(Curve) {
                 this.curve[i] = {
                     x: Curve.lerp(lastCurve.x, thisCurve.x, t),
                     y: Curve.lerp(lastCurve.y, thisCurve.y, t),
-                    t: t,
                 };
             }
+            this.curve[i].t = i / this.ncurve;
         }
     }
     EqualDistanceMultiCurve.prototype.pointAt = function pointAt(t) {

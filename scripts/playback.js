@@ -450,7 +450,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             // create slider body
             // manually set transform osupixel -> gl coordinate
 
-            var body = hit.body = new SliderMesh(hit.curve.curve, this.circleRadius, hit.combo % combos.length);
+            var body = hit.body = new SliderMesh(hit.curve, this.circleRadius, hit.combo % combos.length);
             body.alpha = 0;
             body.depth = 4.9999-0.0001*hit.hitIndex;
             hit.objects.push(body);
@@ -620,7 +620,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             }
         }
         
-        SliderMesh.prototype.initialize(combos, {
+        SliderMesh.prototype.initialize(combos, this.circleRadius, {
             dx: 2 * gfx.width / window.innerWidth / 512,
             ox: -1 + 2 * gfx.xoffset / window.innerWidth,
             dy: -2 * gfx.height / window.innerHeight / 384,

@@ -58,8 +58,8 @@ function() {
         endAng = (endAng > startAng) ? startAng + arcAng : startAng - arcAng;
 
         // calculate points
-        var step = hit.pixelLength / CURVE_POINTS_SEPERATION;
-        var curve = new Array(Math.floor(step) + 1);
+        var step = Math.floor(hit.pixelLength / CURVE_POINTS_SEPERATION);
+        var curve = new Array(step + 1);
 
         pointAt = function(t) {
             if (t > 1) t = 1;

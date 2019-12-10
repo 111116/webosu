@@ -20,10 +20,10 @@ function() {
     precision mediump float;
     attribute vec4 position;
     varying float dist;
-    uniform float dx,dy,ox,oy;
+    uniform float dx,dy,dt,ox,oy,ot;
     void main() {
         dist = position[3];
-        gl_Position = vec4(position[0], position[1], position[3], 1.0);
+        gl_Position = vec4(position[0], position[1], position[3] + 2.0 * float(position[2]*dt>ot), 1.0);
         gl_Position.x = gl_Position.x * dx + ox;
         gl_Position.y = gl_Position.y * dy + oy;
     }`;
@@ -110,6 +110,7 @@ function() {
     }
 
 
+    const DIVIDES = 64; // approximate a circle with a polygon of DEVIDES sides
     // create mesh from control curve
     // given curve0: in osu pixels
     // given radius: in osu pixels
@@ -158,7 +159,6 @@ function() {
 
         function addArc(c, p1, p2, t) // c as center, sector from c-p1 to c-p2 counterclockwise
         {
-            const DIVIDES = 64; // approximate a circle with a polygon of DEVIDES sides
             let theta_1 = Math.atan2(vert[4*p1+1]-vert[4*c+1], vert[4*p1]-vert[4*c])
             let theta_2 = Math.atan2(vert[4*p2+1]-vert[4*c+1], vert[4*p2]-vert[4*c])
             if (theta_1 > theta_2)
@@ -198,13 +198,28 @@ function() {
         return new PIXI.Geometry().addAttribute('position', vert, 4).addIndex(index)
     }
 
+    function circleGeometry(radius) {
+        let vert = new Array();
+        let index = new Array();
+        vert.push(0.0, 0.0, 0.0, 0.0); // center
+        for (let i=0; i<DIVIDES; ++i) {
+            let theta = 2 * Math.PI / DIVIDES * i;
+            vert.push(radius * Math.cos(theta), radius * Math.sin(theta), 0.0, 1.0);
+            index.push(0, i+1, (i+1)%DIVIDES+1);
+        }
+        return new PIXI.Geometry().addAttribute('position', vert, 4).addIndex(index)
+    }
+
     function SliderMesh(curve, radius, tintid) // constructor. 
     {
         Container.call(this);
 
-        this.geometry = curveGeometry(curve, radius);
+        this.curve = curve;
+        this.geometry = curveGeometry(curve.curve, radius);
         this.alpha = 1.0;
         this.tintid = tintid;
+        this.startt = 0.5;
+        this.endt = 1.0;
         
         // blend mode, culling, depth testing, direction of rendering triangles, backface, etc.
         this.state = PIXI.State.for2d();
@@ -221,9 +236,10 @@ function() {
 
     // This should be called directly on prototype before any draw
     // as we only need ONE texture & ONE shader
-    SliderMesh.prototype.initialize = function(colors, transform, SliderTrackOverride, SliderBorder) {
+    SliderMesh.prototype.initialize = function(colors, radius, transform, SliderTrackOverride, SliderBorder) {
         this.ncolors = colors.length;
         this.uSampler2 = newTexture(colors, SliderTrackOverride, SliderBorder);
+        this.circle = circleGeometry(radius);
         this.uniforms = {
             uSampler2: this.uSampler2,
             alpha: 1.0,
@@ -266,35 +282,104 @@ function() {
         // upload color info to shared shader uniform
         this.uniforms.alpha = this.alpha;
         this.uniforms.texturepos = this.tintid / this.ncolors;
-        
-        // translation is not supported
-        renderer.state.set(this.state); // set state
-        renderer.geometry.bind(this.geometry, shader); // bind the geometry
-        renderer.state.setDepthTest(true); // enable depth testing
+        this.uniforms.dt = 0;
+        this.uniforms.ot = 0.5;
+
+        let ox0 = this.uniforms.ox;
+        let oy0 = this.uniforms.oy;
 
         const gl = renderer.gl;
-        const byteSize = this.geometry.indexBuffer.data.BYTES_PER_ELEMENT; // size of each index
-        const glType = byteSize === 2 ? gl.UNSIGNED_SHORT : gl.UNSIGNED_INT; // type of each index
-        const indexLength = this.geometry.indexBuffer.data.length; // number of indices
-
-        renderer.shader.bind(shader); // bind shader & sync uniforms
-
         gl.clearDepth(1.0); // setting depth of clear
         gl.clear(gl.DEPTH_BUFFER_BIT); // this really clears the depth buffer
 
         // first render: to store min depth in depth buffer, but not actually drawing anything
         gl.colorMask(false, false, false, false);
-        gl.drawElements(this.drawMode, indexLength, glType, 0);
+        
+        // translation is not supported
+        renderer.state.set(this.state); // set state
+        renderer.state.setDepthTest(true); // enable depth testing
+
+        let glType;
+        let indexLength;
+
+        function bind(geometry) {
+            renderer.shader.bind(shader); // bind shader & sync uniforms
+            renderer.geometry.bind(geometry, shader); // bind the geometry
+            let byteSize = geometry.indexBuffer.data.BYTES_PER_ELEMENT; // size of each index
+            glType = byteSize === 2 ? gl.UNSIGNED_SHORT : gl.UNSIGNED_INT; // type of each index
+            indexLength = geometry.indexBuffer.data.length; // number of indices
+        }
+        if (this.startt == 0.0 && this.endt == 1.0) { // display whole slider
+            this.uniforms.dt = 0;
+            this.uniforms.ot = 1;
+            bind(this.geometry);
+            gl.drawElements(this.drawMode, indexLength, glType, 0);
+        }
+        else if (this.endt == 1.0) { // snaking out
+            // we want portion: t > this.startt
+            this.uniforms.dt = -1;
+            this.uniforms.ot = -this.startt;
+            bind(this.geometry);
+            gl.drawElements(this.drawMode, indexLength, glType, 0);
+            this.uniforms.dt = 0;
+            this.uniforms.ot = 1;
+            let p = this.curve.pointAt(this.startt);
+            this.uniforms.ox += p.x * this.uniforms.dx;
+            this.uniforms.oy += p.y * this.uniforms.dy;
+            bind(this.circle);
+            gl.drawElements(this.drawMode, indexLength, glType, 0);
+        }
+        else if (this.startt == 0.0) { // snaking in
+            // we want portion: t < this.endt
+            this.uniforms.dt = 1;
+            this.uniforms.ot = this.endt;
+            bind(this.geometry);
+            gl.drawElements(this.drawMode, indexLength, glType, 0);
+            this.uniforms.dt = 0;
+            this.uniforms.ot = 1;
+            let p = this.curve.pointAt(this.endt);
+            this.uniforms.ox += p.x * this.uniforms.dx;
+            this.uniforms.oy += p.y * this.uniforms.dy;
+            bind(this.circle);
+            gl.drawElements(this.drawMode, indexLength, glType, 0);
+        }
+        else {
+            console.error("can't snake both end of slider");
+        }
 
         // second render: draw at previously calculated min depth
         gl.depthFunc(gl.EQUAL);      
         gl.colorMask(true, true, true, true);
-        gl.drawElements(this.drawMode, indexLength, glType, 0);
+
+        if (this.startt == 0.0 && this.endt == 1.0) { // display whole slider
+            gl.drawElements(this.drawMode, indexLength, glType, 0);
+        }
+        else if (this.endt == 1.0) { // snaking out
+            gl.drawElements(this.drawMode, indexLength, glType, 0);
+            this.uniforms.ox = ox0;
+            this.uniforms.oy = oy0;
+            this.uniforms.dt = -1;
+            this.uniforms.ot = -this.startt;
+            bind(this.geometry);
+            gl.drawElements(this.drawMode, indexLength, glType, 0);
+        }
+        else if (this.startt == 0.0) { // snaking in
+            gl.drawElements(this.drawMode, indexLength, glType, 0);
+            this.uniforms.ox = ox0;
+            this.uniforms.oy = oy0;
+            this.uniforms.dt = 1;
+            this.uniforms.ot = this.endt;
+            bind(this.geometry);
+            gl.drawElements(this.drawMode, indexLength, glType, 0);
+        }
 
         // restore state
         // TODO: We don't know the previous state. THIS MIGHT CAUSE BUGS
         gl.depthFunc(gl.LESS); // restore to default depth func
         renderer.state.setDepthTest(false); // restore depth test to disabled
+        // restore uniform
+        this.uniforms.ox = ox0;
+        this.uniforms.oy = oy0;
     };
 
     SliderMesh.prototype.destroy = function destroy (options)
