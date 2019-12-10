@@ -891,9 +891,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 setbodyAlpha((this.approachTime - diff) / hit.objectFadeInTime);
                 if (hit.reverse) hit.reverse.alpha = hit.body.alpha;
                 if (hit.reverse_b) hit.reverse_b.alpha = hit.body.alpha;
-                if (this.game.snakein) {
-
-                }
             } else if (diff <= noteFullAppear) {
                 if (-diff > hit.fadeOutOffset) {
                     let t = clamp01((-diff - hit.fadeOutOffset) / hit.fadeOutDuration);
@@ -903,6 +900,25 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                     setbodyAlpha(1);
                     if (hit.reverse) hit.reverse.alpha = 1;
                     if (hit.reverse_b) hit.reverse_b.alpha = 1;
+                }
+            }
+            if (this.game.snakein) {
+                if (diff > 0) {
+                    let t = clamp01((time - (hit.time - this.approachTime)) / (this.approachTime / 3));
+                    hit.body.endt = t;
+                    if (hit.reverse) {
+                        let p = hit.curve.pointAt(t);
+                        hit.reverse.x = p.x;
+                        hit.reverse.y = p.y;
+                        let p2;
+                        if (t < 0.5) {
+                            let p2 = hit.curve.pointAt(t+0.005);
+                            hit.reverse.rotation = Math.atan2(p.y - p2.y, p.x - p2.x);
+                        } else {
+                            let p2 = hit.curve.pointAt(t-0.005);
+                            hit.reverse.rotation = Math.atan2(p2.y - p.y, p2.x - p.x);
+                        }
+                    }
                 }
             }
 
