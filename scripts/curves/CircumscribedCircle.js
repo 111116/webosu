@@ -58,15 +58,16 @@ function() {
         endAng = (endAng > startAng) ? startAng + arcAng : startAng - arcAng;
 
         // calculate points
-        var step = hit.pixelLength / CURVE_POINTS_SEPERATION;
-        var curve = new Array(Math.floor(step) + 1);
+        var step = Math.floor(hit.pixelLength / CURVE_POINTS_SEPERATION);
+        var curve = new Array(step + 1);
 
         pointAt = function(t) {
             if (t > 1) t = 1;
             var ang = lerp(startAng, endAng, t);
             return {
                 x: Math.cos(ang) * radius + circleCenter.x,
-                y: Math.sin(ang) * radius + circleCenter.y
+                y: Math.sin(ang) * radius + circleCenter.y,
+                t: t,
             };
         };
         for (var i = 0; i < curve.length; i++) {

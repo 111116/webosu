@@ -450,7 +450,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             // create slider body
             // manually set transform osupixel -> gl coordinate
 
-            var body = hit.body = new SliderMesh(hit.curve.curve, this.circleRadius, hit.combo % combos.length);
+            var body = hit.body = new SliderMesh(hit.curve, this.circleRadius, hit.combo % combos.length);
             body.alpha = 0;
             body.depth = 4.9999-0.0001*hit.hitIndex;
             hit.objects.push(body);
@@ -620,7 +620,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             }
         }
         
-        SliderMesh.prototype.initialize(combos, {
+        SliderMesh.prototype.initialize(combos, this.circleRadius, {
             dx: 2 * gfx.width / window.innerWidth / 512,
             ox: -1 + 2 * gfx.xoffset / window.innerWidth,
             dy: -2 * gfx.height / window.innerHeight / 384,
@@ -876,6 +876,9 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
 
             let noteFullAppear = this.approachTime - hit.objectFadeInTime; // duration of opaque hit circle when approaching
 
+            hit.body.startt = 0.0;
+            hit.body.endt = 1.0;
+
             // set opacity of slider body
             function setbodyAlpha(alpha) {
                 hit.body.alpha = alpha;
@@ -899,6 +902,25 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                     if (hit.reverse_b) hit.reverse_b.alpha = 1;
                 }
             }
+            if (this.game.snakein) {
+                if (diff > 0) {
+                    let t = clamp01((time - (hit.time - this.approachTime)) / (this.approachTime / 3));
+                    hit.body.endt = t;
+                    if (hit.reverse) {
+                        let p = hit.curve.pointAt(t);
+                        hit.reverse.x = p.x;
+                        hit.reverse.y = p.y;
+                        let p2;
+                        if (t < 0.5) {
+                            let p2 = hit.curve.pointAt(t+0.005);
+                            hit.reverse.rotation = Math.atan2(p.y - p2.y, p.x - p2.x);
+                        } else {
+                            let p2 = hit.curve.pointAt(t-0.005);
+                            hit.reverse.rotation = Math.atan2(p2.y - p.y, p2.x - p.x);
+                        }
+                    }
+                }
+            }
 
             // set position of slider ball & follow circle
             // approach circle & hit circle moves along fading
@@ -915,9 +937,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             if (-diff >= 0 && -diff <= hit.fadeOutDuration + hit.sliderTimeTotal) { // after hit.time & before slider disappears
                 // t: position relative to slider duration
                 let t = -diff / hit.sliderTime;
-                if (hit.repeat > 1) {
-                    hit.currentRepeat = Math.ceil(t);
-                }
+                hit.currentRepeat = Math.min(Math.ceil(t), hit.repeat);
                 // check for slider edge hit
                 let atEnd = false;
                 if (Math.floor(t) > hit.lastrep)
@@ -1007,13 +1027,27 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
                 }
 
                 // reverse arrow
-                if (hit.currentRepeat) {
+                if (hit.repeat > 1) {
                     let finalrepfromA = hit.repeat - hit.repeat % 2; // even
                     let finalrepfromB = hit.repeat-1 + hit.repeat % 2; // odd
                     hit.reverse.visible = (hit.currentRepeat < finalrepfromA);
                     if (hit.reverse_b)
                         hit.reverse_b.visible = (hit.currentRepeat < finalrepfromB);
                     // TODO reverse arrow fade out animation
+                }
+
+                // update snaking out portion
+                if (this.game.snakeout) {
+                    if (hit.currentRepeat == hit.repeat) {
+                        if (hit.repeat%2==1) {
+                            hit.body.startt = t;
+                            hit.body.endt = 1.0;
+                        }
+                        else {
+                            hit.body.startt = 0.0;
+                            hit.body.endt = t;
+                        }
+                    }
                 }
             }
             
