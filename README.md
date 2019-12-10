@@ -16,7 +16,11 @@ Modes other than osu! (std) are unsupported.
 
 web page:
 
+![webpage](screenshots/page2.jpg)
+
 game in action:
+
+![webpage](screenshots/clip3.gif)
 
 ## Hosting
 
