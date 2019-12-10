@@ -218,7 +218,7 @@ function() {
         this.geometry = curveGeometry(curve.curve, radius);
         this.alpha = 1.0;
         this.tintid = tintid;
-        this.startt = 0.5;
+        this.startt = 0.0;
         this.endt = 1.0;
         
         // blend mode, culling, depth testing, direction of rendering triangles, backface, etc.
@@ -316,11 +316,13 @@ function() {
             gl.drawElements(this.drawMode, indexLength, glType, 0);
         }
         else if (this.endt == 1.0) { // snaking out
-            // we want portion: t > this.startt
-            this.uniforms.dt = -1;
-            this.uniforms.ot = -this.startt;
-            bind(this.geometry);
-            gl.drawElements(this.drawMode, indexLength, glType, 0);
+            if (this.startt != 1.0) {
+                // we want portion: t > this.startt
+                this.uniforms.dt = -1;
+                this.uniforms.ot = -this.startt;
+                bind(this.geometry);
+                gl.drawElements(this.drawMode, indexLength, glType, 0);
+            }
             this.uniforms.dt = 0;
             this.uniforms.ot = 1;
             let p = this.curve.pointAt(this.startt);
@@ -330,11 +332,13 @@ function() {
             gl.drawElements(this.drawMode, indexLength, glType, 0);
         }
         else if (this.startt == 0.0) { // snaking in
-            // we want portion: t < this.endt
-            this.uniforms.dt = 1;
-            this.uniforms.ot = this.endt;
-            bind(this.geometry);
-            gl.drawElements(this.drawMode, indexLength, glType, 0);
+            if (this.endt != 0.0) {
+                // we want portion: t < this.endt
+                this.uniforms.dt = 1;
+                this.uniforms.ot = this.endt;
+                bind(this.geometry);
+                gl.drawElements(this.drawMode, indexLength, glType, 0);
+            }
             this.uniforms.dt = 0;
             this.uniforms.ot = 1;
             let p = this.curve.pointAt(this.endt);
@@ -355,21 +359,25 @@ function() {
             gl.drawElements(this.drawMode, indexLength, glType, 0);
         }
         else if (this.endt == 1.0) { // snaking out
-            gl.drawElements(this.drawMode, indexLength, glType, 0);
-            this.uniforms.ox = ox0;
-            this.uniforms.oy = oy0;
-            this.uniforms.dt = -1;
-            this.uniforms.ot = -this.startt;
-            bind(this.geometry);
+            if (this.startt != 1.0) {
+                gl.drawElements(this.drawMode, indexLength, glType, 0);
+                this.uniforms.ox = ox0;
+                this.uniforms.oy = oy0;
+                this.uniforms.dt = -1;
+                this.uniforms.ot = -this.startt;
+                bind(this.geometry);
+            }
             gl.drawElements(this.drawMode, indexLength, glType, 0);
         }
         else if (this.startt == 0.0) { // snaking in
-            gl.drawElements(this.drawMode, indexLength, glType, 0);
-            this.uniforms.ox = ox0;
-            this.uniforms.oy = oy0;
-            this.uniforms.dt = 1;
-            this.uniforms.ot = this.endt;
-            bind(this.geometry);
+            if (this.endt != 0.0) {
+                gl.drawElements(this.drawMode, indexLength, glType, 0);
+                this.uniforms.ox = ox0;
+                this.uniforms.oy = oy0;
+                this.uniforms.dt = 1;
+                this.uniforms.ot = this.endt;
+                bind(this.geometry);
+            }
             gl.drawElements(this.drawMode, indexLength, glType, 0);
         }
 
