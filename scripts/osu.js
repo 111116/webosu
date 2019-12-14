@@ -275,7 +275,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
 
         this.load = function load() {
             self.raw_tracks = _.filter(this.zip.children, function(c) {
-                return c.name.indexOf(".osu") === c.name.length - 4;
+                return c.name.length >= 4 && c.name.indexOf(".osu") === c.name.length - 4;
             });
 
             if (_.isEmpty(self.raw_tracks)) {
