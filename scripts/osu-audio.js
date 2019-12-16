@@ -50,7 +50,11 @@ define([], function() {
         }
         decode({ buf: buffer, sync: 0, retry: 0 });
 
-        this.getPosition = function getPosition() {
+        this.getPosition = function() {
+            return this._getPosition() - 0.021;
+        }
+
+        this._getPosition = function _getPosition() {
             if (!self.playing) {
                 return self.position;
             } else {
@@ -69,7 +73,7 @@ define([], function() {
             self.started = self.audio.currentTime;
             if (wait > 0) {
                 self.position = -wait/1000;
-                window.setTimeout(function(){self.source.start(Math.max(0, self.getPosition()), 0);}, wait / self.playbackRate);
+                window.setTimeout(function(){self.source.start(Math.max(0, self._getPosition()), 0);}, wait / self.playbackRate);
             }
             else {
                 self.source.start(0, self.position);
@@ -79,7 +83,7 @@ define([], function() {
 
         // return value true: success
         this.pause = function pause() {
-            if (!self.playing || self.getPosition()<=0) return false;
+            if (!self.playing || self._getPosition()<=0) return false;
             self.position += (self.audio.currentTime - self.started) * self.playbackRate;
             self.source.stop();
             self.playing = false;
