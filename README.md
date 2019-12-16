@@ -2,6 +2,8 @@
 
 osu! that can be played in a browser
 
+currently **unplayable** (music not syncing)
+
 (under development)
 
 In case you haven't heard of osu!, it's a game where players click circles on the screen, following rhythm of the music.
