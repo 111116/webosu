@@ -1,4 +1,4 @@
-# This script converts mp3/aac music in a beatmap pack into ogg
+# This script converts mp3 music in a beatmap pack into ogg
 # Use with caution, as this script is untested.
 
 #!/bin/bash
@@ -11,8 +11,8 @@ TMPDIR2=$(mktemp -d -t bmconvtemp2-XXXXXXXXXX)
 # test argument format
 if [ $# != 2 ] || [[ "$1" != *.osz ]] || [[ "$2" != *.osz ]]
 then
-	echo >&2 Transcode mp3/aac files in beatmaps to oggs
-	echo >&2 usage: bmconv.sh in.osz out.osz
+	echo >&2 Transcode mp3 files in beatmaps to oggs
+	echo >&2 usage: "$0" in.osz out.osz
 	exit 1
 fi
 
@@ -27,13 +27,13 @@ command -v ffmpeg &>/dev/null || { echo >&2 "Error: ffmpeg isn't detected"; exit
 echo >&2 "[info] extracting osz"
 unzip "$1" -d "$TMPDIR1" &>/dev/null || { echo >&2 "Error: failed extracting osz"; exit 1; }
 
-# convert mp3/aac to ogg
+# convert mp3 to ogg
 cat "$TMPDIR1"/*.osu | grep "AudioFilename:" | sort | uniq | sed "s/AudioFilename: //" | tr -d '\r' | while read f
 do
 	echo >&2 "[info] AudioFilename: $f"
-	if [[ $f == *.mp3 ]] || [[ $f == *.aac ]] || [[ $f == *.MP3 ]] || [[ $f == *.AAC ]]
+	if [[ $f == *.mp3 ]] || [[ $f == *.MP3 ]]
 	then
-		newf=$(echo $f | sed "s/\.mp3$/_mp3\.ogg/;s/\.MP3$/_mp3\.ogg/;s/\.aac$/_aac\.ogg/;s/\.AAC$/_aac\.ogg/")
+		newf=$(echo $f | sed "s/\.mp3$/_mp3\.ogg/;s/\.MP3$/_mp3\.ogg/")
 		mv "$TMPDIR1"/"$f" "$TMPDIR2"/"$f" || exit 1;
 		echo "[info] Transcoding to: ""$newf"
 		ffmpeg -i "$TMPDIR2"/"$f" "$TMPDIR1"/"$newf" -hide_banner -loglevel fatal || { echo >&2 "Error: failed transcoding"; exit 1; }
@@ -44,7 +44,7 @@ done || exit 1
 echo >&2 "[info] processing osu files"
 for f in $TMPDIR1/*.osu
 do
-	cat "$f" | sed "s/^\(AudioFilename:.*\).mp3/\1_mp3.ogg/;s/^\(AudioFilename:.*\).MP3/\1_mp3.ogg/;s/^\(AudioFilename:.*\).aac/\1_aac.ogg/;s/^\(AudioFilename:.*\).AAC/\1_aac.ogg/;" > "$TMPDIR2"/osu
+	cat "$f" | sed "s/^\(AudioFilename:.*\).mp3/\1_mp3.ogg/;s/^\(AudioFilename:.*\).MP3/\1_mp3.ogg/" > "$TMPDIR2"/osu
 	mv "$TMPDIR2"/osu "$f"
 done
 
