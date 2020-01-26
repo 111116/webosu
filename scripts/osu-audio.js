@@ -22,7 +22,7 @@ define([], function() {
     }
 
     function offset_predict_mp3(tags) {
-        let default_offset = 32;
+        let default_offset = 30;
         if (!tags || !tags.length) {
             console.warn("mp3 offset predictor: mp3 tag missing");
             return default_offset;
@@ -90,6 +90,7 @@ define([], function() {
         let t = preprocAudio(filename, buffer);
         if (t.startoffset) this.posoffset = t.startoffset;
         if (t.newbuffer) buffer = t.newbuffer;
+        console.log("set start offset to", this.posoffset, "ms");
 
         function decode(node) {
             self.audio.decodeAudioData(node.buf, function(decoded) {
