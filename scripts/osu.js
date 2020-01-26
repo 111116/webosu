@@ -275,13 +275,14 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
 
         this.load = function load() {
             self.raw_tracks = _.filter(this.zip.children, function(c) {
-                return c.name.indexOf(".osu") === c.name.length - 4;
+                return c.name.length >= 4 && c.name.indexOf(".osu") === c.name.length - 4;
             });
 
             if (_.isEmpty(self.raw_tracks)) {
                 self.onerror("No .osu files found!");
             } else {
                 _.each(self.raw_tracks, function (t) {
+                    console.log("attemping loading track:", t.name)
                     t.getText(function (text) {
                         var track = new Track(this.zip, text);
                         self.tracks.push(track);
@@ -352,7 +353,7 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                 reader.onload = function(e) {
                     var buffer = e.target.result;
                     console.log("Loaded blob");
-                    self.audio = new OsuAudio(buffer, function() {
+                    self.audio = new OsuAudio(mp3_raw.name.toLowerCase(), buffer, function() {
                         if (self.onready) {
                             self.onready();
                         }
