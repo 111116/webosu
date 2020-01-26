@@ -2,7 +2,7 @@
 
 osu! that can be played in a browser
 
-currently **unplayable** (music not syncing)
+Music might not be perfectly syncing (±20ms on tested beatmaps).
 
 (under development)
 
