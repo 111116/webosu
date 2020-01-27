@@ -532,7 +532,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             hit.rotationProgress = 0;
             hit.clicked = false;
             let spinRequiredPerSec = this.OD<5? 3+0.4*this.OD: 2.5+0.5*this.OD;
-            spinRequiredPerSec *= 0.8; // make it easier
+            spinRequiredPerSec *= 0.7; // make it easier
             hit.rotationRequired = 2 * Math.PI * spinRequiredPerSec * (hit.endTime - hit.time)/1000;
 
             function newsprite(spritename) {
