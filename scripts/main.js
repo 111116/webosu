@@ -281,7 +281,7 @@ function(Osu, _, sound, Playback) {
     var pDragboxInner = document.getElementById("beatmap-dragbox-inner");
     var pDragboxHint = document.getElementById("beatmap-dragbox-hint");
     var pBeatmapList = document.getElementById("beatmap-list");
-    pDragboxHint.defaultHint = "Drag and drop a beatmap (.osz) file here";
+    pDragboxHint.defaultHint = window.i18n_dragdrophint || "Drag and drop a beatmap (.osz) file here";
     pDragboxHint.modeErrHint = "Only supports osu! (std) mode beatmaps. Drop another file.";
     pDragboxHint.nonValidHint = "Not a valid osz file. Drop another file.";
     pDragboxHint.noTransferHint = "Not receiving any file. Please retry.";

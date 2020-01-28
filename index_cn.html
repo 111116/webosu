@@ -27,6 +27,10 @@
             });
         </script>
         <script src="scripts/settings.js"></script>
+        <script>
+            // i18n
+            window.i18n_dragdrophint = "把osz文件拖到这里"
+        </script>
     </head>
 
     <body>
@@ -47,17 +51,16 @@
                 </div>
                 <div class="text" id="nobmhint">
                     <!--a href="https://osu.sayobot.cn/home/hot">Get a beatmap</a-->
-					Announcement (Jan 26): Sayobot is down (under refac). Star ratings are temporarily unavailable.
-					<br>
-					Announcement (Jan 27): Beatmaps containing ogg audio might not sync perfectly on Firefox.
+					公告 (1月26日): 谱面难度评星暂时无法查看。
                 </div>
                 <h2>谱面</h2>
+                <a href="add_beatmap.html">点我浏览更多谱面</a>
                 <hr/>
                 <div class="beatmap-list" id="beatmap-list">
                     <div class="dragbox" id="beatmap-dragbox">
                         <div class="dragbox-inner" id="beatmap-dragbox-inner" hidden>
                             <div class="dragbox-title" id="beatmap-dragbox-title">
-                                <h3> Custom beatmap </h3>
+                                <h3> 添加本地谱面 </h3>
                             </div>
                             <div class="dragbox-hint" id="beatmap-dragbox-hint">
                                 +
