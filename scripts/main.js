@@ -164,6 +164,7 @@ function(Osu, _, sound, Playback) {
             pGameArea.classList.add("shownomouse");
         }
         pMainPage.setAttribute("hidden","");
+        pNav.setAttribute("style","display: none");
         pGameArea.removeAttribute("hidden");
 
         var playback = new Playback(window.game, this.osu, this.osu.tracks[trackid]);
@@ -191,15 +192,21 @@ function(Osu, _, sound, Playback) {
         // create container of beatmap on web page
         let pBeatmapBox = document.createElement("div");
         let pBeatmapCover = document.createElement("img");
+        let pBeatmapCoverOverlay = document.createElement("div");
         let pBeatmapTitle = document.createElement("div");
         let pBeatmapAuthor = document.createElement("div");
+        let pBeatmapRings = document.createElement("div");
         pBeatmapBox.className = "beatmapbox";
         pBeatmapCover.className = "beatmapcover";
+        pBeatmapCoverOverlay.className = "beatmapcover-overlay";
         pBeatmapTitle.className = "beatmaptitle";
         pBeatmapAuthor.className = "beatmapauthor";
+        pBeatmapRings.className = "beatmap-difficulties";
         pBeatmapBox.appendChild(pBeatmapCover);
+        pBeatmapBox.appendChild(pBeatmapCoverOverlay);
         pBeatmapBox.appendChild(pBeatmapTitle);
         pBeatmapBox.appendChild(pBeatmapAuthor);
+        pBeatmapBox.appendChild(pBeatmapRings);
         // set beatmap title & artist display (prefer ascii title)
         var title = map.osu.tracks[0].metadata.Title;
         var artist = map.osu.tracks[0].metadata.Artist;
@@ -289,6 +296,7 @@ function(Osu, _, sound, Playback) {
     pDragboxHint.loadingHint = "loading...";
     var pGameArea = document.getElementById("game-area");
     var pMainPage = document.getElementById("main-page");
+    var pNav = document.getElementById("main-nav");
     var beatmapFileList = [];
 
     // load beatmap from local

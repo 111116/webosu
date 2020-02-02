@@ -2,130 +2,29 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>戳泡泡</title>
-        <link rel="stylesheet" href="style/picnic.min.css">
+        <title>Settings</title>
         <link rel="stylesheet" type="text/css" href="style/main.css">
-        <!-- <link href="//fonts.googleapis.com/css?family=Exo+2:400,600italic" rel="stylesheet" type="text/css"> -->
-        <link rel="stylesheet" type="text/css" href="style/font.css">
         <link rel="icon" href="favicon.png">
-        <script src="scripts/lib/zip.js"></script>
-        <script src="scripts/lib/zip-fs.js"></script>
-        <script src="scripts/lib/pixi.min.js"></script>
-        <script src="scripts/lib/mp3parse.min.js"></script>
         <script src="scripts/lib/localforage.min.js"></script>
-        <script> zip.workerScriptsPath = 'scripts/lib/'; </script>
-        <script data-main="scripts/main" src="scripts/require.js"></script>
-        <script>
-            require.config({
-                paths: {
-                    underscore: 'lib/underscore',
-                    sound: 'lib/sound'
-                },
-                shim: {
-                    "underscore": {
-                        exports: "_"
-                    }
-                },
-                urlArgs: "bust=" +  (new Date()).getTime()
-            });
-        </script>
         <script src="scripts/settings.js"></script>
-        <script>
-            // i18n
-            window.i18n_dragdrophint = "把osz文件拖到这里"
-        </script>
     </head>
 
     <body>
-        <div class="game-area" id="game-area" hidden>
-        </div>
-
-
-        <nav id="main-nav">
-            <div style="width: 43%">
-                <a href="index_cn.html" class="pseudo button" style="font-weight: bold; font-size: 1.1em;">Osaka Salmon University!</a>
-                <a href="" class="pseudo button">最新</a>
-                <a href="" class="pseudo button">热门</a>
-                <a href="" class="pseudo button">已收藏</a>
-            </div>
-            <div style="width: 25%; position: relative;">
-                <input placeholder="谱面关键词或sid" style="height: 36px; margin-top: 6px;" />
-                <img style="position: absolute; width: 24px; top:12px; right: 8px; cursor: pointer" src="research.svg">
-            </div>
-            <div style="width: 7%">
-            </div>
-            <div class="" style="width: 25%">
-                <a href="faq.html" class="pseudo button">常见问题</a>
-                <a href="settings_cn.html" class="pseudo button">设置</a>
-                <a href="index.html" class="pseudo button">English</a>
-            </div>
-        </nav>
-
         <div class="main-page" id="main-page">
-            <div class="main-content">
-
-                <div class="progress-list" hidden>
-                    <div class="progress" id="script-progress">Loading scripts ...</div>
-                    <div class="progress" id="skin-progress">Loading skin ... </div>
-                    <div class="progress" id="sound-progress">Loading hitsounds ...</div>
-                    <div class="progress" id="beatmap-progress">
-                        Loading local beatmap&nbsp;
-                        <span id="bm-loaded-counter">--</span>
-                        &sol;
-                        <span id="bm-total-counter">--</span>
-                    </div>
-                </div>
-
-
-                <div class="beatmap-list" id="beatmap-list">
-
-                    <div class="beatmapbox">
-                        <img class="beatmapcover" alt="beatmap cover" src="skin/defaultbg.jpg">
-                        <div class="beatmapcover-overlay"></div>
-                        <img class="beatmappreview" src="play-button.svg">
-                        <div class="beatmaptitle">Map Title</div>
-                        <div class="beatmapauthor">Artists / Mapper</div>
-                        <div class="beatmaplength">23:33</div>
-                        <div class="beatmap-difficulties">
-                            <div class="difficulty-ring easy"></div>
-                            <div class="difficulty-ring normal"></div>
-                            <div class="difficulty-ring hard"></div>
-                            <div class="difficulty-ring insane"></div>
-                            <div class="difficulty-ring expert"></div>
-                            <div class="difficulty-ring expert-plus"></div>
-                        </div>
-                    </div>
-
-                    <div class="dragbox" id="beatmap-dragbox">
-                        <div class="dragbox-inner" id="beatmap-dragbox-inner" hidden>
-                            <div class="dragbox-title" id="beatmap-dragbox-title">
-                                <h3> 添加本地谱面 </h3>
-                            </div>
-                            <div class="dragbox-hint" id="beatmap-dragbox-hint">
-                                +
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="text">请使用最新的 Firefox 或 Chrome.</div>
-                <div class="text">内测版. <a href="https://github.com/111116/osuweb">Github</a></div>
-            </div>
-
-            
             <div class="panel">
                 <!-- <h1>Settings</h1> -->
                 <table class="holder" id="settings-panel">
                     <tr>
                         <td>
                             <h3>
-                                显示设置
+                                GAMEPLAY
                             </h3>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <div class="option-name">
-                                背景变暗
+                                Background dim
                             </div>
                             <div class="option-control">
                                 <input id="dim-range" class="slider" type="range" min="0" max="100" value="0">
@@ -136,7 +35,7 @@
                     <tr>
                         <td>
                             <div class="option-name">
-                                背景模糊
+                                Background blur
                             </div>
                             <div class="option-control">
                                 <input id="blur-range" class="slider" type="range" min="0" max="8" value="0">
@@ -147,7 +46,7 @@
                     <tr>
                         <td>
                             <div class="option-name">
-                                光标大小
+                                Cursor size
                             </div>
                             <div class="option-control">
                                 <input id="cursorsize-range" class="slider" type="range" min="0.5" max="2.0" step="0.01" value="0.5">
@@ -158,7 +57,7 @@
                     <tr>
                         <td>
                             <div class="option-name" title="less latency, but on some browsers donesn't display correctly">
-                                启用硬件光标
+                                Show hardware cursor
                             </div>
                             <div class="option-control">
                                 <input id="showhwmouse-check" type="checkbox" /><span></span>
@@ -168,7 +67,7 @@
                     <tr>
                         <td>
                             <div class="option-name">
-                                滑条渐入
+                                Snaking in sliders
                             </div>
                             <div class="option-control">
                                 <input id="snakein-check" type="checkbox" /><span></span>
@@ -178,7 +77,7 @@
                     <tr>
                         <td>
                             <div class="option-name">
-                                滑条渐出
+                                Snaking out sliders
                             </div>
                             <div class="option-control">
                                 <input id="snakeout-check" type="checkbox" /><span></span>
@@ -189,14 +88,14 @@
                     <tr>
                         <td>
                             <h3>
-                                操作设置
+                                INPUT
                             </h3>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <div class="option-name" title="So that you don't change volume accidentally">
-                                游戏时禁用鼠标滚轮
+                                Disable mouse wheel in gameplay
                             </div>
                             <div class="option-control">
                                 <input id="disable-wheel-check" type="checkbox" /><span></span>
@@ -206,7 +105,7 @@
                     <tr>
                         <td>
                             <div class="option-name" title="So that you don't hit things accidentally">
-                                游戏时禁用鼠标按钮
+                                Disable mouse buttons in gameplay
                             </div>
                             <div class="option-control">
                                 <input id="disable-button-check" type="checkbox" /><span></span>
@@ -216,7 +115,7 @@
                     <tr>
                         <td>
                             <div class="option-name">
-                                左键
+                                Left button
                             </div>
                             <div class="option-control">
                                 <input id="lbutton1select" type="button" value="oops"/>
@@ -227,7 +126,7 @@
                     <tr>
                         <td>
                             <div class="option-name">
-                                右键
+                                Right button
                             </div>
                             <div class="option-control">
                                 <input id="rbutton1select" type="button" value="oops"/>
@@ -239,14 +138,14 @@
                     <tr>
                         <td>
                             <h3>
-                                音频设置
+                                AUDIO
                             </h3>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <div class="option-name">
-                                主音量
+                                Master volume
                             </div>
                             <div class="option-control">
                                 <input id="mastervolume-range" class="slider" type="range" min="0" max="100" value="0">
@@ -257,7 +156,7 @@
                     <tr>
                         <td>
                             <div class="option-name">
-                                音效音量
+                                Effect volume
                             </div>
                             <div class="option-control">
                                 <input id="effectvolume-range" class="slider" type="range" min="0" max="100" value="0">
@@ -268,7 +167,7 @@
                     <tr>
                         <td>
                             <div class="option-name">
-                                音乐音量
+                                Music volume
                             </div>
                             <div class="option-control">
                                 <input id="musicvolume-range" class="slider" type="range" min="0" max="100" value="0">
@@ -369,14 +268,14 @@
                     <tr>
                         <td>
                             <h3>
-                                皮肤设置
+                                SKIN
                             </h3>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <div class="option-name">
-                                隐藏物体序号
+                                Don't show hit circle numbers
                             </div>
                             <div class="option-control">
                                 <input id="hidenumbers-check" type="checkbox" /><span></span>
@@ -386,7 +285,7 @@
                     <tr>
                         <td>
                             <div class="option-name">
-                                隐藏Great判定提示
+                                Don't show "Great" (300s)
                             </div>
                             <div class="option-control">
                                 <input id="hidegreat-check" type="checkbox" /><span></span>
@@ -396,7 +295,7 @@
                     <tr>
                         <td>
                             <div class="option-name">
-                                隐藏连接线
+                                Don't show follow points
                             </div>
                             <div class="option-control">
                                 <input id="hidefollowpoints-check" type="checkbox" /><span></span>
@@ -406,7 +305,7 @@
                     <tr>
                         <td>
                             <br/>
-                            <input id="restoredefault-btn" type="button" class="warnbtn" value="全部恢复默认设置"/>
+                            <input id="restoredefault-btn" type="button" class="warnbtn" value="Restore all settings to default"/>
                         </td>
                     </tr>
                 </table>
@@ -414,7 +313,3 @@
         </div>
     </body>
 </html>
-
-<!-- attribution -->
-<!-- play icon made by https://www.flaticon.com/authors/those-icons -->
-<!-- search icon made by https://www.flaticon.com/authors/good-ware -->

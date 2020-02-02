@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'Exo 2';
+  font-style: italic;
+  font-weight: 600;
+  src: local('Exo 2 SemiBold Italic'), local('Exo2-SemiBoldItalic'), url(600i.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Exo 2';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Exo 2 Regular'), local('Exo2-Regular'), url(400.ttf) format('truetype');
+}

@@ -1,6 +1,7 @@
 body{
-	background: #ecf0f1;
-	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+	background: #191919;
+  color: #eee;
+	font-family:"Exo 2", "Helvetica Neue",Helvetica,Arial,sans-serif;
 	font-size: 16px;
 }
 
@@ -28,37 +29,47 @@ canvas {
 }
 
 
+nav {
+  background: #b63258;
+  color: #fff;
+  display: flex;
+}
+
+
 .main-page {
 	width: 1240px;
 	min-height: 1200px;
-	margin:auto;
+  margin-top: 50px;
 }
 
 
 .main-content{
+  border-radius: 4px;
 	float: left;
-	background: #fff;
-	border-radius:5px;  
 	box-shadow: 0 2px 3px 0 rgba(0,0,0,.1); 
-	margin:20px auto;
-	padding:20px 20px 20px;
-	width:770px;
+	margin:12px 12px;
+	/*padding:20px 20px 20px;*/
+	width:830px;
 	height:100%;
 }
 
 .disabled{
-  color: #bbb;
+  color: #555;
 }
 
 .panel{
   float: right;
-	background: #fff;
+  background: #292929;
 	border-radius:5px;  
 	box-shadow: 0 2px 3px 0 rgba(0,0,0,.1); 
-	margin:20px auto;
-	padding:20px 20px 20px;
+	margin: 12px auto;
+	padding:15px;
 	width:370px;
 	height:100%;
+}
+
+h1,h2,h3 {
+  color: #fff;
 }
 
 .progress {
@@ -71,26 +82,23 @@ canvas {
 
 
 .beatmap-list {
-  margin-top: 20px;
-  margin-bottom: 20px;
   display: flex;
   flex-wrap: wrap;
   justify-content: left;
-  margin-right: -17px;
   position: relative;
 }
 
 
 .dragbox {
   box-shadow: 0 1px 2px 0 rgba(0,0,0,.3); 
-  background: #eee;
-  color: #666;
-  border-radius: 6px;
+  background: #555;
+  color: #eee;
   font-size: 18px;
-  height: 200px;
-  width: 245px;
-  margin-bottom: 20px;
-  margin-right: 17px;
+  height: 190px;
+  width: 400px;
+  margin-bottom: 12px;
+  margin-right: 12px;
+  border-radius: 4px;
 }
 .dragbox-inner {
   width: 80%;
@@ -102,14 +110,14 @@ canvas {
 .beatmapbox {
   box-shadow: 0 1px 2px 0 rgba(0,0,0,.3); 
   background: #fff;
-  border-radius: 6px;
   font-size: 18px;
-  height: 200px;
-  width: 245px;
-  margin-bottom: 20px;
-  margin-right: 17px;
+  height: 190px;
+  width: 400px;
+  margin-bottom: 12px;
+  margin-right: 12px;
   position: relative;
   cursor: pointer;
+  border-radius: 4px;
   /* shouldn't hide overflow because we have to show difficulty selection box */
   /* but we must ensure content don't get outside this box */
 }
@@ -120,28 +128,49 @@ canvas {
   object-fit: cover;
   background: #eee;
   color: gray;
-  width: 245px;
+  width: 100%;
   height: 130px;
-  border-radius: 5px 5px 0 0;
+  position: absolute;
+  border-radius: 4px 4px 0 0;
+}
+.beatmappreview {
+  position: absolute;
+  fill: #fff;
+  margin-left: 365px;
+  margin-top: 10px;
+  width: 24px;
+}
+.beatmappreview:before {
+  content: "\F144"
+}
+.beatmapcover-overlay {
+  background-image: linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.6));
+  width: 100%;
+  height: 130px;
   position: absolute;
 }
 .beatmaptitle {
-  padding-top: 142px;
-  padding-left: 13px;
+  padding-top: 90px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 1.3em;
+  font-style: italic;
+  color: #fff;
   overflow: hidden;
+  position: relative;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-shadow: 0 2px 4px rgba(0,0,0,.75);
 }
 .beatmapauthor {
-  padding-left: 13px;
-  float: left;
-  color: #888;
+  padding-left: 10px;
+  color: #444;
   font-size: 14px;
-  padding-top: 5px;
+  padding-top: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 180px;
+  width: 350px;
 }
 .beatmaplength {
   padding-right: 13px;
@@ -151,6 +180,10 @@ canvas {
   padding-top: 5px;
 }
 
+.beatmap-difficulties {
+  padding-left: 10px;
+  padding-top: 4px;
+}
 
 
 table {
@@ -162,6 +195,9 @@ tr{
 tr:last-child {
   text-align: center;
 }
+tr:nth-child(even) {
+  background: none;
+}
 td{
   /*border-bottom:1px solid #f6f6f6;*/
   padding:5px 10px;
@@ -171,14 +207,20 @@ td:nth-child(2){
   text-align: right;
   width: 40px;
 }
-
 input {
-  cursor: pointer;
+  background: #892e48;
+  color: #fff;
+  border: none;
+}
+
+input:focus {
+  border-color: #fff;
 }
 
 input:focus {outline:0;}
 
 input[type=checkbox] {
+  cursor: pointer;
   height: 20px;
   margin: 2px 2px;
   position: absolute;
@@ -188,7 +230,7 @@ input[type=checkbox] {
 }
 
 input[type=checkbox] + span {
-  background: #BBBBBB;
+  background: #555;
   border-radius: 10px;
   box-shadow: 0 2px 3px 0 rgba(0,0,0,.1);
   display: inline-block;
@@ -200,7 +242,7 @@ input[type=checkbox] + span {
 }
 
 input[type=checkbox] + span::before, input[type=checkbox] + span::after{
-  background:#fff;
+  background:#eee;
   content:'';
   display:block;
   position:absolute;
@@ -209,6 +251,7 @@ input[type=checkbox] + span::before, input[type=checkbox] + span::after{
   border-radius: 50%;
   transition: all .2s ease;
 }
+
 
 input[type=checkbox] + span::after{
   right:22px;
@@ -223,6 +266,8 @@ input[type=checkbox]:checked + span::after{
   right: 2px;
   width:16px;
 }
+
+
 
 
 .option-name{
@@ -268,11 +313,12 @@ input[type=checkbox]:checked + span::after{
 }
 
 input[type=button] {
+  cursor: pointer;
   border-radius: 12px;
   position: relative;
   width: auto;
   transition: all .2s ease;
-  color: #555;
+  color: #eee;
   font-size: 16px;
   line-height: 17px;
   padding-top: 0px;
@@ -281,11 +327,11 @@ input[type=button] {
   /*padding-left: 12px;*/
   /*padding-right: 12px;*/
   min-width: 70px;
-  background: #eee;
+  background: #555;
   border: none;
 }
 input[type=button]:hover {
-  background: #888;
+  background: #999;
   color: #fff;
 }
 input[type=button].using {
@@ -293,18 +339,23 @@ input[type=button].using {
   color: #fff;
 }
 input[type=button].warnbtn {
+  background: #191919;
   border-radius: 4px;
   cursor: pointer;
   display: inline-block;
-  color: #000;
+  color: #eee;
   font-size:16px;
   text-align: center;
   padding: 12px 20px 14px;
   height: auto;
 }
 input[type=button].warnbtn:hover {
-  background: #a00;
+  background: #a11;
   color: #fff;
+}
+input[type=range] {
+  cursor: pointer;
+
 }
 
 hr {
@@ -312,6 +363,8 @@ hr {
   border: none;
   background: #ee6da7;
 }
+
+
 
 div[hidden=""] {
   visibility: hidden;
@@ -343,23 +396,25 @@ div[hidden=""] {
 
 .difficulty-item {
   padding: 12px;
-  height: 18px;
+  height: 40px;
+  color: #000;
   white-space: nowrap;
   font-size: 16px;
   cursor: pointer;
 }
 .difficulty-item span {
-  top: -4px;
+  top: -5px;
+  left: 4px;
   position: relative;
 }
 .difficulty-ring {
-  height: 12px;
-  width: 12px;
+  height: 18px;
+  width: 18px;
   border-radius: 50%;
   border: solid #aaa 3px;
   margin-top: 2px;
   margin-left: 0px;
-  margin-right: 8px;
+  margin-right: 4px;
   display: inline-block;
 }
 
