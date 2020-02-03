@@ -34,10 +34,23 @@ nav {
   color: #fff;
   display: flex;
 }
-
+.brand {
+  font-size: 1.1em;
+  line-height: 1em;
+}
+nav .pseudo.button {
+  margin-top: 0.7em;
+  height: 2.3em;
+  padding: 0 1em;
+  border-radius: 0px;
+  transition: 0s;
+}
+nav .pseudo.button.active, .pseudo.button:hover {
+  box-shadow: none;
+  border-bottom: 3px solid #fff;
+}
 
 .main-page {
-	width: 1240px;
 	min-height: 1200px;
   margin-top: 50px;
 }
@@ -46,19 +59,80 @@ nav {
 .main-content{
   border-radius: 4px;
 	float: left;
-	box-shadow: 0 2px 3px 0 rgba(0,0,0,.1); 
 	margin:12px 12px;
 	/*padding:20px 20px 20px;*/
 	width:830px;
 	height:100%;
 }
 
+
+.side-panel {
+  background: #333;
+  position: fixed;
+  float: right;
+  width: calc(100% - 800px - 36px);
+  top: 0px;
+  right: 0px;
+  padding-top: 48px;
+  height: 100%;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.1); 
+}
+.side-panel .imgwrapper {
+  width: 100%;
+  padding-bottom: 50%;
+  position: relative;
+  overflow: hidden;
+}
+.side-panel img {
+  position: absolute;
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  overflow: hidden;
+}
+.side-panel .imgwrapper .overlay {
+  width: 100%;
+  background-image: linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.7));
+  height: 100%;
+  position: absolute;
+}
+.side-panel .imgwrapper .overlaytext {
+  position: absolute;
+  font-style: italic;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 2px 4px rgba(0,0,0,.75);
+}
+.side-panel .imgwrapper .title {
+  font-size: 2em;
+  padding-left: 12px;
+  bottom: 30px;
+}
+.side-panel .imgwrapper .artists {
+  font-size: 1em;
+  padding-left: 12px;
+  bottom: 10px;
+}
+.side-panel .imgwrapper .length {
+  font-size: 1em;
+  bottom: 10px;
+  right: 15px;
+}
+
+.side-panel .textwrapper {
+  padding-left: 12px;
+  padding-top: 12px;
+
+}
+
+
+
 .disabled{
   color: #555;
 }
-
 .panel{
-  float: right;
   background: #292929;
 	border-radius:5px;  
 	box-shadow: 0 2px 3px 0 rgba(0,0,0,.1); 
@@ -67,11 +141,9 @@ nav {
 	width:370px;
 	height:100%;
 }
-
 h1,h2,h3 {
   color: #fff;
 }
-
 .progress {
 	line-height: 1.8em;
 }
@@ -81,12 +153,14 @@ h1,h2,h3 {
 }
 
 
+
 .beatmap-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: left;
   position: relative;
 }
+
 
 
 .dragbox {
@@ -103,7 +177,7 @@ h1,h2,h3 {
 .dragbox-inner {
   width: 80%;
   margin-left: 10%;
-  margin-top: 16%;
+  margin-top: 10%;
   line-height: 1.5em;
 }
 
@@ -439,4 +513,10 @@ div[hidden=""] {
 
 .difficulty-item:hover {
   background: #eee; 
+}
+
+
+.faqentry {
+  width: 800px;
+  margin: auto;
 }

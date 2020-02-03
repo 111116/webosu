@@ -2,8 +2,11 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Osu! Web</title>
-        <link rel="stylesheet" type="text/css" href="style.css">
+        <title>戳泡泡</title>
+        <link rel="stylesheet" href="style/picnic.min.css">
+        <link rel="stylesheet" type="text/css" href="style/main.css">
+        <!-- <link href="//fonts.googleapis.com/css?family=Exo+2:400,600italic" rel="stylesheet" type="text/css"> -->
+        <link rel="stylesheet" type="text/css" href="style/font.css">
         <link rel="icon" href="favicon.png">
         <script src="scripts/lib/zip.js"></script>
         <script src="scripts/lib/zip-fs.js"></script>
@@ -27,348 +30,29 @@
             });
         </script>
         <script src="scripts/settings.js"></script>
+        <script>
+            // i18n
+            window.i18n_dragdrophint = "把osz文件拖到这里"
+        </script>
     </head>
 
     <body>
         <div class="game-area" id="game-area" hidden>
         </div>
-        <div style="position: fixed; height: 50px;">
-            <a href="">
-        </div>
-        <div class="main-page" id="main-page">
-            <div class="main-content">
-                <div class="progress-list">
-                    <div class="progress" id="script-progress">Loading scripts ...</div>
-                    <div class="progress" id="skin-progress">Loading skin ... </div>
-                    <div class="progress" id="sound-progress">Loading hitsounds ...</div>
-                    <div class="progress" id="beatmap-progress">
-                        Loading local beatmap&nbsp;
-                        <span id="bm-loaded-counter">--</span>
-                        &sol;
-                        <span id="bm-total-counter">--</span>
-                    </div>
-                </div>
-                <div class="text" id="nobmhint">
-                    <!--a href="https://osu.sayobot.cn/home/hot">Get a beatmap</a-->
-					Announcement (Jan 27): Beatmaps containing ogg audio might not sync perfectly on Firefox.
-                </div>
-                <h2>BEATMAPS</h2>
-                <hr/>
-                <div class="beatmap-list" id="beatmap-list">
-                    <div class="dragbox" id="beatmap-dragbox">
-                        <div class="dragbox-inner" id="beatmap-dragbox-inner" hidden>
-                            <div class="dragbox-title" id="beatmap-dragbox-title">
-                                <h3> Custom beatmap </h3>
-                            </div>
-                            <div class="dragbox-hint" id="beatmap-dragbox-hint">
-                                +
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="text">Please use latest versions of Firefox or Chrome.</div>
-                <div class="text">Alpha version. <a href="https://github.com/111116/osuweb">Github</a></div>
+
+
+        <nav id="main-nav">
+            <div style="width: 43%">
+                <a href="index.html" class="brand">Osaka Salmon University!</a>
             </div>
-
-            <div class="panel">
-                <!-- <h1>Settings</h1> -->
-                <table class="holder" id="settings-panel">
-                    <tr>
-                        <td>
-                            <h3>
-                                GAMEPLAY
-                            </h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Background dim
-                            </div>
-                            <div class="option-control">
-                                <input id="dim-range" class="slider" type="range" min="0" max="100" value="0">
-                                <div class="range-indicator" id="dim-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Background blur
-                            </div>
-                            <div class="option-control">
-                                <input id="blur-range" class="slider" type="range" min="0" max="8" value="0">
-                                <div class="range-indicator" id="blur-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Cursor size
-                            </div>
-                            <div class="option-control">
-                                <input id="cursorsize-range" class="slider" type="range" min="0.5" max="2.0" step="0.01" value="0.5">
-                                <div class="range-indicator" id="cursorsize-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="less latency, but on some browsers donesn't display correctly">
-                                Show hardware cursor
-                            </div>
-                            <div class="option-control">
-                                <input id="showhwmouse-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Snaking in sliders
-                            </div>
-                            <div class="option-control">
-                                <input id="snakein-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Snaking out sliders
-                            </div>
-                            <div class="option-control">
-                                <input id="snakeout-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <h3>
-                                INPUT
-                            </h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="So that you don't change volume accidentally">
-                                Disable mouse wheel in gameplay
-                            </div>
-                            <div class="option-control">
-                                <input id="disable-wheel-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="So that you don't hit things accidentally">
-                                Disable mouse buttons in gameplay
-                            </div>
-                            <div class="option-control">
-                                <input id="disable-button-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Left button
-                            </div>
-                            <div class="option-control">
-                                <input id="lbutton1select" type="button" value="oops"/>
-                                <input type="button" value="M1"/>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Right button
-                            </div>
-                            <div class="option-control">
-                                <input id="rbutton1select" type="button" value="oops"/>
-                                <input type="button" value="M2"/>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <h3>
-                                AUDIO
-                            </h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Master volume
-                            </div>
-                            <div class="option-control">
-                                <input id="mastervolume-range" class="slider" type="range" min="0" max="100" value="0">
-                                <div class="range-indicator" id="mastervolume-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Effect volume
-                            </div>
-                            <div class="option-control">
-                                <input id="effectvolume-range" class="slider" type="range" min="0" max="100" value="0">
-                                <div class="range-indicator" id="effectvolume-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Music volume
-                            </div>
-                            <div class="option-control">
-                                <input id="musicvolume-range" class="slider" type="range" min="0" max="100" value="0">
-                                <div class="range-indicator" id="musicvolume-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name disabled">
-                                Audio offset
-                            </div>
-                            <div class="option-control">
-                                <input id="audiooffset-range" class="slider" type="range" min="-80" max="80" value="-80">
-                                <div class="range-indicator" id="audiooffset-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name disabled">
-                                Enable beatmap hitsounds
-                            </div>
-                            <div class="option-control">
-                                <input id="beatmap-hitsound-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <h3>
-                                MODS
-                            </h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="This doesn't make things easier!">
-                                Easy
-                            </div>
-                            <div class="option-control">
-                                <input id="easy-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="Everything gets slower...">
-                                Daycore
-                            </div>
-                            <div class="option-control">
-                                <input id="daycore-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="Everything gets a bit harder...">
-                                Hard Rock
-                            </div>
-                            <div class="option-control">
-                                <input id="hardrock-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="Play with no approach circles and fading circles/sliders">
-                                Hidden
-                            </div>
-                            <div class="option-control">
-                                <input id="hidden-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="Everything gets faster...">
-                                Nightcore
-                            </div>
-                            <div class="option-control">
-                                <input id="nightcore-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="Watch a perfect automated play">
-                                Autoplay
-                            </div>
-                            <div class="option-control">
-                                <input id="autoplay-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <h3>
-                                SKIN
-                            </h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Don't show hit circle numbers
-                            </div>
-                            <div class="option-control">
-                                <input id="hidenumbers-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Don't show "Great" (300s)
-                            </div>
-                            <div class="option-control">
-                                <input id="hidegreat-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                Don't show follow points
-                            </div>
-                            <div class="option-control">
-                                <input id="hidefollowpoints-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <br/>
-                            <input id="restoredefault-btn" type="button" class="warnbtn" value="Restore all settings to default"/>
-                        </td>
-                    </tr>
-                </table>
+            <div style="width: 7%">
             </div>
+            <div class="" style="width: 25%">
+                <a href="index_cn.html" class="pseudo button">中文</a>
+            </div>
+        </nav>
+
         </div>
     </body>
 </html>
+

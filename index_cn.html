@@ -43,10 +43,10 @@
 
         <nav id="main-nav">
             <div style="width: 43%">
-                <a href="index_cn.html" class="pseudo button" style="font-weight: bold; font-size: 1.1em;">Osaka Salmon University!</a>
+                <a href="index_cn.html" class="brand">Osaka Salmon University!</a>
                 <a href="" class="pseudo button">最新</a>
                 <a href="" class="pseudo button">热门</a>
-                <a href="" class="pseudo button">已收藏</a>
+                <a href="" class="pseudo button active">已收藏</a>
             </div>
             <div style="width: 25%; position: relative;">
                 <input placeholder="谱面关键词或sid" style="height: 36px; margin-top: 6px;" />
@@ -84,7 +84,7 @@
                         <div class="beatmapcover-overlay"></div>
                         <img class="beatmappreview" src="play-button.svg">
                         <div class="beatmaptitle">Map Title</div>
-                        <div class="beatmapauthor">Artists / Mapper</div>
+                        <div class="beatmapauthor">Various Artists / Mapper</div>
                         <div class="beatmaplength">23:33</div>
                         <div class="beatmap-difficulties">
                             <div class="difficulty-ring easy"></div>
@@ -112,304 +112,23 @@
             </div>
 
             
-            <div class="panel">
-                <!-- <h1>Settings</h1> -->
-                <table class="holder" id="settings-panel">
-                    <tr>
-                        <td>
-                            <h3>
-                                显示设置
-                            </h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                背景变暗
-                            </div>
-                            <div class="option-control">
-                                <input id="dim-range" class="slider" type="range" min="0" max="100" value="0">
-                                <div class="range-indicator" id="dim-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                背景模糊
-                            </div>
-                            <div class="option-control">
-                                <input id="blur-range" class="slider" type="range" min="0" max="8" value="0">
-                                <div class="range-indicator" id="blur-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                光标大小
-                            </div>
-                            <div class="option-control">
-                                <input id="cursorsize-range" class="slider" type="range" min="0.5" max="2.0" step="0.01" value="0.5">
-                                <div class="range-indicator" id="cursorsize-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="less latency, but on some browsers donesn't display correctly">
-                                启用硬件光标
-                            </div>
-                            <div class="option-control">
-                                <input id="showhwmouse-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                滑条渐入
-                            </div>
-                            <div class="option-control">
-                                <input id="snakein-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                滑条渐出
-                            </div>
-                            <div class="option-control">
-                                <input id="snakeout-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <h3>
-                                操作设置
-                            </h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="So that you don't change volume accidentally">
-                                游戏时禁用鼠标滚轮
-                            </div>
-                            <div class="option-control">
-                                <input id="disable-wheel-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="So that you don't hit things accidentally">
-                                游戏时禁用鼠标按钮
-                            </div>
-                            <div class="option-control">
-                                <input id="disable-button-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                左键
-                            </div>
-                            <div class="option-control">
-                                <input id="lbutton1select" type="button" value="oops"/>
-                                <input type="button" value="M1"/>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                右键
-                            </div>
-                            <div class="option-control">
-                                <input id="rbutton1select" type="button" value="oops"/>
-                                <input type="button" value="M2"/>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <h3>
-                                音频设置
-                            </h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                主音量
-                            </div>
-                            <div class="option-control">
-                                <input id="mastervolume-range" class="slider" type="range" min="0" max="100" value="0">
-                                <div class="range-indicator" id="mastervolume-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                音效音量
-                            </div>
-                            <div class="option-control">
-                                <input id="effectvolume-range" class="slider" type="range" min="0" max="100" value="0">
-                                <div class="range-indicator" id="effectvolume-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                音乐音量
-                            </div>
-                            <div class="option-control">
-                                <input id="musicvolume-range" class="slider" type="range" min="0" max="100" value="0">
-                                <div class="range-indicator" id="musicvolume-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name disabled">
-                                Audio offset
-                            </div>
-                            <div class="option-control">
-                                <input id="audiooffset-range" class="slider" type="range" min="-80" max="80" value="-80">
-                                <div class="range-indicator" id="audiooffset-range-indicator" hidden></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name disabled">
-                                Enable beatmap hitsounds
-                            </div>
-                            <div class="option-control">
-                                <input id="beatmap-hitsound-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <h3>
-                                MODS
-                            </h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="This doesn't make things easier!">
-                                Easy
-                            </div>
-                            <div class="option-control">
-                                <input id="easy-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="Everything gets slower...">
-                                Daycore
-                            </div>
-                            <div class="option-control">
-                                <input id="daycore-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="Everything gets a bit harder...">
-                                Hard Rock
-                            </div>
-                            <div class="option-control">
-                                <input id="hardrock-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="Play with no approach circles and fading circles/sliders">
-                                Hidden
-                            </div>
-                            <div class="option-control">
-                                <input id="hidden-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="Everything gets faster...">
-                                Nightcore
-                            </div>
-                            <div class="option-control">
-                                <input id="nightcore-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name" title="Watch a perfect automated play">
-                                Autoplay
-                            </div>
-                            <div class="option-control">
-                                <input id="autoplay-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <h3>
-                                皮肤设置
-                            </h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                隐藏物体序号
-                            </div>
-                            <div class="option-control">
-                                <input id="hidenumbers-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                隐藏Great判定提示
-                            </div>
-                            <div class="option-control">
-                                <input id="hidegreat-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="option-name">
-                                隐藏连接线
-                            </div>
-                            <div class="option-control">
-                                <input id="hidefollowpoints-check" type="checkbox" /><span></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <br/>
-                            <input id="restoredefault-btn" type="button" class="warnbtn" value="全部恢复默认设置"/>
-                        </td>
-                    </tr>
-                </table>
+            <div class="side-panel">
+                <div class="imgwrapper">
+                    <img src="skin/defaultbg.jpg">
+                    <div class="overlay"></div>
+                    <div class="overlaytext title">Map Title</div>
+                    <div class="overlaytext artists">Various Artists</div>
+                    <div class="overlaytext length">23:33</div>
+                </div>
+                <div class="textwrapper">
+                    <div>制谱: PKUanonym</div>
+                    <div>来源: Bilibili Douga</div>
+                </div>
+                下载中
+                收藏
+                导出到本地
+                选择难度
+                历史记录
             </div>
         </div>
     </body>
