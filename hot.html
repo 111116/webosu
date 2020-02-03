@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>戳泡泡</title>
+        <link rel="stylesheet" href="style/picnic.min.css">
+        <link rel="stylesheet" type="text/css" href="style/main.css">
+        <link rel="stylesheet" type="text/css" href="style/font.css">
+        <link rel="icon" href="favicon.png">
+        <script src="scripts/addbeatmaplist.js"></script>
+    </head>
+
+    <body>
+        <div class="game-area" id="game-area" hidden>
+        </div>
+
+        <nav id="main-nav">
+            <div style="width: 43%">
+                <a href="index_cn.html" class="brand">Osaka Salmon University!</a>
+                <a href="" class="pseudo button">最新</a>
+                <a href="" class="pseudo button active">热门</a>
+                <a href="" class="pseudo button">已收藏</a>
+            </div>
+            <div style="width: 25%; position: relative;">
+                <input placeholder="谱面关键词或sid" style="height: 36px; margin-top: 6px;" />
+                <img style="position: absolute; width: 24px; top:12px; right: 8px; cursor: pointer" src="research.svg">
+            </div>
+            <div style="width: 7%">
+            </div>
+            <div class="" style="width: 25%">
+                <a href="faq.html" class="pseudo button">常见问题</a>
+                <a href="settings_cn.html" class="pseudo button">设置</a>
+                <a href="index.html" class="pseudo button">English</a>
+            </div>
+        </nav>
+
+        <div class="main-page" id="main-page">
+            <div class="main-content">
+                <div class="beatmap-list" id="beatmap-list">
+                    <!-- to be filled in script -->
+                </div>
+                <div class="button" style="width:calc(100% - 20px); margin-bottom: 10px;" id="btnmore">加载更多</div>
+                <div class="text">推荐使用最新版本 Firefox 或 Chrome.</div>
+                <div class="text">内测版v0.2.0. <a href="https://github.com/111116/osuweb">Github</a></div>
+                <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
+            </div>
+            <div class="side-panel">
+                <!-- to be activated in script -->
+            </div>
+        </div>
+        <script>
+
+            function showSidepanel(boxclicked) {
+
+            }
+
+            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=1&5=1");
+            var cur = 20;
+            document.getElementById("btnmore").onclick = function() {
+                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+cur+"&2=1&5=1");
+                cur += 20;
+            }
+        </script>
+    </body>
+</html>
+
+<!-- attribution -->
+<!-- play icon made by https://www.flaticon.com/authors/those-icons -->
+<!-- search icon made by https://www.flaticon.com/authors/good-ware -->

@@ -5,6 +5,10 @@ body{
 	font-size: 16px;
 }
 
+a {
+  color: #6df;
+}
+
 body.gaming {
   overflow: hidden;
 }
@@ -200,7 +204,7 @@ h1,h2,h3 {
 }
 .beatmapcover {
   object-fit: cover;
-  background: #eee;
+  background: #555;
   color: gray;
   width: 100%;
   height: 130px;
@@ -218,25 +222,52 @@ h1,h2,h3 {
   content: "\F144"
 }
 .beatmapcover-overlay {
-  background-image: linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.6));
+  background-image: linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.7));
   width: 100%;
   height: 130px;
   position: absolute;
 }
 .beatmaptitle {
-  padding-top: 90px;
+  width: 400px;
+  padding-top: 73px;
   padding-left: 10px;
   padding-right: 10px;
   font-size: 1.3em;
   font-style: italic;
   color: #fff;
   overflow: hidden;
-  position: relative;
+  position: absolute;
   text-overflow: ellipsis;
   white-space: nowrap;
   text-shadow: 0 2px 4px rgba(0,0,0,.75);
 }
+.beatmapartist {
+  width: 400px;
+  padding-top: 102px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 0.8em;
+  font-style: italic;
+  color: #fff;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 2px 4px rgba(0,0,0,.75);
+}
+.beatmapcreator {
+  padding-top: 134px;
+  padding-left: 10px;
+  color: #444;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 400px;
+  position: absolute;
+}
 .beatmapauthor {
+  padding-top: 102px;
   padding-left: 10px;
   color: #444;
   font-size: 14px;
@@ -244,20 +275,34 @@ h1,h2,h3 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 350px;
+  width: 400px;
+  position: absolute;
+}
+.beatmapbpm {
+  right: 13px;
+  position: absolute;
+  float: right;
+  font-style: italic;
+  color: #fff;
+  font-size: 0.8em;
+  padding-top: 82px;
 }
 .beatmaplength {
-  padding-right: 13px;
+  right: 13px;
+  position: absolute;
   float: right;
-  color: #888;
-  font-size: 14px;
-  padding-top: 5px;
+  font-style: italic;
+  color: #fff;
+  font-size: 0.8em;
+  padding-top: 102px;
 }
 
 .beatmap-difficulties {
+  position: absolute;
+  padding-top: 160px;
   padding-left: 10px;
-  padding-top: 4px;
 }
+
 
 
 table {
@@ -447,15 +492,11 @@ div[hidden=""] {
 
 .difficulty-box{
   width: auto;
-  min-width: 180px;
+  min-width: 360px;
   height: auto;
   position: absolute;
-  background: #fff;
-  overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 5px 2px;
-  border-radius: 3px;
   z-index: 2;
-  animation: 0.2s unfold ease;
+  animation: 0.4s unfold ease;
   transform-origin: top left;
 }
 
@@ -469,18 +510,57 @@ div[hidden=""] {
 }
 
 .difficulty-item {
+  background: #142b33;
+  box-shadow: 2px 2px 5px #000;
+  border-radius: 8px;
+  margin-bottom: 6px;
   padding: 12px;
-  height: 40px;
-  color: #000;
+  height: 50px;
+  color: #fff;
   white-space: nowrap;
   font-size: 16px;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 .difficulty-item span {
   top: -5px;
   left: 4px;
   position: relative;
 }
+.difficulty-item:hover {
+  background: #1e404d; 
+}
+.difficulty-item .versionline {
+  position: absolute;
+  top: 3px;
+  left: 50px;
+}
+.difficulty-item .version {
+  font-size: 1.1em;
+  display: inline-block;
+}
+.difficulty-item .mapper {
+  padding-left: 0.5em;
+  font-size: 0.8em;
+  display: inline-block;
+}
+.star-row {
+  position: absolute;
+  top: 28px;
+  left: 49px;
+}
+.star-row .imgcontainer {
+  height: 18px;
+  width: 18px;
+  margin-right: 2px;
+  display: inline-block;
+}
+.star-row img {
+  width: 18px;
+  position:relative;
+}
+
 .difficulty-ring {
   height: 18px;
   width: 18px;
@@ -491,7 +571,14 @@ div[hidden=""] {
   margin-right: 4px;
   display: inline-block;
 }
-
+.difficulty-count {
+  color: #000;
+  line-height: 18px;
+  font-size: 0.8em;
+  position: relative;
+  font-weight: bold;
+  bottom: 4px;
+}
 .difficulty-ring.easy {
   border-color: #88b300;
 }
@@ -511,9 +598,44 @@ div[hidden=""] {
   border-color: #000;
 }
 
-.difficulty-item:hover {
-  background: #eee; 
+.bigringbase {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  top: 5px;
+  left: 5px;
+  border-radius: 50%;
+  background: #fff;
 }
+.bigring {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  top: 8px;
+  left: 8px;
+  border-radius: 50%;
+  border: solid #aaa 4px;
+  background: #fff;
+}
+.bigring.easy {
+  border-color: #88b300;
+}
+.bigring.normal {
+  border-color: #6cf;
+}
+.bigring.hard {
+  border-color: #fc2;
+}
+.bigring.insane {
+  border-color: #f6a;
+}
+.bigring.expert {
+  border-color: #86e;
+}
+.bigring.expert-plus {
+  border-color: #000;
+}
+
 
 
 .faqentry {
