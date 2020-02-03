@@ -1,3 +1,6 @@
 _site/
 *.swp
 env.sh
+defaultskin
+lazerskin
+tests
