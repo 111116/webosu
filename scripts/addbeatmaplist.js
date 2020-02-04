@@ -1,3 +1,5 @@
+// star: number; numerical representation of star rating
+// returns an html element used in difficulty selection menu
 function createStarRow(star) {
     let row = document.createElement("div");
     row.className = "star-row";
@@ -21,6 +23,7 @@ function createStarRow(star) {
     }
     return row;
 }
+// creates a difficulty selection menu
 function createDifficultyList(boxclicked, event) {
     // check if a list of this kind is already there
     if (window.currentDifficultyList) {
@@ -98,6 +101,8 @@ function createDifficultyList(boxclicked, event) {
 }
 
 // async
+// listurl: url of api request that returns a list of beatmap packs
+// adds symbols of these beatmap packs to webpage
 function addBeatmapList(listurl) {
 
     function addpreviewbox(map) {
@@ -176,6 +181,12 @@ function addBeatmapList(listurl) {
                 let cnt = document.createElement("span");
                 cnt.className = "difficulty-count";
                 cnt.innerText = stars.length;
+                row.appendChild(cnt);
+            }
+            if (res.data.length == 0) {
+                let cnt = document.createElement("span");
+                cnt.className = "difficulty-count";
+                cnt.innerText = "no std map";
                 row.appendChild(cnt);
             }
             // show length & bpm
