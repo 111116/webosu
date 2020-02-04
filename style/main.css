@@ -192,7 +192,6 @@ progress {
 progress::-webkit-progress-bar{background:#333;}
 progress::-moz-progress-bar{background:#f6a;}
 progress::-webkit-progress-value{background:#f6a;}
-
 progress.finished::-moz-progress-bar{background:#6cf;}
 progress.finished::-webkit-progress-value{background:#6cf;}
 
