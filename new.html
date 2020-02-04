@@ -7,7 +7,11 @@
         <link rel="stylesheet" type="text/css" href="style/main.css">
         <link rel="stylesheet" type="text/css" href="style/font.css">
         <link rel="icon" href="favicon.png">
+        <script src="scripts/launchgame.js"></script>
+        <script src="scripts/downloader.js"></script>
         <script src="scripts/addbeatmaplist.js"></script>
+        <script src="scripts/settings.js"></script>
+        <script src="scripts/jsloader.js"></script>
     </head>
 
     <body>
@@ -47,6 +51,20 @@
             <!-- <div class="side-panel">
                 to be activated in script
             </div> -->
+            <div class="statuslines" id="statuslines">
+                <div class="progress" id="script-progress">
+                    Scripts
+                    <div class="lds-dual-ring"></div>
+                </div>
+                <div class="progress" id="skin-progress">
+                    Skin
+                    <div class="lds-dual-ring"></div>
+                </div>
+                <div class="progress" id="sound-progress">
+                    Hitsounds
+                    <div class="lds-dual-ring"></div>
+                </div>
+            </div>
         </div>
         <script>
             addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=2&5=1");
