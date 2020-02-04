@@ -164,6 +164,37 @@ h1,h2,h3 {
 .progress {
 	line-height: 1.8em;
 }
+.statuslines {
+  font-size: 0.8em;
+  position: fixed;
+  right: 0px;
+  top: 48px;
+  background: rgba(0,0,0,0.5);
+  padding: 12px;
+  padding-right: 12px;
+  width: 152px;
+}
+.download-progress {
+  line-height: 1.8em;
+}
+.download-progress .title {
+  margin-bottom: -1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+progress {
+  background: #333;
+  background-color: #333;
+  border-style: none;
+  height: 3px;
+}
+progress::-webkit-progress-bar{background:#333;}
+progress::-moz-progress-bar{background:#f6a;}
+progress::-webkit-progress-value{background:#f6a;}
+
+progress.finished::-moz-progress-bar{background:#6cf;}
+progress.finished::-webkit-progress-value{background:#6cf;}
 
 .text {
 	line-height: 1.8em;
@@ -656,4 +687,42 @@ div[hidden=""] {
 .faqentry {
   width: 800px;
   margin: auto;
+}
+
+
+
+/* loading status lines */
+
+/* loader */
+.lds-dual-ring {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 0.8em;
+  height: 0.8em;
+  margin-top: 0.1em;
+  margin-left: 0.2em;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  border-color: #fff #fff #fff transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.lds-dual-ring.finished:after {
+  border: none;
+  content: "OK";
+  line-height: 0.8em;
+  animation: none;
 }
