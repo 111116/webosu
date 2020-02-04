@@ -8,28 +8,7 @@
         <!-- <link href="//fonts.googleapis.com/css?family=Exo+2:400,600italic" rel="stylesheet" type="text/css"> -->
         <link rel="stylesheet" type="text/css" href="style/font.css">
         <link rel="icon" href="favicon.png">
-        <script src="scripts/lib/zip.js"></script>
-        <script src="scripts/lib/zip-fs.js"></script>
-        <script src="scripts/lib/pixi.min.js"></script>
-        <script src="scripts/lib/mp3parse.min.js"></script>
         <script src="scripts/lib/localforage.min.js"></script>
-        <script> zip.workerScriptsPath = 'scripts/lib/'; </script>
-        <script data-main="scripts/main" src="scripts/require.js"></script>
-        <script>
-            require.config({
-                paths: {
-                    underscore: 'lib/underscore',
-                    sound: 'lib/sound'
-                },
-                shim: {
-                    "underscore": {
-                        exports: "_"
-                    }
-                },
-                urlArgs: "bust=" +  (new Date()).getTime()
-            });
-        </script>
-        <script src="scripts/settings.js"></script>
         <script>
             // i18n
             window.i18n_dragdrophint = "把osz文件拖到这里"
@@ -44,9 +23,9 @@
         <nav id="main-nav">
             <div style="width: 43%">
                 <a href="index_cn.html" class="brand">Osaka Salmon University!</a>
-                <a href="" class="pseudo button">最新</a>
-                <a href="" class="pseudo button">热门</a>
-                <a href="" class="pseudo button active">已收藏</a>
+                <a href="new.html" class="pseudo button">最新</a>
+                <a href="hot.html" class="pseudo button">热门</a>
+                <a href="local.html" class="pseudo button">已收藏</a>
             </div>
             <div style="width: 25%; position: relative;">
                 <input placeholder="谱面关键词或sid" style="height: 36px; margin-top: 6px;" />
@@ -76,60 +55,37 @@
                     </div>
                 </div>
 
-
-                <div class="beatmap-list" id="beatmap-list">
-
-                    <div class="beatmapbox">
-                        <img class="beatmapcover" alt="beatmap cover" src="skin/defaultbg.jpg">
-                        <div class="beatmapcover-overlay"></div>
-                        <img class="beatmappreview" src="play-button.svg">
-                        <div class="beatmaptitle">Map Title</div>
-                        <div class="beatmapauthor">Various Artists / Mapper</div>
-                        <div class="beatmaplength">23:33</div>
-                        <div class="beatmap-difficulties">
-                            <div class="difficulty-ring easy"></div>
-                            <div class="difficulty-ring normal"></div>
-                            <div class="difficulty-ring hard"></div>
-                            <div class="difficulty-ring insane"></div>
-                            <div class="difficulty-ring expert"></div>
-                            <div class="difficulty-ring expert-plus"></div>
-                        </div>
-                    </div>
-
-                    <div class="dragbox" id="beatmap-dragbox">
-                        <div class="dragbox-inner" id="beatmap-dragbox-inner" hidden>
-                            <div class="dragbox-title" id="beatmap-dragbox-title">
-                                <h3> 添加本地谱面 </h3>
-                            </div>
-                            <div class="dragbox-hint" id="beatmap-dragbox-hint">
-                                +
-                            </div>
-                        </div>
-                    </div>
+                <div class="announcement">
+                    公告：我能吞下玻璃而不伤身体
                 </div>
+                <br>
+                <h2>发生了什么</h2>
+                <hr/>
+                <br>
+                <h2>最新曲目</h2>
+                <hr/>
+                <div class="beatmap-list" id="beatmap-list-new">
+                    <div class="dragbox" id="beatmap-dragbox"></div>
+                    <div class="dragbox" id="beatmap-dragbox"></div>
+                    <div class="dragbox" id="beatmap-dragbox"></div>
+                    <div class="dragbox" id="beatmap-dragbox"></div>
+                </div>
+                <br>
+                <h2>热门曲目</h2>
+                <hr/>
+                <div class="beatmap-list" id="beatmap-list-hot">
+                    <div class="dragbox" id="beatmap-dragbox"></div>
+                    <div class="dragbox" id="beatmap-dragbox"></div>
+                    <div class="dragbox" id="beatmap-dragbox"></div>
+                    <div class="dragbox" id="beatmap-dragbox"></div>
+                </div>
+                <br>
                 <div class="text">请使用最新的 Firefox 或 Chrome.</div>
-                <div class="text">内测版. <a href="https://github.com/111116/osuweb">Github</a></div>
+                <div class="text">内测版v0.2.0. <a href="https://github.com/111116/osuweb">Github</a></div>
+                <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
             </div>
 
             
-            <div class="side-panel">
-                <div class="imgwrapper">
-                    <img src="skin/defaultbg.jpg">
-                    <div class="overlay"></div>
-                    <div class="overlaytext title">Map Title</div>
-                    <div class="overlaytext artists">Various Artists</div>
-                    <div class="overlaytext length">23:33</div>
-                </div>
-                <div class="textwrapper">
-                    <div>制谱: PKUanonym</div>
-                    <div>来源: Bilibili Douga</div>
-                </div>
-                下载中
-                收藏
-                导出到本地
-                选择难度
-                历史记录
-            </div>
         </div>
     </body>
 </html>

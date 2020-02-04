@@ -4,7 +4,10 @@ body{
 	font-family:"Exo 2", "Helvetica Neue",Helvetica,Arial,sans-serif;
 	font-size: 16px;
 }
-
+h1,h2,h3,h4,h5,h6 {
+  padding: 0px;
+  font-weight: normal;
+}
 a {
   color: #6df;
 }
@@ -58,14 +61,24 @@ nav .pseudo.button.active, .pseudo.button:hover {
 	min-height: 1200px;
   margin-top: 50px;
 }
+.announcement {
+  width: 100%;
+  border-radius: 4px;
+  background: #333;
+  padding-left: 6px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
 
 
 .main-content{
   border-radius: 4px;
-	float: left;
-	margin:12px 12px;
+	/*float: left;*/
+  margin:auto;
+	padding-top:12px;
+  /*margin-left:12px;*/
 	/*padding:20px 20px 20px;*/
-	width:830px;
+	width:812px;
 	height:100%;
 }
 
@@ -163,6 +176,7 @@ h1,h2,h3 {
   flex-wrap: wrap;
   justify-content: left;
   position: relative;
+  margin-right: -12px; /* to cancel padding-right of last column*/
 }
 
 
@@ -479,6 +493,7 @@ input[type=range] {
 
 hr {
   height: 2px;
+  margin-bottom: 12px;
   border: none;
   background: #ee6da7;
 }

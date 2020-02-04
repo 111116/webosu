@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>戳泡泡</title>
+        <link rel="stylesheet" href="style/picnic.min.css">
+        <link rel="stylesheet" type="text/css" href="style/main.css">
+        <!-- <link href="//fonts.googleapis.com/css?family=Exo+2:400,600italic" rel="stylesheet" type="text/css"> -->
+        <link rel="stylesheet" type="text/css" href="style/font.css">
+        <link rel="icon" href="favicon.png">
+        <script src="scripts/lib/zip.js"></script>
+        <script src="scripts/lib/zip-fs.js"></script>
+        <script src="scripts/lib/pixi.min.js"></script>
+        <script src="scripts/lib/mp3parse.min.js"></script>
+        <script src="scripts/lib/localforage.min.js"></script>
+        <script> zip.workerScriptsPath = 'scripts/lib/'; </script>
+        <script data-main="scripts/main" src="scripts/require.js"></script>
+        <script>
+            require.config({
+                paths: {
+                    underscore: 'lib/underscore',
+                    sound: 'lib/sound'
+                },
+                shim: {
+                    "underscore": {
+                        exports: "_"
+                    }
+                },
+                urlArgs: "bust=" +  (new Date()).getTime()
+            });
+        </script>
+        <script src="scripts/settings.js"></script>
+        <script>
+            // i18n
+            window.i18n_dragdrophint = "把osz文件拖到这里"
+        </script>
+    </head>
+
+    <body>
+        <div class="game-area" id="game-area" hidden>
+        </div>
+
+
+        <nav id="main-nav">
+            <div style="width: 43%">
+                <a href="index_cn.html" class="brand">Osaka Salmon University!</a>
+                <a href="new.html" class="pseudo button">最新</a>
+                <a href="hot.html" class="pseudo button">热门</a>
+                <a href="local.html" class="pseudo button active">已收藏</a>
+            </div>
+            <div style="width: 25%; position: relative;">
+                <input placeholder="谱面关键词或sid" style="height: 36px; margin-top: 6px;" />
+                <img style="position: absolute; width: 24px; top:12px; right: 8px; cursor: pointer" src="research.svg">
+            </div>
+            <div style="width: 7%">
+            </div>
+            <div class="" style="width: 25%">
+                <a href="faq.html" class="pseudo button">常见问题</a>
+                <a href="settings_cn.html" class="pseudo button">设置</a>
+                <a href="index.html" class="pseudo button">English</a>
+            </div>
+        </nav>
+
+        <div class="main-page" id="main-page">
+            <div class="main-content">
+
+                <div class="progress-list" hidden>
+                    <div class="progress" id="script-progress">Loading scripts ...</div>
+                    <div class="progress" id="skin-progress">Loading skin ... </div>
+                    <div class="progress" id="sound-progress">Loading hitsounds ...</div>
+                    <div class="progress" id="beatmap-progress">
+                        Loading local beatmap&nbsp;
+                        <span id="bm-loaded-counter">--</span>
+                        &sol;
+                        <span id="bm-total-counter">--</span>
+                    </div>
+                </div>
+
+
+                <div class="beatmap-list" id="beatmap-list">
+
+                    <div class="beatmapbox">
+                        <img class="beatmapcover" alt="beatmap cover" src="skin/defaultbg.jpg">
+                        <div class="beatmapcover-overlay"></div>
+                        <img class="beatmappreview" src="play-button.svg">
+                        <div class="beatmaptitle">Map Title</div>
+                        <div class="beatmapauthor">Various Artists / Mapper</div>
+                        <div class="beatmaplength">23:33</div>
+                        <div class="beatmap-difficulties">
+                            <div class="difficulty-ring easy"></div>
+                            <div class="difficulty-ring normal"></div>
+                            <div class="difficulty-ring hard"></div>
+                            <div class="difficulty-ring insane"></div>
+                            <div class="difficulty-ring expert"></div>
+                            <div class="difficulty-ring expert-plus"></div>
+                        </div>
+                    </div>
+
+                    <div class="dragbox" id="beatmap-dragbox">
+                        <div class="dragbox-inner" id="beatmap-dragbox-inner" hidden>
+                            <div class="dragbox-title" id="beatmap-dragbox-title">
+                                <h3> 添加本地谱面 </h3>
+                            </div>
+                            <div class="dragbox-hint" id="beatmap-dragbox-hint">
+                                +
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text">请使用最新的 Firefox 或 Chrome.</div>
+                <div class="text">内测版. <a href="https://github.com/111116/osuweb">Github</a></div>
+            </div>
+
+            
+            <div class="side-panel">
+                <div class="imgwrapper">
+                    <img src="skin/defaultbg.jpg">
+                    <div class="overlay"></div>
+                    <div class="overlaytext title">Map Title</div>
+                    <div class="overlaytext artists">Various Artists</div>
+                    <div class="overlaytext length">23:33</div>
+                </div>
+                <div class="textwrapper">
+                    <div>制谱: PKUanonym</div>
+                    <div>来源: Bilibili Douga</div>
+                </div>
+                下载中
+                收藏
+                导出到本地
+                选择难度
+                历史记录
+            </div>
+        </div>
+    </body>
+</html>
+
+<!-- attribution -->
+<!-- play icon made by https://www.flaticon.com/authors/those-icons -->
+<!-- search icon made by https://www.flaticon.com/authors/good-ware -->

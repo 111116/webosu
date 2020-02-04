@@ -17,8 +17,8 @@
         <nav id="main-nav">
             <div style="width: 43%">
                 <a href="index_cn.html" class="brand">Osaka Salmon University!</a>
-                <a href="new.html" class="pseudo button">最新</a>
-                <a href="hot.html" class="pseudo button active">热门</a>
+                <a href="new.html" class="pseudo button active">最新</a>
+                <a href="hot.html" class="pseudo button">热门</a>
                 <a href="local.html" class="pseudo button">已收藏</a>
             </div>
             <div style="width: 25%; position: relative;">
@@ -49,10 +49,10 @@
             </div> -->
         </div>
         <script>
-            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=1&5=1");
+            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=2&5=1");
             var cur = 20;
             document.getElementById("btnmore").onclick = function() {
-                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+cur+"&2=1&5=1");
+                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+cur+"&2=2&5=1");
                 cur += 20;
             }
         </script>
