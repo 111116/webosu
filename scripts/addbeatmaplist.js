@@ -234,6 +234,8 @@ function addBeatmapList(listurl) {
                 startdownload(box[i]);
             }
         }
+        if (window.beatmaplistLoadedCallback)
+            window.beatmaplistLoadedCallback();
     }
     xhr.send();
 }

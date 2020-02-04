@@ -83,6 +83,7 @@ function setOptionPanel() {
 	}
 	gamesettings.loadToGame();
 	// this will also be called on game side. The latter call makes effect
+	if (!document.getElementById("settings-panel")) return;
 
 	// functions that get called when settings are restored to default
 	// used for refreshing widgets on the page
