@@ -1,5 +1,9 @@
 require(["osu", "underscore", "sound", "playback"],
 function(Osu, _, sound, Playback) {
+    window.Osu = Osu;
+    window.Playback = Playback;
+    // setup compatible audio context
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
     // initialize global game variables
     var game = {

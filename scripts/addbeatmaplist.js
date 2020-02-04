@@ -68,6 +68,7 @@ function createDifficultyList(boxclicked, event) {
         let difficultyItem = document.createElement("div");
         difficultyItem.className = "difficulty-item";
         difficultyBox.appendChild(difficultyItem);
+        difficultyItem.data = boxclicked.data[i];
         // add ring icon representing star
         let ringbase = document.createElement("div");
         let ring = document.createElement("div");
@@ -95,6 +96,12 @@ function createDifficultyList(boxclicked, event) {
 
         }
         difficultyItem.onclick = function(e) {
+            // check if ready
+            if (!window.scriptReady) return;
+            if (!window.soundReady) return;
+            if (!window.skinReady) return;
+            if (!this.parentElement.parentElement.oszblob) return;
+            launchGame(this.parentElement.parentElement.oszblob, this.data.bid);
         }
     }
     difficultyBox.onclick = function(e) {

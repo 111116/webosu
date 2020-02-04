@@ -48,18 +48,3 @@ window.beatmaplistLoadedCallback = function () {
 	}, 0);
 }
 
-
-
-
-// "scripts/osu.js"
-// "scripts/playerActions.js"
-// "scripts/SliderMesh.js"
-// "scripts/overlay/score.js"
-// "scripts/overlay/pause.js"
-// "scripts/overlay/volume.js"
-// "scripts/overlay/loading.js"
-// "scripts/overlay/grade.js"
-// "scripts/overlay/break.js"
-// "scripts/overlay/progress.js"
-// "scripts/overlay/hiterrormeter.js"
-// "scripts/playback.js"
