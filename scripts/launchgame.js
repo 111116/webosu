@@ -6,6 +6,9 @@ function launchOSU(osu, beatmapid){
             trackid = i;
     if (trackid == -1) {
         console.error("no suck track");
+        console.log("available tracks are:");
+        for (let i=0; i<osu.tracks.length; ++i)
+            console.log(osu.tracks[i].metadata.BeatmapID);
         return;
     }
     // launch PIXI app

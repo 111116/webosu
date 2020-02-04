@@ -71,7 +71,7 @@ function(Osu, _, sound, Playback) {
     // load skin & game cursor
     PIXI.Loader.shared
     .add('fonts/venera.fnt')
-    .add("sprites.json").load(function() {
+    .add("sprites.json").load(function(loader, resources) {
         window.skinReady = true;
         document.getElementById("skin-progress").classList.add("finished");
         Skin = PIXI.Loader.shared.resources["sprites.json"].textures;
@@ -130,4 +130,5 @@ function(Osu, _, sound, Playback) {
     // load script done
     window.scriptReady = true;
     document.getElementById("script-progress").classList.add("finished");
+
 });
