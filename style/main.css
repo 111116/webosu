@@ -719,7 +719,7 @@ div[hidden=""] {
   }
 }
 
-.lds-dual-ring.finished:after {
+.finished .lds-dual-ring:after {
   border: none;
   content: "OK";
   line-height: 0.8em;
