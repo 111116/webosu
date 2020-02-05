@@ -12,6 +12,7 @@
         <script src="scripts/addbeatmaplist.js"></script>
         <script src="scripts/settings.js"></script>
         <script src="scripts/jsloader.js"></script>
+        <script defer src="scripts/search.js"></script>
     </head>
 
     <body>
@@ -21,13 +22,13 @@
         <nav id="main-nav">
             <div style="width: 43%">
                 <a href="index_cn.html" class="brand">Osaka Salmon University!</a>
-                <a href="new.html" class="pseudo button">最新</a>
-                <a href="hot.html" class="pseudo button active">热门</a>
-                <a href="local.html" class="pseudo button">已收藏</a>
+                <a href="new.html" id="nav-new" class="pseudo button">最新</a>
+                <a href="hot.html" id="nav-hot" class="pseudo button active">热门</a>
+                <a href="local.html" id="nav-local" class="pseudo button">已收藏</a>
             </div>
             <div style="width: 25%; position: relative;">
-                <input placeholder="谱面关键词或sid" style="height: 36px; margin-top: 6px;" />
-                <img style="position: absolute; width: 24px; top:12px; right: 8px; cursor: pointer" src="research.svg">
+                <input id="search-input" placeholder="谱面关键词或sid" style="height: 36px; margin-top: 6px;" />
+                <img id="search-icon" style="position: absolute; width: 24px; top:12px; right: 8px; cursor: pointer" src="research.svg">
             </div>
             <div style="width: 7%">
             </div>
