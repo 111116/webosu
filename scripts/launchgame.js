@@ -1,14 +1,16 @@
-function launchOSU(osu, beatmapid){
+function launchOSU(osu, beatmapid, version){
     // select track
     let trackid = -1;
+    // mode can be 0 or undefined
     for (let i=0; i<osu.tracks.length; ++i)
-        if (osu.tracks[i].metadata.BeatmapID == beatmapid)
+        if (osu.tracks[i].metadata.BeatmapID == beatmapid || !osu.tracks[i].mode && osu.tracks[i].metadata.Version == version)
             trackid = i;
+    console.log("launching", beatmapid, version)
     if (trackid == -1) {
         console.error("no suck track");
         console.log("available tracks are:");
         for (let i=0; i<osu.tracks.length; ++i)
-            console.log(osu.tracks[i].metadata.BeatmapID);
+            console.log(osu.tracks[i].metadata.BeatmapID, osu.tracks[i].mode, osu.tracks[i].metadata.Version);
         return;
     }
     // launch PIXI app
@@ -79,14 +81,14 @@ function launchOSU(osu, beatmapid){
     window.requestAnimationFrame(gameLoop);
 }
 
-function launchGame(osublob, beatmapid) {
+function launchGame(osublob, beatmapid, version) {
     // unzip osz & parse beatmap
     let fs = new zip.fs.FS();
     fs.root.importBlob(osublob,
         function(){
             let osu = new Osu(fs.root);
             osu.ondecoded = function() {
-                launchOSU(osu, beatmapid);
+                launchOSU(osu, beatmapid, version);
             }
             osu.onerror = function() {
                 console.error("osu parse error");
