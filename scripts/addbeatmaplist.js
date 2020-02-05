@@ -101,7 +101,7 @@ function createDifficultyList(boxclicked, event) {
             if (!window.soundReady) return;
             if (!window.skinReady) return;
             if (!this.parentElement.parentElement.oszblob) return;
-            launchGame(this.parentElement.parentElement.oszblob, this.data.bid);
+            launchGame(this.parentElement.parentElement.oszblob, this.data.bid, this.data.version);
         }
     }
     difficultyBox.onclick = function(e) {
@@ -109,12 +109,11 @@ function createDifficultyList(boxclicked, event) {
     }
 }
 
-// async
-// listurl: url of api request that returns a list of beatmap packs
-// adds symbols of these beatmap packs to webpage
-function addBeatmapList(listurl) {
 
-    function addpreviewbox(map) {
+var NSaddBeatmapList = {
+
+    // map contains key: sid, title, artist, creator
+    addpreviewbox: function(map) {
         // create container of beatmap on web page
         let pBeatmapBox = document.createElement("div");
         let pBeatmapCover = document.createElement("img");
@@ -142,9 +141,9 @@ function addBeatmapList(listurl) {
         document.getElementById("beatmap-list").appendChild(pBeatmapBox);
         pBeatmapBox.setdata = map;
         return pBeatmapBox;
-    }
+    },
 
-    function addStarRings(box, data) {
+    addStarRings: function(box, data) {
         // get star ratings
         let stars = [];
         for (let i=0; i<data.length; ++i) {
@@ -158,7 +157,9 @@ function addBeatmapList(listurl) {
             for (let i=0; i<stars.length; ++i) {
                 let difficultyRing = document.createElement("div");
                 difficultyRing.className = "difficulty-ring";
-                difficultyRing.classList.add(starname(stars[i]));
+                let s = starname(stars[i]);
+                if (s.length>0)
+                    difficultyRing.classList.add(s);
                 row.appendChild(difficultyRing);
             }
         }
@@ -166,7 +167,9 @@ function addBeatmapList(listurl) {
         else {
             let difficultyRing = document.createElement("div");
             difficultyRing.className = "difficulty-ring";
-            difficultyRing.classList.add(starname(stars[stars.length-1]));
+            let s = starname(stars[stars.length-1]);
+            if (s.length>0)
+                difficultyRing.classList.add(s);
             row.appendChild(difficultyRing);
             let cnt = document.createElement("span");
             cnt.className = "difficulty-count";
@@ -179,8 +182,9 @@ function addBeatmapList(listurl) {
             cnt.innerText = "no std map";
             row.appendChild(cnt);
         }
-    }
-    function addLength(box, data) {
+    },
+
+    addLength: function(box, data) {
         // show length & bpm
         let length = 0;
         let bpm = 0;
@@ -196,29 +200,36 @@ function addBeatmapList(listurl) {
         pBeatmapLength.className = "beatmaplength";
         box.appendChild(pBeatmapLength);
         pBeatmapLength.innerText = Math.floor(length/60) + ":" + (length%60<10?"0":"") + (length%60);
-    }
-    function addMoreInfo(box, data) {
+    },
+
+    addMoreInfo: function(box, data) {
         // remove all but osu std mode
         data = data.filter(function(o){return o.mode == 0;});
         data = data.sort(function(a,b){return Math.sign(a.star-b.star);});
         box.data = data;
-        addStarRings(box, data);
-        addLength(box, data);
-    }
+        NSaddBeatmapList.addStarRings(box, data);
+        NSaddBeatmapList.addLength(box, data);
+    },
 
     // async
-    function requestMoreInfo(box) {
+    requestMoreInfo: function(box) {
         let url = "https://api.sayobot.cn/beatmapinfo?1=" + box.sid;
         let xhr = new XMLHttpRequest();
         xhr.responseType = 'text';
         xhr.open("GET", url);
         xhr.onload = function() {
             let res = JSON.parse(xhr.response);
-            addMoreInfo(box, res.data);
+            NSaddBeatmapList.addMoreInfo(box, res.data);
         }
         xhr.send();
     }
+}
 
+
+// async
+// listurl: url of api request that returns a list of beatmap packs
+// adds symbols of these beatmap packs to webpage
+function addBeatmapList(listurl) {
     // request beatmap pack list
     let xhr = new XMLHttpRequest();
     xhr.responseType = 'text';
@@ -229,12 +240,12 @@ function addBeatmapList(listurl) {
         let box = [];
         // add widget to webpage as soon as list is fetched
         for (let i=0; i<res.data.length; ++i) {
-            box.push(addpreviewbox(res.data[i]));
+            box.push(NSaddBeatmapList.addpreviewbox(res.data[i]));
         }
         // async add more info
         for (let i=0; i<res.data.length; ++i) {
             box[i].sid = res.data[i].sid;
-            requestMoreInfo(box[i]);
+            NSaddBeatmapList.requestMoreInfo(box[i]);
             box[i].onclick = function(e) {
                 // this is effective only when box.data is available
                 createDifficultyList(box[i], e);
@@ -249,3 +260,30 @@ function addBeatmapList(listurl) {
     }
     xhr.send();
 }
+
+function addBeatmapSid(sid) {
+    let url = "https://api.sayobot.cn/v2/beatmapinfo?0=" + sid;
+    let xhr = new XMLHttpRequest();
+    xhr.responseType = 'text';
+    xhr.open("GET", url);
+    xhr.onload = function() {
+        let res = JSON.parse(xhr.response);
+        if (res.status==-1) {
+            alert("Beatmap not found with specified sid");
+            return;
+        }
+        // use data of first track as set data
+        let box = NSaddBeatmapList.addpreviewbox(res.data);
+        box.sid = res.data.sid;
+        NSaddBeatmapList.requestMoreInfo(box);
+        box.onclick = function(e) {
+            // this is effective only when box.data is available
+            createDifficultyList(box, e);
+            startdownload(box);
+        }
+    }
+    xhr.send();
+}
+
+
+
