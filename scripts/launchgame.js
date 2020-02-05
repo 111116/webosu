@@ -13,6 +13,8 @@ function launchOSU(osu, beatmapid, version){
             console.log(osu.tracks[i].metadata.BeatmapID, osu.tracks[i].mode, osu.tracks[i].metadata.Version);
         return;
     }
+    // prevent launching multiple times
+    if (window.app) return;
     // launch PIXI app
     let app = window.app = new PIXI.Application({
         width: window.innerWidth,
