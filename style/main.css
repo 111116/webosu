@@ -108,20 +108,26 @@ nav .pseudo.button.active, .pseudo.button:hover {
   position: absolute;
   width: 100%;
   top: calc(50% - 3.75em);
+  /*shadow*/
+  box-shadow: 0px 0px 60px rgba(0,0,0,0.6);
+  width: 120%;
+  left: -10%;
+  background: rgba(0,0,0,0.3)
 }
 .pausebutton {
   margin-left: auto;
   margin-right: auto;
-  width: 80%;
+  width: 66%;
   height: 2.5em;
   text-align: center;
   transform: skewX(-12deg);
   letter-spacing: 0em;
   transition: 0.1s ease-out all;
+  overflow: hidden;
 }
 .pausebutton:hover {
   letter-spacing: 0.1em;
-  width: 90%;
+  width: 75%;
 }
 .pausebutton .inner {
   transform: skewX(19deg);
