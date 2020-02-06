@@ -8,7 +8,6 @@
         <!-- <link href="//fonts.googleapis.com/css?family=Exo+2:400,600italic" rel="stylesheet" type="text/css"> -->
         <link rel="stylesheet" type="text/css" href="style/font.css">
         <link rel="icon" href="favicon.png">
-        <script src="scripts/lib/localforage.min.js"></script>
         <script>
             // i18n
             window.i18n_dragdrophint = "把osz文件拖到这里"
@@ -28,8 +27,10 @@
                 <a href="local.html" class="pseudo button">已收藏</a>
             </div>
             <div style="width: 25%; position: relative;">
-                <input placeholder="谱面关键词或sid" style="height: 36px; margin-top: 6px;" />
-                <img style="position: absolute; width: 24px; top:12px; right: 8px; cursor: pointer" src="research.svg">
+                <form action="search.html">
+                    <input type="text" name="q" placeholder="谱面关键词或sid" style="height: 36px; margin-top: 6px;" />
+                    <input type="image" style="position: absolute; width: 24px; top:8px; right: 8px; background: none; padding: 0;" src="research.svg">
+                </form>
             </div>
             <div style="width: 7%">
             </div>
@@ -84,7 +85,6 @@
                 <div class="text">内测版v0.2.0. <a href="https://github.com/111116/osuweb">Github</a></div>
                 <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
             </div>
-
             
         </div>
     </body>

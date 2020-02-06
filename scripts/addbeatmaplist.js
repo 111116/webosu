@@ -281,6 +281,11 @@ function addBeatmapSid(sid) {
             createDifficultyList(box, e);
             startdownload(box);
         }
+        if (window.beatmaplistLoadedCallback) {
+            window.beatmaplistLoadedCallback();
+            window.beatmaplistLoadedCallback = null;
+            // to make sure it's called only once
+        }
     }
     xhr.send();
 }
