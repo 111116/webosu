@@ -12,27 +12,17 @@
         <script src="scripts/addbeatmaplist.js"></script>
         <script src="scripts/settings.js"></script>
         <script src="scripts/jsloader.js"></script>
-        <script defer src="scripts/search.js"></script>
     </head>
 
     <body>
         <div class="game-area" id="game-area" hidden>
         </div>
 
-        <div class="pause-menu">
-            <div class="paused-title">paused</div>
-                <div class="button-list">
-                    <div class="pausebutton continue"><div class="inner">Continue</div></div>
-                    <div class="pausebutton retry"><div class="inner">Retry</div></div>
-                    <div class="pausebutton quit"><div class="inner">Quit</div></div>
-                </div>
-        </div>
-
         <nav id="main-nav">
             <div style="width: 43%">
                 <a href="index_cn.html" class="brand">Osaka Salmon University!</a>
                 <a href="new.html" id="nav-new" class="pseudo button">最新</a>
-                <a href="hot.html" id="nav-hot" class="pseudo button active">热门</a>
+                <a href="hot.html" id="nav-hot" class="pseudo button">热门</a>
                 <a href="local.html" id="nav-local" class="pseudo button">已收藏</a>
             </div>
             <div style="width: 25%; position: relative;">
@@ -79,10 +69,20 @@
             </div>
         </div>
         <script>
-            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=1&5=1");
-            var cur = 20;
+            let url = new URL(window.location.href);
+            let keyword = url.searchParams.get("q");
+            var cur = 0;
+            if (keyword == parseInt(keyword, 10)) {
+                // is sid
+                addBeatmapSid(keyword);
+            }
+            else {
+                // search keyword
+                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=4&3=" + keyword + "&5=1");
+                cur = 20;
+            }
             document.getElementById("btnmore").onclick = function() {
-                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+cur+"&2=1&5=1");
+                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=" + cur + "&2=4&3=" + keyword + "&5=1");
                 cur += 20;
             }
         </script>

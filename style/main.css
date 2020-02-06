@@ -56,6 +56,22 @@ nav .pseudo.button.active, .pseudo.button:hover {
   box-shadow: none;
   border-bottom: 3px solid #fff;
 }
+/*fix placeholder color for chrome*/
+form input[type="text"]::-webkit-input-placeholder {
+  color: #c89eaa;
+}
+form input[type="text"] {
+  height: 36px;
+  margin-top: 6px;
+}
+.search-button {
+  position: absolute;
+  width: 24px;
+  top:8px;
+  right: 8px;
+  background: none;
+  padding: 0;
+}
 
 .main-page {
 	min-height: 1200px;
