@@ -2,8 +2,8 @@
 *   object layering:
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/pause", "overlay/volume", "overlay/loading", "overlay/grade", "overlay/break", "overlay/progress", "overlay/hiterrormeter"],
-function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu, LoadingMenu, GradeMenu, BreakOverlay, ProgressOverlay, ErrorMeterOverlay) {
+define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/volume", "overlay/loading", "overlay/grade", "overlay/break", "overlay/progress", "overlay/hiterrormeter"],
+function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMenu, GradeMenu, BreakOverlay, ProgressOverlay, ErrorMeterOverlay) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -74,7 +74,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.calcSize();
         game.mouseX = 512 / 2;
         game.mouseY = 384 / 2;
-        self.pauseMenu = new PauseMenu({width: game.window.innerWidth, height: game.window.innerHeight});
         self.loadingMenu = new LoadingMenu({width: game.window.innerWidth, height: game.window.innerHeight}, track);
         self.volumeMenu = new VolumeMenu({width: game.window.innerWidth, height: game.window.innerHeight});
         self.breakOverlay = new BreakOverlay({width: game.window.innerWidth, height: game.window.innerHeight});
@@ -86,7 +85,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
             self.calcSize();
             self.scoreOverlay.resize({width: window.innerWidth, height: window.innerHeight});
             self.errorMeter.resize({width: window.innerWidth, height: window.innerHeight});
-            self.pauseMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.loadingMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.volumeMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.breakOverlay.resize({width: window.innerWidth, height: window.innerHeight});
@@ -196,13 +194,21 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         this.pause = function() {
             if (this.osu.audio.pause()) { // pause music success
                 this.game.paused = true;
-                this.pauseMenu.pause();
+                let menu = document.getElementById("pause-menu");
+                menu.removeAttribute("hidden");
+                btn_continue = document.getElementById("pausebtn-continue");
+                btn_retry = document.getElementById("pausebtn-retry");
+                btn_quit = document.getElementById("pausebtn-quit");
+                btn_continue.onclick = function() {
+                    self.resume();
+                    btn_continue.onclick = null;
+                }
             }
         };
         this.resume = function() {
             this.osu.audio.play();
             this.game.paused = false;
-            this.pauseMenu.resume();
+            document.getElementById("pause-menu").setAttribute("hidden","");
         };
 
         // adjust volume
@@ -222,7 +228,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
 
         // pause
         window.addEventListener("keyup", function(e) {
-            if (e.keyCode === 32) {
+            // press esc to pause
+            if (e.keyCode === 27) {
                 if (!self.game.paused) {
                     self.pause();
                 }
@@ -394,7 +401,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, PauseMenu, VolumeMenu,
         self.game.stage.addChild(this.errorMeter);
         self.game.stage.addChild(this.progressOverlay);
         self.game.stage.addChild(this.breakOverlay);
-        self.game.stage.addChild(this.pauseMenu);
         self.game.stage.addChild(this.volumeMenu);
         self.game.stage.addChild(this.loadingMenu);
 
