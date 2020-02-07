@@ -168,37 +168,31 @@ form input[type="text"] {
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.6);
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 .grading .container {
-  border: 3px solid #eee;
-  background: rgba(0,0,0,0.6);
-  width: 800px;
-  height: 600px;
-  top: calc(50% - 300px);
+  /*background: #222;*/
+  border-radius: 2px;
+  width: 450px;
+  height: 556px;
+  top: calc(50% - 260px);
   margin-left: auto;
   margin-right: auto;
   position: relative;
-  padding-left: 10px;
 }
 .grading .container .left {
   font-size: 1.2em;
   position: absolute;
-  top: 190px;
-  left: -3px;
+  top: 120px;
+  left: 0px;
   width: 400px;
-  border: 3px solid #f00;
   padding-top: 20px;
   padding-bottom: 20px;
 }
-.grading .container .right {
-  position: absolute;
-  top: 100px;
-  left: 397px;
-  width: 400px;
-  border: 3px solid #0d0;
-  text-align: center;
-  padding-bottom: 20px;
+.grading .container .top {
+  background: #444;
+  width: 100%;
+  height: 110px;
 }
 .grading .beatmap-info {
   color: #fff;
@@ -215,93 +209,153 @@ form input[type="text"] {
   font-style: italic;
 }
 .grading .beatmap-info .version {
-  font-style: italic;
-  transform: skewX(7deg);
+  font-weight: bold;
   display: inline-block;
 }
 .grading .beatmap-info .mapper {
   display: inline-block;
-}
-.grading .score {
-  font-size: 3em;
+  padding-left: 0.5em;
 }
 .grading .grade {
+  position: absolute;
+  top: 12px;
+  right: 30px;
   font-style: italic;
   transform: skewX(7deg);
-  font-size: 6em;
+  font-size: 6.5em;
+  line-height: 0.6em;
+  letter-spacing: -0.08em;
 }
-.grading .accuracy {
+.grading .grade.s {
+  text-shadow: 0px 0px 20px #ff3;
+}
+.grading .grade.a {
+  text-shadow: 0px 0px 20px #0f0;
+}
+.grading .grade.b {
+  text-shadow: 0px 0px 20px #3bf;
+}
+.grading .grade.c {
+  text-shadow: 0px 0px 20px #90f;
+}
+.grading .grade.d {
+  text-shadow: 0px 0px 20px #f00;
+}
+.grading .grade.f {
+  color: #000;
+  text-shadow: 0px 0px 20px #fff;
 }
 .grading .judge {
+  text-align: left;
   width: 400px;
   height: 1.5em;
   position: relative;
+  margin-bottom: 6px;
 }
 .grading .judge .name {
   position: absolute;
-  left: 210px;
-}
-.grading .judge .count {
-  right: 200px;
-  position: absolute;
+  padding-left:7px;
+  padding-right:7px;
+  display: inline-block;
+  color: #fff;
+  width: 90px;
+  text-shadow: 1px 2px 0px rgba(0,0,0,0.2)
+  height: 1.5em;
 }
 .grading .name.great {
-  color: #66ccff;
+  background: #4293ff;
 }
 .grading .name.good {
-  color: #88b300;
+  background: #597a00;
 }
 .grading .name.meh {
-  color: #ffcc22;
+  background: #ff9316;
 }
 .grading .name.miss {
-  color: #ed1121;
+  background: #c40b15;
+}
+.grading .name.acc {
+  background: #555;
+}
+.grading .name.error {
+  background: #555;
 }
 .grading .count {
-
-}
-.grading .count.combo {
-  font-size: 1.5em;
-  font-style: italic;
-  transform: skewX(7deg);
-  line-height: 1em;
-}
-.grading .err {
   position: absolute;
-  left: 10px;
-  bottom: 6px;
+  top: 0px;
+  left: 80px;
+  transform: skewX(-12deg);
+  padding-left:20px;
+  background: #eee;
+  color: #000;
+  width: 160px;
+  display: inline-block;
+  height: 1.5em;
+}
+.grading .count .inner {
+  transform: skewX(12deg);
+}
+.grading .judge.combo {
+  height: 60px;
+}
+.grading .judge.combo .name {
+  background: #6b00c6;
+  line-height: 0.9em;
+  padding-top: 0.3em;
+  padding-bottom: 0.3em;
+  height: 60px;
+}
+.grading .judge.combo .count {
+  font-size: 2em;
+  line-height: 1.2em;
+  height: 60px;
+  width: 220px;
+}
+.grading .judge.combo .count .fc{
+  color: #6b00c6;
+}
+.grading .judge.score {
+  height: 60px;
+}
+.grading .judge.score .name {
+  background: #6b00c6;
+  padding-top: 0.4em;
+  padding-bottom: 0.4em;
+  height: 60px;
+}
+.grading .judge.score .count {
+  font-size: 2em;
+  line-height: 1.2em;
+  height: 60px;
+  width: 220px;
 }
 .grading .fullcombo {
   font-size: 2em;
   position: absolute;
+  font-style: italic;
+  color: #9200ee;
   right: 10px;
   bottom: 0px;
 }
 
 .grading .btnlist {
+  font-size: 1.8em;
   position: absolute;
-  left: -8px;
+  left: -10px;
   bottom: 0px;
   font-style: italic;
 }
-/*.pausebutton {
-  margin-left: auto;
-  margin-right: auto;
-  width: 66%;
-  letter-spacing: 0em;
-  overflow: hidden;
-}
-*/
 .grading .btnlist .btn {
   height: 2.5em;
   text-align: center;
   transform: skewX(-12deg);
-  width: 150px;
+  width: 240px;
   transition: 0.1s ease-out all;
+  cursor: pointer;
 }
 .grading .btnlist .btn:hover {
   letter-spacing: 0.1em;
-  width: 200px;
+  width: 300px;
 }
 .grading .btnlist .btn .inner {
   transform: skewX(19deg);
