@@ -157,13 +157,13 @@ define([], function()
             // any zero-score result is a miss
             this.combo = (result > 0)? this.combo+1 : 0;
             this.maxcombo = Math.max(this.maxcombo, this.combo);
-            this.HP += this.HPincreasefor(result);
-            this.HP = Math.min(1, Math.max(0, this.HP));
+            if (this.HP >= 0)
+                this.HP += this.HPincreasefor(result);
 
             this.score4display.set(time, this.score);
             this.combo4display.set(time, this.combo);
             this.accuracy4display.set(time, this.judgeTotal / this.maxJudgeTotal);
-            this.HP4display.set(time, this.HP);
+            this.HP4display.set(time, Math.max(0, Math.min(1, this.HP)));
         }
 
         this.charspacing = 10; // in texture pixel
@@ -235,7 +235,7 @@ define([], function()
                 return div;
             }
             let acc = this.judgeTotal / this.maxJudgeTotal;
-            let rank = grade(acc); // F
+            let rank = this.HP<0? "F": grade(acc);
             let grading = newdiv(null, "grading");
             document.body.appendChild(grading);
             let top = newdiv(grading, "top");
