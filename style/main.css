@@ -175,7 +175,7 @@ form input[type="text"] {
 .grading .top {
   background: rgba(0,0,0,0.7);
   width: 100%;
-  height: 110px;
+  height: 115px;
 }
 .grading .ranking {
   position: absolute;
@@ -198,6 +198,8 @@ form input[type="text"] {
   font-style: italic;
 }
 .grading .beatmap-info .version {
+  font-size: 1.4em;
+  line-height: 1.2em;
   font-weight: bold;
   display: inline-block;
 }
