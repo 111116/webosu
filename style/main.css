@@ -142,6 +142,7 @@ form input[type="text"] {
   letter-spacing: 0em;
   transition: 0.1s ease-out all;
   overflow: hidden;
+  cursor: pointer;
 }
 .pausebutton:hover {
   letter-spacing: 0.1em;
@@ -166,6 +167,8 @@ form input[type="text"] {
 /*in-game grading menu*/
 .grading {
   position: fixed;
+  top: 0px;
+  left: 0px;
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.6);
@@ -179,8 +182,8 @@ form input[type="text"] {
 }
 .grading .ranking {
   position: absolute;
-  top: 30px;
-  right: 150px;
+  top: 35px;
+  right: 160px;
   font-size: 3em;
 }
 .grading .beatmap-info {
@@ -217,22 +220,26 @@ form input[type="text"] {
   line-height: 0.6em;
   letter-spacing: -0.08em;
 }
-.grading .grade.s {
+.grading .grade.SS {
+  text-shadow: 0px 0px 40px #ff3;
+  right: 110px;
+}
+.grading .grade.S {
   text-shadow: 0px 0px 40px #ff3;
 }
-.grading .grade.a {
+.grading .grade.A {
   text-shadow: 0px 0px 40px #0f0;
 }
-.grading .grade.b {
+.grading .grade.B {
   text-shadow: 0px 0px 40px #3bf;
 }
-.grading .grade.c {
+.grading .grade.C {
   text-shadow: 0px 0px 40px #90f;
 }
-.grading .grade.d {
+.grading .grade.D {
   text-shadow: 0px 0px 40px #f00;
 }
-.grading .grade.f {
+.grading .grade.F {
   color: #000;
   text-shadow: 0px 0px 40px #fff;
 }
@@ -346,40 +353,6 @@ form input[type="text"] {
   content: "Max Combo";
 }
 
-.grading .count {
-  position: absolute;
-  top: 0px;
-  left: 80px;
-  transform: skewX(-12deg);
-  padding-left:20px;
-  background: #eee;
-  color: #000;
-  width: 160px;
-  display: inline-block;
-  height: 1.5em;
-}
-.grading .count .inner {
-  transform: skewX(12deg);
-}
-.grading .judge.combo {
-  height: 60px;
-}
-.grading .judge.combo .name {
-  background: #6b00c6;
-  line-height: 0.9em;
-  padding-top: 0.3em;
-  padding-bottom: 0.3em;
-  height: 60px;
-}
-.grading .judge.combo .count {
-  font-size: 2em;
-  line-height: 1.2em;
-  height: 60px;
-  width: 220px;
-}
-.grading .judge.combo .count .fc{
-  color: #6b00c6;
-}
 .grading .fullcombo {
 }
 .grading .fullcombo:before {
@@ -388,7 +361,7 @@ form input[type="text"] {
   font-size: 2em;
   font-style: italic;
   color: #ff969c;
-  border: 4px #ff969c solid;
+  border: 5px #ff969c solid;
   border-radius: 12px;
   white-space:nowrap;
   line-height: 1.2em;

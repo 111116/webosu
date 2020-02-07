@@ -12,6 +12,14 @@
 
 define([], function()
 {
+    function grade(acc) {
+        if (acc >= 1) return 'SS';
+        if (acc >= 0.95) return 'S';
+        if (acc >= 0.9) return 'A';
+        if (acc >= 0.8) return 'B';
+        if (acc >= 0.7) return 'C';
+        return 'D';
+    }
     function LazyNumber(value = 0) {
         this.value = value;
         this.target = value;
@@ -211,6 +219,50 @@ define([], function()
             this.setSpriteArrayPos(this.scoreDigits, basex - this.scoreDigits.width / 2, basey);
             this.setSpriteArrayPos(this.accuracyDigits, basex - this.scoreDigits.width / 2 - this.accuracyDigits.width - 16*unit, basey + 3*unit);
             this.setSpriteArrayPos(this.comboDigits, basex + this.scoreDigits.width / 2 + 16*unit, basey + 3*unit);
+        }
+
+        this.showSummary = function(metadata, retryCallback, quitCallback) {
+            console.log("showSummary", this);
+            console.log(this.judgecnt);
+            function newdiv(parent, classname, text) {
+                let div = document.createElement("div");
+                if (parent)
+                    parent.appendChild(div);
+                if (classname)
+                    div.className = classname;
+                if (text)
+                    div.innerText = text;
+                return div;
+            }
+            let acc = this.judgeTotal / this.maxJudgeTotal;
+            let rank = grade(acc); // F
+            let grading = newdiv(null, "grading");
+            document.body.appendChild(grading);
+            let top = newdiv(grading, "top");
+            let info = newdiv(top, "beatmap-info");
+            newdiv(info, "title", metadata.Title);
+            newdiv(info, "artist", metadata.Artist);
+            newdiv(info, "version", metadata.Version);
+            newdiv(info, "mapper", "mapped by " + metadata.Creator);
+            newdiv(top, "ranking", "Ranking");
+            newdiv(top, "grade " + rank, rank);
+            let left = newdiv(grading, "left");
+            newdiv(left, "block score", Math.round(this.score).toString());
+            newdiv(left, "block acc", (acc*100).toFixed(2)+"%");
+            newdiv(left, "block err", "N/A");
+            newdiv(left, "block great", this.judgecnt.great.toString());
+            newdiv(left, "block good", this.judgecnt.good.toString());
+            newdiv(left, "block meh", this.judgecnt.meh.toString());
+            newdiv(left, "block miss", this.judgecnt.miss.toString());
+            newdiv(left, "block placeholder");
+            newdiv(left, "block combo", this.maxcombo.toString() + "x");
+            // newdiv(left, "fullcombo");
+            let b1 = newdiv(grading, "btn retry");
+            newdiv(b1, "inner", "Retry");
+            b1.onclick = retryCallback;
+            let b2 = newdiv(grading, "btn quit");
+            newdiv(b2, "inner", "Quit");
+            b2.onclick = quitCallback;
         }
     }
     

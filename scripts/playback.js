@@ -2,8 +2,8 @@
 *   object layering:
 *       assuming number of possible hits doesn't exceed 9998
 */
-define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/volume", "overlay/loading", "overlay/grade", "overlay/break", "overlay/progress", "overlay/hiterrormeter"],
-function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMenu, GradeMenu, BreakOverlay, ProgressOverlay, ErrorMeterOverlay) {
+define(["osu", "playerActions", "SliderMesh", "overlay/score", "overlay/volume", "overlay/loading", "overlay/break", "overlay/progress", "overlay/hiterrormeter"],
+function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMenu, BreakOverlay, ProgressOverlay, ErrorMeterOverlay) {
     function clamp01(a) {
         return Math.min(1, Math.max(0, a));
     }
@@ -89,7 +89,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             self.volumeMenu.resize({width: window.innerWidth, height: window.innerHeight});
             self.breakOverlay.resize({width: window.innerWidth, height: window.innerHeight});
             self.progressOverlay.resize({width: window.innerWidth, height: window.innerHeight});
-            if (self.gradeMenu) self.gradeMenu.resize({width: window.innerWidth, height: window.innerHeight});
 
             if (self.background && self.background.texture) {
                 self.background.x = window.innerWidth / 2;
@@ -202,7 +201,11 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                 btn_continue.onclick = function() {
                     self.resume();
                     btn_continue.onclick = null;
+                    btn_retry.onclick = null;
+                    btn_quit.onclick = null;
                 }
+                btn_retry.onclick = self.retry;
+                btn_quit.onclick = self.quit;
             }
         };
         this.resume = function() {
@@ -1204,11 +1207,13 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
 
             if (time > this.endTime) {
                 // game ends
-                if (!this.gradeMenu) {
-                    this.gradeMenu = new GradeMenu({width: game.window.innerWidth, height: game.window.innerHeight}, this.scoreOverlay);
-                    self.game.stage.addChild(this.gradeMenu);
+                if (!this.ended) {
+                    this.ended = true;
+                    this.pause = function(){};
+                    this.scoreOverlay.visible = false;
+                    this.scoreOverlay.showSummary(this.track.metadata, this.retry, this.quit);
                 }
-                this.gradeMenu.alpha = clamp01((time - this.endTime) / 200);
+                self.background.tint = 0xffffff;
             }
         }
 
@@ -1227,6 +1232,13 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             self.osu.audio.play(self.backgroundFadeTime + self.wait);
         };
 
+        this.retry = function() {
+
+        }
+
+        this.quit = function() {
+
+        }
     }
     
     return Playback;
