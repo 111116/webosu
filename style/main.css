@@ -98,6 +98,8 @@ form input[type="text"] {
 	height:100%;
 }
 
+
+/*in-game pause menu*/
 .pause-menu {
   color: #ffffff;
   font-size: 1.8em;
@@ -159,6 +161,161 @@ form input[type="text"] {
 .pausebutton.quit {
   background: #aa1b27;
 }
+
+/*in-game grading menu*/
+.grading {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  font-size: 1.5rem;
+}
+.grading .container {
+  border: 3px solid #eee;
+  background: rgba(0,0,0,0.6);
+  width: 800px;
+  height: 600px;
+  top: calc(50% - 300px);
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  padding-left: 10px;
+}
+.grading .container .left {
+  font-size: 1.2em;
+  position: absolute;
+  top: 190px;
+  left: -3px;
+  width: 400px;
+  border: 3px solid #f00;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.grading .container .right {
+  position: absolute;
+  top: 100px;
+  left: 397px;
+  width: 400px;
+  border: 3px solid #0d0;
+  text-align: center;
+  padding-bottom: 20px;
+}
+.grading .beatmap-info {
+  color: #fff;
+  position: absolute;
+  top: 0px;
+  left: 10px;
+}
+.grading .beatmap-info .title {
+  font-style: italic;
+  font-size: 2em;
+  line-height: 1.2em;
+}
+.grading .beatmap-info .artist {
+  font-style: italic;
+}
+.grading .beatmap-info .version {
+  font-style: italic;
+  transform: skewX(7deg);
+  display: inline-block;
+}
+.grading .beatmap-info .mapper {
+  display: inline-block;
+}
+.grading .score {
+  font-size: 3em;
+}
+.grading .grade {
+  font-style: italic;
+  transform: skewX(7deg);
+  font-size: 6em;
+}
+.grading .accuracy {
+}
+.grading .judge {
+  width: 400px;
+  height: 1.5em;
+  position: relative;
+}
+.grading .judge .name {
+  position: absolute;
+  left: 210px;
+}
+.grading .judge .count {
+  right: 200px;
+  position: absolute;
+}
+.grading .name.great {
+  color: #66ccff;
+}
+.grading .name.good {
+  color: #88b300;
+}
+.grading .name.meh {
+  color: #ffcc22;
+}
+.grading .name.miss {
+  color: #ed1121;
+}
+.grading .count {
+
+}
+.grading .count.combo {
+  font-size: 1.5em;
+  font-style: italic;
+  transform: skewX(7deg);
+  line-height: 1em;
+}
+.grading .err {
+  position: absolute;
+  left: 10px;
+  bottom: 6px;
+}
+.grading .fullcombo {
+  font-size: 2em;
+  position: absolute;
+  right: 10px;
+  bottom: 0px;
+}
+
+.grading .btnlist {
+  position: absolute;
+  left: -8px;
+  bottom: 0px;
+  font-style: italic;
+}
+/*.pausebutton {
+  margin-left: auto;
+  margin-right: auto;
+  width: 66%;
+  letter-spacing: 0em;
+  overflow: hidden;
+}
+*/
+.grading .btnlist .btn {
+  height: 2.5em;
+  text-align: center;
+  transform: skewX(-12deg);
+  width: 150px;
+  transition: 0.1s ease-out all;
+}
+.grading .btnlist .btn:hover {
+  letter-spacing: 0.1em;
+  width: 200px;
+}
+.grading .btnlist .btn .inner {
+  transform: skewX(19deg);
+  padding-top: 0.4em;
+  text-shadow: 1px 2px 0px rgba(0,0,0,0.2)
+}
+.grading .btnlist .btn.retry {
+  background: #eeaa00;
+}
+.grading .btnlist .btn.quit {
+  background: #aa1b27;
+}
+
+
 
 .side-panel {
   background: #333;
