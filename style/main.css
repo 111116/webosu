@@ -162,43 +162,32 @@ form input[type="text"] {
   background: #aa1b27;
 }
 
+
 /*in-game grading menu*/
 .grading {
   position: fixed;
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.6);
+  color: #fff;
   font-size: 1.2rem;
 }
-.grading .container {
-  /*background: #222;*/
-  border-radius: 2px;
-  width: 450px;
-  height: 556px;
-  top: calc(50% - 260px);
-  margin-left: auto;
-  margin-right: auto;
-  position: relative;
-}
-.grading .container .left {
-  font-size: 1.2em;
-  position: absolute;
-  top: 120px;
-  left: 0px;
-  width: 400px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-.grading .container .top {
-  background: #444;
+.grading .top {
+  background: rgba(0,0,0,0.7);
   width: 100%;
   height: 110px;
+}
+.grading .ranking {
+  position: absolute;
+  top: 30px;
+  right: 150px;
+  font-size: 3em;
 }
 .grading .beatmap-info {
   color: #fff;
   position: absolute;
   top: 0px;
-  left: 10px;
+  left: 120px;
 }
 .grading .beatmap-info .title {
   font-style: italic;
@@ -216,70 +205,145 @@ form input[type="text"] {
   display: inline-block;
   padding-left: 0.5em;
 }
+
 .grading .grade {
   position: absolute;
-  top: 12px;
-  right: 30px;
+  top: 210px;
+  right: 180px;
   font-style: italic;
-  transform: skewX(7deg);
-  font-size: 6.5em;
+  font-size: 20em;
   line-height: 0.6em;
   letter-spacing: -0.08em;
 }
 .grading .grade.s {
-  text-shadow: 0px 0px 20px #ff3;
+  text-shadow: 0px 0px 40px #ff3;
 }
 .grading .grade.a {
-  text-shadow: 0px 0px 20px #0f0;
+  text-shadow: 0px 0px 40px #0f0;
 }
 .grading .grade.b {
-  text-shadow: 0px 0px 20px #3bf;
+  text-shadow: 0px 0px 40px #3bf;
 }
 .grading .grade.c {
-  text-shadow: 0px 0px 20px #90f;
+  text-shadow: 0px 0px 40px #90f;
 }
 .grading .grade.d {
-  text-shadow: 0px 0px 20px #f00;
+  text-shadow: 0px 0px 40px #f00;
 }
 .grading .grade.f {
   color: #000;
-  text-shadow: 0px 0px 20px #fff;
+  text-shadow: 0px 0px 40px #fff;
 }
-.grading .judge {
-  text-align: left;
-  width: 400px;
-  height: 1.5em;
-  position: relative;
-  margin-bottom: 6px;
-}
-.grading .judge .name {
+
+.grading .left {
+  font-size: 1.2em;
   position: absolute;
-  padding-left:7px;
-  padding-right:7px;
-  display: inline-block;
+  top: 130px;
+  left: 120px;
+  width: 500px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.grading .block {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
   color: #fff;
-  width: 90px;
-  text-shadow: 1px 2px 0px rgba(0,0,0,0.2)
-  height: 1.5em;
+  font-size: 1.6em;
+  text-shadow: 1px 2px 0px rgba(0,0,0,0.3);
+  line-height: 1em;
+  padding-top: 1.4em;
+  padding-right: 0.2em;
+  text-align: right;
+  box-shadow: 2px 3px 5px rgba(0,0,0,0.5);
 }
-.grading .name.great {
+.grading .block:before {
+  position: absolute;
+  top: 0px;
+  left: 4px;
+  color: rgba(0,0,0,0.3);
+  text-shadow: none;
+}
+.block.score {
+  background: #6b00c6;
+  width: 500px;
+  text-align: right;
+  padding-top: 0em;
+  line-height: 90px;
+  padding-right: 20px;
+  height: 100px;
+  font-size: 3em;
+  text-shadow: 2px 3px 0px rgba(0,0,0,0.3);
+}
+.block.score:before {
+  content: "Score";
+  position: absolute;
+}
+.block.acc {
+  background: #abbc38;
+  width: 50%;
+  font-size: 1.8em;
+  padding-top: 1.2em;
+}
+.block.acc:before {
+  content: "Accuracy";
+}
+.block.err {
+  background: #4299a4;
+  width: 50%;
+  font-size: 1.8em;
+  padding-top: 1.2em;
+}
+.block.err:before {
+  content: "Hit Error";
+}
+.block.great {
   background: #4293ff;
+  width: 25%;
 }
-.grading .name.good {
+.block.great:before {
+  content: "Great";
+}
+.block.good {
   background: #597a00;
+  width: 25%;
 }
-.grading .name.meh {
-  background: #ff9316;
+.block.good:before {
+  content: "Good";
 }
-.grading .name.miss {
+.block.meh {
+  background: #e68412;
+  width: 25%;
+}
+.block.meh:before {
+  content: "Meh";
+}
+.block.miss {
   background: #c40b15;
+  width: 25%;
 }
-.grading .name.acc {
-  background: #555;
+.block.miss:before {
+  content: "Miss";
 }
-.grading .name.error {
-  background: #555;
+.block.placeholder {
+  width: 50%;
+  box-shadow: none;
 }
+.block.combo {
+  background: #a64d99;
+  width: 50%;
+  font-size: 2.2em;
+  padding-top: 0.85em;
+}
+.block.combo:before {
+  font-size: 0.8em;
+  line-height: 1em;
+  content: "Max Combo";
+}
+
 .grading .count {
   position: absolute;
   top: 0px;
@@ -314,58 +378,55 @@ form input[type="text"] {
 .grading .judge.combo .count .fc{
   color: #6b00c6;
 }
-.grading .judge.score {
-  height: 60px;
-}
-.grading .judge.score .name {
-  background: #6b00c6;
-  padding-top: 0.4em;
-  padding-bottom: 0.4em;
-  height: 60px;
-}
-.grading .judge.score .count {
-  font-size: 2em;
-  line-height: 1.2em;
-  height: 60px;
-  width: 220px;
-}
 .grading .fullcombo {
-  font-size: 2em;
+}
+.grading .fullcombo:before {
   position: absolute;
+  content: "Full Combo";
+  font-size: 2em;
   font-style: italic;
-  color: #9200ee;
-  right: 10px;
-  bottom: 0px;
+  color: #ff969c;
+  border: 4px #ff969c solid;
+  border-radius: 12px;
+  white-space:nowrap;
+  line-height: 1.2em;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  padding-bottom: 0.1em;
+  transform: rotate(21deg);
+  bottom: 15px;
+  right: 90px;
+  text-shadow: 1px 2px 0px rgba(0,0,0,0.3);
+  box-shadow: 1px 2px 0px rgba(0,0,0,0.3);
 }
 
-.grading .btnlist {
-  font-size: 1.8em;
+.grading .btn {
   position: absolute;
-  left: -10px;
   bottom: 0px;
-  font-style: italic;
-}
-.grading .btnlist .btn {
+  font-size: 1.8em;
+  width: 240px;
   height: 2.5em;
   text-align: center;
-  transform: skewX(-12deg);
-  width: 240px;
+  font-weight: bold;
   transition: 0.1s ease-out all;
   cursor: pointer;
+  transform: skewX(-12deg);
 }
-.grading .btnlist .btn:hover {
-  letter-spacing: 0.1em;
-  width: 300px;
+.grading .btn:hover {
+  letter-spacing: 0.06em;
+  width: 270px;
 }
-.grading .btnlist .btn .inner {
-  transform: skewX(19deg);
+.grading .btn .inner {
   padding-top: 0.4em;
-  text-shadow: 1px 2px 0px rgba(0,0,0,0.2)
+  text-shadow: 1px 2px 0px rgba(0,0,0,0.2);
+  transform: skewX(12deg);
 }
-.grading .btnlist .btn.retry {
+.grading .btn.retry {
+  right: -10px;
   background: #eeaa00;
 }
-.grading .btnlist .btn.quit {
+.grading .btn.quit {
+  left: -10px;
   background: #aa1b27;
 }
 
