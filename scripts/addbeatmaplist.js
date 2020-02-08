@@ -97,10 +97,9 @@ function createDifficultyList(boxclicked, event) {
         }
         difficultyItem.onclick = function(e) {
             // check if ready
-            if (!window.scriptReady) return;
-            if (!window.soundReady) return;
-            if (!window.skinReady) return;
-            if (!this.parentElement.parentElement.oszblob) return;
+            if (!window.scriptReady || !window.soundReady || !window.skinReady || !this.parentElement.parentElement.oszblob) {
+                return;
+            }
             launchGame(this.parentElement.parentElement.oszblob, this.data.bid, this.data.version);
         }
     }

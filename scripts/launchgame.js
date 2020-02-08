@@ -81,9 +81,11 @@ function launchOSU(osu, beatmapid, version){
         // restore page scroll position
         document.documentElement.scrollTop = scrollTop;
         // TODO application level clean up
-        game.stage.removeChild(game.cursor);
-        game.cursor.destroy();
-        game.cursor = null;
+        if (game.cursor) {
+            game.stage.removeChild(game.cursor);
+            game.cursor.destroy();
+            game.cursor = null;
+        }
         window.app.destroy(true, {children: true, texture: false});
         window.app = null;
         gameLoop = null;
