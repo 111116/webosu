@@ -159,11 +159,12 @@ define([], function()
             this.maxcombo = Math.max(this.maxcombo, this.combo);
             if (this.HP >= 0)
                 this.HP += this.HPincreasefor(result);
+            this.HP = Math.min(1, this.HP);
 
             this.score4display.set(time, this.score);
             this.combo4display.set(time, this.combo);
             this.accuracy4display.set(time, this.judgeTotal / this.maxJudgeTotal);
-            this.HP4display.set(time, Math.max(0, Math.min(1, this.HP)));
+            this.HP4display.set(time, Math.max(0, this.HP));
         }
 
         this.charspacing = 10; // in texture pixel
