@@ -18,7 +18,8 @@ function startdownload(box) {
     title.innerText = box.setdata.title;
     container.appendChild(title);
     container.appendChild(bar);
-    document.getElementById("statuslines").appendChild(container);
+    let statuslines = document.getElementById("statuslines");
+    statuslines.insertBefore(container, statuslines.children[3]);
     bar.max = 1;
     bar.value = 0;
     // async part
