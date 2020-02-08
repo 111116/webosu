@@ -223,8 +223,6 @@ define([], function()
         }
 
         this.showSummary = function(metadata, retryCallback, quitCallback) {
-            console.log("showSummary", this);
-            console.log(this.judgecnt);
             function newdiv(parent, classname, text) {
                 let div = document.createElement("div");
                 if (parent)

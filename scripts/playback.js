@@ -29,6 +29,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         self.hits = self.track.hitObjects.slice(0); // creating a copy of hitobjects
         self.offset = 0;
         self.currentHitIndex = 0; // index for all hit objects
+        self.ended = false;
         // mods
         self.autoplay = game.autoplay;
         self.modhidden = game.hidden;
@@ -1263,11 +1264,11 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
 
         this.retry = function() {
             console.log("playback: retrying");
-            this.destroy();
-            this.constructor(this.game, this.osu, this.track);
-            this.loadingMenu.hide();
-            this.audioReady = true;
-            this.start();
+            self.destroy();
+            self.constructor(self.game, self.osu, self.track);
+            self.loadingMenu.hide();
+            self.audioReady = true;
+            self.start();
         }
 
         this.quit = function() {
