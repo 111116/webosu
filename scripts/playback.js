@@ -24,7 +24,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         self.osu = osu;
         self.track = track;
         self.background = null;
-        self.ready = true;
         self.started = false;
         self.upcomingHits = [];
         self.hits = self.track.hitObjects.slice(0); // creating a copy of hitobjects
@@ -372,7 +371,6 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                 });
             }
             if (self.track.events.length != 0) {
-                self.ready = false;
                 var file = self.track.events[0][2];
                 if (track.events[0][0] === "Video") {
                     file = self.track.events[1][2];
@@ -383,11 +381,9 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                     entry.getBlob("image/jpeg", function (blob) {
                         var uri = URL.createObjectURL(blob);
                         loadBackground(uri);
-                        self.ready = true;
                     });
                 } else  {
                     loadBackground("skin/defaultbg.jpg");
-                    self.ready = true;
                 }
             } else {
                 loadBackground("skin/defaultbg.jpg");
@@ -1261,15 +1257,17 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             console.log("start playback")
             self.started = true;
             self.osu.audio.gain.gain.value = self.game.musicVolume * self.game.masterVolume;
-            if (!self.ready) {
-                return;
-            }
             self.osu.audio.playbackRate = self.playbackRate;
             self.osu.audio.play(self.backgroundFadeTime + self.wait);
         };
 
         this.retry = function() {
-
+            console.log("playback: retrying");
+            this.destroy();
+            this.constructor(this.game, this.osu, this.track);
+            this.loadingMenu.hide();
+            this.audioReady = true;
+            this.start();
         }
 
         this.quit = function() {

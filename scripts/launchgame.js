@@ -95,7 +95,7 @@ function launchOSU(osu, beatmapid, version){
     // load playback
     var playback = new Playback(window.game, osu, osu.tracks[trackid]);
     game.scene = playback;
-    playback.load();
+    playback.load(); // load audio
 
     // start main loop
     gameLoop = function(timestamp) {
