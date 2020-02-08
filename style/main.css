@@ -29,7 +29,7 @@ canvas {
 .game-area {
 }
 .game-area.showhwmouse {
-  cursor: url("skin/cursor.cur") 40 40, crosshair !important;
+  cursor: url("cursor.cur") 40 40, crosshair !important;
 }
 .game-area.shownomouse {
   cursor: none !important;
