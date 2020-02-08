@@ -15,6 +15,7 @@ function launchOSU(osu, beatmapid, version){
     }
     // prevent launching multiple times
     if (window.app) return;
+    console.log("launching PIXI app");
     // launch PIXI app
     let app = window.app = new PIXI.Application({
         width: window.innerWidth,
@@ -61,13 +62,32 @@ function launchOSU(osu, beatmapid, version){
     pNav.setAttribute("style","display: none");
     pGameArea.removeAttribute("hidden");
 
+    var gameLoop;
+    // set quit callback
+    window.quitGame = function() {
+        // this shouldn't be called before playback is cleaned up
+        // restore webpage state
+        pGameArea.setAttribute("hidden", "");
+        pMainPage.removeAttribute("hidden");
+        pNav.removeAttribute("style");
+        document.body.classList.remove("gaming");
+        // TODO application level clean up
+        game.stage.removeChild(game.cursor);
+        game.cursor.destroy();
+        game.cursor = null;
+        window.app.destroy(true, {children: true, texture: false});
+        window.app = null;
+        gameLoop = null;
+        window.cancelAnimationFrame(window.animationRequestID);
+    }
+
     // load playback
     var playback = new Playback(window.game, osu, osu.tracks[trackid]);
     game.scene = playback;
     playback.load();
 
     // start main loop
-    function gameLoop(timestamp) {
+    gameLoop = function(timestamp) {
         if (game.scene) {
             game.scene.render(timestamp);
         }
@@ -78,9 +98,9 @@ function launchOSU(osu, beatmapid, version){
             game.cursor.bringToFront();
         }
         app.renderer.render(game.stage);
-        window.requestAnimationFrame(gameLoop);
+        window.animationRequestID = window.requestAnimationFrame(gameLoop);
     }
-    window.requestAnimationFrame(gameLoop);
+    window.animationRequestID = window.requestAnimationFrame(gameLoop);
 }
 
 function launchGame(osublob, beatmapid, version) {

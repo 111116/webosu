@@ -79,7 +79,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         self.breakOverlay = new BreakOverlay({width: game.window.innerWidth, height: game.window.innerHeight});
         self.progressOverlay = new ProgressOverlay({width: game.window.innerWidth, height: game.window.innerHeight}, this.hits[0].time - 1500, this.hits[this.hits.length-1].endTime);
 
-        self.game.window.onresize = function() {
+        window.onresize = function() {
             window.app.renderer.resize(window.innerWidth, window.innerHeight);
             if (self.audioReady) self.pause();
             self.calcSize();
@@ -104,10 +104,11 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             });
         }
 
-        window.addEventListener("blur", function(e){
+        var blurCallback = function(e){
             if (self.audioReady)
                 self.pause();
-        });
+        };
+        window.addEventListener("blur", blurCallback);
 
         // deal with difficulties
         this.OD = track.difficulty.OverallDifficulty;
@@ -204,8 +205,16 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                     btn_retry.onclick = null;
                     btn_quit.onclick = null;
                 }
-                btn_retry.onclick = self.retry;
-                btn_quit.onclick = self.quit;
+                btn_retry.onclick = function() {
+                    self.game.paused = false;
+                    menu.setAttribute("hidden","");
+                    self.retry();
+                }
+                btn_quit.onclick = function() {
+                    self.game.paused = false;
+                    menu.setAttribute("hidden","");
+                    self.quit();
+                }
             }
         };
         this.resume = function() {
@@ -215,8 +224,9 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         };
 
         // adjust volume
+        var wheelCallback;
         if (game.allowMouseScroll) {
-            self.game.window.addEventListener('wheel', function(e) {
+            wheelCallback = function(e) {
                 self.game.masterVolume -= e.deltaY * 0.002;
                 if (self.game.masterVolume < 0) {
                     self.game.masterVolume = 0;
@@ -226,11 +236,12 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                 }
                 self.osu.audio.gain.gain.value = self.game.musicVolume * self.game.masterVolume;
                 self.volumeMenu.setVolume(self.game.masterVolume * 100);
-            });
+            };
+            window.addEventListener('wheel', wheelCallback);
         }
 
         // pause
-        window.addEventListener("keyup", function(e) {
+        var keyupCallback = function(e) {
             // press esc to pause
             if (e.keyCode === 27) {
                 if (!self.game.paused) {
@@ -240,7 +251,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                     self.resume();
                 }
             }
-        });
+        };
+        window.addEventListener("keyup", keyupCallback);
 
 
         this.fadeOutEasing = function(t) { // [0..1] -> [1..0]
@@ -782,7 +794,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                     i--;
                     _.each(hit.objects, function(o) { self.gamefield.removeChild(o); o.destroy(); });
                     _.each(hit.judgements, function(o) { self.gamefield.removeChild(o); o.destroy(); });
-                    hit.destoryed = true;
+                    hit.destroyed = true;
                 }
             }
         }
@@ -1217,9 +1229,33 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             }
         }
 
-        this.teardown = function() {
-            // TODO
-        }
+        this.destroy = function() {
+            // clean up
+            console.log("playback:destroy");
+            _.each(self.hits, function(hit){
+                if (!hit.destroyed) {
+                    _.each(hit.objects, function(o) { self.gamefield.removeChild(o); o.destroy(); });
+                    _.each(hit.judgements, function(o) { self.gamefield.removeChild(o); o.destroy(); });
+                    hit.destroyed = true;
+                }
+            });
+            let opt = {children: true, texture: false}
+            self.scoreOverlay.destroy(opt);
+            self.errorMeter.destroy(opt);
+            self.loadingMenu.destroy(opt);
+            self.volumeMenu.destroy(opt);
+            self.breakOverlay.destroy(opt);
+            self.progressOverlay.destroy(opt);
+            self.gamefield.destroy(opt);
+            self.background.destroy();
+            // clean up event listeners
+            window.onresize = null;
+            window.removeEventListener("blur", blurCallback);
+            window.removeEventListener('wheel', wheelCallback);
+            window.removeEventListener('keyup', keyupCallback);
+            self.game.cleanupPlayerActions();
+            self.render = function(){};
+        };
 
         this.start = function() {
             console.log("start playback")
@@ -1237,7 +1273,10 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         }
 
         this.quit = function() {
-
+            console.log("playback: quiting");
+            self.destroy();
+            if (window.quitGame)
+                window.quitGame();
         }
     }
     

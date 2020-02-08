@@ -259,10 +259,16 @@ define([], function()
             // newdiv(left, "fullcombo");
             let b1 = newdiv(grading, "btn retry");
             newdiv(b1, "inner", "Retry");
-            b1.onclick = retryCallback;
+            b1.onclick = function() {
+                grading.remove();
+                retryCallback();
+            }
             let b2 = newdiv(grading, "btn quit");
             newdiv(b2, "inner", "Quit");
-            b2.onclick = quitCallback;
+            b2.onclick = function() {
+                grading.remove();
+                quitCallback();
+            }
         }
     }
     

@@ -110,78 +110,90 @@ define([], function() {
             }
         };
 
+        var mousemoveCallback = function(e) {
+            playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
+            playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
+        }
+        var mousedownCallback = function(e) {
+            playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
+            playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
+            if (e.button == 0) {
+                if (playback.game.M1down) return;
+                playback.game.M1down = true;
+            }
+            else
+            if (e.button == 2) {
+                if (playback.game.M2down) return;
+                playback.game.M2down = true;
+            }
+            else
+            return;
+            e.preventDefault();
+            e.stopPropagation();
+            playback.game.down = playback.game.K1down || playback.game.K2down
+                              || playback.game.M1down || playback.game.M2down;
+            checkClickdown();
+        }
+        var mouseupCallback = function(e) {
+            playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
+            playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
+            if (e.button == 0) playback.game.M1down = false; else
+            if (e.button == 2) playback.game.M2down = false; else
+            return;
+            e.preventDefault();
+            e.stopPropagation();
+            playback.game.down = playback.game.K1down || playback.game.K2down
+                              || playback.game.M1down || playback.game.M2down;
+        }
+        var keydownCallback = function(e) {
+            if (e.keyCode == playback.game.K1keycode) {
+                if (playback.game.K1down) return;
+                playback.game.K1down = true;
+            }
+            else
+            if (e.keyCode == playback.game.K2keycode) {
+                if (playback.game.K2down) return;
+                playback.game.K2down = true;
+            }
+            else
+            return;
+            e.preventDefault();
+            e.stopPropagation();
+            playback.game.down = playback.game.K1down || playback.game.K2down
+                              || playback.game.M1down || playback.game.M2down;
+            checkClickdown();
+        }
+        var keyupCallback = function(e) {
+            if (e.keyCode == playback.game.K1keycode) playback.game.K1down = false; else
+            if (e.keyCode == playback.game.K2keycode) playback.game.K2down = false; else
+            return;
+            e.preventDefault();
+            e.stopPropagation();
+            playback.game.down = playback.game.K1down || playback.game.K2down
+                              || playback.game.M1down || playback.game.M2down;
+        }
+
         // set eventlisteners
         if (!playback.autoplay) {
-
-            playback.game.window.addEventListener("mousemove", function(e) {
-                playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
-                playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
-            });
-
+            playback.game.window.addEventListener("mousemove", mousemoveCallback);
             // mouse click handling for gameplay
             if (playback.game.allowMouseButton) {
-                playback.game.window.addEventListener("mousedown", function(e) {
-                    playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
-                    playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
-                    if (e.button == 0) {
-                        if (playback.game.M1down) return;
-                        playback.game.M1down = true;
-                    }
-                    else
-                    if (e.button == 2) {
-                        if (playback.game.M2down) return;
-                        playback.game.M2down = true;
-                    }
-                    else
-                    return;
-                    e.preventDefault();
-                    e.stopPropagation();
-                    playback.game.down = playback.game.K1down || playback.game.K2down
-                                      || playback.game.M1down || playback.game.M2down;
-                    checkClickdown();
-                });
-                playback.game.window.addEventListener("mouseup", function(e) {
-                    playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
-                    playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
-                    if (e.button == 0) playback.game.M1down = false; else
-                    if (e.button == 2) playback.game.M2down = false; else
-                    return;
-                    e.preventDefault();
-                    e.stopPropagation();
-                    playback.game.down = playback.game.K1down || playback.game.K2down
-                                      || playback.game.M1down || playback.game.M2down;
-                });
+                playback.game.window.addEventListener("mousedown", mousedownCallback);
+                playback.game.window.addEventListener("mouseup", mouseupCallback);
             }
-
             // keyboard click handling for gameplay
-            playback.game.window.addEventListener("keydown", function(e) {
-                if (e.keyCode == playback.game.K1keycode) {
-                    if (playback.game.K1down) return;
-                    playback.game.K1down = true;
-                }
-                else
-                if (e.keyCode == playback.game.K2keycode) {
-                    if (playback.game.K2down) return;
-                    playback.game.K2down = true;
-                }
-                else
-                return;
-                e.preventDefault();
-                e.stopPropagation();
-                playback.game.down = playback.game.K1down || playback.game.K2down
-                                  || playback.game.M1down || playback.game.M2down;
-                checkClickdown();
-            });
-            playback.game.window.addEventListener("keyup", function(e) {
-                if (e.keyCode == playback.game.K1keycode) playback.game.K1down = false; else
-                if (e.keyCode == playback.game.K2keycode) playback.game.K2down = false; else
-                return;
-                e.preventDefault();
-                e.stopPropagation();
-                playback.game.down = playback.game.K1down || playback.game.K2down
-                                  || playback.game.M1down || playback.game.M2down;
-            });
+            playback.game.window.addEventListener("keydown", keydownCallback);
+            playback.game.window.addEventListener("keyup", keyupCallback);
         }
+
+        playback.game.cleanupPlayerActions = function() {
+            playback.game.window.removeEventListener("mousemove", mousemoveCallback);
+            playback.game.window.removeEventListener("mousedown", mousedownCallback);
+            playback.game.window.removeEventListener("mouseup", mouseupCallback);
+            playback.game.window.removeEventListener("keydown", keydownCallback);
+            playback.game.window.removeEventListener("keyup", keyupCallback);
+        }
+
     }
 
     // https://tc39.github.io/ecma262/#sec-array.prototype.find
