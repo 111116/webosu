@@ -26,12 +26,19 @@ function launchOSU(osu, beatmapid, version){
     app.renderer.autoResize = true;
     app.renderer.backgroundColor = 0x111111;
 
+    // remember where the page is scrolled to
+    let scrollTop = document.documentElement.scrollTop;
     // get ready for gaming
     document.addEventListener("contextmenu", function(e) {
         e.preventDefault();
         return false;
     });
     document.body.classList.add("gaming");
+    // update game settings
+    if (window.gamesettings) {
+        window.gamesettings.refresh();
+        window.gamesettings.loadToGame();
+    }
 
     // load cursor
     if (!game.showhwmouse || game.autoplay) {
@@ -71,6 +78,8 @@ function launchOSU(osu, beatmapid, version){
         pMainPage.removeAttribute("hidden");
         pNav.removeAttribute("style");
         document.body.classList.remove("gaming");
+        // restore page scroll position
+        document.documentElement.scrollTop = scrollTop;
         // TODO application level clean up
         game.stage.removeChild(game.cursor);
         game.cursor.destroy();

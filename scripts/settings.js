@@ -49,6 +49,7 @@ function setOptionPanel() {
 	};
 	window.gamesettings = {};
 	Object.assign(gamesettings, defaultsettings);
+	gamesettings.refresh = loadFromLocal;
 	loadFromLocal();
 
 	window.gamesettings.loadToGame = function() {
