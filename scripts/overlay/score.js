@@ -58,6 +58,7 @@ define([], function()
         this.judgeTotal = 0;
         this.maxJudgeTotal = 0;
         this.HP = 1;
+        this.fullcombo = true;
         // accuracy = judgeTotal / maxJudgeTotal
 
         this.onfail = null;
@@ -156,6 +157,8 @@ define([], function()
             this.score += this.scoreMultiplier * result * (1 + this.combo / 25);
             // any zero-score result is a miss
             this.combo = (result > 0)? this.combo+1 : 0;
+            if (result == 0)
+                this.fullcombo = false;
             this.maxcombo = Math.max(this.maxcombo, this.combo);
             if (this.HP >= 0)
                 this.HP += this.HPincreasefor(result);
@@ -270,7 +273,8 @@ define([], function()
             newdiv(left, "block miss", this.judgecnt.miss.toString());
             newdiv(left, "block placeholder");
             newdiv(left, "block combo", this.maxcombo.toString() + "x");
-            // newdiv(left, "fullcombo");
+            if (this.fullcombo)
+                newdiv(left, "fullcombo");
             let b1 = newdiv(grading, "btn retry");
             newdiv(b1, "inner", "Retry");
             b1.onclick = function() {
