@@ -74,6 +74,7 @@ function(Osu, _, sound, Playback) {
     .add("sprites.json").load(function(loader, resources) {
         window.skinReady = true;
         document.getElementById("skin-progress").classList.add("finished");
+        document.body.classList.add("skin-ready");
         Skin = PIXI.Loader.shared.resources["sprites.json"].textures;
     });
 
@@ -115,6 +116,7 @@ function(Osu, _, sound, Playback) {
         game.sample[3].slidertick = sounds['hitsounds/drum-slidertick.ogg'];
         window.soundReady = true;
         document.getElementById("sound-progress").classList.add("finished");
+        document.body.classList.add("sound-ready");
     };
     sounds.load(sample);
 
@@ -130,5 +132,6 @@ function(Osu, _, sound, Playback) {
     // load script done
     window.scriptReady = true;
     document.getElementById("script-progress").classList.add("finished");
+    document.body.classList.add("script-ready");
 
 });

@@ -893,6 +893,18 @@ div[hidden=""] {
   position: relative;
   overflow: hidden;
 }
+body:not(.script-ready) .difficulty-item {
+  cursor: wait;
+}
+body:not(.skin-ready) .difficulty-item {
+  cursor: wait;
+}
+body:not(.sound-ready) .difficulty-item {
+  cursor: wait;
+}
+.beatmapbox.downloading .difficulty-item {
+  cursor: wait;
+}
 .difficulty-item span {
   top: -5px;
   left: 4px;
