@@ -216,6 +216,7 @@ form input[type="text"] {
 .grading .beatmap-info .mapper {
   display: inline-block;
   padding-left: 0.5em;
+  padding-right: 0.5em;
 }
 
 .grading .grade {

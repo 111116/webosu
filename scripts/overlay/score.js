@@ -241,6 +241,20 @@ define([], function()
                     sgnavg = '+' + sgnavg;
                 return sgnavg + "±" + stdev.toFixed(0) + "ms";
             }
+            function modstext(game) {
+                let l = [];
+                if (game.easy) l.push("EZ");
+                if (game.daycore) l.push("DC");
+                if (game.hidden) l.push("HD");
+                if (game.hardrock) l.push("HR");
+                if (game.nightcore) l.push("NC");
+                if (game.autoplay) l.push("AT");
+                if (l.length == 0) return "";
+                let s = l[0];
+                for (let i=1; i<l.length; ++i)
+                    s = s + '+' + l[i];
+                return s;
+            }
             function newdiv(parent, classname, text) {
                 let div = document.createElement("div");
                 if (parent)
@@ -262,6 +276,7 @@ define([], function()
             newdiv(info, "artist", metadata.Artist);
             newdiv(info, "version", metadata.Version);
             newdiv(info, "mapper", "mapped by " + metadata.Creator);
+            newdiv(info, "version", modstext(window.game));
             newdiv(top, "ranking", "Ranking");
             newdiv(top, "grade " + rank, rank);
             let left = newdiv(grading, "left");
