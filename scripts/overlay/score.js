@@ -254,6 +254,7 @@ define([], function()
             let acc = this.judgeTotal / this.maxJudgeTotal;
             let rank = this.HP<0? "F": grade(acc);
             let grading = newdiv(null, "grading");
+            grading.classList.add("transparent");
             document.body.appendChild(grading);
             let top = newdiv(grading, "top");
             let info = newdiv(top, "beatmap-info");
@@ -287,6 +288,7 @@ define([], function()
                 grading.remove();
                 quitCallback();
             }
+            window.setTimeout(function(){grading.classList.remove("transparent")},100);
         }
     }
     

@@ -176,6 +176,12 @@ form input[type="text"] {
   color: #fff;
   font-size: 1.2rem;
 }
+.grading > * {
+  transition: 0.4s ease opacity;
+}
+.grading.transparent > * {
+  opacity: 0;
+}
 .grading .top {
   background: rgba(0,0,0,0.7);
   width: 100%;
