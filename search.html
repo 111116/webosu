@@ -42,7 +42,7 @@
             </div>
             <div style="width: 25%; position: relative;">
                 <form action="search.html">
-                    <input type="text" name="q" placeholder="谱面关键词或sid"/>
+                    <input type="text" id="inputtext" name="q" placeholder="谱面关键词或sid"/>
                     <input type="image" class="search-button" src="research.svg">
                 </form>
             </div>
@@ -86,6 +86,7 @@
         <script>
             let url = new URL(window.location.href);
             let keyword = url.searchParams.get("q");
+            document.getElementById("inputtext").value = keyword;
             var cur = 0;
             if (keyword == parseInt(keyword, 10)) {
                 // is sid
