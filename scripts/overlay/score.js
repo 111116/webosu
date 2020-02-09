@@ -222,7 +222,22 @@ define([], function()
             this.setSpriteArrayPos(this.comboDigits, basex + this.scoreDigits.width / 2 + 16*unit, basey + 3*unit);
         }
 
-        this.showSummary = function(metadata, retryCallback, quitCallback) {
+        this.showSummary = function(metadata, hiterrors, retryCallback, quitCallback) {
+            function errortext(a) {
+                let sum = 0;
+                for (let i=0; i<a.length; ++i)
+                    sum += a[i];
+                let avg = sum / a.length;
+                let sumsqerr = 0;
+                for (let i=0; i<a.length; ++i)
+                    sumsqerr += (a[i]-avg) * (a[i]-avg);
+                let variance = sumsqerr / a.length;
+                let stdev = Math.sqrt(variance);
+                let sgnavg = avg.toFixed(0);
+                if (sgnavg[0] != '-')
+                    sgnavg = '+' + sgnavg;
+                return sgnavg + "±" + stdev.toFixed(0) + "ms";
+            }
             function newdiv(parent, classname, text) {
                 let div = document.createElement("div");
                 if (parent)
@@ -248,7 +263,7 @@ define([], function()
             let left = newdiv(grading, "left");
             newdiv(left, "block score", Math.round(this.score).toString());
             newdiv(left, "block acc", (acc*100).toFixed(2)+"%");
-            newdiv(left, "block err", "N/A");
+            newdiv(left, "block err", errortext(hiterrors));
             newdiv(left, "block great", this.judgecnt.great.toString());
             newdiv(left, "block good", this.judgecnt.good.toString());
             newdiv(left, "block meh", this.judgecnt.meh.toString());

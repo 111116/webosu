@@ -92,6 +92,7 @@ define([], function()
 
         this.barl = new ErrorMeter(r300, r100, r50);
         this.barr = new ErrorMeter(r300, r100, r50);
+        this.record = [];
         this.barr.scale.x = -1;
         this.addChild(this.barl);
         this.addChild(this.barr);
@@ -107,6 +108,7 @@ define([], function()
         this.hit = function(hiterror, time) {
             this.barl.hit(hiterror, time);
             this.barr.hit(hiterror, time);
+            this.record.push(hiterror);
         }
 
         this.update = function(time) {

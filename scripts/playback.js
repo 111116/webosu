@@ -1220,7 +1220,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                     this.ended = true;
                     this.pause = function(){};
                     this.scoreOverlay.visible = false;
-                    this.scoreOverlay.showSummary(this.track.metadata, this.retry, this.quit);
+                    this.scoreOverlay.showSummary(this.track.metadata, this.errorMeter.record, this.retry, this.quit);
                 }
                 self.background.tint = 0xffffff;
             }
