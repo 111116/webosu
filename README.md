@@ -2,15 +2,15 @@
 
 osu! that can be played in a browser
 
-Music might not be perfectly syncing (±20ms on tested beatmaps).
+Music might not be perfectly syncing (still being tested).
 
-(under development)
+**(under development)**
 
 In case you haven't heard of osu!, it's a game where players click circles on the screen, following rhythm of the music.
 
 It runs on Firefox & Chrome. It doesn't run on Safari currently.
 
-Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). It has nothing to do with @ppy. Scoring and judgement rules can differ from that of official osu!.
+Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). It has nothing to do with ppy. Scoring and judgement rules can differ from that of official osu!.
 
 Modes other than osu! (std) are unsupported.
 
@@ -18,7 +18,7 @@ Modes other than osu! (std) are unsupported.
 
 web page:
 
-![webpage](screenshots/page2.jpg)
+![webpage](screenshots/page3.jpg)
 
 game in action:
 
@@ -163,11 +163,7 @@ import a beatmap: get blob -> zip import -> osu decode -> put on webpage
 
 play: check for skin & hitsounds -> launch PIXI app & audiocontext -> set gaming area on page -> start game loop, enter playback & start loading music
 
-## Notes
-
-- currently using sound.js for hitsound, but not music.
-
-- don't know what `firefox` and `api` and `hash` is for...
+## Dev Notes
 
 - If a slider is longer than given `PixelLength`, just truncated it -- This is what's done officially
 
@@ -176,35 +172,3 @@ play: check for skin & hitsounds -> launch PIXI app & audiocontext -> set gaming
 - layering: approach circle > hit circle > slider ball > follow circle > slider body
 
 
-## Notes from ddevault/osuweb
-
-For getting replays
-
-https://osu.ppy.sh/web/osu-getreplay.php?c=1740197996&m=0&u=SirCmpwn&h=531445fb945017068978ed385051c204
-
-h is the md5 hash of the map?
-c is the replay to get
-u is neccessary and it has to match my cookies, fuck that shit
-
-For getting scores:
-
-```
-https://osu.ppy.sh/web/osu-osz2-getscores.php?s=0&vv=2&v=1&c=da8aae79c8f3306b5d65ec951874a7fb&f=xi+-+FREEDOM+DiVE+%28Nakagawa-Kanon%29+[FOUR+DIMENSIONS].osu&m=0&i=39804&mods=0&h=&a=0&us=SirCmpwn&ha=531445fb945017068978ed385051c204
-```
-
-```
-s=0 # dunno
-vv=2 # dunno
-v=1 # dunno
-c=da8aae79c8f3306b5d65ec951874a7fb # dunno
-f=xi+-+FREEDOM+DiVE+%28Nakagawa-Kanon%29+[FOUR+DIMENSIONS].osu # file name for the difficulty?
-m=0 # game mode?
-i=39804 # dunno
-mods=0 # obvious
-h= # dunno
-a=0 # dunno
-us=SirCmpwn # obvious
-ha=531445fb945017068978ed385051c204 # hash of beatmap
-```
-
-Works without the cookies, but needs the username
