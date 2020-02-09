@@ -1,6 +1,42 @@
 // beatmap downloader
 
+function startpreview(box) {
+    let audios = document.getElementsByTagName("audio");
+    for (let i=0; i<audios.length; ++i)
+        audios[i].softstop();
+    let a = document.createElement("audio");
+    let s = document.createElement("source");
+    s.src = "https://cdn.sayobot.cn:25225/preview/" + box.sid + ".mp3";
+    s.type = "audio/mpeg";
+    a.appendChild(s);
+    a.volume = 0;
+    a.play();
+    document.body.appendChild(a);
+    let fadeIn = setInterval(function(){
+        if (a.volume < 1)
+            a.volume = Math.min(1, a.volume + 0.05);
+        else
+            clearInterval(fadeIn);
+    }, 30);
+    let fadeOut = setInterval(function(){
+        if (a.currentTime > 9.3) // assume it's 10s long
+            a.volume = Math.max(0, a.volume - 0.05);
+        if (a.volume == 0)
+            clearInterval(fadeOut);
+    }, 30);
+    a.softstop = function() {
+        let fadeOut = setInterval(function(){
+            a.volume = Math.max(0, a.volume - 0.05);
+            if (a.volume == 0) {
+                clearInterval(fadeOut);
+                a.remove();
+            }
+        }, 10);
+    }
+}
+
 function startdownload(box) {
+    startpreview(box);
 	if (box.downloading) {
 		return;
 	}
