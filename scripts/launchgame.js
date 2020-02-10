@@ -95,6 +95,11 @@ function launchOSU(osu, beatmapid, version){
     // load playback
     var playback = new Playback(window.game, osu, osu.tracks[trackid]);
     game.scene = playback;
+    playback.onload = function() {
+        let audios = document.getElementsByTagName("audio");
+        for (let i=0; i<audios.length; ++i)
+            audios[i].softstop();
+    }
     playback.load(); // load audio
 
     // start main loop

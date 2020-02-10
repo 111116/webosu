@@ -48,6 +48,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         self.osu.onready = function() {
             self.loadingMenu.hide();
             self.audioReady = true;
+            if (self.onload)
+                self.onload();
             self.start();
         }
         self.load = function() {
