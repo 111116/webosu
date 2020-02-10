@@ -639,6 +639,23 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                     break;
             }
         }
+
+        this.updateCursorPredictVisualizer = function() {
+            if (!this.predictVisualizer && game.mouse) {
+                // create visualizer
+                let o = this.predictVisualizer = new PIXI.Sprite(Skin["sliderb.png"]);
+                o.anchor.set(0.5);
+                o.tint = 0x00ff00;
+                this.gamefield.addChild(o);
+            }
+            if (this.predictVisualizer) {
+                let res = game.mouse(new Date().getTime()); // prediction result
+                this.predictVisualizer.x = res.x;
+                this.predictVisualizer.y = res.y;
+                this.predictVisualizer.scale.set(res.r/120);
+                this.predictVisualizer.bringToFront();
+            }
+        }
         
         SliderMesh.prototype.initialize(combos, this.circleRadius, {
             dx: 2 * gfx.width / window.innerWidth / 512,
@@ -999,6 +1016,10 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                 let dy = game.mouseY - at.y;
                 let followPixelSize = hit.followSize * this.circleRadius;
                 let isfollowing = dx*dx + dy*dy <= followPixelSize * followPixelSize;
+                let predict = game.mouse(this.realtime);
+                let dx1 = predict.x - at.x;
+                let dy1 = predict.y - at.y;
+                isfollowing |= dx1*dx1 + dy1*dy1 <= (followPixelSize + predict.r) * (followPixelSize + predict.r);
                 let activated = this.game.down && isfollowing || hit.followSize > 1.01;
 
 
@@ -1196,6 +1217,12 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         }
 
         this.render = function(timestamp) {
+            this.realtime = new Date().getTime();
+            if (window.lastPlaybackRenderTime) {
+                window.currentFrameInterval = this.realtime - window.lastPlaybackRenderTime;
+            }
+            window.lastPlaybackRenderTime = this.realtime;
+
             var time;
             if (this.audioReady) {
                 time = osu.audio.getPosition() * 1000 + self.offset;
@@ -1215,6 +1242,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             }
             this.volumeMenu.update(timestamp);
             this.loadingMenu.update(timestamp);
+            // this.updateCursorPredictVisualizer();
 
             if (time > this.endTime) {
                 // game ends

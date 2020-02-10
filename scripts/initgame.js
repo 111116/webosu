@@ -48,6 +48,7 @@ function(Osu, _, sound, Playback) {
         // cursor info
         mouseX: 0, // in osu pixel, probably negative or exceeding 512
         mouseY: 0,
+        mouse: null, // return {x,y,r} in osu pixel, probably negative or exceeding 512
         K1down: false,
         K2down: false,
         M1down: false,
@@ -58,6 +59,7 @@ function(Osu, _, sound, Playback) {
         sample: [{}, {}, {}, {}],
         sampleSet: 1
     };
+    window.currentFrameInterval = 16;
     window.game = game;
     if (window.gamesettings)
         window.gamesettings.loadToGame();

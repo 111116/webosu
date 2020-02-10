@@ -8,6 +8,13 @@ define([], function() {
             time: playback.osu.audio.getPosition() * 1000
         };
         var hit = upcoming.find(inUpcoming(click));
+        if (!hit && game.mouse) {
+            // if not hit with traditional (lagged) cursor position,
+            // try predicted position with more tolerance
+            let res = game.mouse(new Date().getTime());
+            res.time = click.time;
+            hit = upcoming.find(inUpcoming_grace(res));
+        }
         if (hit){
             if (hit.type == "circle" || hit.type == "slider") {
                 let points = 50;
@@ -28,6 +35,19 @@ define([], function() {
                 && dx*dx + dy*dy < playback.circleRadius * playback.circleRadius
                 && Math.abs(click.time - hit.time) < playback.MehTime);
             }
+    }
+    var inUpcoming_grace = function (predict){
+        return function (hit){
+            var dx = predict.x - hit.x;
+            var dy = predict.y - hit.y;
+            var r = predict.r + playback.circleRadius;
+            let result = hit.score < 0
+                && dx*dx + dy*dy < r * r
+                && Math.abs(predict.time - hit.time) < playback.MehTime;
+            if (result)
+                console.log("grace hit");
+            return result;
+        }
     }
 
     var playerActions = function(playback){
@@ -110,13 +130,35 @@ define([], function() {
             }
         };
 
+
+        var movehistory = [{x:512/2, y:384/2, t: new Date().getTime()}];
+
+        playback.game.mouse = function(t) {
+            // realtime mouse position prediction algorithm
+            let m = movehistory;
+            let i = 0;
+            while (i<m.length-1 && m[0].t-m[i].t<40 && t-m[i].t<100) i+=1;
+            let velocity = i==0? {x:0, y:0}: {x: (m[0].x-m[i].x)/(m[0].t-m[i].t), y: (m[0].y-m[i].y)/(m[0].t - m[i].t)};
+            let dt = Math.min(t - m[0].t + window.currentFrameInterval, 40);
+            return {
+                x: m[0].x + velocity.x * dt,
+                y: m[0].y + velocity.y * dt,
+                r: Math.hypot(velocity.x, velocity.y) * Math.max(t-m[0].t, window.currentFrameInterval)
+            }
+        }
+
         var mousemoveCallback = function(e) {
             playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
             playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
+            movehistory.unshift({
+                x: playback.game.mouseX,
+                y: playback.game.mouseY,
+                t: new Date().getTime()
+            });
+            if (movehistory.length>10) movehistory.pop();
         }
         var mousedownCallback = function(e) {
-            playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
-            playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
+            mousemoveCallback(e);
             if (e.button == 0) {
                 if (playback.game.M1down) return;
                 playback.game.M1down = true;
@@ -135,8 +177,7 @@ define([], function() {
             checkClickdown();
         }
         var mouseupCallback = function(e) {
-            playback.game.mouseX = (e.clientX - gfx.xoffset) / gfx.width * 512;
-            playback.game.mouseY = (e.clientY - gfx.yoffset) / gfx.height * 384;
+            mousemoveCallback(e);
             if (e.button == 0) playback.game.M1down = false; else
             if (e.button == 2) playback.game.M2down = false; else
             return;
