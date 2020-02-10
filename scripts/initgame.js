@@ -99,6 +99,7 @@ function(Osu, _, sound, Playback) {
         'hitsounds/drum-hitfinish.ogg',
         'hitsounds/drum-hitclap.ogg',
         'hitsounds/drum-slidertick.ogg',
+        'hitsounds/combobreak.ogg',
     ];
     sounds.whenLoaded = function(){
         game.sample[1].hitnormal = sounds['hitsounds/normal-hitnormal.ogg'];
@@ -116,6 +117,7 @@ function(Osu, _, sound, Playback) {
         game.sample[3].hitfinish = sounds['hitsounds/drum-hitfinish.ogg'];
         game.sample[3].hitclap = sounds['hitsounds/drum-hitclap.ogg'];
         game.sample[3].slidertick = sounds['hitsounds/drum-slidertick.ogg'];
+        game.sampleComboBreak = sounds['hitsounds/combobreak.ogg'];
         window.soundReady = true;
         document.getElementById("sound-progress").classList.add("finished");
         document.body.classList.add("sound-ready");

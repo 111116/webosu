@@ -156,9 +156,17 @@ define([], function()
             this.maxJudgeTotal += maxresult;
             this.score += this.scoreMultiplier * result * (1 + this.combo / 25);
             // any zero-score result is a miss
+            let oldCombo = this.combo;
             this.combo = (result > 0)? this.combo+1 : 0;
-            if (result == 0)
+            if (result == 0) {
                 this.fullcombo = false;
+                // combo creak
+                if (oldCombo > 20) {
+                    // play combo break sound
+                    window.game.sampleComboBreak.volume = window.game.masterVolume * window.game.effectVolume;
+                    window.game.sampleComboBreak.play();
+                }
+            }
             this.maxcombo = Math.max(this.maxcombo, this.combo);
             if (this.HP >= 0)
                 this.HP += this.HPincreasefor(result);
