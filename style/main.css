@@ -78,7 +78,7 @@ form input {
 }
 
 .main-page {
-	min-height: 1200px;
+	min-height: 800px;
   margin-top: 50px;
 }
 .announcement {
@@ -102,6 +102,14 @@ form input {
 	height:100%;
 }
 
+.index-area {
+  position: relative;
+}
+.index-area .more {
+  position: absolute;
+  right: 0px;
+  top: 10px;
+}
 
 /*in-game pause menu*/
 .pause-menu {

@@ -8,16 +8,31 @@
         <!-- <link href="//fonts.googleapis.com/css?family=Exo+2:400,600italic" rel="stylesheet" type="text/css"> -->
         <link rel="stylesheet" type="text/css" href="style/font.css">
         <link rel="icon" href="favicon.png">
-        <script>
-            // i18n
-            window.i18n_dragdrophint = "把osz文件拖到这里"
-        </script>
+        <script src="scripts/launchgame.js"></script>
+        <script src="scripts/downloader.js"></script>
+        <script src="scripts/addbeatmaplist.js"></script>
+        <script src="scripts/settings.js"></script>
+        <script src="scripts/jsloader.js"></script>
     </head>
 
     <body>
         <div class="game-area" id="game-area" hidden>
         </div>
 
+        <div class="pause-menu" id="pause-menu" hidden>
+            <div class="paused-title">paused</div>
+            <div class="button-list">
+                <div class="pausebutton continue" id="pausebtn-continue">
+                    <div class="inner">Continue</div>
+                </div>
+                <div class="pausebutton retry" id="pausebtn-retry">
+                    <div class="inner">Retry</div>
+                </div>
+                <div class="pausebutton quit" id="pausebtn-quit">
+                    <div class="inner">Quit</div>
+                </div>
+            </div>
+        </div>
 
         <nav id="main-nav">
             <div style="width: 43%">
@@ -43,19 +58,6 @@
 
         <div class="main-page" id="main-page">
             <div class="main-content">
-
-                <div class="progress-list" hidden>
-                    <div class="progress" id="script-progress">Loading scripts ...</div>
-                    <div class="progress" id="skin-progress">Loading skin ... </div>
-                    <div class="progress" id="sound-progress">Loading hitsounds ...</div>
-                    <div class="progress" id="beatmap-progress">
-                        Loading local beatmap&nbsp;
-                        <span id="bm-loaded-counter">--</span>
-                        &sol;
-                        <span id="bm-total-counter">--</span>
-                    </div>
-                </div>
-
                 <div class="announcement">
                     公告：此网站还在开发中
                 </div>
@@ -66,22 +68,28 @@
                     此功能还在开发中...
                 </div>
                 <br>
-                <h2>最新曲目</h2>
-                <hr/>
-                <div class="beatmap-list" id="beatmap-list-new">
-                    <div class="dragbox" id="beatmap-dragbox"></div>
-                    <div class="dragbox" id="beatmap-dragbox"></div>
-                    <div class="dragbox" id="beatmap-dragbox"></div>
-                    <div class="dragbox" id="beatmap-dragbox"></div>
+                <div class="index-area">
+                    <h2>最新曲目</h2>
+                    <a href="new.html" class="more">查看更多</a>
+                    <hr/>
+                    <div class="beatmap-list" id="beatmap-list-new">
+                        <!-- to be filled in script -->
+                    </div>
                 </div>
                 <br>
-                <h2>热门曲目</h2>
-                <hr/>
-                <div class="beatmap-list" id="beatmap-list-hot">
-                    <div class="dragbox" id="beatmap-dragbox"></div>
-                    <div class="dragbox" id="beatmap-dragbox"></div>
-                    <div class="dragbox" id="beatmap-dragbox"></div>
-                    <div class="dragbox" id="beatmap-dragbox"></div>
+                <div class="index-area">
+                    <h2>热门曲目</h2>
+                    <a href="hot.html" class="more">查看更多</a>
+                    <hr/>
+                    <div class="beatmap-list" id="beatmap-list-hot">
+                        <!-- to be filled in script -->
+                    </div>
+                </div>
+                <br>
+                <div class="index-area">
+                    <h2>已收藏曲目</h2>
+                    <hr/>
+                    此功能还在开发中...
                 </div>
                 <br>
                 <div class="text">请使用最新的 Firefox 或 Chrome.</div>
@@ -89,7 +97,25 @@
                 <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
             </div>
             
+            <div class="statuslines" id="statuslines">
+                <div class="progress" id="script-progress">
+                    Scripts
+                    <div class="lds-dual-ring"></div>
+                </div>
+                <div class="progress" id="skin-progress">
+                    Skin
+                    <div class="lds-dual-ring"></div>
+                </div>
+                <div class="progress" id="sound-progress">
+                    Hitsounds
+                    <div class="lds-dual-ring"></div>
+                </div>
+            </div>
         </div>
+        <script>
+            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=2&5=1", document.getElementById("beatmap-list-new"));
+            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=1&5=1", document.getElementById("beatmap-list-hot"));
+        </script>
     </body>
 </html>
 

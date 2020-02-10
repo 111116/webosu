@@ -112,7 +112,7 @@ function createDifficultyList(boxclicked, event) {
 var NSaddBeatmapList = {
 
     // map contains key: sid, title, artist, creator
-    addpreviewbox: function(map) {
+    addpreviewbox: function(map, list) {
         // create container of beatmap on web page
         let pBeatmapBox = document.createElement("div");
         let pBeatmapCover = document.createElement("img");
@@ -137,7 +137,7 @@ var NSaddBeatmapList = {
         pBeatmapCreator.innerText = "mapped by " + map.creator;
         pBeatmapCover.alt = "cover" + map.sid;
         pBeatmapCover.src = "https://cdn.sayobot.cn:25225/beatmaps/" + map.sid + "/covers/cover.webp";
-        document.getElementById("beatmap-list").appendChild(pBeatmapBox);
+        list.appendChild(pBeatmapBox);
         pBeatmapBox.setdata = map;
         return pBeatmapBox;
     },
@@ -228,7 +228,8 @@ var NSaddBeatmapList = {
 // async
 // listurl: url of api request that returns a list of beatmap packs
 // adds symbols of these beatmap packs to webpage
-function addBeatmapList(listurl) {
+function addBeatmapList(listurl, list) {
+    if (!list) list = document.getElementById("beatmap-list");
     // request beatmap pack list
     let xhr = new XMLHttpRequest();
     xhr.responseType = 'text';
@@ -239,7 +240,7 @@ function addBeatmapList(listurl) {
         let box = [];
         // add widget to webpage as soon as list is fetched
         for (let i=0; i<res.data.length; ++i) {
-            box.push(NSaddBeatmapList.addpreviewbox(res.data[i]));
+            box.push(NSaddBeatmapList.addpreviewbox(res.data[i], list));
         }
         // async add more info
         for (let i=0; i<res.data.length; ++i) {
@@ -260,7 +261,8 @@ function addBeatmapList(listurl) {
     xhr.send();
 }
 
-function addBeatmapSid(sid) {
+function addBeatmapSid(sid, list) {
+    if (!list) list = document.getElementById("beatmap-list");
     let url = "https://api.sayobot.cn/v2/beatmapinfo?0=" + sid;
     let xhr = new XMLHttpRequest();
     xhr.responseType = 'text';
@@ -272,7 +274,7 @@ function addBeatmapSid(sid) {
             return;
         }
         // use data of first track as set data
-        let box = NSaddBeatmapList.addpreviewbox(res.data);
+        let box = NSaddBeatmapList.addpreviewbox(res.data, list);
         box.sid = res.data.sid;
         NSaddBeatmapList.requestMoreInfo(box);
         box.onclick = function(e) {
