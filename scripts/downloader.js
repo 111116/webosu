@@ -1,6 +1,11 @@
 // beatmap downloader
 
 function startpreview(box) {
+    let volume = 1;
+    if (window.gamesettings) {
+        volume = (window.gamesettings.mastervolume/100) * (window.gamesettings.musicvolume/100);
+        volume = Math.min(1, Math.max(0, volume));
+    }
     let audios = document.getElementsByTagName("audio");
     for (let i=0; i<audios.length; ++i)
         audios[i].softstop();
@@ -13,20 +18,20 @@ function startpreview(box) {
     a.play();
     document.body.appendChild(a);
     let fadeIn = setInterval(function(){
-        if (a.volume < 1)
-            a.volume = Math.min(1, a.volume + 0.05);
+        if (a.volume < volume)
+            a.volume = Math.min(volume, a.volume + 0.05*volume);
         else
             clearInterval(fadeIn);
     }, 30);
     let fadeOut = setInterval(function(){
         if (a.currentTime > 9.3) // assume it's 10s long
-            a.volume = Math.max(0, a.volume - 0.05);
+            a.volume = Math.max(0, a.volume - 0.05*volume);
         if (a.volume == 0)
             clearInterval(fadeOut);
     }, 30);
     a.softstop = function() {
         let fadeOut = setInterval(function(){
-            a.volume = Math.max(0, a.volume - 0.05);
+            a.volume = Math.max(0, a.volume - 0.05*volume);
             if (a.volume == 0) {
                 clearInterval(fadeOut);
                 a.remove();
