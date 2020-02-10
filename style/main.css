@@ -65,6 +65,9 @@ form input[type="text"] {
   height: 36px;
   margin-top: 6px;
 }
+form input {
+  transition: none;
+}
 .search-button {
   position: absolute;
   width: 24px;
