@@ -220,3 +220,10 @@ function setOptionPanel() {
 }
 
 window.addEventListener('DOMContentLoaded', setOptionPanel);
+
+
+// press any key to search
+window.onkeydown = function(e) {
+	let textinput = document.getElementsByTagName("input")[0];
+	textinput.focus();
+}
