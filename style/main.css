@@ -957,7 +957,7 @@ body:not(.sound-ready) .difficulty-item {
   border: solid #aaa 3px;
   margin-top: 2px;
   margin-left: 0px;
-  margin-right: 4px;
+  margin-right: 6px;
   display: inline-block;
 }
 .difficulty-count {
