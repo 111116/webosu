@@ -1039,8 +1039,10 @@ body:not(.sound-ready) .difficulty-item {
 
 
 .faqentry {
-  width: 800px;
-  margin: auto;
+  margin-bottom: 1em;
+}
+.faqentry h2 {
+  margin-bottom: 0.2em;
 }
 
 
