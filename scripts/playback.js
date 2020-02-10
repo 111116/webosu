@@ -293,6 +293,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             judge.depth = depth;
             judge.points = -1;
             judge.finalTime = finalTime;
+            judge.defaultScore = 0;
             return judge;
         }
 
@@ -310,8 +311,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         {
             if (judge.points < 0 && time >= judge.finalTime) // miss
             {
-                this.scoreOverlay.hit(0, 300, time);
-                this.invokeJudgement(judge, 0, time);
+                this.scoreOverlay.hit(judge.defaultScore, 300, time);
+                this.invokeJudgement(judge, judge.defaultScore, time);
                 return;
             }
             if (!judge.visible) return;
@@ -755,6 +756,10 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                     self.playHitsound(hit, 0, hit.time);
                     self.errorMeter.hit(time - hit.time, time);
                 }
+                if (hit.type == "slider") {
+                    // special rule: only missing slider end will not result in a miss
+                    hit.judgements[hit.judgements.length-1].defaultScore = 50;
+                }
             }
             hit.score = points;
             hit.clickTime = time;
@@ -1028,6 +1033,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                     if (activated) {
                         hit.ticks[hit.nexttick].result = true;
                         self.playTicksound(hit, hit.ticks[hit.nexttick].time);
+                        // special rule: only missing slider end will not result in a miss
+                        hit.judgements[hit.judgements.length-1].defaultScore = 50;
                     }
                     self.scoreOverlay.hit(activated?10:0, 10, time);
                     hit.nexttick++;
