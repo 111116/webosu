@@ -22,7 +22,7 @@ define([], function() {
     }
 
     function offset_predict_mp3(tags) {
-        let default_offset = 30;
+        let default_offset = 22;
         if (!tags || !tags.length) {
             console.warn("mp3 offset predictor: mp3 tag missing");
             return default_offset;
