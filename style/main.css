@@ -29,8 +29,14 @@ canvas {
 }
 .game-area {
 }
-.game-area.showhwmouse {
-  cursor: url("cursor.cur") 40 40, crosshair !important;
+.game-area.showhwmousemedium {
+  cursor: url("cursor.cur") 40 40, url("cursorsmall.cur") 30 30, crosshair !important;
+}
+.game-area.showhwmousesmall {
+  cursor: url("cursorsmall.cur") 30 30, url("cursortiny.cur") 20 20, crosshair !important;
+}
+.game-area.showhwmousetiny {
+  cursor: url("cursortiny.cur") 20 20, url("cursorsmall.cur") 30 30, crosshair !important;
 }
 .game-area.shownomouse {
   cursor: none !important;

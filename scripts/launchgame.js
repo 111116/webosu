@@ -55,15 +55,24 @@ function launchOSU(osu, beatmapid, version){
     pGameArea.appendChild(app.view);
     if (game.autoplay) {
         pGameArea.classList.remove("shownomouse");
-        pGameArea.classList.remove("showhwmouse");
+        pGameArea.classList.remove("showhwmousemedium");
+        pGameArea.classList.remove("showhwmousesmall");
+        pGameArea.classList.remove("showhwmousetiny");
     }
     else if (game.showhwmouse) {
         pGameArea.classList.remove("shownomouse");
-        pGameArea.classList.add("showhwmouse");
+        if (game.cursorSize < 0.65)
+            pGameArea.classList.add("showhwmousetiny");
+        else if (game.cursorSize < 0.95)
+            pGameArea.classList.add("showhwmousesmall");
+        else
+            pGameArea.classList.add("showhwmousemedium");
     }
     else {
-        pGameArea.classList.remove("showhwmouse");
         pGameArea.classList.add("shownomouse");
+        pGameArea.classList.remove("showhwmousemedium");
+        pGameArea.classList.remove("showhwmousesmall");
+        pGameArea.classList.remove("showhwmousetiny");
     }
     pMainPage.setAttribute("hidden","");
     pNav.setAttribute("style","display: none");
