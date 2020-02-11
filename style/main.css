@@ -708,6 +708,18 @@ progress.finished::-webkit-progress-value{background:#6cf;}
   padding-top: 160px;
   padding-left: 10px;
 }
+.beatmaplike {
+  position: absolute;
+  bottom: 12px;
+  right: 10px;
+  font-size: 1.4em;
+}
+.beatmaplike.icon-heart-empty {
+  color: #000;
+}
+.beatmaplike.icon-heart {
+  color: #ed4956;
+}
 
 
 

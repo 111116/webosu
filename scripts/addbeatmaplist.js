@@ -111,6 +111,59 @@ function createDifficultyList(boxclicked, event) {
 
 var NSaddBeatmapList = {
 
+    addlikeicon: function(box) {
+        let icon = document.createElement("div");
+        icon.className = "beatmaplike";
+        icon.setAttribute("hidden","");
+        box.appendChild(icon);
+        box.initlike = function() {
+            if (!window.liked_sid_set || !box.sid) {
+                return;
+            }
+            if (window.liked_sid_set.has(box.sid)) {
+                icon.classList.add("icon-heart");
+                icon.onclick = box.undolike;
+            }
+            else {
+                icon.classList.add("icon-heart-empty");
+                icon.onclick = box.like;
+            }
+            icon.removeAttribute("hidden");
+        }        
+        box.like = function(e) {
+            e.stopPropagation();
+            window.liked_sid_set.add(box.sid);
+            localforage.setItem("likedsidset", window.liked_sid_set, function(err, val){
+                if (err) {
+                    console.error("Error saving liked beatmap list");
+                }
+            });
+            icon.onclick = box.undolike;
+            icon.classList.remove("icon-heart-empty");
+            icon.classList.add("icon-heart");
+        }
+        box.undolike = function(e) {
+            e.stopPropagation();
+            window.liked_sid_set.delete(box.sid);
+            localforage.setItem("likedsidset", window.liked_sid_set, function(err, val){
+                if (err) {
+                    console.error("Error saving liked beatmap list");
+                }
+            });
+            icon.onclick = box.like;
+            icon.classList.remove("icon-heart");
+            icon.classList.add("icon-heart-empty");
+        }
+        if (window.liked_sid_set) {
+            box.initlike();
+        }
+        else {
+            if (!window.liked_sid_set_callbacks)
+                window.liked_sid_set_callbacks = [];
+            window.liked_sid_set_callbacks.push(box.initlike);
+        }
+    },
+
     // map contains key: sid, title, artist, creator
     addpreviewbox: function(map, list) {
         function approvedText(status) {
@@ -125,6 +178,8 @@ var NSaddBeatmapList = {
         }
         // create container of beatmap on web page
         let pBeatmapBox = document.createElement("div");
+        pBeatmapBox.setdata = map;
+        pBeatmapBox.sid = map.sid;
         let pBeatmapCover = document.createElement("img");
         let pBeatmapCoverOverlay = document.createElement("div");
         let pBeatmapTitle = document.createElement("div");
@@ -144,6 +199,7 @@ var NSaddBeatmapList = {
         pBeatmapBox.appendChild(pBeatmapArtist);
         pBeatmapBox.appendChild(pBeatmapCreator);
         pBeatmapBox.appendChild(pBeatmapApproved);
+        NSaddBeatmapList.addlikeicon(pBeatmapBox);
         // set beatmap title & artist display (prefer ascii title)
         pBeatmapTitle.innerText = map.title;
         pBeatmapArtist.innerText = map.artist;
@@ -151,7 +207,6 @@ var NSaddBeatmapList = {
         pBeatmapCover.alt = "cover" + map.sid;
         pBeatmapCover.src = "https://cdn.sayobot.cn:25225/beatmaps/" + map.sid + "/covers/cover.webp";
         list.appendChild(pBeatmapBox);
-        pBeatmapBox.setdata = map;
         pBeatmapApproved.innerText = approvedText(map.approved);
         return pBeatmapBox;
     },
@@ -166,7 +221,7 @@ var NSaddBeatmapList = {
         row.className = "beatmap-difficulties";
         box.appendChild(row);
         // show all of them if can be fit in
-        if (stars.length <= 15) {
+        if (stars.length <= 14) {
             for (let i=0; i<stars.length; ++i) {
                 let difficultyRing = document.createElement("div");
                 difficultyRing.className = "difficulty-ring";
