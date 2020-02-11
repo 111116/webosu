@@ -138,4 +138,12 @@ function(Osu, _, sound, Playback) {
     document.getElementById("script-progress").classList.add("finished");
     document.body.classList.add("script-ready");
 
+    // load play history
+    if (localforage) {
+        localforage.getItem("playhistory1000", function(err, item) {
+            if (!err && item && item.length) {
+                window.playHistory1000 = item;
+            }
+        })
+    }
 });

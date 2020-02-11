@@ -12,6 +12,22 @@
 
 define([], function()
 {
+    function addPlayHistory(summary) {
+        if (!window.playHistory1000) {
+            window.playHistory1000 = [];
+        }
+        window.playHistory1000.push(summary);
+        if (window.playHistory1000.length > 1000)
+            window.playHistory1000.shift();
+        // save history
+        if (localforage) {
+            localforage.setItem("playhistory1000", window.playHistory1000, function(err, val){
+                if (err) {
+                    console.error("Error saving play history");
+                }
+            });
+        }
+    }
     function grade(acc) {
         if (acc >= 1) return 'SS';
         if (acc >= 0.95) return 'S';
@@ -312,6 +328,20 @@ define([], function()
                 quitCallback();
             }
             window.setTimeout(function(){grading.classList.remove("transparent")},100);
+            // generate summary data
+            let summary = {
+                sid: metadata.BeatmapSetID,
+                bid: metadata.BeatmapID,
+                title: metadata.Title,
+                version: metadata.Version,
+                mods: modstext(window.game),
+                grade: rank,
+                score: Math.round(this.score).toString(),
+                combo: this.maxcombo.toString(),
+                acc: (acc*100).toFixed(2)+"%",
+                time: new Date().getTime()
+            }
+            addPlayHistory(summary);
         }
     }
     

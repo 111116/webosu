@@ -78,7 +78,6 @@ form input {
 }
 
 .main-page {
-	min-height: 800px;
   margin-top: 50px;
 }
 .announcement {
@@ -692,24 +691,24 @@ progress.finished::-webkit-progress-value{background:#6cf;}
 
 
 
-table {
+.panel table {
   width: 100%;
 }
-tr{
+.panel tr{
   height: 2.7em;
 }
-tr:last-child {
+.panel tr:last-child {
   text-align: center;
 }
-tr:nth-child(even) {
+.panel tr:nth-child(even) {
   background: none;
 }
-td{
+.panel td{
   /*border-bottom:1px solid #f6f6f6;*/
   padding:5px 10px;
 }
 
-td:nth-child(2){
+.panel td:nth-child(2){
   text-align: right;
   width: 40px;
 }
