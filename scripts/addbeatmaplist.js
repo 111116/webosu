@@ -113,6 +113,16 @@ var NSaddBeatmapList = {
 
     // map contains key: sid, title, artist, creator
     addpreviewbox: function(map, list) {
+        function approvedText(status) {
+            if (status == 4) return "LOVED";
+            if (status == 3) return "QUALIFIED";
+            if (status == 2) return "APPROVED";
+            if (status == 1) return "RANKED";
+            if (status == 0) return "PENDING";
+            if (status == -1) return "WIP";
+            if (status == -2) return "GRAVEYARD";
+            return "UNKNOWN";
+        }
         // create container of beatmap on web page
         let pBeatmapBox = document.createElement("div");
         let pBeatmapCover = document.createElement("img");
@@ -120,17 +130,20 @@ var NSaddBeatmapList = {
         let pBeatmapTitle = document.createElement("div");
         let pBeatmapArtist = document.createElement("div");
         let pBeatmapCreator = document.createElement("div");
+        let pBeatmapApproved = document.createElement("div");
         pBeatmapBox.className = "beatmapbox";
         pBeatmapCover.className = "beatmapcover";
         pBeatmapCoverOverlay.className = "beatmapcover-overlay";
         pBeatmapTitle.className = "beatmaptitle";
         pBeatmapArtist.className = "beatmapartist";
         pBeatmapCreator.className = "beatmapcreator";
+        pBeatmapApproved.className = "beatmapapproved";
         pBeatmapBox.appendChild(pBeatmapCover);
         pBeatmapBox.appendChild(pBeatmapCoverOverlay);
         pBeatmapBox.appendChild(pBeatmapTitle);
         pBeatmapBox.appendChild(pBeatmapArtist);
         pBeatmapBox.appendChild(pBeatmapCreator);
+        pBeatmapBox.appendChild(pBeatmapApproved);
         // set beatmap title & artist display (prefer ascii title)
         pBeatmapTitle.innerText = map.title;
         pBeatmapArtist.innerText = map.artist;
@@ -139,6 +152,7 @@ var NSaddBeatmapList = {
         pBeatmapCover.src = "https://cdn.sayobot.cn:25225/beatmaps/" + map.sid + "/covers/cover.webp";
         list.appendChild(pBeatmapBox);
         pBeatmapBox.setdata = map;
+        pBeatmapApproved.innerText = approvedText(map.approved);
         return pBeatmapBox;
     },
 
