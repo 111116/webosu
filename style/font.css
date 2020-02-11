@@ -10,3 +10,61 @@
   font-weight: 400;
   src: local('Exo 2 Regular'), local('Exo2-Regular'), url(400.ttf) format('truetype');
 }
+@font-face {
+  font-family: 'fontello';
+  font-style: normal;
+  font-weight: normal;
+  src: url('fontello.ttf') format('truetype');
+  /*Font Awesome Copyright (C) 2016 by Dave Gandy*/
+}
+
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "fontello";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+ 
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+ 
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+ 
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+ 
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+ 
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+ 
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+.icon-search:before { content: '\e800'; } /* '' */
+.icon-heart-empty:before { content: '\e801'; } /* '' */
+.icon-heart:before { content: '\e802'; } /* '' */
+.icon-cog:before { content: '\e803'; } /* '' */
+.icon-star:before { content: '\e804'; } /* '' */
+.icon-help-circled:before { content: '\e805'; } /* '' */
+.icon-globe:before { content: '\e806'; } /* '' */
+.icon-ok:before { content: '\e807'; } /* '' */
+.icon-download:before { content: '\e808'; } /* '' */
+.icon-upload:before { content: '\e809'; } /* '' */
+.icon-cancel:before { content: '\e80a'; } /* '' */
+.icon-github-circled:before { content: '\f09b'; } /* '' */
+.icon-download-cloud:before { content: '\f0ed'; } /* '' */
+.icon-help:before { content: '\f128'; } /* '' */
+.icon-play-circled:before { content: '\f144'; } /* '' */
+.icon-trash:before { content: '\f1f8'; } /* '' */
