@@ -139,7 +139,7 @@ function(Osu, _, sound, Playback) {
     document.body.classList.add("script-ready");
 
     // load play history
-    if (localforage) {
+    if (window.localforage) {
         localforage.getItem("playhistory1000", function(err, item) {
             if (!err && item && item.length) {
                 window.playHistory1000 = item;

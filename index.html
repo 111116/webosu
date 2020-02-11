@@ -13,6 +13,7 @@
         <script src="scripts/addbeatmaplist.js"></script>
         <script src="scripts/settings.js"></script>
         <script src="scripts/jsloader.js"></script>
+        <script src="scripts/lib/localforage.min.js"></script>
     </head>
 
     <body>
@@ -70,6 +71,14 @@
                 </div>
                 <br>
                 <div class="index-area">
+                    <h2>最近游玩</h2>
+                    <hr/>
+                    <div class="beatmap-list" id="beatmap-list-history">
+                        <!-- to be filled in script -->
+                    </div>
+                </div>
+                <br>
+                <div class="index-area">
                     <h2>最新曲目</h2>
                     <a href="new.html" class="more">查看更多</a>
                     <hr/>
@@ -114,7 +123,27 @@
             </div>
         </div>
         <script>
+            // recently played
+            if (window.localforage) {
+                let listhistory = document.getElementById("beatmap-list-history");
+                localforage.getItem("playhistory1000", function(err, item) {
+                    if (!err && item && item.length) {
+                        item = item.reverse();
+                        sid = [];
+                        for (let i=0; i<item.length; ++i) {
+                            if (item[i].sid)
+                                sid.push(item[i].sid);
+                        }
+                        sid = [...new Set(sid)]; // uniq
+                        console.log(sid);
+                        for (let i=0; i<4 && i<sid.length; ++i)
+                            addBeatmapSid(sid[i], listhistory)
+                    }
+                })
+            }
+            // new
             addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=2&5=1", document.getElementById("beatmap-list-new"));
+            // hot
             addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=1&5=1", document.getElementById("beatmap-list-hot"));
         </script>
     </body>

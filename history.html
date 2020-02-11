@@ -101,7 +101,7 @@
                 nexttd(summary.mods);
                 nexttd(new Date(summary.time).customFormat("#D# #MMM# #hhhh#:#mm#"));
             }
-            if (localforage) {
+            if (window.localforage) {
                 localforage.getItem("playhistory1000", function(err, item) {
                     if (!err && item && item.length) {
                         item = item.reverse();

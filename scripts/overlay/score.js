@@ -20,7 +20,7 @@ define([], function()
         if (window.playHistory1000.length > 1000)
             window.playHistory1000.shift();
         // save history
-        if (localforage) {
+        if (window.localforage) {
             localforage.setItem("playhistory1000", window.playHistory1000, function(err, val){
                 if (err) {
                     console.error("Error saving play history");
