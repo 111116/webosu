@@ -221,7 +221,7 @@ var NSaddBeatmapList = {
         row.className = "beatmap-difficulties";
         box.appendChild(row);
         // show all of them if can be fit in
-        if (stars.length <= 14) {
+        if (stars.length <= 13) {
             for (let i=0; i<stars.length; ++i) {
                 let difficultyRing = document.createElement("div");
                 difficultyRing.className = "difficulty-ring";

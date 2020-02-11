@@ -715,7 +715,7 @@ progress.finished::-webkit-progress-value{background:#6cf;}
   font-size: 1.4em;
 }
 .beatmaplike.icon-heart-empty {
-  color: #000;
+  color: #333;
 }
 .beatmaplike.icon-heart {
   color: #ed4956;
