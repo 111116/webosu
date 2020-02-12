@@ -342,6 +342,26 @@ define([], function()
                 time: new Date().getTime()
             }
             addPlayHistory(summary);
+            // show history best
+            if (window.localforage && summary.bid) {
+                window.localforage.getItem("historybest", function(err, val) {
+                    if (err) return;
+                    let historybest = 0;
+                    if (val && val.size) {
+                        historybest = val.get(summary.bid) || 0;
+                    }
+                    newdiv(left, "history-best", historybest.toString());
+                    if (parseInt(summary.score) > historybest) {
+                        if (!val || !val.size)
+                            val = new Map();
+                        val.set(summary.bid, parseInt(summary.score));
+                        window.localforage.setItem("historybest", val, function(err, val){
+                            if (err) console.error("failed saving best score");
+                        });
+                    }
+                })
+
+            }
         }
     }
     
