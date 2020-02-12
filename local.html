@@ -12,6 +12,7 @@
         <script src="scripts/addbeatmaplist.js"></script>
         <script src="scripts/settings.js"></script>
         <script src="scripts/jsloader.js"></script>
+        <script src="scripts/lib/localforage.min.js"></script>
     </head>
 
     <body>
@@ -56,7 +57,6 @@
         <div class="main-page" id="main-page">
             <div class="main-content">
                 <div class="beatmap-list" id="beatmap-list">
-                    此功能还在开发中
                     <!-- to be filled in script -->
                 </div>
                 <div class="button" style="width:100%; margin-bottom: 10px;" id="btnmore">加载更多</div>
@@ -81,22 +81,39 @@
                     <div class="lds-dual-ring"></div>
                 </div>
             </div>
-
-            <div class="side-panel">
-                <div class="imgwrapper">
-                    <img src="skin/defaultbg.jpg">
-                    <div class="overlay"></div>
-                    <div class="overlaytext title">Map Title</div>
-                    <div class="overlaytext artists">Various Artists</div>
-                    <div class="overlaytext length">23:33</div>
-                </div>
-                <div class="textwrapper">
-                    <div>制谱: PKUanonym</div>
-                    <div>来源: Bilibili Douga</div>
-                </div>
-                此功能还在开发中
-            </div>
         </div>
+        <script>
+            if (window.localforage) {
+                window.localforage.getItem("likedsidset", function(err, val){
+                    if (err) {
+                        alert("Error loading liked beatmap list");
+                        return;
+                    }
+                    if (val && val.size) {
+                        list = Array.from(val);
+                        function addlist(startoffset, maxlength) {
+                            for (let i=startoffset; i<list.length && i<startoffset+maxlength; ++i)
+                                addBeatmapSid(list[i]);
+                            if (list.length <= startoffset + maxlength) {
+                                document.getElementById("btnmore").setAttribute("style","display:none;");
+                            }
+                        }
+                        addlist(0,20);
+                        var cur = 20;
+                        document.getElementById("btnmore").onclick = function() {
+                            addlist(cur, 20);
+                            cur += 20;
+                        }
+                    }
+                    else {
+                        document.getElementById("beatmap-list").innerText = "你还没有收藏一首歌曲哦！";
+                    }
+                });
+            }
+            else {
+                alert("localforage not supported")
+            }
+        </script>
     </body>
 </html>
 

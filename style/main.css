@@ -171,6 +171,7 @@ form input {
 
 .index-area {
   position: relative;
+  margin-bottom: 2em;
 }
 .index-area .more {
   position: absolute;

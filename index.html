@@ -63,11 +63,10 @@
                 <br>
                 <h2>发生了什么</h2>
                 <hr/>
-                <div>
+                <div class="index-area">
                     此功能还在开发中...
                     <a href="history.html">查看自己的游玩记录</a>
                 </div>
-                <br>
                 <div class="index-area">
                     <h2>最近游玩</h2>
                     <hr/>
@@ -75,7 +74,6 @@
                         <!-- to be filled in script -->
                     </div>
                 </div>
-                <br>
                 <div class="index-area">
                     <h2>最新曲目</h2>
                     <a href="new.html" class="more">查看更多</a>
@@ -84,7 +82,14 @@
                         <!-- to be filled in script -->
                     </div>
                 </div>
-                <br>
+                <div class="index-area">
+                    <h2>已收藏曲目</h2>
+                    <a href="local.html" class="more">查看更多</a>
+                    <hr/>
+                    <div class="beatmap-list" id="beatmap-list-liked">
+                        <!-- to be filled in script -->
+                    </div>
+                </div>
                 <div class="index-area">
                     <h2>热门曲目</h2>
                     <a href="hot.html" class="more">查看更多</a>
@@ -93,13 +98,6 @@
                         <!-- to be filled in script -->
                     </div>
                 </div>
-                <br>
-                <div class="index-area">
-                    <h2>已收藏曲目</h2>
-                    <hr/>
-                    此功能还在开发中...
-                </div>
-                <br>
                 <div class="text">推荐使用最新版本 Firefox 或 Chrome.</div>
                 <div class="text">内测版v1.0.1. <a href="https://github.com/111116/osu">Github</a></div>
                 <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
@@ -125,7 +123,11 @@
             if (window.localforage) {
                 let listhistory = document.getElementById("beatmap-list-history");
                 localforage.getItem("playhistory1000", function(err, item) {
-                    if (!err && item && item.length) {
+                    if (err) {
+                        listhistory.innerText = "游玩记录加载失败";
+                        return;
+                    }
+                    if (item && item.length) {
                         item = item.reverse();
                         sid = [];
                         for (let i=0; i<item.length; ++i) {
@@ -137,12 +139,36 @@
                         for (let i=0; i<4 && i<sid.length; ++i)
                             addBeatmapSid(sid[i], listhistory)
                     }
+                    else {
+                        listhistory.innerText = "你还没有玩过一首歌曲哦！";
+                    }
                 })
             }
             // new
             addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=2&5=1", document.getElementById("beatmap-list-new"));
             // hot
             addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=1&5=1", document.getElementById("beatmap-list-hot"));
+            // liked
+            if (window.localforage) {
+                window.localforage.getItem("likedsidset", function(err, val){
+                    if (err) {
+                        document.getElementById("beatmap-list-liked").innerText = "收藏夹加载失败。";
+                        return;
+                    }
+                    if (val && val.size) {
+                        let listlike = document.getElementById("beatmap-list-liked");
+                        list = Array.from(val);
+                        for (let i=0; i<list.length && i<4; ++i)
+                            addBeatmapSid(list[i], listlike);
+                    }
+                    else {
+                        document.getElementById("beatmap-list-liked").innerText = "你还没有收藏一首歌曲哦！";
+                    }
+                });
+            }
+            else {
+                alert("localforage not supported")
+            }
         </script>
     </body>
 </html>
