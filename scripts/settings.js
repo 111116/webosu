@@ -16,7 +16,7 @@ function setOptionPanel() {
 	// give range inputs a visual feedback (a hovering indicator that shows on drag)
 
 	let defaultsettings = {
-		dim: 50,
+		dim: 60,
 		blur: 0,
 		cursorsize: 1.0,
 		showhwmouse: false,
