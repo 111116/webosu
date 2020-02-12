@@ -31,6 +31,7 @@ function(Osu, _, sound, Playback) {
         allowMouseScroll: true,
         K1keycode: 90,
         K2keycode: 88,
+        ESCkeycode: 27,
 
         // mods
         autoplay: false,

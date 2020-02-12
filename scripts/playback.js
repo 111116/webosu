@@ -242,19 +242,25 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             window.addEventListener('wheel', wheelCallback);
         }
 
-        // pause
-        var keyupCallback = function(e) {
+        var pauseKeyCallback = function(e) {
             // press esc to pause
-            if (e.keyCode === 27) {
-                if (!self.game.paused) {
-                    self.pause();
-                }
-                else {
-                    self.resume();
-                }
+            if (e.keyCode === game.ESCkeycode && !self.game.paused) {
+                self.pause();
+                if (self.game.paused) // check success
+                    self.pausing = true; // to prevent resuming at end of first key press
             }
         };
-        window.addEventListener("keyup", keyupCallback);
+        var resumeKeyCallback = function(e) {
+            // press and release esc to pause
+            if (e.keyCode === game.ESCkeycode && self.game.paused) {
+                if (self.pausing)
+                    self.pausing = false;
+                else
+                    self.resume();
+            }
+        }
+        window.addEventListener("keydown", pauseKeyCallback);
+        window.addEventListener("keyup", resumeKeyCallback);
 
 
         this.fadeOutEasing = function(t) { // [0..1] -> [1..0]
@@ -1286,7 +1292,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             window.onresize = null;
             window.removeEventListener("blur", blurCallback);
             window.removeEventListener('wheel', wheelCallback);
-            window.removeEventListener('keyup', keyupCallback);
+            window.removeEventListener('keydown', pauseKeyCallback);
+            window.removeEventListener('keyup', resumeKeyCallback);
             self.game.cleanupPlayerActions();
             self.render = function(){};
         };
