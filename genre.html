@@ -38,11 +38,11 @@
                 <a href="index.html" class="brand">Osaka Salmon University!</a>
                 <a href="new.html" class="pseudo button">最新</a>
                 <a href="hot.html" class="pseudo button">热门</a>
-                <a href="genre.html" class="pseudo button">分类</a>
+                <a href="genre.html" class="pseudo button active">分类</a>
             </div>
             <div class="nav-search">
                 <form action="search.html">
-                    <input type="text" id="inputtext"name="q" placeholder="谱面关键词或sid"/>
+                    <input type="text" name="q" placeholder="谱面关键词或sid"/>
                     <input type="image" class="search-button" src="research.svg">
                 </form>
             </div>
@@ -56,6 +56,33 @@
 
         <div class="main-page" id="main-page">
             <div class="main-content">
+                <div class="sort-nav">
+                    <div class="title">风格</div>
+                    <div class="selitem" genre="1">全部</div>
+                    <div class="selitem" genre="4">游戏</div>
+                    <div class="selitem" genre="8">动漫</div>
+                    <div class="selitem" genre="16">摇滚</div>
+                    <div class="selitem" genre="32">流行</div>
+                    <div class="selitem" genre="128">新奇</div>
+                    <div class="selitem" genre="1024">电子</div>
+                    <div class="selitem" genre="2+64+256">其它</div>
+                </div>
+                <div class="sort-nav">
+                    <div class="title">语言</div>
+                    <div class="selitem" lang="1">全部</div>
+                    <div class="selitem" lang="16">汉语</div>
+                    <div class="selitem" lang="4">英语</div>
+                    <div class="selitem" lang="8">日语</div>
+                    <div class="selitem" lang="32">器乐</div>
+                    <div class="selitem" lang="64">韩语</div>
+                    <div class="selitem" lang="128">法语</div>
+                    <div class="selitem" lang="256">德语</div>
+                    <div class="selitem" lang="2048">意大利语</div>
+                    <div class="selitem" lang="512">瑞典语</div>
+                    <div class="selitem" lang="2+1024">其它</div>
+                </div>
+                <hr>
+
                 <div class="beatmap-list" id="beatmap-list">
                     <!-- to be filled in script -->
                 </div>
@@ -83,22 +110,42 @@
             </div>
         </div>
         <script>
-            let url = new URL(window.location.href);
-            let keyword = url.searchParams.get("q");
-            document.getElementById("inputtext").value = keyword;
-            var cur = 0;
-            if (keyword == parseInt(keyword, 10)) {
-                // is sid
-                addBeatmapSid(keyword);
+            let btns = document.getElementsByClassName("selitem");
+            function search(genre, lang) {
+                // clear list
+                list = document.getElementById("beatmap-list");
+                while (list.firstChild) {
+                    list.removeChild(list.firstChild);
+                }
+                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=4&5=1&7=" + genre + "&8=" + lang);
+                var cur = 20;
+                document.getElementById("btnmore").onclick = function() {
+                    addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+cur+"&2=4&5=1&7=" + genre + "&8=" + lang);
+                    cur += 20;
+                }
+                // update buttons state
+                for (let i=0; i<btns.length; ++i) {
+                    let g = eval(btns[i].getAttribute("genre"));
+                    let l = eval(btns[i].getAttribute("lang"));
+                    if (g==genre || l==lang) {
+                        btns[i].classList.add("active");
+                    }
+                    else {
+                        btns[i].classList.remove("active");
+                    }
+                }
             }
-            else {
-                // search keyword
-                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=4&3=" + keyword + "&5=1");
-                cur = 20;
-            }
-            document.getElementById("btnmore").onclick = function() {
-                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=" + cur + "&2=4&3=" + keyword + "&5=1");
-                cur += 20;
+            let curgenre = 1;
+            let curlang = 1;
+            search(curgenre, curlang);
+            for (let i=0; i<btns.length; ++i) {
+                btns[i].onclick = function() {
+                    let g = eval(btns[i].getAttribute("genre"));
+                    let l = eval(btns[i].getAttribute("lang"));
+                    if (g) curgenre = g;
+                    if (l) curlang = l;
+                    search(curgenre, curlang);
+                }
             }
         </script>
     </body>

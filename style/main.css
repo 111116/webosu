@@ -114,7 +114,7 @@ nav .pseudo.button {
   border-radius: 0px;
   transition: 0s;
 }
-nav .pseudo.button.active, .pseudo.button:hover {
+nav .pseudo.button.active, nav .pseudo.button:hover {
   box-shadow: none;
   border-bottom: 3px solid #fff;
 }
@@ -495,6 +495,32 @@ form input {
 }
 
 
+/*genre*/
+.sort-nav {
+  cursor: default;
+}
+.sort-nav .title {
+  display: inline-block;
+  height: 2em;
+  padding-right: 1em;
+  color: #fff;
+}
+.sort-nav .selitem {
+  display: inline-block;
+  height: 2em;
+  line-height: 2em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  color: #7df;
+  cursor: pointer;
+  transition: 0.2s ease all;
+}
+.sort-nav .selitem:hover {
+  text-decoration: underline;
+}
+.sort-nav .selitem.active {
+  color: #fff;
+}
 
 .side-panel {
   background: #333;
