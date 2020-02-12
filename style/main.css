@@ -47,10 +47,63 @@ nav {
   background: #b63258;
   color: #fff;
   display: flex;
+  white-space: nowrap;
+  padding-right: 1em;
 }
-.brand {
+nav .brand {
   font-size: 1.1em;
   line-height: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
+  box-sizing: content-box;
+  margin-top: 0.515em;
+}
+.nav-link {
+  display: flex;
+}
+.nav-search {
+  width: 100%;
+  margin-left: 1.5em;
+  margin-right: 1.5em;
+}
+.nav-tool {
+  display: flex;
+}
+@media screen and (max-device-width: 900px) {
+  nav .brand {
+    visibility: hidden;
+    width: 2em;
+  }
+  nav .brand:before {
+    visibility: visible;
+    content: "OSU!";
+  }
+}
+@media screen and (max-device-width: 700px) {
+  nav {
+    flex-wrap: wrap;
+    height: auto;
+    padding-right: 9px;
+    justify-content: center;
+  }
+  .nav-tool {
+    display: none;
+  }
+  .nav-link {
+    height: 2.6em;
+  }
+  .nav-search {
+    margin: 0;
+  }
+  .main-page {
+    margin-top: 84px !important;
+  }
+  .statuslines {
+    top: 84px !important;
+  }
+  .difficulty-box {
+    left: 40px !important;
+  }
 }
 nav .pseudo.button {
   margin-top: 0.7em;
@@ -62,6 +115,10 @@ nav .pseudo.button {
 nav .pseudo.button.active, .pseudo.button:hover {
   box-shadow: none;
   border-bottom: 3px solid #fff;
+}
+
+nav form {
+  position: relative;
 }
 /*fix placeholder color for chrome*/
 form input[type="text"]::-webkit-input-placeholder {
@@ -105,6 +162,11 @@ form input {
 	/*padding:20px 20px 20px;*/
 	width:812px;
 	height:100%;
+}
+@media screen and (max-device-width: 811px) {
+  .main-content{
+    width:400px;
+  }
 }
 
 .index-area {
@@ -521,6 +583,7 @@ h1,h2,h3 {
   padding: 12px;
   padding-right: 12px;
   width: 152px;
+  text-shadow: 0px 1px 3px rgba(0,0,0,0.7);
 }
 .download-progress {
   line-height: 1.8em;
