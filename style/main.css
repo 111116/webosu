@@ -1,3 +1,5 @@
+@charset "UTF-8"; 
+
 body{
 	background: #191919;
   color: #eee;
@@ -784,7 +786,28 @@ progress.finished::-webkit-progress-value{background:#6cf;}
 .beatmaplike.icon-heart {
   color: #ed4956;
 }
-
+.beatmaplike.hint-liked::after {
+  content: "已收藏";
+  white-space: nowrap;
+  position: absolute;
+  bottom: 32px;
+  right: -8px;
+  color: white;
+  background: rgba(0,0,0,0.8);
+  font-size: 0.6em;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  border-radius: 0.3em;
+  opacity: 0;
+  animation-name: fadeoutmy;
+  animation-duration: 0.8s;
+  animation-timing-function: ease-in;
+}
+@keyframes fadeoutmy {
+  0%   { opacity: 1; }
+  70%   { opacity: 1; }
+  100% { opacity: 0; }
+}
 
 
 .panel table {

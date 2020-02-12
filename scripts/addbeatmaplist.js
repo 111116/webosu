@@ -137,6 +137,9 @@ var NSaddBeatmapList = {
                 if (err) {
                     console.error("Error saving liked beatmap list");
                 }
+                else {
+                    icon.classList.add("hint-liked");
+                }
             });
             icon.onclick = box.undolike;
             icon.classList.remove("icon-heart-empty");
@@ -153,6 +156,7 @@ var NSaddBeatmapList = {
             icon.onclick = box.like;
             icon.classList.remove("icon-heart");
             icon.classList.add("icon-heart-empty");
+            icon.classList.remove("hint-liked");
         }
         if (window.liked_sid_set) {
             box.initlike();
