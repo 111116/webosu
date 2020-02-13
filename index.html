@@ -65,11 +65,26 @@
                 <h2>发生了什么</h2>
                 <hr/>
                 <div class="index-area">
-                    此功能还在开发中...
-                    <a href="history.html">查看自己的游玩记录</a>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>玩家</td>
+                                <td>歌曲</td>
+                                <td>连击</td>
+                                <td>分数</td>
+                                <td>评定</td>
+                                <td>MODS</td>
+                                <td>时间</td>
+                            </tr>
+                        </thead>
+                        <tbody id="activity-list">
+                            <!-- will be filled in script -->
+                        </tbody>
+                    </table>
                 </div>
                 <div class="index-area">
                     <h2>最近游玩</h2>
+                    <a href="history.html" class="more">查看自己的游玩记录</a>
                     <hr/>
                     <div class="beatmap-list" id="beatmap-list-history">
                         <!-- to be filled in script -->
@@ -77,7 +92,7 @@
                 </div>
                 <div class="index-area">
                     <h2>最新曲目</h2>
-                    <a href="new.html" class="more">查看更多</a>
+                    <a href="new.html" class="more">查看更多最新曲目</a>
                     <hr/>
                     <div class="beatmap-list" id="beatmap-list-new">
                         <!-- to be filled in script -->
@@ -85,7 +100,7 @@
                 </div>
                 <div class="index-area">
                     <h2>已收藏曲目</h2>
-                    <a href="local.html" class="more">查看更多</a>
+                    <a href="local.html" class="more">查看更多已收藏曲目</a>
                     <hr/>
                     <div class="beatmap-list" id="beatmap-list-liked">
                         <!-- to be filled in script -->
@@ -93,14 +108,14 @@
                 </div>
                 <div class="index-area">
                     <h2>热门曲目</h2>
-                    <a href="hot.html" class="more">查看更多</a>
+                    <a href="hot.html" class="more">查看更多热门曲目</a>
                     <hr/>
                     <div class="beatmap-list" id="beatmap-list-hot">
                         <!-- to be filled in script -->
                     </div>
                 </div>
                 <div class="text">推荐使用最新版本 Firefox 或 Chrome.</div>
-                <div class="text">内测版v1.2.1. <a href="https://github.com/111116/osu">Github</a></div>
+                <div class="text">内测版v1.3.0. <a href="https://github.com/111116/osu">Github</a></div>
                 <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
             </div>
             
@@ -120,6 +135,50 @@
             </div>
         </div>
         <script>
+            // what's happening
+            let tbody = document.getElementById("activity-list");
+            function formattime(date) {
+                console.log(date.getMinutes())
+                let m;
+                return date.getHours() + ":" + ((m=date.getMinutes())<10?('0'+m):m);
+            }
+            function showActivity(records) {
+                records = records.reverse();
+                for (let i=0; i<records.length && i<10; ++i) {
+                    let tr = document.createElement("tr");
+                    tbody.appendChild(tr);
+                    function nexttd(content) {
+                        let td = document.createElement("td");
+                        tr.appendChild(td);
+                        if (!content) return;
+                        if (content.tagName)
+                            td.appendChild(content);
+                        else
+                            td.innerText = content;
+                    }
+                    nexttd(records[i].ip);
+                    let title = document.createElement("a");
+                    title.innerText = records[i].title + " [" + records[i].version + "]";
+                    title.title = records[i].title + " [" + records[i].version + "]";
+                    title.href = "search.html?q=" + (records[i].sid || records[i].title);
+                    nexttd(title);
+                    nexttd(records[i].combo);
+                    nexttd(records[i].score);
+                    nexttd(records[i].grade);
+                    nexttd(records[i].mods);
+                    nexttd(formattime(new Date(parseInt(records[i].time))));
+                }
+            }
+            let xhr = new XMLHttpRequest();
+            xhr.responseType = 'text';
+            xhr.open("GET", "http://" + window.location.host + "/api/fetch/");
+            xhr.onload = function() {
+                showActivity(JSON.parse(xhr.response));
+            }
+            xhr.onerror = function() {
+                console.error("failed fetching activities");
+            }
+            xhr.send();
             // recently played
             if (window.localforage) {
                 let listhistory = document.getElementById("beatmap-list-history");
@@ -136,7 +195,6 @@
                                 sid.push(item[i].sid);
                         }
                         sid = [...new Set(sid)]; // uniq
-                        console.log(sid);
                         for (let i=0; i<4 && i<sid.length; ++i)
                             addBeatmapSid(sid[i], listhistory)
                     }

@@ -154,7 +154,59 @@ form input {
   padding-bottom: 2px;
 }
 
-
+.index-area table {
+  max-width: 812px;
+  white-space: nowrap;
+  table-layout: fixed;
+  font-size: 0.9em;
+}
+thead {
+  color: #fff;
+}
+.index-area thead td {
+  font-size: 1.1em;
+  padding-top: 0;
+}
+.index-area td {
+  max-width: 400px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: .3em 1em .3em .0em;
+}
+.index-area td:nth-child(1) {
+  width: 140px;
+  max-width: 140px;
+}
+.index-area td:nth-child(2) {
+  width: 300px;
+  max-width: 300px;
+}
+.index-area td:nth-child(3) {
+  text-align: center;
+  width: 70px;
+  max-width: 70px;
+}
+.index-area td:nth-child(4) {
+  text-align: center;
+  width: 100px;
+  max-width: 100px;
+}
+.index-area td:nth-child(5) {
+  text-align: center;
+  width: 50px;
+  max-width: 50px;
+}
+.index-area td:nth-child(6) {
+  text-align: center;
+  width: 80px;
+  max-width: 80px;
+}
+.index-area td:nth-child(7) {
+  text-align: center;
+  width: 70px;
+  max-width: 70px;
+  padding-right: 0;
+}
 .main-content{
   border-radius: 4px;
 	/*float: left;*/

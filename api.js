@@ -1,0 +1,36 @@
+const http = require('http');
+const url = require('url');
+
+const hostname = '127.0.0.1';
+const postport = 3000;
+const getport = 3001;
+
+var a = [];
+
+const postserver = http.createServer((req, res) => {
+  var q = url.parse(req.url, true).query;
+  q.ip = req.headers["x-real-ip"];
+  if (q.title || q.sid) {
+    a.push(q);
+  }
+  if (a.length > 16) {
+    a.shift();
+  }
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  res.end("");
+});
+
+const getserver = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(a));
+});
+
+postserver.listen(postport, hostname, () => {
+  console.log(`Server running at http://${hostname}:${postport}/`);
+});
+getserver.listen(getport, hostname, () => {
+  console.log(`Server running at http://${hostname}:${getport}/`);
+});
+
