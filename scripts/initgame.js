@@ -25,6 +25,7 @@ function(Osu, _, sound, Playback) {
         masterVolume: 0.7,
         effectVolume: 1.0,
         musicVolume: 1.0,
+        beatmapHitsound: true,
 
         // input
         allowMouseButton: false,

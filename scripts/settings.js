@@ -34,7 +34,7 @@ function setOptionPanel() {
 		effectvolume: 100,
 		musicvolume: 100,
 		audiooffset: 0,
-		beatmapHitsound: false,
+		beatmapHitsound: true,
 
         easy: false,
         daycore: false,
@@ -69,6 +69,7 @@ function setOptionPanel() {
 	        window.game.masterVolume = this.mastervolume / 100;
 	        window.game.effectVolume = this.effectvolume / 100;
 	        window.game.musicVolume = this.musicvolume / 100;
+	        window.game.beatmapHitsound = this.beatmapHitsound;
 
 	        window.game.easy = this.easy;
 	        window.game.daycore = this.daycore;
@@ -197,7 +198,7 @@ function setOptionPanel() {
 	bindrange("effectvolume-range", "effectvolume", function(v){return v+"%"});
 	bindrange("musicvolume-range", "musicvolume", function(v){return v+"%"});
 	bindrange("audiooffset-range", "audiooffset", function(v){return v+"ms"});
-	bindcheck("beatmap-hitsound-check", "beatmapHitsound")
+	bindcheck("beatmap-hitsound-check", "beatmapHitsound");
 
 	// mods
 	bindExclusiveCheck("easy-check", "easy", "hardrock-check", "hardrock");
