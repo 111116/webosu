@@ -20,14 +20,19 @@ game in action:
 
 ## Hosting
 
-Just set up a local web server with root directory located where `index.html` is in.
+Set up a web server with root directory located where `index.html` is in.
 
-## Current functions
+For live score display, redirect send/fetch api requests to localhost:3000/3001 respectively, and change the api url in `index.html` and `scripts/overlay/score.js` accordingly. Then run:
 
-- audio offset: no
-- input offset: no
-- custom skin: no
-- beatmap hitsounds: no
+```bash
+nohup node api.js &
+```
+
+## Todos
+
+- audio offset
+- input offset
+- beatmap hitsounds
 - supported mods: EZ DC HR NC HD AT
 
 ## License Notes
