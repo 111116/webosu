@@ -155,7 +155,10 @@
                         else
                             td.innerText = content;
                     }
-                    nexttd(records[i].ip);
+                    let b = records[i].ip.split(".");
+                    b[0]="**";
+                    if (b.length>3) b[3]="**";
+                    nexttd(b.join("."));
                     let title = document.createElement("a");
                     title.innerText = records[i].title + " [" + records[i].version + "]";
                     title.title = records[i].title + " [" + records[i].version + "]";
