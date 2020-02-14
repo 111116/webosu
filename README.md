@@ -22,7 +22,7 @@ game in action:
 
 Set up a web server with root directory located where `index.html` is in.
 
-For live score display, redirect send/fetch api requests to localhost:3000/3001 respectively, and change the api url in `index.html` and `scripts/overlay/score.js` accordingly. Then run:
+To host a separate live score, redirect send/fetch api requests to localhost:3000/3001 respectively, and change the api url in `index.html` and `scripts/overlay/score.js` accordingly. Then run:
 
 ```bash
 nohup node api.js &
