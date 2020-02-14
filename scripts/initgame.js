@@ -148,4 +148,14 @@ function(Osu, _, sound, Playback) {
             }
         })
     }
+
+    // prevent all drag-related events
+    window.addEventListener("drag", function(e){e=e||window.event; e.preventDefault(); e.stopPropagation();});
+    window.addEventListener("dragend", function(e){e=e||window.event; e.preventDefault(); e.stopPropagation();});
+    window.addEventListener("dragenter", function(e){e=e||window.event; e.preventDefault(); e.stopPropagation();});
+    window.addEventListener("dragexit", function(e){e=e||window.event; e.preventDefault(); e.stopPropagation();});
+    window.addEventListener("dragleave", function(e){e=e||window.event; e.preventDefault(); e.stopPropagation();});
+    window.addEventListener("dragover", function(e){e=e||window.event; e.preventDefault(); e.stopPropagation();});
+    window.addEventListener("dragstart", function(e){e=e||window.event; e.preventDefault(); e.stopPropagation();});
+    window.addEventListener("drop", function(e){e=e||window.event; e.preventDefault(); e.stopPropagation();});
 });
