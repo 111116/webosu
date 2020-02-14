@@ -1307,6 +1307,10 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         };
 
         this.retry = function() {
+            if (!self.game.paused) {
+                self.osu.audio.pause();
+                self.game.paused = true;
+            }
             console.log("playback: retrying");
             self.destroy();
             self.constructor(self.game, self.osu, self.track);
@@ -1316,6 +1320,10 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         }
 
         this.quit = function() {
+            if (!self.game.paused) {
+                self.osu.audio.pause();
+                self.game.paused = true;
+            }
             console.log("playback: quiting");
             self.destroy();
             if (window.quitGame)
