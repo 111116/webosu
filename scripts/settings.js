@@ -156,13 +156,17 @@ function setOptionPanel() {
 	function bindkeyselector(id, keynameitem, keycodeitem) {
 		let btn = document.getElementById(id);
 		let activate = function() {
+			let t_onkeydown = window.onkeydown;
+			window.onkeydown = null;
 			let deactivate = function() {
+				window.onkeydown = t_onkeydown;
 				btn.onclick = activate;
 				btn.classList.remove("using");
 				document.removeEventListener("keydown", listenkey);
 			}
 			let listenkey = function(e) {
 				e = e || window.event;
+				e.stopPropagation();
 				gamesettings[keycodeitem] = e.keyCode;
 				gamesettings[keynameitem] = e.key.toUpperCase();
 				btn.value = gamesettings[keynameitem];
