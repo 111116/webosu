@@ -192,7 +192,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         setPlayerActions(self);
 
 
-        self.paused = false;
+        self.game.paused = false;
         this.pause = function() {
             if (this.osu.audio.pause()) { // pause music success
                 this.game.paused = true;
@@ -246,8 +246,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             // press esc to pause
             if (e.keyCode === game.ESCkeycode && !self.game.paused) {
                 self.pause();
-                if (self.game.paused) // check success
-                    self.pausing = true; // to prevent resuming at end of first key press
+                self.pausing = true; // to prevent resuming at end of first key press
             }
         };
         var resumeKeyCallback = function(e) {
