@@ -171,7 +171,7 @@ thead {
   max-width: 400px;
   text-overflow: ellipsis;
   overflow: hidden;
-  padding: .3em 1em .3em .0em;
+  padding: .3em 0.9em .3em .0em;
 }
 .index-area td:nth-child(1) {
   width: 140px;
@@ -183,18 +183,20 @@ thead {
 }
 .index-area td:nth-child(3) {
   text-align: center;
+  color: #fff;
   width: 70px;
   max-width: 70px;
 }
 .index-area td:nth-child(4) {
   text-align: center;
+  color: #fff;
   width: 100px;
   max-width: 100px;
 }
 .index-area td:nth-child(5) {
   text-align: center;
-  width: 50px;
-  max-width: 50px;
+  width: 80px;
+  max-width: 80px;
 }
 .index-area td:nth-child(6) {
   text-align: center;
@@ -203,10 +205,37 @@ thead {
 }
 .index-area td:nth-child(7) {
   text-align: center;
-  width: 70px;
-  max-width: 70px;
+  width: 50px;
+  max-width: 50px;
   padding-right: 0;
 }
+.index-area td span.SS {
+  color: #fff;
+  text-shadow: 0px 0px 2px #dd0;
+}
+.index-area td span.S {
+  color: #fff;
+  text-shadow: 0px 0px 2px #dd0;
+}
+.index-area td span.A {
+  color: #efe;
+  text-shadow: 0px 0px 2px #0b0;
+}
+.index-area td span.B {
+  color: #eef8ff;
+  text-shadow: 0px 0px 2px #0bf;
+}
+.index-area td span.C {
+  color: #fef;
+  text-shadow: 0px 0px 2px #90f;
+}
+.index-area td span.D {
+  text-shadow: 0px 0px 2px #f00;
+}
+.index-area td span.F {
+  color: #999;
+}
+
 .main-content{
   border-radius: 4px;
 	/*float: left;*/

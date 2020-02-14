@@ -72,7 +72,7 @@
                                 <td>歌曲</td>
                                 <td>连击</td>
                                 <td>分数</td>
-                                <td>评定</td>
+                                <td>准确率</td>
                                 <td>MODS</td>
                                 <td>时间</td>
                             </tr>
@@ -162,9 +162,12 @@
                     title.title = records[i].title + " [" + records[i].version + "]";
                     title.href = "search.html?q=" + (records[i].sid || records[i].title);
                     nexttd(title);
-                    nexttd(records[i].combo);
-                    nexttd(records[i].score);
-                    nexttd(records[i].grade);
+                    nexttd(records[i].combo + "x");
+                    nexttd(parseInt(records[i].score).toLocaleString());
+                    let acc = document.createElement("span");
+                    acc.innerText = records[i].acc;
+                    acc.className = records[i].grade;
+                    nexttd(acc);
                     nexttd(records[i].mods);
                     nexttd(formattime(new Date(parseInt(records[i].time))));
                 }
