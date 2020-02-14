@@ -27,7 +27,7 @@ function launchOSU(osu, beatmapid, version){
     app.renderer.backgroundColor = 0x111111;
 
     // remember where the page is scrolled to
-    let scrollTop = document.documentElement.scrollTop;
+    let scrollTop = document.body.scrollTop;
     // get ready for gaming
     document.addEventListener("contextmenu", function(e) {
         e.preventDefault();
@@ -88,7 +88,7 @@ function launchOSU(osu, beatmapid, version){
         pNav.removeAttribute("style");
         document.body.classList.remove("gaming");
         // restore page scroll position
-        document.documentElement.scrollTop = scrollTop;
+        document.body.scrollTop = scrollTop;
         // TODO application level clean up
         if (game.cursor) {
             game.stage.removeChild(game.cursor);
