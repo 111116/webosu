@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 <div class="text">推荐使用最新版本 Firefox 或 Chrome.</div>
-                <div class="text">内测版v1.3.0. <a href="https://github.com/111116/osu">Github</a></div>
+                <div class="text">内测版v1.3.1. <a href="https://github.com/111116/osu">Github</a></div>
                 <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
             </div>
             
@@ -171,7 +171,7 @@
             }
             let xhr = new XMLHttpRequest();
             xhr.responseType = 'text';
-            xhr.open("GET", "http://" + window.location.host + "/api/fetch/");
+            xhr.open("GET", "http://api.osugame.online/fetch/");
             xhr.onload = function() {
                 showActivity(JSON.parse(xhr.response));
             }

@@ -251,7 +251,7 @@ define([], function()
 
         function uploadScore(summary) {
             let xhr = new XMLHttpRequest();
-            let url = "http://" + window.location.host + "/api/send/";
+            let url = "http://api.osugame.online/send/";
             url += "?sid=" + summary.sid;
             url += "&bid=" + summary.bid;
             url += "&title=" + summary.title;
