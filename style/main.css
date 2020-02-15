@@ -678,7 +678,12 @@ thead {
 }
 
 
-
+.panel table h3 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  color: #9df;
+  font-size: 1.3em;
+}
 .disabled{
   color: #555;
 }
