@@ -49,7 +49,7 @@ function startdownload(box) {
 	box.downloading = true;
     box.classList.add("downloading");
     let xhr = new XMLHttpRequest();
-    xhr.responseType = 'blob';
+    xhr.responseType = 'arraybuffer';
     xhr.open("GET", url);
     // create download progress bar
     let container = document.createElement("div");
@@ -67,7 +67,7 @@ function startdownload(box) {
     bar.value = 0;
     // async part
     xhr.onload = function() {
-        box.oszblob = xhr.response;
+        box.oszblob = new Blob([xhr.response]);
         bar.className = "finished";
         box.classList.remove("downloading");
     }
