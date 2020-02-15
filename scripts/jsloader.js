@@ -39,8 +39,7 @@ window.beatmaplistLoadedCallback = function () {
 		                    "underscore": {
 		                        exports: "_"
 		                    }
-		                },
-		                urlArgs: "bust=" +  (new Date()).getTime()
+		                }
 		            });
 				}, {"data-main":"scripts/initgame"});
 				// load Liked list
