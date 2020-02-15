@@ -681,7 +681,7 @@ thead {
 .panel table h3 {
   margin-top: 1em;
   margin-bottom: 0.5em;
-  color: #9df;
+  color: #aef;
   font-size: 1.3em;
 }
 .disabled{
@@ -1104,7 +1104,23 @@ input[type=button].warnbtn:hover {
 }
 input[type=range] {
   cursor: pointer;
-
+  height: 1em;
+  background: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+input[type=range]:focus {
+  border-style: none;
+}
+input[type=range]::-moz-range-thumb {
+  border-style: none;
+  width: 10px;
+}
+input[type=range]::-moz-range-progress {
+  background-color: #fc7bb4; 
+}
+input[type=range]::-moz-range-track {  
+  background-color: #888;
 }
 
 hr {
