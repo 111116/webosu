@@ -57,7 +57,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             self.start();
         }
         self.load = function() {
-            self.osu.load_mp3();
+            self.osu.load_mp3(self.track);
         }
 
         var gfx = window.gfx = {}; // game field area

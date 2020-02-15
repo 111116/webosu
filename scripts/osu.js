@@ -76,6 +76,8 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                             uninherited: +parts[6],
                             kaiMode: +parts[7]
                         };
+                        // fallback to default set if sampleset is illegal
+                        if (t.sampleSet>3) t.sampleSet = 0;
                         if (t.millisecondsPerBeat < 0) {
                             t.uninherited = 0;
                         }
@@ -187,6 +189,11 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                         } else {
                             console.log("Attempted to decode unknown hit object type " + hit.type + ": " + line);
                         }
+                        // fallback to default set if sampleset is illegal
+                        if (hit.hitSample && hit.hitSample.normalSet > 3)
+                            hit.hitSample.normalSet = 0;
+                        if (hit.hitSample && hit.hitSample.additionSet > 3)
+                            hit.hitSample.additionSet = 0;
                         self.hitObjects.push(hit);
                         break;
                 }
@@ -346,8 +353,9 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
             });
         }
 
-        this.load_mp3 = function load_mp3() {
-            var mp3_raw = _.find(self.zip.children, function(c) { return c.name.toLowerCase() === self.tracks[0].general.AudioFilename.toLowerCase(); });
+        this.load_mp3 = function load_mp3(track) {
+            track = track || self.tracks[0];
+            var mp3_raw = _.find(self.zip.children, function(c) { return c.name.toLowerCase() === track.general.AudioFilename.toLowerCase(); });
             mp3_raw.getBlob("audio/mpeg", function(blob) {
                 var reader = new FileReader();
                 reader.onload = function(e) {
