@@ -26,7 +26,11 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         self.background = null;
         self.started = false;
         self.upcomingHits = [];
-        self.hits = self.track.hitObjects.slice(0); // creating a copy of hitobjects
+        // creating a copy of hitobjects
+        self.hits = [];
+        _.each(self.track.hitObjects, function(o){
+            self.hits.push(Object.assign({},o));
+        });
         self.offset = 0;
         self.currentHitIndex = 0; // index for all hit objects
         self.ended = false;
