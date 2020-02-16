@@ -56,7 +56,7 @@ function setOptionPanel() {
 		if (window.game) {
 	        window.game.backgroundDimRate = this.dim / 100;
 	        window.game.backgroundBlurRate = this.blur / 100;
-	        window.game.cursorSize = this.cursorsize;
+	        window.game.cursorSize = parseFloat(this.cursorsize);
 	        window.game.showhwmouse = this.showhwmouse;
 	        window.game.snakein = this.snakein;
 	        window.game.snakeout = this.snakeout;
@@ -70,6 +70,7 @@ function setOptionPanel() {
 	        window.game.effectVolume = this.effectvolume / 100;
 	        window.game.musicVolume = this.musicvolume / 100;
 	        window.game.beatmapHitsound = this.beatmapHitsound;
+	        window.game.globalOffset = parseFloat(this.audiooffset);
 
 	        window.game.easy = this.easy;
 	        window.game.daycore = this.daycore;

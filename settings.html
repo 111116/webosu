@@ -76,8 +76,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <div class="option-name" title="less latency, but on some browsers donesn't display correctly">
+                        <td title="减少光标延迟，但兼容性差，可能闪烁或无法显示">
+                            <div class="option-name">
                                 启用硬件光标
                             </div>
                             <div class="option-control">
@@ -114,8 +114,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <div class="option-name" title="So that you don't change volume accidentally">
+                        <td title="以避免偶然改变音量">
+                            <div class="option-name">
                                 游戏时禁用鼠标滚轮
                             </div>
                             <div class="option-control">
@@ -124,8 +124,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <div class="option-name" title="So that you don't hit things accidentally">
+                        <td title="以避免偶然点击物体">
+                            <div class="option-name">
                                 游戏时禁用鼠标按钮
                             </div>
                             <div class="option-control">
@@ -196,15 +196,17 @@
                             </div>
                         </td>
                     </tr>
-                    <tr hidden>
+                    <tr>
                         <td>
-                            <div class="option-name disabled">
-                                Audio offset
+                            <div class="option-name">
+                                音频偏移
                             </div>
                             <div class="option-control">
-                                <input id="audiooffset-range" class="slider" type="range" min="-80" max="80" value="-80">
+                                <input id="audiooffset-range" class="slider" type="range" min="-50" max="50" value="-50">
                                 <div class="range-indicator" id="audiooffset-range-indicator" hidden></div>
                             </div>
+                            <div style="font-size: 0.8em; color: #999; margin-top: 2.2em;">不建议使用！设为正值则使判定点相对于音乐延后；如使用请关闭打击音效。前往<a style="color: #8bc" href="https://bemuse.ninja/?mode=sync">bemuse sync</a>以判断键盘延迟。</div>
+                            <div style="font-size: 0.8em; color: #999;">如果延迟不大，请勿使用！</div>
                         </td>
                     </tr>
                     <tr hidden>
@@ -226,8 +228,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <div class="option-name" title="This doesn't make things easier!">
+                        <td title="This doesn't make things easier!">
+                            <div class="option-name">
                                 Easy
                             </div>
                             <div class="option-control">
@@ -236,8 +238,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <div class="option-name" title="Everything gets slower...">
+                        <td title="Everything gets slower...">
+                            <div class="option-name">
                                 Daycore
                             </div>
                             <div class="option-control">
@@ -246,8 +248,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <div class="option-name" title="Everything gets a bit harder...">
+                        <td title="Everything gets a bit harder...">
+                            <div class="option-name">
                                 Hard Rock
                             </div>
                             <div class="option-control">
@@ -256,8 +258,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <div class="option-name" title="Play with no approach circles and fading circles/sliders">
+                        <td title="Play with no approach circles and fading circles/sliders">
+                            <div class="option-name">
                                 Hidden
                             </div>
                             <div class="option-control">
@@ -266,8 +268,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <div class="option-name" title="Everything gets faster...">
+                        <td title="Everything gets faster...">
+                            <div class="option-name">
                                 Nightcore
                             </div>
                             <div class="option-control">
@@ -276,8 +278,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <div class="option-name" title="Watch a perfect automated play">
+                        <td title="Watch a (probably) perfect automated play">
+                            <div class="option-name">
                                 Autoplay
                             </div>
                             <div class="option-control">

@@ -91,6 +91,8 @@ define([], function() {
         if (t.startoffset) this.posoffset = t.startoffset;
         if (t.newbuffer) buffer = t.newbuffer;
         console.log("set start offset to", this.posoffset, "ms");
+        console.log("you've set global offset to", game.globalOffset || 0, "ms");
+        this.posoffset += game.globalOffset || 0;
 
         function decode(node) {
             self.audio.decodeAudioData(node.buf, function(decoded) {
