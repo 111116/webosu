@@ -940,12 +940,23 @@ progress.finished::-webkit-progress-value{background:#6cf;}
 }
 .panel tr{
   height: 2.7em;
+  position: relative;
 }
 .panel tr:last-child {
   text-align: center;
 }
 .panel tr:nth-child(even) {
   background: none;
+}
+.panel tr.non-default:after {
+  content: " ";
+  position: absolute;
+  height: 80%;
+  width: 4px;
+  top: 10%;
+  left: -1px;
+  background: rgba(255,190,0,0.8);
+  border-radius: 4px;
 }
 .panel td{
   /*border-bottom:1px solid #f6f6f6;*/

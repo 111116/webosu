@@ -91,13 +91,21 @@ function setOptionPanel() {
 	// functions that get called when settings are restored to default
 	// used for refreshing widgets on the page
 	gamesettings.restoreCallbacks = [];
+	function checkdefault(element, item) {
+		if (gamesettings[item] == defaultsettings[item])
+			element.parentElement.parentElement.parentElement.classList.remove("non-default");
+		else
+			element.parentElement.parentElement.parentElement.classList.add("non-default");
+	}
 
 	function bindcheck(id, item) {
 		let c = document.getElementById(id);
 		c.checked = gamesettings[item];
 		gamesettings.restoreCallbacks.push(function(){c.checked = gamesettings[item];});
+		checkdefault(c, item);
 		c.onclick = function() {
 			gamesettings[item] = c.checked;
+			checkdefault(c, item);
 			gamesettings.loadToGame();
 	        saveToLocal();
 		}
@@ -110,12 +118,16 @@ function setOptionPanel() {
 		c2.checked = gamesettings[item2];
 		gamesettings.restoreCallbacks.push(function(){c1.checked = gamesettings[item1];});
 		gamesettings.restoreCallbacks.push(function(){c2.checked = gamesettings[item2];});
+		checkdefault(c1, item1);
+		checkdefault(c2, item2);
 		c1.onclick = function() {
 			gamesettings[item1] = c1.checked;
 			gamesettings[item2] = false;
 			c2.checked = false;
 			gamesettings.loadToGame();
 	        saveToLocal();
+			checkdefault(c1, item1);
+			checkdefault(c2, item2);
 		}
 		c2.onclick = function() {
 			gamesettings[item2] = c2.checked;
@@ -123,6 +135,8 @@ function setOptionPanel() {
 			c1.checked = false;
 			gamesettings.loadToGame();
 	        saveToLocal();
+			checkdefault(c1, item1);
+			checkdefault(c2, item2);
 		}
 	}
 
@@ -143,6 +157,7 @@ function setOptionPanel() {
 			let length = range.clientWidth - 20;
 			indicator.style.left = (pos * length + 13) + "px";
 			indicator.innerText = feedback(val);
+			checkdefault(range, item);
 		}
 		range.value = gamesettings[item];
 		gamesettings.restoreCallbacks.push(function(){range.value = gamesettings[item];});
@@ -151,6 +166,7 @@ function setOptionPanel() {
 			gamesettings[item] = range.value;
 			gamesettings.loadToGame();
 	        saveToLocal();
+			checkdefault(range, item);
 		}
 	}
 
@@ -164,6 +180,7 @@ function setOptionPanel() {
 				btn.onclick = activate;
 				btn.classList.remove("using");
 				document.removeEventListener("keydown", listenkey);
+				checkdefault(btn, keynameitem);
 			}
 			let listenkey = function(e) {
 				e = e || window.event;
@@ -179,6 +196,7 @@ function setOptionPanel() {
 			document.addEventListener("keydown", listenkey);
 			btn.onclick = deactivate;
 		}
+		checkdefault(btn, keynameitem);
 		btn.onclick = activate;
 		btn.value = gamesettings[keynameitem];
 		gamesettings.restoreCallbacks.push(function(){btn.value = gamesettings[keynameitem];});
