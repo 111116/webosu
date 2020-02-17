@@ -1,5 +1,8 @@
 require(["osu", "underscore", "sound", "playback"],
 function(Osu, _, sound, Playback) {
+    // check for WebGL
+    if (!PIXI || !PIXI.utils.isWebGLSupported())
+        alert("此网站使用WebGL绘图。您的浏览器不支持WebGL，请更换浏览器。")
     window.Osu = Osu;
     window.Playback = Playback;
     // setup compatible audio context
