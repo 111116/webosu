@@ -152,7 +152,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         self.approachFadeInTime = Math.min(800, self.approachTime); // duration of approach circles fading in, at beginning of approaching
         for (let i=0; i<self.hits.length; ++i) {
             let hit = self.hits[i];
-            if (self.modhidden && i>0) { // don't hide the first one
+            if (self.modhidden && (i>0 && self.hits[i-1].type != "spinner")) { // don't hide the first one
                 hit.objectFadeInTime = 0.4 * self.approachTime;
                 hit.objectFadeOutOffset = -0.6 * self.approachTime;
                 hit.circleFadeOutTime = 0.3 * self.approachTime;
@@ -167,7 +167,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         
         for (let i=0; i<self.hits.length; ++i) {
             if (self.hits[i].type == "slider") {
-                if (self.modhidden && i>0) {
+                if (self.modhidden && (i>0 && self.hits[i-1].type != "spinner")) {
                     self.hits[i].fadeOutOffset = -0.6 * self.approachTime;
                     self.hits[i].fadeOutDuration = self.hits[i].sliderTimeTotal - self.hits[i].fadeOutOffset;
                 }
@@ -677,8 +677,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             this.populateHit(this.hits[i]); // Prepare sprites and such
         }
         if (this.modhidden) {
-            for (let i=1; i < this.hits.length; i++) {
-                if (this.hits[i].approach)
+            for (let i=0; i < this.hits.length; i++) {
+                if (this.hits[i].approach && (i>0 && this.hits[i-1].type != "spinner"))
                     this.hits[i].approach.visible = false;
             }
         }
