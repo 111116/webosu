@@ -27,8 +27,10 @@ function setOptionPanel() {
 		disableButton: false,
 		K1name: 'Z',
 		K2name: 'X',
+		Kpausename: 'SPACE',
 		K1keycode: 90,
 		K2keycode: 88,
+		Kpausekeycode: 32,
 
 		mastervolume: 60,
 		effectvolume: 100,
@@ -65,6 +67,7 @@ function setOptionPanel() {
 	        window.game.allowMouseButton = !this.disableButton;
 	        window.game.K1keycode = this.K1keycode;
 	        window.game.K2keycode = this.K2keycode;
+	        window.game.ESCkeycode = this.Kpausekeycode;
 
 	        window.game.masterVolume = this.mastervolume / 100;
 	        window.game.effectVolume = this.effectvolume / 100;
@@ -197,6 +200,8 @@ function setOptionPanel() {
 				e.stopPropagation();
 				gamesettings[keycodeitem] = e.keyCode;
 				gamesettings[keynameitem] = e.key.toUpperCase();
+				if (gamesettings[keynameitem] == " ")
+					gamesettings[keynameitem] = "SPACE";
 				btn.value = gamesettings[keynameitem];
 				gamesettings.loadToGame();
 		        saveToLocal();
@@ -228,6 +233,7 @@ function setOptionPanel() {
 	bindcheck("disable-button-check", "disableButton");
 	bindkeyselector("lbutton1select", "K1name", "K1keycode");
 	bindkeyselector("rbutton1select", "K2name", "K2keycode");
+	bindkeyselector("pausebuttonselect", "Kpausename", "Kpausekeycode");
 
 	// audio settings
 	bindrange("mastervolume-range", "mastervolume", function(v){return v+"%"});
