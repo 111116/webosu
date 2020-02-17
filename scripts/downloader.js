@@ -45,7 +45,7 @@ function startdownload(box) {
 	if (box.downloading) {
 		return;
 	}
-	let url = "https://txy1.sayobot.cn/beatmaps/download/novideo/" + box.sid;
+	let url = "https://txy1.sayobot.cn/beatmaps/download/mini/" + box.sid;
 	box.downloading = true;
     box.classList.add("downloading");
     let xhr = new XMLHttpRequest();
