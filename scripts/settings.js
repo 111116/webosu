@@ -101,7 +101,10 @@ function setOptionPanel() {
 	function bindcheck(id, item) {
 		let c = document.getElementById(id);
 		c.checked = gamesettings[item];
-		gamesettings.restoreCallbacks.push(function(){c.checked = gamesettings[item];});
+		gamesettings.restoreCallbacks.push(function(){
+			c.checked = gamesettings[item];
+			checkdefault(c, item);
+		});
 		checkdefault(c, item);
 		c.onclick = function() {
 			gamesettings[item] = c.checked;
@@ -116,8 +119,12 @@ function setOptionPanel() {
 		let c2 = document.getElementById(id2);
 		c1.checked = gamesettings[item1];
 		c2.checked = gamesettings[item2];
-		gamesettings.restoreCallbacks.push(function(){c1.checked = gamesettings[item1];});
-		gamesettings.restoreCallbacks.push(function(){c2.checked = gamesettings[item2];});
+		gamesettings.restoreCallbacks.push(function(){
+			c1.checked = gamesettings[item1];
+			c2.checked = gamesettings[item2];
+			checkdefault(c1, item1);
+			checkdefault(c2, item2);
+		});
 		checkdefault(c1, item1);
 		checkdefault(c2, item2);
 		c1.onclick = function() {
@@ -160,7 +167,10 @@ function setOptionPanel() {
 			checkdefault(range, item);
 		}
 		range.value = gamesettings[item];
-		gamesettings.restoreCallbacks.push(function(){range.value = gamesettings[item];});
+		gamesettings.restoreCallbacks.push(function(){
+			range.value = gamesettings[item];
+			checkdefault(range, item);
+		});
 		range.oninput();
 		range.onchange = function() {
 			gamesettings[item] = range.value;
@@ -199,7 +209,10 @@ function setOptionPanel() {
 		checkdefault(btn, keynameitem);
 		btn.onclick = activate;
 		btn.value = gamesettings[keynameitem];
-		gamesettings.restoreCallbacks.push(function(){btn.value = gamesettings[keynameitem];});
+		gamesettings.restoreCallbacks.push(function(){
+			btn.value = gamesettings[keynameitem];
+			checkdefault(btn, keynameitem);
+		});
 	}
 
 	// gameplay settings
