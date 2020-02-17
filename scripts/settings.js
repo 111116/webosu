@@ -167,6 +167,7 @@ function setOptionPanel() {
 			let length = range.clientWidth - 20;
 			indicator.style.left = (pos * length + 13) + "px";
 			indicator.innerText = feedback(val);
+			gamesettings[item] = range.value;
 			checkdefault(range, item);
 		}
 		range.value = gamesettings[item];
