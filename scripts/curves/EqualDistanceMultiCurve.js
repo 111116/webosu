@@ -9,7 +9,7 @@ define(["curves/Curve"], function(Curve) {
         this.endAngle = 0;
     }
     EqualDistanceMultiCurve.prototype.init = function init(curves) {
-        this.ncurve = Math.floor(this.hitObject.pixelLength / CURVE_POINTS_SEPERATION);
+        this.ncurve = Math.floor(this.hitObject.pixelLength / CURVE_POINTS_SEPERATION)+1;
         // number of segments, which have approximately same length
         this.curve = [];
 
@@ -22,6 +22,7 @@ define(["curves/Curve"], function(Curve) {
         var lastDistanceAt = 0;
 
         var pixelLength = this.hitObject.pixelLength; // This is the expected value of length
+        if (pixelLength < 0) console.error("osu curve: negative slider length");
         for (var i = 0; i <= this.ncurve; i++) {
             var prefDistance = i * pixelLength / this.ncurve; // expected current accumulated length
             while (distanceAt < prefDistance) {
