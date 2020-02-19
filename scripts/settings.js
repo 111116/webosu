@@ -29,7 +29,7 @@ function setOptionPanel() {
 		K1name: 'Z',
 		K2name: 'X',
 		Kpausename: 'SPACE',
-		Kpause2name: 'ESCAPE',
+		Kpause2name: 'ESC',
 		K1keycode: 90,
 		K2keycode: 88,
 		Kpausekeycode: 32,
@@ -65,6 +65,7 @@ function setOptionPanel() {
 	        window.game.showhwmouse = this.showhwmouse;
 	        window.game.snakein = this.snakein;
 	        window.game.snakeout = this.snakeout;
+	        window.game.autofullscreen = this.autofullscreen;
 
 	        window.game.allowMouseScroll = !this.disableWheel;
 	        window.game.allowMouseButton = !this.disableButton;
@@ -207,6 +208,8 @@ function setOptionPanel() {
 				gamesettings[keynameitem] = e.key.toUpperCase();
 				if (gamesettings[keynameitem] == " ")
 					gamesettings[keynameitem] = "SPACE";
+				if (gamesettings[keynameitem] == "ESCAPE")
+					gamesettings[keynameitem] = "ESC";
 				btn.value = gamesettings[keynameitem];
 				gamesettings.loadToGame();
 		        saveToLocal();
@@ -232,6 +235,7 @@ function setOptionPanel() {
 	bindcheck("showhwmouse-check", "showhwmouse");
 	bindcheck("snakein-check", "snakein");
 	bindcheck("snakeout-check", "snakeout");
+	bindcheck("autofullscreen-check", "autofullscreen");
 
 	// input settings
 	bindcheck("disable-wheel-check", "disableWheel");
