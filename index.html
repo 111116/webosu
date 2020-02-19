@@ -61,9 +61,6 @@
                 <div class="announcement">
                     公告：此网站还在内部测试中，喜欢本站可以<a href="https://github.com/111116/osu">Star本项目</a>，遇到问题先看<a href="faq.html">常见问题</a>。
                 </div>
-                <div class="announcement">
-                    公告：由于和退出全屏键冲突，暂停键默认改为空格，可在设置中修改。
-                </div>
                 <br>
                 <div class="index-area">
                     <h2>发生了什么</h2>
@@ -220,7 +217,9 @@
                 })
             }
             // new
-            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=2&5=1", document.getElementById("beatmap-list-new"));
+            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=2&5=1",
+                document.getElementById("beatmap-list-new"),
+                function(t){return (t.modes&1)!=0;}, 4);
             // hot
             addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=1&5=1", document.getElementById("beatmap-list-hot"));
             // liked
