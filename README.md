@@ -2,7 +2,7 @@
 
 A browser rhythm game where you click circles on the screen, following rhythm of the music.
 
-Powered by [PixiJS](https://www.pixijs.com), [Sayobot](https://osu.sayobot.cn).
+Powered by [PixiJS](https://www.pixijs.com). Beatmap source: [Sayobot](https://osu.sayobot.cn).
 
 **(under development)**
 
@@ -28,12 +28,10 @@ To host a separate live score, redirect send/fetch api requests to localhost:300
 nohup node api.js &
 ```
 
-## Todos
+## Todos (probably)
 
-- audio offset
-- input offset
 - beatmap hitsounds
-- supported mods: EZ DC HR NC HD AT
+- pp & user system
 
 ## License Notes
 
