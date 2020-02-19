@@ -248,14 +248,14 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
 
         var pauseKeyCallback = function(e) {
             // press esc to pause
-            if (e.keyCode === game.ESCkeycode && !self.game.paused) {
+            if ((e.keyCode === game.ESCkeycode || e.keyCode == game.ESC2keycode) && !self.game.paused) {
                 self.pause();
                 self.pausing = true; // to prevent resuming at end of first key press
             }
         };
         var resumeKeyCallback = function(e) {
             // press and release esc to pause
-            if (e.keyCode === game.ESCkeycode && self.game.paused) {
+            if ((e.keyCode === game.ESCkeycode || e.keyCode == game.ESC2keycode) && self.game.paused) {
                 if (self.pausing)
                     self.pausing = false;
                 else

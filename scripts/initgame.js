@@ -37,6 +37,7 @@ function(Osu, _, sound, Playback) {
         K1keycode: 90,
         K2keycode: 88,
         ESCkeycode: 27,
+        ESC2keycode: 27,
 
         // mods
         autoplay: false,

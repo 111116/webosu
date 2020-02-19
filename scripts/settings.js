@@ -28,9 +28,11 @@ function setOptionPanel() {
 		K1name: 'Z',
 		K2name: 'X',
 		Kpausename: 'SPACE',
+		Kpause2name: 'ESCAPE',
 		K1keycode: 90,
 		K2keycode: 88,
 		Kpausekeycode: 32,
+		Kpause2keycode: 27,
 
 		mastervolume: 60,
 		effectvolume: 100,
@@ -100,7 +102,7 @@ function setOptionPanel() {
 		else
 			element.parentElement.parentElement.parentElement.classList.add("non-default");
 	}
-
+	// FIXME: checkdefault: 1 to 1 bind
 	function bindcheck(id, item) {
 		let c = document.getElementById(id);
 		c.checked = gamesettings[item];
@@ -234,6 +236,7 @@ function setOptionPanel() {
 	bindcheck("disable-button-check", "disableButton");
 	bindkeyselector("lbutton1select", "K1name", "K1keycode");
 	bindkeyselector("rbutton1select", "K2name", "K2keycode");
+	bindkeyselector("pausebutton2select", "Kpause2name", "Kpause2keycode");
 	bindkeyselector("pausebuttonselect", "Kpausename", "Kpausekeycode");
 
 	// audio settings
