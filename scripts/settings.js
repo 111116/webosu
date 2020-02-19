@@ -22,6 +22,7 @@ function setOptionPanel() {
 		showhwmouse: false,
 		snakein: true,
 		snakeout: true,
+		autofullscreen: false,
 
 		disableWheel: false,
 		disableButton: false,
@@ -70,6 +71,7 @@ function setOptionPanel() {
 	        window.game.K1keycode = this.K1keycode;
 	        window.game.K2keycode = this.K2keycode;
 	        window.game.ESCkeycode = this.Kpausekeycode;
+	        window.game.ESC2keycode = this.Kpause2keycode;
 
 	        window.game.masterVolume = this.mastervolume / 100;
 	        window.game.effectVolume = this.effectvolume / 100;
