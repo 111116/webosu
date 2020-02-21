@@ -300,9 +300,12 @@ var NSaddBeatmapList = {
 
 
 // async
-// listurl: url of api request that returns a list of beatmap packs
 // adds symbols of these beatmap packs to webpage
-function addBeatmapList(listurl, list) {
+// listurl: url of api request that returns a list of beatmap packs
+// list: DOM element to insert beatmaps into
+// filter, maxsize: does't apply if not specified
+// Note that some beatmaps may not contain std mode, so we request more maps than we need
+function addBeatmapList(listurl, list, filter, maxsize) {
     if (!list) list = document.getElementById("beatmap-list");
     // request beatmap pack list
     let xhr = new XMLHttpRequest();
@@ -312,6 +315,12 @@ function addBeatmapList(listurl, list) {
     xhr.onload = function() {
         let res = JSON.parse(xhr.response);
         let box = [];
+        if (filter && res.data) {
+            res.data = res.data.filter(filter);
+        }
+        if (maxsize && res.data) {
+            res.data = res.data.slice(0, maxsize);
+        }
         // add widget to webpage as soon as list is fetched
         for (let i=0; i<res.data.length; ++i) {
             box.push(NSaddBeatmapList.addpreviewbox(res.data[i], list));

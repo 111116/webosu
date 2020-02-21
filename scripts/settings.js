@@ -22,13 +22,18 @@ function setOptionPanel() {
 		showhwmouse: false,
 		snakein: true,
 		snakeout: true,
+		autofullscreen: false,
 
 		disableWheel: false,
 		disableButton: false,
 		K1name: 'Z',
 		K2name: 'X',
+		Kpausename: 'SPACE',
+		Kpause2name: 'ESC',
 		K1keycode: 90,
 		K2keycode: 88,
+		Kpausekeycode: 32,
+		Kpause2keycode: 27,
 
 		mastervolume: 60,
 		effectvolume: 100,
@@ -60,11 +65,14 @@ function setOptionPanel() {
 	        window.game.showhwmouse = this.showhwmouse;
 	        window.game.snakein = this.snakein;
 	        window.game.snakeout = this.snakeout;
+	        window.game.autofullscreen = this.autofullscreen;
 
 	        window.game.allowMouseScroll = !this.disableWheel;
 	        window.game.allowMouseButton = !this.disableButton;
 	        window.game.K1keycode = this.K1keycode;
 	        window.game.K2keycode = this.K2keycode;
+	        window.game.ESCkeycode = this.Kpausekeycode;
+	        window.game.ESC2keycode = this.Kpause2keycode;
 
 	        window.game.masterVolume = this.mastervolume / 100;
 	        window.game.effectVolume = this.effectvolume / 100;
@@ -97,11 +105,14 @@ function setOptionPanel() {
 		else
 			element.parentElement.parentElement.parentElement.classList.add("non-default");
 	}
-
+	// FIXME: checkdefault: 1 to 1 bind
 	function bindcheck(id, item) {
 		let c = document.getElementById(id);
 		c.checked = gamesettings[item];
-		gamesettings.restoreCallbacks.push(function(){c.checked = gamesettings[item];});
+		gamesettings.restoreCallbacks.push(function(){
+			c.checked = gamesettings[item];
+			checkdefault(c, item);
+		});
 		checkdefault(c, item);
 		c.onclick = function() {
 			gamesettings[item] = c.checked;
@@ -116,8 +127,12 @@ function setOptionPanel() {
 		let c2 = document.getElementById(id2);
 		c1.checked = gamesettings[item1];
 		c2.checked = gamesettings[item2];
-		gamesettings.restoreCallbacks.push(function(){c1.checked = gamesettings[item1];});
-		gamesettings.restoreCallbacks.push(function(){c2.checked = gamesettings[item2];});
+		gamesettings.restoreCallbacks.push(function(){
+			c1.checked = gamesettings[item1];
+			c2.checked = gamesettings[item2];
+			checkdefault(c1, item1);
+			checkdefault(c2, item2);
+		});
 		checkdefault(c1, item1);
 		checkdefault(c2, item2);
 		c1.onclick = function() {
@@ -157,10 +172,14 @@ function setOptionPanel() {
 			let length = range.clientWidth - 20;
 			indicator.style.left = (pos * length + 13) + "px";
 			indicator.innerText = feedback(val);
+			gamesettings[item] = range.value;
 			checkdefault(range, item);
 		}
 		range.value = gamesettings[item];
-		gamesettings.restoreCallbacks.push(function(){range.value = gamesettings[item];});
+		gamesettings.restoreCallbacks.push(function(){
+			range.value = gamesettings[item];
+			checkdefault(range, item);
+		});
 		range.oninput();
 		range.onchange = function() {
 			gamesettings[item] = range.value;
@@ -187,6 +206,10 @@ function setOptionPanel() {
 				e.stopPropagation();
 				gamesettings[keycodeitem] = e.keyCode;
 				gamesettings[keynameitem] = e.key.toUpperCase();
+				if (gamesettings[keynameitem] == " ")
+					gamesettings[keynameitem] = "SPACE";
+				if (gamesettings[keynameitem] == "ESCAPE")
+					gamesettings[keynameitem] = "ESC";
 				btn.value = gamesettings[keynameitem];
 				gamesettings.loadToGame();
 		        saveToLocal();
@@ -199,7 +222,10 @@ function setOptionPanel() {
 		checkdefault(btn, keynameitem);
 		btn.onclick = activate;
 		btn.value = gamesettings[keynameitem];
-		gamesettings.restoreCallbacks.push(function(){btn.value = gamesettings[keynameitem];});
+		gamesettings.restoreCallbacks.push(function(){
+			btn.value = gamesettings[keynameitem];
+			checkdefault(btn, keynameitem);
+		});
 	}
 
 	// gameplay settings
@@ -209,12 +235,15 @@ function setOptionPanel() {
 	bindcheck("showhwmouse-check", "showhwmouse");
 	bindcheck("snakein-check", "snakein");
 	bindcheck("snakeout-check", "snakeout");
+	bindcheck("autofullscreen-check", "autofullscreen");
 
 	// input settings
 	bindcheck("disable-wheel-check", "disableWheel");
 	bindcheck("disable-button-check", "disableButton");
 	bindkeyselector("lbutton1select", "K1name", "K1keycode");
 	bindkeyselector("rbutton1select", "K2name", "K2keycode");
+	bindkeyselector("pausebutton2select", "Kpause2name", "Kpause2keycode");
+	bindkeyselector("pausebuttonselect", "Kpausename", "Kpausekeycode");
 
 	// audio settings
 	bindrange("mastervolume-range", "mastervolume", function(v){return v+"%"});

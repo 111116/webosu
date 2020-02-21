@@ -49,6 +49,8 @@ function launchOSU(osu, beatmapid, version){
     }
 
     // switch page to game view
+    if (game.autofullscreen)
+        document.documentElement.requestFullscreen();
     let pGameArea = document.getElementById("game-area");
     var pMainPage = document.getElementById("main-page");
     var pNav = document.getElementById("main-nav");

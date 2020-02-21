@@ -1,12 +1,10 @@
 # osu! web
 
-A browser rhythm game where you click circles on the screen, following rhythm of the music.
+A browser rhythm game where players click circles following rhythm of the music.
 
-Powered by [PixiJS](https://www.pixijs.com), [Sayobot](https://osu.sayobot.cn).
+Powered by [PixiJS](https://www.pixijs.com). Beatmap source: [Sayobot](https://osu.sayobot.cn).
 
-**(under development)**
-
-Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). Scoring and judgement rules can differ from that of official osu!. Some music might not be perfectly syncing (still being tested). Modes other than osu! (std) are unsupported.
+Note: This is an unofficial implementation of [osu!](https://osu.ppy.sh). Scoring and judgement rules differ from official versions. Some music might not be perfectly syncing. Modes other than osu! (std) are unsupported.
 
 ## Screenshots
 
@@ -28,12 +26,10 @@ To host a separate live score, redirect send/fetch api requests to localhost:300
 nohup node api.js &
 ```
 
-## Todos
+## Todos (probably)
 
-- audio offset
-- input offset
 - beatmap hitsounds
-- supported mods: EZ DC HR NC HD AT
+- pp & user system
 
 ## License Notes
 

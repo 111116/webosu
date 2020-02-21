@@ -941,6 +941,8 @@ progress.finished::-webkit-progress-value{background:#6cf;}
 .panel tr{
   height: 2.7em;
   position: relative;
+  transform: scale(1);
+  /* workaround table relative ignored https://stackoverflow.com/a/51407758 */
 }
 .panel tr:last-child {
   text-align: center;

@@ -6,7 +6,7 @@ define([], function() {
         while (1) {
             node.retry++;
             i = b.indexOf(0xFF,i);
-            if (i ==- 1 || (b[i+1] & 0xE0 == 0xE0 ))
+            if (i == -1 || (b[i+1] & 0xE0 == 0xE0 ))
                 break;
             i++;
         }
@@ -103,6 +103,7 @@ define([], function() {
                 }
             }, function (err) {
                 console.log("Error");
+                alert("Audio decode failed. Please report by filing an issue on Github");
                 if (syncStream(node)) {
                     console.log("Attempting again");
                     decode(node);

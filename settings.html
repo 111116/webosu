@@ -28,7 +28,7 @@
                 <a href="local.html" class="pseudo button">收藏夹</a>
                 <a href="faq.html" class="pseudo button">常见问题</a>
                 <a href="settings.html" class="pseudo button active">设置</a>
-                <a href="en/" class="pseudo button">English</a>
+                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">进入全屏</a>
             </div>
         </nav>
         <div class="main-page" id="main-page">
@@ -105,6 +105,16 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                进入游戏自动全屏
+                            </div>
+                            <div class="option-control">
+                                <input id="autofullscreen-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
 
                     <tr>
                         <td>
@@ -152,6 +162,17 @@
                             <div class="option-control">
                                 <input id="rbutton1select" type="button" value="oops"/>
                                 <input type="button" value="M2"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                暂停键
+                            </div>
+                            <div class="option-control">
+                                <input id="pausebuttonselect" type="button" value="oops"/>
+                                <input id="pausebutton2select" type="button" value="oops"/>
                             </div>
                         </td>
                     </tr>

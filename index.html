@@ -52,7 +52,7 @@
                 <a href="local.html" class="pseudo button">收藏夹</a>
                 <a href="faq.html" class="pseudo button">常见问题</a>
                 <a href="settings.html" class="pseudo button">设置</a>
-                <a href="en/" class="pseudo button">English</a>
+                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">进入全屏</a>
             </div>
         </nav>
 
@@ -62,9 +62,9 @@
                     公告：此网站还在内部测试中，喜欢本站可以<a href="https://github.com/111116/osu">Star本项目</a>，遇到问题先看<a href="faq.html">常见问题</a>。
                 </div>
                 <br>
-                <h2>发生了什么</h2>
-                <hr/>
                 <div class="index-area">
+                    <h2>发生了什么</h2>
+                    <hr/>
                     <table>
                         <thead>
                             <tr>
@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 <div class="text">推荐使用最新版本 Firefox 或 Chrome.</div>
-                <div class="text">内测版v1.3.13. <a href="https://github.com/111116/osu">Github</a></div>
+                <div class="text">内测版v1.4.0. <a href="https://github.com/111116/osu">Github</a></div>
                 <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
             </div>
             
@@ -143,6 +143,8 @@
             }
             function showActivity(records) {
                 records = records.reverse();
+                while (tbody.firstChild)
+                    tbody.removeChild(tbody.firstChild);
                 for (let i=0; i<records.length && i<10; ++i) {
                     let tr = document.createElement("tr");
                     tbody.appendChild(tr);
@@ -174,16 +176,22 @@
                     nexttd(formattime(new Date(parseInt(records[i].time))));
                 }
             }
-            let xhr = new XMLHttpRequest();
-            xhr.responseType = 'text';
-            xhr.open("GET", "http://api.osugame.online/fetch/");
-            xhr.onload = function() {
-                showActivity(JSON.parse(xhr.response));
+            let b={ip:"",title:"",version:"loading",score:0,combo:0,acc:0};
+            showActivity([b,b,b,b,b,b,b,b,b,b])
+            function refreshLivescore(){
+                let xhr = new XMLHttpRequest();
+                xhr.responseType = 'text';
+                xhr.open("GET", "http://api.osugame.online/fetch/");
+                xhr.onload = function() {
+                    showActivity(JSON.parse(xhr.response));
+                }
+                xhr.onerror = function() {
+                    console.error("failed fetching activities");
+                }
+                xhr.send();
             }
-            xhr.onerror = function() {
-                console.error("failed fetching activities");
-            }
-            xhr.send();
+            refreshLivescore();
+            window.setInterval(refreshLivescore, 5000);
             // recently played
             if (window.localforage) {
                 let listhistory = document.getElementById("beatmap-list-history");
@@ -209,7 +217,9 @@
                 })
             }
             // new
-            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=2&5=1", document.getElementById("beatmap-list-new"));
+            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=2&5=1",
+                document.getElementById("beatmap-list-new"),
+                function(t){return (t.modes&1)!=0;}, 4);
             // hot
             addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=1&5=1", document.getElementById("beatmap-list-hot"));
             // liked
