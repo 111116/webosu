@@ -1,12 +1,13 @@
 // beatmap downloader
 
+let audios = []
+
 function startpreview(box) {
     let volume = 1;
     if (window.gamesettings) {
         volume = (window.gamesettings.mastervolume/100) * (window.gamesettings.musicvolume/100);
         volume = Math.min(1, Math.max(0, volume));
     }
-    let audios = document.getElementsByTagName("audio");
     for (let i=0; i<audios.length; ++i)
         audios[i].softstop();
     let a = document.createElement("audio");
@@ -16,7 +17,7 @@ function startpreview(box) {
     a.appendChild(s);
     a.volume = 0;
     a.play();
-    document.body.appendChild(a);
+    audios.push(a)
     let fadeIn = setInterval(function(){
         if (a.volume < volume)
             a.volume = Math.min(volume, a.volume + 0.05*volume);
