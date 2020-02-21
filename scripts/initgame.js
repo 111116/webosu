@@ -108,23 +108,32 @@ function(Osu, _, sound, Playback) {
         'hitsounds/drum-slidertick.ogg',
         'hitsounds/combobreak.ogg',
     ];
+    var issafariBrowser = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    if(issafariBrowser){
+        sample = sample.map(path => {
+            const pathSplited = path.split('.');
+            pathSplited.pop();
+            pathSplited.push('wav');
+            return pathSplited.join('.');
+        })
+    }
     sounds.whenLoaded = function(){
-        game.sample[1].hitnormal = sounds['hitsounds/normal-hitnormal.ogg'];
-        game.sample[1].hitwhistle = sounds['hitsounds/normal-hitwhistle.ogg'];
-        game.sample[1].hitfinish = sounds['hitsounds/normal-hitfinish.ogg'];
-        game.sample[1].hitclap = sounds['hitsounds/normal-hitclap.ogg'];
-        game.sample[1].slidertick = sounds['hitsounds/normal-slidertick.ogg'];
-        game.sample[2].hitnormal = sounds['hitsounds/soft-hitnormal.ogg'];
-        game.sample[2].hitwhistle = sounds['hitsounds/soft-hitwhistle.ogg'];
-        game.sample[2].hitfinish = sounds['hitsounds/soft-hitfinish.ogg'];
-        game.sample[2].hitclap = sounds['hitsounds/soft-hitclap.ogg'];
-        game.sample[2].slidertick = sounds['hitsounds/soft-slidertick.ogg'];
-        game.sample[3].hitnormal = sounds['hitsounds/drum-hitnormal.ogg'];
-        game.sample[3].hitwhistle = sounds['hitsounds/drum-hitwhistle.ogg'];
-        game.sample[3].hitfinish = sounds['hitsounds/drum-hitfinish.ogg'];
-        game.sample[3].hitclap = sounds['hitsounds/drum-hitclap.ogg'];
-        game.sample[3].slidertick = sounds['hitsounds/drum-slidertick.ogg'];
-        game.sampleComboBreak = sounds['hitsounds/combobreak.ogg'];
+        game.sample[1].hitnormal = sounds[sample[0]];
+        game.sample[1].hitwhistle = sounds[sample[1]];
+        game.sample[1].hitfinish = sounds[sample[2]];
+        game.sample[1].hitclap = sounds[sample[3]];
+        game.sample[1].slidertick = sounds[sample[4]];
+        game.sample[2].hitnormal = sounds[sample[5]];
+        game.sample[2].hitwhistle = sounds[sample[6]];
+        game.sample[2].hitfinish = sounds[sample[7]];
+        game.sample[2].hitclap = sounds[sample[8]];
+        game.sample[2].slidertick = sounds[sample[9]];
+        game.sample[3].hitnormal = sounds[sample[10]];
+        game.sample[3].hitwhistle = sounds[sample[11]];
+        game.sample[3].hitfinish = sounds[sample[12]];
+        game.sample[3].hitclap = sounds[sample[13]];
+        game.sample[3].slidertick = sounds[sample[14]];
+        game.sampleComboBreak = sounds[sample[15]];
         window.soundReady = true;
         document.getElementById("sound-progress").classList.add("finished");
         document.body.classList.add("sound-ready");

@@ -21,3 +21,5 @@ ffmpeg -i soft-hitclap.wav soft-hitclap.ogg
 ffmpeg -i soft-sliderslide.wav soft-sliderslide.ogg
 ffmpeg -i soft-sliderwhistle.wav soft-sliderwhistle.ogg
 ffmpeg -i soft-slidertick.wav soft-slidertick.ogg
+
+ffmpeg -i combobreak.ogg combobreak.mp3
