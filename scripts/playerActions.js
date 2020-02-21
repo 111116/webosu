@@ -202,7 +202,7 @@ define([], function() {
             touchmoveCallback(e);
             if (playback.game.M1down) return;
             playback.game.M1down = true;
-            if(!playback.game.paused){
+            if(!playback.game.paused && !this.ended){
                 e.preventDefault();
                 e.stopPropagation();
             }
@@ -213,7 +213,7 @@ define([], function() {
         var touchendCallback = function(e) {
             touchmoveCallback(e);
             playback.game.M1down = false;
-            if(!playback.game.paused){
+            if(!playback.game.paused && !this.ended){
                 e.preventDefault();
                 e.stopPropagation();
             }
