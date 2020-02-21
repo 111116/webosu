@@ -13,32 +13,44 @@
          */
         constructor(sid, volume = 1) {
             const audioContext = new Audio("https://cdn.sayobot.cn:25225/preview/" + sid + ".mp3");
-            this._sid = sid
+            this._sid = sid;
             this._volume = volume;
             this._audioContext = audioContext;
-            audioContext.load()
+            this._playing = false;
+            this._ready = false;
+            this._timer = 0;
+            audioContext.load();
             audioContext.volume = 0;
             audioContext.addEventListener('canplay', () => {
-                console.log("canplay")
-                this.play()
+                this._ready = true
+                if(this._playing === true){
+                    this.play();
+                }
             }, {once: true})
         }
         play() {
-            this._audioContext.volume = 0;
-            this._audioContext.currentTime = 0;
-            this._audioContext.play();
-            const intervalNumber = setInterval(() => {
-                if (this._audioContext.volume < this._volume)
-                    this._audioContext.volume = Math.min(this._volume, this._audioContext.volume + 0.05 * this._volume);
-                else
-                    clearInterval(intervalNumber);
-            }, 30);
+            this._playing  = true;
+            if(this._ready){
+                this._playing = true
+                this._audioContext.volume = 0;
+                this._audioContext.currentTime = 0;
+                this._audioContext.play();
+                clearInterval(this._timer);
+                this._timer = setInterval(() => {
+                    if (this._audioContext.volume < this._volume)
+                        this._audioContext.volume = Math.min(this._volume, this._audioContext.volume + 0.05 * this._volume);
+                    else
+                        clearInterval(this._timer);
+                }, 30);    
+            }
         }
         stop() {
-            const intervalNumber = setInterval(() => {
+            this._playing = false
+            clearInterval(this._timer);
+            this._timer = setInterval(() => {
                 this._audioContext.volume = Math.max(0, this._audioContext.volume - 0.05 * this._volume);
                 if (this._audioContext.volume === 0) {
-                    clearInterval(intervalNumber);
+                    clearInterval(this._timer);
                 }
             }, 10);
         }
@@ -73,6 +85,7 @@
                 this._active.stop();
             }
             this._active = new PreviewAudio(sid, this._volume);
+            this._active.play()
         }
         stop() {
             if(this._active){
