@@ -50,6 +50,7 @@
             this._timer = setInterval(() => {
                 this._audioContext.volume = Math.max(0, this._audioContext.volume - 0.05 * this._volume);
                 if (this._audioContext.volume === 0) {
+                    this._audioContext.pause();
                     clearInterval(this._timer);
                 }
             }, 10);

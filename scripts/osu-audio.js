@@ -74,6 +74,15 @@ define([], function() {
         return {startoffset:offset_predict_mp3(tags)};
     }
 
+    const audioContext = new AudioContext();
+    if (audioContext.state === "suspended") {
+        document.body.addEventListener("touchstart", event => {
+            audioContext.resume();
+        }, {
+            once: true
+        });
+    }
+
     function OsuAudio(filename, buffer, callback) {
         var self = this;
         this.decoded = null;
@@ -81,7 +90,7 @@ define([], function() {
         this.started = 0;
         this.position = 0;
         this.playing = false;
-        this.audio = new AudioContext();
+        this.audio = audioContext;
         this.gain = this.audio.createGain();
         this.gain.connect(this.audio.destination);
         this.playbackRate = 1.0;
@@ -112,17 +121,6 @@ define([], function() {
         }
         decode({ buf: buffer, sync: 0, retry: 0 });
 
-        if (this.audio.state === 'suspended' && 'ontouchstart' in window)  
-        {
-            const resume = (event) => {
-                this.audio.resume();
-                if(this.playing === true){
-                    this.play(this._playWait)
-                }
-            }
-            document.body.addEventListener('touchstart',resume, {once: true})
-        }
-
         this.getPosition = function() {
             return this._getPosition() - this.posoffset/1000;
         }
@@ -136,12 +134,11 @@ define([], function() {
         };
 
         this.play = function play(wait = 0) {
-            self.playing = true;
-            self._playWait = wait;
-            if (self.audio.state == "suspended") {
+            if (self.audio.state === "suspended") {
                 console.warn("Audio suspended. Waiting for touchstart.");
-                return;
+                self.audio.resume();
             }
+            self.playing = true;
             self.source = self.audio.createBufferSource();
             self.source.playbackRate.value = self.playbackRate;
             self.source.buffer = self.decoded;
