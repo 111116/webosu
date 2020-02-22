@@ -202,7 +202,7 @@ define([], function() {
             touchmoveCallback(e);
             if (playback.game.M1down) return;
             playback.game.M1down = true;
-            if(!playback.game.paused && !playback.game.ended){
+            if(!playback.game.paused && !playback.ended){
                 e.preventDefault();
             }
             playback.game.down = playback.game.K1down || playback.game.K2down
@@ -212,7 +212,7 @@ define([], function() {
         var touchendCallback = function(e) {
             touchmoveCallback(e);
             playback.game.M1down = false;
-            if(!playback.game.paused && !playback.game.ended){
+            if(!playback.game.paused && !playback.ended){
                 e.preventDefault();
             }
             playback.game.down = playback.game.K1down || playback.game.K2down

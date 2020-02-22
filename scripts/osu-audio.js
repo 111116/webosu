@@ -112,6 +112,17 @@ define([], function() {
         }
         decode({ buf: buffer, sync: 0, retry: 0 });
 
+        if (this.audio.state === 'suspended' && 'ontouchstart' in window)  
+        {
+            const resume = (event) => {
+                this.audio.resume();
+                if(this.playing === true){
+                    this.play(this._playWait)
+                }
+            }
+            document.body.addEventListener('touchstart',resume, {once: true})
+        }
+
         this.getPosition = function() {
             return this._getPosition() - this.posoffset/1000;
         }
@@ -125,8 +136,11 @@ define([], function() {
         };
 
         this.play = function play(wait = 0) {
+            self.playing = true;
+            self._playWait = wait;
             if (self.audio.state == "suspended") {
-                window.alert("Audio can't play. Please use Chrome or Firefox.")
+                console.warn("Audio suspended. Waiting for touchstart.");
+                return;
             }
             self.source = self.audio.createBufferSource();
             self.source.playbackRate.value = self.playbackRate;
@@ -140,7 +154,6 @@ define([], function() {
             else {
                 self.source.start(0, self.position);
             }
-            self.playing = true;
         };
 
         // return value true: success
