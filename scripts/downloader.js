@@ -40,6 +40,13 @@ function startpreview(box) {
     }
 }
 
+function log_to_server(message) {
+    let url = "http://api.osugame.online/log/?msg=" + message;
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.send();
+}
+
 function startdownload(box) {
     startpreview(box);
 	if (box.downloading) {
@@ -70,6 +77,7 @@ function startdownload(box) {
         box.oszblob = new Blob([xhr.response]);
         bar.className = "finished";
         box.classList.remove("downloading");
+        log_to_server("got " + box.sid + " in " + (new Date().getTime() - (box.download_starttime || 0)));
     }
     xhr.onprogress = function(e) {
 		bar.value = e.loaded / e.total;
@@ -79,6 +87,9 @@ function startdownload(box) {
         alert("Beatmap download failed. Please retry later.")
 		box.downloading = false;
         box.classList.remove("downloading");
+        log_to_server("fail " + box.sid);
     }
     xhr.send();
+    // start time (for logging)
+    box.download_starttime = new Date().getTime();
 }
