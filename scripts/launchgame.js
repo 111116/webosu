@@ -7,6 +7,7 @@ function launchOSU(osu, beatmapid, version){
             trackid = i;
     console.log("launching", beatmapid, version)
     if (trackid == -1) {
+        if (log_to_server) log_to_server("unmatch " + beatmapid + " " + version);
         console.error("no suck track");
         console.log("available tracks are:");
         for (let i=0; i<osu.tracks.length; ++i)
