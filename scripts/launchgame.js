@@ -29,6 +29,9 @@ function launchOSU(osu, beatmapid, version){
 
     // remember where the page is scrolled to
     let scrollTop = document.body.scrollTop;
+    // save alert function and replace with silent alert to prevent pop-up in game
+    let defaultAlert = window.alert;
+    window.alert = function(msg){console.log("IN-GAME ALERT " + msg);};
     // get ready for gaming
     document.addEventListener("contextmenu", function(e) {
         e.preventDefault();
@@ -92,6 +95,8 @@ function launchOSU(osu, beatmapid, version){
         document.body.classList.remove("gaming");
         // restore page scroll position
         document.body.scrollTop = scrollTop;
+        // restore alert function
+        window.alert = defaultAlert;
         // TODO application level clean up
         if (game.cursor) {
             game.stage.removeChild(game.cursor);
