@@ -8,7 +8,8 @@ function startpreview(box) {
     }
     let audios = document.getElementsByTagName("audio");
     for (let i=0; i<audios.length; ++i)
-        audios[i].softstop();
+        if (audios[i].softstop)
+            audios[i].softstop();
     let a = document.createElement("audio");
     let s = document.createElement("source");
     s.src = "https://cdn.sayobot.cn:25225/preview/" + box.sid + ".mp3";
