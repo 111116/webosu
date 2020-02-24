@@ -85,6 +85,8 @@
         <script>
             let url = new URL(window.location.href);
             let keyword = url.searchParams.get("q");
+            // remove quotes, trailing spaces and duplicate spaces
+            keyword = keyword.split('"').join(' ').trim().replace(/ +/g, ' ');
             document.getElementById("inputtext").value = keyword;
             var cur = 0;
             if (keyword == parseInt(keyword, 10)) {
