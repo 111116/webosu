@@ -186,6 +186,38 @@ define([], function() {
             playback.game.down = playback.game.K1down || playback.game.K2down
                               || playback.game.M1down || playback.game.M2down;
         }
+        var touchmoveCallback = function(e) {
+            if(!e.touches || !e.touches[0]) return;
+            var touch = e.touches[0];
+            playback.game.mouseX = (touch.clientX - gfx.xoffset) / gfx.width * 512;
+            playback.game.mouseY = (touch.clientY - gfx.yoffset) / gfx.height * 384;
+            movehistory.unshift({
+                x: playback.game.mouseX,
+                y: playback.game.mouseY,
+                t: new Date().getTime()
+            });
+            if (movehistory.length>10) movehistory.pop();
+        }
+        var touchstartCallback = function(e) {
+            touchmoveCallback(e);
+            if (playback.game.M1down) return;
+            playback.game.M1down = true;
+            if(!playback.game.paused && !playback.ended){
+                e.preventDefault();
+            }
+            playback.game.down = playback.game.K1down || playback.game.K2down
+                              || playback.game.M1down || playback.game.M2down;
+            checkClickdown();
+        }
+        var touchendCallback = function(e) {
+            touchmoveCallback(e);
+            playback.game.M1down = false;
+            if(!playback.game.paused && !playback.ended){
+                e.preventDefault();
+            }
+            playback.game.down = playback.game.K1down || playback.game.K2down
+                              || playback.game.M1down || playback.game.M2down;
+        }
         var keydownCallback = function(e) {
             if (e.keyCode == playback.game.K1keycode) {
                 if (playback.game.K1down) return;
@@ -221,10 +253,19 @@ define([], function() {
             if (playback.game.allowMouseButton) {
                 playback.game.window.addEventListener("mousedown", mousedownCallback);
                 playback.game.window.addEventListener("mouseup", mouseupCallback);
+                // touch handling for gameplay
+                if("ontouchstart" in window){
+                    playback.game.window.addEventListener("touchstart", touchstartCallback);
+                    playback.game.window.addEventListener("touchend", touchendCallback);
+                }
             }
             // keyboard click handling for gameplay
             playback.game.window.addEventListener("keydown", keydownCallback);
             playback.game.window.addEventListener("keyup", keyupCallback);
+
+            if("ontouchstart" in window){
+                playback.game.window.addEventListener("touchmove", touchmoveCallback);
+            }
         }
 
         playback.game.cleanupPlayerActions = function() {
@@ -233,6 +274,9 @@ define([], function() {
             playback.game.window.removeEventListener("mouseup", mouseupCallback);
             playback.game.window.removeEventListener("keydown", keydownCallback);
             playback.game.window.removeEventListener("keyup", keyupCallback);
+            playback.game.window.removeEventListener("touchmove", touchmoveCallback);
+            playback.game.window.removeEventListener("touchstart", touchstartCallback);
+            playback.game.window.removeEventListener("touchend", touchendCallback);
         }
 
     }

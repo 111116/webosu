@@ -114,10 +114,7 @@ function launchOSU(osu, beatmapid, version){
     game.scene = playback;
     playback.onload = function() {
         // stop beatmap preview
-        let audios = document.getElementsByTagName("audio");
-        for (let i=0; i<audios.length; ++i)
-            if (audios[i].softstop)
-                audios[i].softstop();
+        previewAudioMgr.stop()
     }
     playback.load(); // load audio
 

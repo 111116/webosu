@@ -74,6 +74,15 @@ define([], function() {
         return {startoffset:offset_predict_mp3(tags)};
     }
 
+    const audioContext = new AudioContext();
+    if (audioContext.state === "suspended") {
+        document.body.addEventListener("touchstart", event => {
+            audioContext.resume();
+        }, {
+            once: true
+        });
+    }
+
     function OsuAudio(filename, buffer, callback) {
         var self = this;
         this.decoded = null;
@@ -81,7 +90,7 @@ define([], function() {
         this.started = 0;
         this.position = 0;
         this.playing = false;
-        this.audio = new AudioContext();
+        this.audio = audioContext;
         this.gain = this.audio.createGain();
         this.gain.connect(this.audio.destination);
         this.playbackRate = 1.0;
@@ -125,9 +134,11 @@ define([], function() {
         };
 
         this.play = function play(wait = 0) {
-            if (self.audio.state == "suspended") {
-                window.alert("Audio can't play. Please use Chrome or Firefox.")
+            if (self.audio.state === "suspended") {
+                console.warn("Audio suspended. Waiting for touchstart.");
+                self.audio.resume();
             }
+            self.playing = true;
             self.source = self.audio.createBufferSource();
             self.source.playbackRate.value = self.playbackRate;
             self.source.buffer = self.decoded;
@@ -140,7 +151,6 @@ define([], function() {
             else {
                 self.source.start(0, self.position);
             }
-            self.playing = true;
         };
 
         // return value true: success
