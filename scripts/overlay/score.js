@@ -252,16 +252,16 @@ define([], function()
         function uploadScore(summary) {
             let xhr = new XMLHttpRequest();
             let url = "http://api.osugame.online/send/";
-            url += "?sid=" + summary.sid;
-            url += "&bid=" + summary.bid;
-            url += "&title=" + summary.title;
-            url += "&version=" + summary.version;
-            url += "&mods=" + summary.mods;
-            url += "&grade=" + summary.grade;
-            url += "&score=" + summary.score;
-            url += "&combo=" + summary.combo;
-            url += "&acc=" + summary.acc;
-            url += "&time=" + summary.time;
+            url += "?sid=" + encodeURIComponent(summary.sid);
+            url += "&bid=" + encodeURIComponent(summary.bid);
+            url += "&title=" + encodeURIComponent(summary.title);
+            url += "&version=" + encodeURIComponent(summary.version);
+            url += "&mods=" + encodeURIComponent(summary.mods);
+            url += "&grade=" + encodeURIComponent(summary.grade);
+            url += "&score=" + encodeURIComponent(summary.score);
+            url += "&combo=" + encodeURIComponent(summary.combo);
+            url += "&acc=" + encodeURIComponent(summary.acc);
+            url += "&time=" + encodeURIComponent(summary.time);
             xhr.open("GET", url);
             console.log(url);
             xhr.onload = function() {
