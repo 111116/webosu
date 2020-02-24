@@ -1,5 +1,11 @@
 // beatmap downloader
 
+function log_to_server(message) {
+    let url = "http://api.osugame.online/log/?msg=" + message;
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.send();
+}
 
 (() => {
 
