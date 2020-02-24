@@ -164,6 +164,8 @@
                     let title = document.createElement("a");
                     title.innerText = records[i].title + " [" + records[i].version + "]";
                     title.title = records[i].title + " [" + records[i].version + "]";
+                    if (records[i].sid == "undefined")
+                        records[i].sid = undefined;
                     title.href = "search.html?q=" + (records[i].sid || records[i].title);
                     nexttd(title);
                     nexttd(records[i].combo + "x");
