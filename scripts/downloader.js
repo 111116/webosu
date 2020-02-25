@@ -18,7 +18,8 @@
             this._audioContext = audioContext;
             this._playing = false;
             this._ready = false;
-            this._timer = 0;
+            this._fadeTimer = 0;
+            this._playTimer = 0;
             audioContext.load();
             audioContext.volume = 0;
             audioContext.addEventListener('canplay', () => {
@@ -35,25 +36,39 @@
                 this._audioContext.volume = 0;
                 this._audioContext.currentTime = 0;
                 this._audioContext.play();
-                clearInterval(this._timer);
-                this._timer = setInterval(() => {
+                clearInterval(this._fadeTimer);
+                clearTimeout(this._playTimer);
+                this._fadeTimer = setInterval(() => {
                     if (this._audioContext.volume < this._volume)
                         this._audioContext.volume = Math.min(this._volume, this._audioContext.volume + 0.05 * this._volume);
                     else
-                        clearInterval(this._timer);
-                }, 30);    
+                        clearInterval(this._fadeTimer);
+                        clearTimeout(this._playTimer);
+                }, 30);
+                this._playTimer = setTimeout(() => {
+                    this._audioContext.volume = this._volume;
+                    clearInterval(this._fadeTimer);
+                    clearTimeout(this._playTimer);
+                }, 600);
             }
         }
         stop() {
             this._playing = false
-            clearInterval(this._timer);
-            this._timer = setInterval(() => {
+            clearInterval(this._fadeTimer);
+            clearTimeout(this._playTimer);
+            this._fadeTimer = setInterval(() => {
                 this._audioContext.volume = Math.max(0, this._audioContext.volume - 0.05 * this._volume);
                 if (this._audioContext.volume === 0) {
                     this._audioContext.pause();
-                    clearInterval(this._timer);
+                    clearInterval(this._fadeTimer);
+                    clearTimeout(this._playTimer);
                 }
             }, 10);
+            this._playTimer = setTimeout(() => {
+                this._audioContext.pause();
+                clearInterval(this._fadeTimer);
+                clearTimeout(this._playTimer);
+            }, 200);
         }
         set volume(value) {
             this._volume = value;
