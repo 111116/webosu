@@ -79,52 +79,52 @@ function(Osu, _, sound, Playback) {
 
     // load skin & game cursor
     PIXI.Loader.shared
-    .add('fonts/venera.fnt')
-    .add("sprites.json").load(function(loader, resources) {
+    .add('https://osugame.sayobot.cn/fonts/venera.fnt')
+    .add("https://osugame.sayobot.cn/sprites.json").load(function(loader, resources) {
         window.skinReady = true;
         document.getElementById("skin-progress").classList.add("finished");
         document.body.classList.add("skin-ready");
-        Skin = PIXI.Loader.shared.resources["sprites.json"].textures;
+        Skin = PIXI.Loader.shared.resources["https://osugame.sayobot.cn/sprites.json"].textures;
     });
 
 
     // load sounds
     // load hitsound set
     var sample = [
-        'hitsounds/normal-hitnormal.ogg',
-        'hitsounds/normal-hitwhistle.ogg',
-        'hitsounds/normal-hitfinish.ogg',
-        'hitsounds/normal-hitclap.ogg',
-        'hitsounds/normal-slidertick.ogg',
-        'hitsounds/soft-hitnormal.ogg',
-        'hitsounds/soft-hitwhistle.ogg',
-        'hitsounds/soft-hitfinish.ogg',
-        'hitsounds/soft-hitclap.ogg',
-        'hitsounds/soft-slidertick.ogg',
-        'hitsounds/drum-hitnormal.ogg',
-        'hitsounds/drum-hitwhistle.ogg',
-        'hitsounds/drum-hitfinish.ogg',
-        'hitsounds/drum-hitclap.ogg',
-        'hitsounds/drum-slidertick.ogg',
-        'hitsounds/combobreak.ogg',
+        'https://osugame.sayobot.cn/hitsounds/normal-hitnormal.ogg',
+        'https://osugame.sayobot.cn/hitsounds/normal-hitwhistle.ogg',
+        'https://osugame.sayobot.cn/hitsounds/normal-hitfinish.ogg',
+        'https://osugame.sayobot.cn/hitsounds/normal-hitclap.ogg',
+        'https://osugame.sayobot.cn/hitsounds/normal-slidertick.ogg',
+        'https://osugame.sayobot.cn/hitsounds/soft-hitnormal.ogg',
+        'https://osugame.sayobot.cn/hitsounds/soft-hitwhistle.ogg',
+        'https://osugame.sayobot.cn/hitsounds/soft-hitfinish.ogg',
+        'https://osugame.sayobot.cn/hitsounds/soft-hitclap.ogg',
+        'https://osugame.sayobot.cn/hitsounds/soft-slidertick.ogg',
+        'https://osugame.sayobot.cn/hitsounds/drum-hitnormal.ogg',
+        'https://osugame.sayobot.cn/hitsounds/drum-hitwhistle.ogg',
+        'https://osugame.sayobot.cn/hitsounds/drum-hitfinish.ogg',
+        'https://osugame.sayobot.cn/hitsounds/drum-hitclap.ogg',
+        'https://osugame.sayobot.cn/hitsounds/drum-slidertick.ogg',
+        'https://osugame.sayobot.cn/hitsounds/combobreak.ogg',
     ];
     sounds.whenLoaded = function(){
-        game.sample[1].hitnormal = sounds['hitsounds/normal-hitnormal.ogg'];
-        game.sample[1].hitwhistle = sounds['hitsounds/normal-hitwhistle.ogg'];
-        game.sample[1].hitfinish = sounds['hitsounds/normal-hitfinish.ogg'];
-        game.sample[1].hitclap = sounds['hitsounds/normal-hitclap.ogg'];
-        game.sample[1].slidertick = sounds['hitsounds/normal-slidertick.ogg'];
-        game.sample[2].hitnormal = sounds['hitsounds/soft-hitnormal.ogg'];
-        game.sample[2].hitwhistle = sounds['hitsounds/soft-hitwhistle.ogg'];
-        game.sample[2].hitfinish = sounds['hitsounds/soft-hitfinish.ogg'];
-        game.sample[2].hitclap = sounds['hitsounds/soft-hitclap.ogg'];
-        game.sample[2].slidertick = sounds['hitsounds/soft-slidertick.ogg'];
-        game.sample[3].hitnormal = sounds['hitsounds/drum-hitnormal.ogg'];
-        game.sample[3].hitwhistle = sounds['hitsounds/drum-hitwhistle.ogg'];
-        game.sample[3].hitfinish = sounds['hitsounds/drum-hitfinish.ogg'];
-        game.sample[3].hitclap = sounds['hitsounds/drum-hitclap.ogg'];
-        game.sample[3].slidertick = sounds['hitsounds/drum-slidertick.ogg'];
-        game.sampleComboBreak = sounds['hitsounds/combobreak.ogg'];
+        game.sample[1].hitnormal = sounds['https://osugame.sayobot.cn/hitsounds/normal-hitnormal.ogg'];
+        game.sample[1].hitwhistle = sounds['https://osugame.sayobot.cn/hitsounds/normal-hitwhistle.ogg'];
+        game.sample[1].hitfinish = sounds['https://osugame.sayobot.cn/hitsounds/normal-hitfinish.ogg'];
+        game.sample[1].hitclap = sounds['https://osugame.sayobot.cn/hitsounds/normal-hitclap.ogg'];
+        game.sample[1].slidertick = sounds['https://osugame.sayobot.cn/hitsounds/normal-slidertick.ogg'];
+        game.sample[2].hitnormal = sounds['https://osugame.sayobot.cn/hitsounds/soft-hitnormal.ogg'];
+        game.sample[2].hitwhistle = sounds['https://osugame.sayobot.cn/hitsounds/soft-hitwhistle.ogg'];
+        game.sample[2].hitfinish = sounds['https://osugame.sayobot.cn/hitsounds/soft-hitfinish.ogg'];
+        game.sample[2].hitclap = sounds['https://osugame.sayobot.cn/hitsounds/soft-hitclap.ogg'];
+        game.sample[2].slidertick = sounds['https://osugame.sayobot.cn/hitsounds/soft-slidertick.ogg'];
+        game.sample[3].hitnormal = sounds['https://osugame.sayobot.cn/hitsounds/drum-hitnormal.ogg'];
+        game.sample[3].hitwhistle = sounds['https://osugame.sayobot.cn/hitsounds/drum-hitwhistle.ogg'];
+        game.sample[3].hitfinish = sounds['https://osugame.sayobot.cn/hitsounds/drum-hitfinish.ogg'];
+        game.sample[3].hitclap = sounds['https://osugame.sayobot.cn/hitsounds/drum-hitclap.ogg'];
+        game.sample[3].slidertick = sounds['https://osugame.sayobot.cn/hitsounds/drum-slidertick.ogg'];
+        game.sampleComboBreak = sounds['https://osugame.sayobot.cn/hitsounds/combobreak.ogg'];
         window.soundReady = true;
         document.getElementById("sound-progress").classList.add("finished");
         document.body.classList.add("sound-ready");

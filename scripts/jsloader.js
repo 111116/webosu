@@ -17,23 +17,23 @@ function loadScript(url, callback, aux) {
 
 window.beatmaplistLoadedCallback = function () {
 	window.setTimeout(function(){
-		loadScript("scripts/lib/zip.js", function(){
-			window.zip.workerScriptsPath = 'scripts/lib/';
-			loadScript("scripts/lib/zip-fs.js", checkdep);
+		loadScript("https://osugame.sayobot.cn/scripts/lib/zip.js", function(){
+			window.zip.workerScriptsPath = 'https://osugame.sayobot.cn/scripts/lib/';
+			loadScript("https://osugame.sayobot.cn/scripts/lib/zip-fs.js", checkdep);
 		});
-		loadScript("scripts/lib/pixi.min.js", checkdep);
-		loadScript("scripts/lib/mp3parse.min.js", checkdep);
-		loadScript("scripts/lib/localforage.min.js", checkdep);
+		loadScript("https://osugame.sayobot.cn/scripts/lib/pixi.min.js", checkdep);
+		loadScript("https://osugame.sayobot.cn/scripts/lib/mp3parse.min.js", checkdep);
+		loadScript("https://osugame.sayobot.cn/scripts/lib/localforage.min.js", checkdep);
 		function checkdep() {
 			if (!window.aaaaa) window.aaaaa = 0;
 			window.aaaaa += 1;
 			if (window.aaaaa == 4) {
 				// load scripts of game
-				loadScript("scripts/lib/require.js", function() {
+				loadScript("https://osugame.sayobot.cn/scripts/lib/require.js", function() {
 		            require.config({
 		                paths: {
-		                    underscore: 'lib/underscore',
-		                    sound: 'lib/sound'
+		                    underscore: 'https://osugame.sayobot.cn/scripts/lib/underscore',
+		                    sound: 'https://osugame.sayobot.cn/scripts/lib/sound'
 		                },
 		                shim: {
 		                    "underscore": {
