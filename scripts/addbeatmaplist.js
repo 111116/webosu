@@ -130,7 +130,7 @@ var NSaddBeatmapList = {
                 icon.onclick = box.like;
             }
             icon.removeAttribute("hidden");
-        }        
+        }
         box.like = function(e) {
             e.stopPropagation();
             window.liked_sid_set.add(box.sid);

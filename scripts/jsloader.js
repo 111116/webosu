@@ -42,7 +42,7 @@ window.beatmaplistLoadedCallback = function () {
 		                },
 		                // urlArgs: "bust=" +  (new Date()).getTime()
 		            });
-				}, {"data-main":"scripts/initgame"});
+				}, {"data-main":"https://osugame.sayobot.cn/scripts/initgame"});
 				// load Liked list
 				if (window.localforage) {
 					localforage.getItem("likedsidset", function(err, item) {
