@@ -18,7 +18,7 @@ function loadScript(url, callback, aux) {
 window.beatmaplistLoadedCallback = function () {
 	window.setTimeout(function(){
 		loadScript("https://osugame.sayobot.cn/scripts/lib/zip.js", function(){
-			window.zip.workerScriptsPath = 'https://osugame.sayobot.cn/scripts/lib/';
+			window.zip.workerScriptsPath = 'scripts/lib/';
 			loadScript("https://osugame.sayobot.cn/scripts/lib/zip-fs.js", checkdep);
 		});
 		loadScript("https://osugame.sayobot.cn/scripts/lib/pixi.min.js", checkdep);
