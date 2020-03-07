@@ -123,6 +123,7 @@
             }
             xhr.onload = function() {
                 window.oszblob = new Blob([xhr.response]);
+                bar.className = "finished";
                 function checktostart(){
                     if (!window.scriptReady || !window.soundReady || !window.skinReady) {
                         window.setTimeout(checktostart, 100);
