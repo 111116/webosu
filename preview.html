@@ -117,7 +117,7 @@
                     }
                     wtf();
                     window.removeEventListener("click",f);
-                    document.getElementById("hint").innerText = "";
+                    document.getElementById("hint").innerText = "如果谱面预览未开始，可能谱包或数据有错。";
                 };
                 window.addEventListener("click",f);
                 document.getElementById("hint").innerText = "点击任意处以开始";
@@ -127,7 +127,7 @@
                 bar.className = "finished";
                 function checktostart(){
                     if (!window.scriptReady || !window.soundReady || !window.skinReady) {
-                        window.setTimeout(checktostart, 100);
+                        window.setTimeout(checktostart, 50);
                         return;
                     }
                     start();
