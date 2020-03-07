@@ -57,7 +57,7 @@
             <div class="main-content">
                 <div class="beatmap-list" id="beatmap-list">
                     <!-- to be filled in script -->
-                    <h1>谱面预览加载中</h1>
+                    <h1 id="hint">谱面预览加载中</h1>
                 </div>
                 <div class="text">推荐使用最新版本 Firefox 或 Chrome.</div>
                 <div class="text">内测版v1.4.2. <a href="https://github.com/111116/osu">Github</a></div>
@@ -106,8 +106,20 @@
             bar.value = 0;
             // async part
             function start(){
-                window.game.autoplay = true;
-                launchGame(window.oszblob, bid);
+                function f(){
+                    window.game.autoplay = true;
+                    launchGame(window.oszblob, bid);
+                    function wtf(){
+                        if (window.playback)
+                            window.playback.pause = function(){};
+                        else
+                            window.setTimeout(wtf, 50);
+                    }
+                    wtf();
+                    window.removeEventListener("click",f);
+                };
+                window.addEventListener("click",f);
+                document.getElementById("hint").innerText = "点击任意处以开始";
             }
             xhr.onload = function() {
                 window.oszblob = new Blob([xhr.response]);
