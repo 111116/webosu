@@ -314,6 +314,8 @@ function addBeatmapList(listurl, list, filter, maxsize) {
     // async part 1
     xhr.onload = function() {
         let res = JSON.parse(xhr.response);
+        if (typeof(res.endid) != "undefined")
+            window.list_endid = res.endid;
         let box = [];
         if (filter && res.data) {
             res.data = res.data.filter(filter);

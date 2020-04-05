@@ -120,7 +120,15 @@
                 addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=4&5=1&7=" + genre + "&8=" + lang);
                 var cur = 20;
                 document.getElementById("btnmore").onclick = function() {
-                    addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+cur+"&2=4&5=1&7=" + genre + "&8=" + lang);
+                    if (typeof(window.list_endid) == "undefined") {
+                        addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+cur+"&2=4&5=1&7=" + genre + "&8=" + lang);
+                    }
+                    else {
+                        if (window.list_endid == 0)
+                            document.getElementById("btnmore").innerText = "已经没有更多了哦！";
+                        else
+                            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+window.list_endid+"&2=4&5=1&7=" + genre + "&8=" + lang);
+                    }
                     cur += 20;
                 }
                 // update buttons state
