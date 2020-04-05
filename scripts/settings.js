@@ -68,9 +68,8 @@ function setOptionPanel() {
 	        window.game.snakein = this.snakein;
 	        window.game.snakeout = this.snakeout;
 	        window.game.autofullscreen = this.autofullscreen;
-	        // window.game.overridedpi = !this.sysdpi;
-	        // window.game.dpiscale = this.dpiscale;
-	        if (!this.sysdpi) window.devicePixelRatio = this.dpiscale;
+	        window.game.overridedpi = !this.sysdpi;
+	        window.game.dpiscale = this.dpiscale;
 
 	        window.game.allowMouseScroll = !this.disableWheel;
 	        window.game.allowMouseButton = !this.disableButton;

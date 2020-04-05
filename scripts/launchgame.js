@@ -21,7 +21,7 @@ function launchOSU(osu, beatmapid, version){
     let app = window.app = new PIXI.Application({
         width: window.innerWidth,
         height: window.innerHeight,
-        resolution: window.devicePixelRatio || 1,
+        resolution: (window.game.overridedpi? window.game.dpiscale: window.devicePixelRatio) || 1,
         autoResize: true,
     });
     app.renderer.autoResize = true;
