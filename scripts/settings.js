@@ -23,6 +23,8 @@ function setOptionPanel() {
 		snakein: true,
 		snakeout: true,
 		autofullscreen: false,
+		sysdpi: true,
+		dpiscale: 1.0,
 
 		disableWheel: false,
 		disableButton: false,
@@ -66,6 +68,9 @@ function setOptionPanel() {
 	        window.game.snakein = this.snakein;
 	        window.game.snakeout = this.snakeout;
 	        window.game.autofullscreen = this.autofullscreen;
+	        // window.game.overridedpi = !this.sysdpi;
+	        // window.game.dpiscale = this.dpiscale;
+	        if (!this.sysdpi) window.devicePixelRatio = this.dpiscale;
 
 	        window.game.allowMouseScroll = !this.disableWheel;
 	        window.game.allowMouseButton = !this.disableButton;
@@ -236,6 +241,8 @@ function setOptionPanel() {
 	bindcheck("snakein-check", "snakein");
 	bindcheck("snakeout-check", "snakeout");
 	bindcheck("autofullscreen-check", "autofullscreen");
+	bindcheck("sysdpi-check", "sysdpi");
+	bindrange("dpi-range", "dpiscale", function(v){return v.toFixed(2)+"x"});
 
 	// input settings
 	bindcheck("disable-wheel-check", "disableWheel");
