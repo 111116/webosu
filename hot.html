@@ -61,7 +61,7 @@
                 </div>
                 <div class="button" style="width:100%; margin-bottom: 10px;" id="btnmore">加载更多</div>
                 <div class="text">推荐使用最新版本 Firefox 或 Chrome.</div>
-                <div class="text">内测版v1.4.2. <a href="https://github.com/111116/osu">Github</a></div>
+                <div class="text">内测版v1.4.3. <a href="https://github.com/111116/osu">Github</a></div>
                 <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
             </div>
             <!-- <div class="side-panel">
@@ -86,7 +86,16 @@
             addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=1&5=1");
             var cur = 20;
             document.getElementById("btnmore").onclick = function() {
-                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+cur+"&2=1&5=1");
+                if (typeof(window.list_endid) == "undefined") {
+                    addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+cur+"&2=1&5=1");
+                }
+                else {
+                    if (window.list_endid == 0)
+                        document.getElementById("btnmore").innerText = "已经没有更多了哦！";
+                    else
+                        addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+window.list_endid+"&2=1&5=1");
+
+                }
                 cur += 20;
             }
         </script>
