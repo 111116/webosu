@@ -85,7 +85,23 @@
             let cururl = new URL(window.location.href);
             let sid = cururl.searchParams.get("sid");
             let bid = cururl.searchParams.get("bid");
-
+            // version look up
+            let version = null;
+            {
+                let xhr = new XMLHttpRequest();
+                let url = "https://api.sayobot.cn/v2/beatmapinfo?T=1&K=" + bid;
+                xhr.responseType = 'text';
+                xhr.open("GET", url);
+                xhr.onload = function() {
+                    let res = JSON.parse(xhr.response);
+                    console.log(res)
+                    for (let i=0; i<res.data.bid_data.length; ++i)
+                        if (res.data.bid_data[i].bid == bid)
+                            version = res.data.bid_data[i].version;
+                }
+                xhr.send();
+            }
+            // download beatmap
             let url = "https://txy1.sayobot.cn/beatmaps/download/mini/" + sid;
             let xhr = new XMLHttpRequest();
             xhr.responseType = 'arraybuffer';
@@ -108,7 +124,7 @@
             function start(){
                 function f(){
                     window.game.autoplay = true;
-                    launchGame(window.oszblob, bid);
+                    launchGame(window.oszblob, bid, version);
                     function wtf(){
                         if (window.playback)
                             window.playback.pause = function(){};
