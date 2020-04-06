@@ -114,6 +114,7 @@
             function search(genre, lang) {
                 // clear list
                 list = document.getElementById("beatmap-list");
+                document.getElementById("btnmore").innerText = "查看更多";
                 while (list.firstChild) {
                     list.removeChild(list.firstChild);
                 }
