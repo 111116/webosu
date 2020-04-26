@@ -83,6 +83,14 @@
                     </table>
                 </div>
                 <div class="index-area">
+                    <h2>随机曲目</h2>
+                    <a onclick="genRandomList()" class="more" style="cursor:pointer;">换一换</a>
+                    <hr/>
+                    <div class="beatmap-list" id="beatmap-list-random">
+                        <!-- to be filled in script -->
+                    </div>
+                </div>
+                <div class="index-area">
                     <h2>最近游玩</h2>
                     <a href="history.html" class="more">查看自己的游玩记录</a>
                     <hr/>
@@ -222,6 +230,17 @@
             addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=2&5=1",
                 document.getElementById("beatmap-list-new"),
                 function(t){return (t.modes&1)!=0;}, 4);
+            // random
+            function genRandomList() {
+                // clear list
+                let list = document.getElementById("beatmap-list-random");
+                
+                // fill list
+                let randstart = Math.floor(Math.random()*20000);
+                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=10&1="+randstart+"&2=1&5=1", list,
+                    function(t){while (list.firstChild) list.removeChild(list.firstChild); return (t.modes&1)!=0;}, 4);
+            }
+            genRandomList();
             // hot
             addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=1&5=1", document.getElementById("beatmap-list-hot"));
             // liked
