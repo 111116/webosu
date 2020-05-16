@@ -9,7 +9,19 @@ var a = [];
 
 const postserver = http.createServer((req, res) => {
   var q = url.parse(req.url, true).query;
-  q.ip = req.headers["x-real-ip"];
+  var ip = req.headers["x-real-ip"];
+  if (ip) {
+    ip = ip.split(".");
+    ip[0] = "**";
+    if (ip.length > 3) {
+      ip[3] = "**";
+    }
+    ip = ip.join(".");
+  }
+  else {
+    ip = "";
+  }
+  q.ip = ip;
   if (q.title || q.sid) {
     a.push(q);
   }
