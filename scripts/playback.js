@@ -48,6 +48,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         self.audioReady = false;
         self.endTime = self.hits[self.hits.length-1].endTime + 1500;
         this.wait = Math.max(0, 1500-this.hits[0].time);
+        self.skipTime = this.hits[0].time / 1000 - 3;
+        self.skipped = false;
 
         self.osu.onready = function() {
             self.loadingMenu.hide();
@@ -261,9 +263,16 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                 else
                     self.resume();
             }
+        };
+        var skipKeyCallback = function(e) {
+            if (e.keyCode === game.CTRLkeycode && !self.game.paused) {
+                if (!self.skipped && !self.pausing)
+                    self.skip();
+            }
         }
         window.addEventListener("keydown", pauseKeyCallback);
         window.addEventListener("keyup", resumeKeyCallback);
+        window.addEventListener("keydown", skipKeyCallback);
 
 
         this.fadeOutEasing = function(t) { // [0..1] -> [1..0]
@@ -1297,6 +1306,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             window.removeEventListener('wheel', wheelCallback);
             window.removeEventListener('keydown', pauseKeyCallback);
             window.removeEventListener('keyup', resumeKeyCallback);
+            window.removeEventListener('keydown', skipKeyCallback)
             self.game.cleanupPlayerActions();
             self.render = function(){};
         };
@@ -1304,6 +1314,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         this.start = function() {
             console.log("start playback")
             self.started = true;
+            self.skipped = false;
             self.osu.audio.gain.gain.value = self.game.musicVolume * self.game.masterVolume;
             self.osu.audio.playbackRate = self.playbackRate;
             self.osu.audio.play(self.backgroundFadeTime + self.wait);
@@ -1331,6 +1342,12 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             self.destroy();
             if (window.quitGame)
                 window.quitGame();
+        }
+
+        this.skip = function() {
+            if (self.osu.audio && self.osu.audio.seek(self.skipTime)) {
+                self.skipped = true;
+            }
         }
     }
     
