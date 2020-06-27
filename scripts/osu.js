@@ -229,6 +229,8 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
                 var point = this.timingPoints[i];
                 if (point.uninherited === 0) {
                     point.uninherited = 1;
+                    point.millisecondsPerBeat = Math.min(point.millisecondsPerBeat, -10);
+                    point.millisecondsPerBeat = Math.max(point.millisecondsPerBeat, -1000);
                     point.millisecondsPerBeat *= -0.01 * last.millisecondsPerBeat;
                     point.trueMillisecondsPerBeat = last.trueMillisecondsPerBeat;
                 } else {
