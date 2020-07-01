@@ -1345,7 +1345,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         }
 
         this.skip = function() {
-            if (self.osu.audio && self.osu.audio.seek(self.skipTime)) {
+            if (self.osu.audio && self.osu.audio.seekforward(self.skipTime)) {
                 self.skipped = true;
             }
         }

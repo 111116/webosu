@@ -152,7 +152,7 @@ define([], function() {
             return true;
         };
 
-        this.seek = function seek(time) {
+        this.seekforward = function seekforward(time) {
             let offSet = time;
             if (offSet > self.audio.currentTime - self.started) {
                 self.position = offSet;
