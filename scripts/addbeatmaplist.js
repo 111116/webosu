@@ -316,6 +316,10 @@ function addBeatmapList(listurl, list, filter, maxsize) {
         let res = JSON.parse(xhr.response);
         if (typeof(res.endid) != "undefined")
             window.list_endid = res.endid;
+        else {
+            window.list_endid = 0;
+            return;
+        }
         let box = [];
         if (filter && res.data) {
             res.data = res.data.filter(filter);
