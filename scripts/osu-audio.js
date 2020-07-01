@@ -151,6 +151,23 @@ define([], function() {
             self.playing = false;
             return true;
         };
+
+        this.seek = function seek(time) {
+            let offSet = time;
+            if (offSet > self.audio.currentTime - self.started) {
+                self.position = offSet;
+                self.source.stop();
+                self.source = self.audio.createBufferSource();
+                self.source.playbackRate.value = self.playbackRate;
+                self.source.buffer = self.decoded;
+                self.source.connect(self.gain);
+                self.source.start(0, self.position);
+                self.started = self.audio.currentTime;
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     return OsuAudio;
