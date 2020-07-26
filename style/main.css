@@ -72,16 +72,6 @@ nav .brand {
   display: flex;
 }
 @media screen and (max-device-width: 900px) {
-  nav .brand {
-    visibility: hidden;
-    width: 2em;
-  }
-  nav .brand:before {
-    visibility: visible;
-    content: "OSU!";
-  }
-}
-@media screen and (max-device-width: 700px) {
   nav {
     flex-wrap: wrap;
     height: auto;
