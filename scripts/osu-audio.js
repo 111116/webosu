@@ -61,7 +61,8 @@ define([], function() {
             console.log("preproc audio: ogg", suffix);
             return {startoffset:19};
         }
-        let tags = mp3Parser.readTags(new DataView(buffer));
+        mp3Parser.readTagsNew = readTagsNew;
+        let tags = mp3Parser.readTagsNew(new DataView(buffer));
         if (tags.length == 3 && tags[1]._section.type == "Xing") {
             console.log("dumbifing", filename);
             let arr = new Uint8Array(buffer.byteLength - tags[1]._section.byteLength);
@@ -72,6 +73,35 @@ define([], function() {
             return {startoffset:offset_predict_mp3(tags), newbuffer:arr.buffer};
         }
         return {startoffset:offset_predict_mp3(tags)};
+    }
+    
+    //mp3 parser bug fix
+    function readTagsNew(view, offset) {
+        offset || (offset = 0);
+        var sections = [];
+        var section = null;
+        var isFirstFrameFound = false;
+        var bufferLength = view.byteLength;
+        var readers = [mp3Parser.readId3v2Tag, mp3Parser.readXingTag, mp3Parser.readFrame];
+        var numOfReaders = readers.length;
+        for (; offset < bufferLength && !isFirstFrameFound; ++offset) {
+            for (var i = 0; i < numOfReaders; ++i) {
+                section = readers[i](view, offset);
+
+                //***fix point***//
+                if (section && section._section.byteLength) {
+
+                    sections.push(section);
+                    offset += section._section.byteLength;
+                    if (section._section.type === "frame") {
+                        isFirstFrameFound = true;
+                        break;
+                    }
+                    i = -1;
+                }
+            }
+        }
+        return sections;
     }
 
     function OsuAudio(filename, buffer, callback) {
