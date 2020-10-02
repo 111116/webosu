@@ -253,9 +253,11 @@ function(_, OsuAudio, LinearBezier, CircumscribedCircle) {
             // just give an estimated track length
             this.length = Math.round((this.hitObjects[this.hitObjects.length-1].endTime)/1000+1.5);
 
-            calculateCurve(this);
-            // stack hitobjects
-            stackHitObjects(this);
+            if (self.general.Mode === 0) {
+                calculateCurve(this);
+                // stack hitobjects
+                stackHitObjects(this);
+            }
 
             // callback
             if (this.ondecoded !== null) {
