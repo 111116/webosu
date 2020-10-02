@@ -286,13 +286,13 @@ var NSaddBeatmapList = {
 
     // async
     requestMoreInfo: function(box) {
-        let url = "https://api.sayobot.cn/beatmapinfo?1=" + box.sid;
+        let url = "https://api.sayobot.cn/v2/beatmapinfo?0=" + box.sid;
         let xhr = new XMLHttpRequest();
         xhr.responseType = 'text';
         xhr.open("GET", url);
         xhr.onload = function() {
             let res = JSON.parse(xhr.response);
-            NSaddBeatmapList.addMoreInfo(box, res.data);
+            NSaddBeatmapList.addMoreInfo(box, res.data.bid_data);
         }
         xhr.send();
     }
