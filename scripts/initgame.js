@@ -13,7 +13,7 @@ function(Osu, _, sound, Playback) {
         window: window,
         stage: null,
         scene: null,
-        updatePlayerActions: null,
+        updatePlayerActions: function(){},
 
         // note: preference values here will be overwritten by gamesettings (in settings.js)
         // display
@@ -41,6 +41,8 @@ function(Osu, _, sound, Playback) {
 
         // mods
         autoplay: false,
+        autopilot: false,
+        relax: false,
         nightcore: false,
         daycore: false,
         hardrock: false,

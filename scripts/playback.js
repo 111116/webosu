@@ -36,6 +36,8 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
         self.ended = false;
         // mods
         self.autoplay = game.autoplay;
+        self.autopilot = game.autopilot;
+        self.relax = game.relax;
         self.modhidden = game.hidden;
         self.playbackRate = 1.0;
         if (self.game.nightcore) self.playbackRate *= 1.5;
