@@ -471,7 +471,7 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             hit.approach = newHitSprite("approachcircle.png", 8 + 0.0001 * hit.hitIndex);
             hit.approach.tint = combos[hit.combo % combos.length];
 
-            hit.judgements.push(this.createJudgement(hit.x, hit.y, 4, hit.time + this.MehTime));
+            hit.judgements.push(this.createJudgement(hit.x, hit.y, 10, hit.time + this.MehTime));
 
             // create combo number
             hit.numbers = [];
@@ -496,13 +496,13 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
             body.depth = 4.9999-0.0001*hit.hitIndex;
             hit.objects.push(body);
 
-            function newSprite(spritename, x, y, scalemul = 1) {
+            function newSprite(spritename, x, y, scalemul = 1, reverseArr) {
                 let sprite = new PIXI.Sprite(Skin[spritename]);
                 sprite.scale.set(self.hitSpriteScale * scalemul);
                 sprite.anchor.set(0.5);
                 sprite.x = x;
                 sprite.y = y;
-                sprite.depth = 4.9999-0.0001*hit.hitIndex;
+                sprite.depth = (reverseArr ? 9.9999 : 4.9999) - 0.0001*hit.hitIndex;
                 sprite.alpha = 0;
                 hit.objects.push(sprite);
                 return sprite;
@@ -530,14 +530,14 @@ function(Osu, setPlayerActions, SliderMesh, ScoreOverlay, VolumeMenu, LoadingMen
                 // curve points are of about-same distance, so these 2 points should be different
                 let p = hit.curve.curve[hit.curve.curve.length-1];
                 let p2 = hit.curve.curve[hit.curve.curve.length-2];
-                hit.reverse = newSprite("reversearrow.png", p.x, p.y, 0.36);
+                hit.reverse = newSprite("reversearrow.png", p.x, p.y, 0.36, true);
                 hit.reverse.rotation = Math.atan2(p2.y - p.y, p2.x - p.x);
             }
             if (hit.repeat > 2) {
                 // curve points are of about-same distance, so these 2 points should be different
                 let p = hit.curve.curve[0];
                 let p2 = hit.curve.curve[1];
-                hit.reverse_b = newSprite("reversearrow.png", p.x, p.y, 0.36);
+                hit.reverse_b = newSprite("reversearrow.png", p.x, p.y, 0.36, true);
                 hit.reverse_b.rotation = Math.atan2(p2.y - p.y, p2.x - p.x);
                 hit.reverse_b.visible = false; // Only visible when it's the next end to hit
             }
