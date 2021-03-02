@@ -296,6 +296,8 @@ define([], function()
                 if (game.hidden) l.push("HD");
                 if (game.hardrock) l.push("HR");
                 if (game.nightcore) l.push("NC");
+                if (game.relax) l.push("RL");
+                if (game.autopilot) l.push("AP");
                 if (game.autoplay) l.push("AT");
                 if (l.length == 0) return "";
                 let s = l[0];
