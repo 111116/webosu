@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>戳泡泡</title>
+        <link rel="stylesheet" href="style/picnic.min.css">
+        <link rel="stylesheet" type="text/css" href="style/main.css">
+        <link rel="stylesheet" type="text/css" href="style/font.css">
+        <link rel="icon" href="favicon.png">
+        <script src="scripts/launchgame.js"></script>
+        <script src="scripts/downloader.js"></script>
+        <script src="scripts/addbeatmaplist.js"></script>
+        <script src="scripts/jsloader.js"></script>
+    </head>
+
+    <body>
+        <div class="game-area" id="game-area" hidden>
+        </div>
+
+        <div class="pause-menu" id="pause-menu" hidden>
+            <div class="paused-title">paused</div>
+            <div class="button-list">
+                <div class="pausebutton continue" id="pausebtn-continue">
+                    <div class="inner">Continue</div>
+                </div>
+                <div class="pausebutton retry" id="pausebtn-retry">
+                    <div class="inner">Retry</div>
+                </div>
+                <div class="pausebutton quit" id="pausebtn-quit">
+                    <div class="inner">Quit</div>
+                </div>
+            </div>
+        </div>
+
+        <nav id="main-nav">
+            <div class="nav-link">
+                <a href="index.html" class="brand">Osaka Salmon University!</a>
+                <a href="new.html" class="pseudo button">最新</a>
+                <a href="hot.html" class="pseudo button">热门</a>
+                <a href="genre.html" class="pseudo button">分类</a>
+            </div>
+            <div class="nav-search">
+                <form action="search.html">
+                    <input type="text" name="q" placeholder="谱面关键词或sid"/>
+                    <input type="image" class="search-button" src="research.svg">
+                </form>
+            </div>
+            <div class="nav-tool">
+                <a href="local.html" class="pseudo button">收藏夹</a>
+                <a href="faq.html" class="pseudo button">常见问题</a>
+                <a href="settings.html" class="pseudo button">设置</a>
+                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">进入全屏</a>
+            </div>
+        </nav>
+
+        <div class="main-page" id="main-page">
+            <div class="main-content">
+                <div class="beatmap-list" id="beatmap-list">
+                    <!-- to be filled in script -->
+                    <h1 id="hint">谱面预览加载中</h1>
+                </div>
+                <div class="text">推荐使用最新版本 Firefox 或 Chrome.</div>
+                <div class="text">内测版v1.4.3. <a href="https://github.com/111116/osu">Github</a></div>
+                <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
+            </div>
+            <!-- <div class="side-panel">
+                to be activated in script
+            </div> -->
+            <div class="statuslines" id="statuslines">
+                <div class="progress" id="script-progress">
+                    Scripts
+                    <div class="lds-dual-ring"></div>
+                </div>
+                <div class="progress" id="skin-progress">
+                    Skin
+                    <div class="lds-dual-ring"></div>
+                </div>
+                <div class="progress" id="sound-progress">
+                    Hitsounds
+                    <div class="lds-dual-ring"></div>
+                </div>
+            </div>
+        </div>
+        <script>
+            let cururl = new URL(window.location.href);
+            let sid = cururl.searchParams.get("sid");
+            let bid = cururl.searchParams.get("bid");
+            // version look up
+            let version = null;
+            {
+                let xhr = new XMLHttpRequest();
+                let url = "https://api.sayobot.cn/v2/beatmapinfo?T=1&K=" + bid;
+                xhr.responseType = 'text';
+                xhr.open("GET", url);
+                xhr.onload = function() {
+                    let res = JSON.parse(xhr.response);
+                    console.log(res)
+                    for (let i=0; i<res.data.bid_data.length; ++i)
+                        if (res.data.bid_data[i].bid == bid)
+                            version = res.data.bid_data[i].version;
+                }
+                xhr.send();
+            }
+            // download beatmap
+            let url = "https://txy1.sayobot.cn/beatmaps/download/mini/" + sid;
+            let xhr = new XMLHttpRequest();
+            xhr.responseType = 'arraybuffer';
+            xhr.open("GET", url);
+            // create download progress bar
+            let container = document.createElement("div");
+            let title = document.createElement("div");
+            let bar = document.createElement("progress");
+            container.className = "download-progress";
+            title.className = "title";
+            title.innerText = sid;
+            container.appendChild(title);
+            container.appendChild(bar);
+            // insert so that download list from recent to old
+            let statuslines = document.getElementById("statuslines");
+            statuslines.insertBefore(container, statuslines.children[3]);
+            bar.max = 1;
+            bar.value = 0;
+            // async part
+            function start(){
+                function f(){
+                    window.game.autoplay = true;
+                    launchGame(window.oszblob, bid, version);
+                    function wtf(){
+                        if (window.playback)
+                            window.playback.pause = function(){};
+                        else
+                            window.setTimeout(wtf, 50);
+                    }
+                    wtf();
+                    window.removeEventListener("click",f);
+                    document.getElementById("hint").innerText = "如果谱面预览未开始，可能谱包或数据有错。";
+                };
+                window.addEventListener("click",f);
+                document.getElementById("hint").innerText = "点击任意处以开始";
+            }
+            xhr.onload = function() {
+                window.oszblob = new Blob([xhr.response]);
+                bar.className = "finished";
+                function checktostart(){
+                    if (!window.scriptReady || !window.soundReady || !window.skinReady) {
+                        window.setTimeout(checktostart, 50);
+                        return;
+                    }
+                    start();
+                }
+                checktostart();
+            }
+            xhr.onprogress = function(e) {
+                bar.value = e.loaded / e.total;
+            }
+            xhr.onerror = function() {
+                console.error("download failed");
+                alert("Beatmap download failed.")
+                log_to_server("fail " + box.sid);
+            }
+            xhr.send();
+
+            if (window.beatmaplistLoadedCallback) {
+                window.beatmaplistLoadedCallback();
+                window.beatmaplistLoadedCallback = null;
+                // to make sure it's called only once
+            }
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-169262247-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-169262247-1');
+</script>
+    </body>
+</html>
+
+<!-- attribution -->
+<!-- play icon made by https://www.flaticon.com/authors/those-icons -->
+<!-- search icon made by https://www.flaticon.com/authors/good-ware -->
