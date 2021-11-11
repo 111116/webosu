@@ -1,0 +1,287 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>osu!Web Online</title>
+        <link rel="stylesheet" href="style/picnic.min.css">
+        <link rel="stylesheet" type="text/css" href="style/main.css">
+        <!-- <link href="//fonts.googleapis.com/css?family=Exo+2:400,600italic" rel="stylesheet" type="text/css"> -->
+        <link rel="stylesheet" type="text/css" href="style/font.css">
+        <link rel="icon" href="favicon.png">
+        <script src="scripts/launchgame.js"></script>
+        <script src="scripts/downloader.js"></script>
+        <script src="scripts/addbeatmaplist.js"></script>
+        <script src="scripts/settings.js"></script>
+        <script src="scripts/jsloader.js"></script>
+        <script src="scripts/lib/localforage.min.js"></script>
+    </head>
+
+    <body>
+        <div class="game-area" id="game-area" hidden>
+        </div>
+
+        <div class="pause-menu" id="pause-menu" hidden>
+            <div class="paused-title">Pausa</div>
+            <div class="button-list">
+                <div class="pausebutton continue" id="pausebtn-continue">
+                    <div class="inner">Continuar</div>
+                </div>
+                <div class="pausebutton retry" id="pausebtn-retry">
+                    <div class="inner">Reiniciar</div>
+                </div>
+                <div class="pausebutton quit" id="pausebtn-quit">
+                    <div class="inner">Salir</div>
+                </div>
+            </div>
+        </div>
+
+        <nav id="main-nav">
+            <div class="nav-link">
+                <a href="index.html" class="brand">Osaka Salmon University!</a>
+                <a href="new.html" class="pseudo button">Reciente</a>
+                <a href="hot.html" class="pseudo button">Popular</a>
+                <a href="genre.html" class="pseudo button">Buscar por clasificacion</a>
+            </div>
+            <div class="nav-search">
+                <form action="search.html">
+                    <input type="text" name="q" placeholder="Buscar"/>
+                    <input type="image" class="search-button" src="research.svg">
+                </form>
+            </div>
+            <div class="nav-tool">
+                <a href="local.html" class="pseudo button">Favoritos</a>
+                <a href="faq.html" class="pseudo button">Preguntas frecuentes</a>
+                <a href="settings.html" class="pseudo button">Opciones</a>
+                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">进入全屏</a>
+            </div>
+        </nav>
+
+        <div class="main-page" id="main-page">
+            <div class="main-content">
+                <div class="announcement">
+                    公告：请考虑<a href="https://osu.sayobot.cn/support">支持Sayobot</a>！Sayobot是本站的谱面源，请给服务器续命❤️
+                    <a href="https://paypal.me/Sayobot">Donate with Paypal</a>
+                </div>
+                <br>
+                <div class="index-area">
+                    <h2>发生了什么</h2>
+                    <hr/>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Jugador</td>
+                                <td>Cancion</td>
+                                <td>连击</td>
+                                <td>分数</td>
+                                <td>Accuracy</td>
+                                <td>MODS</td>
+                                <td>Tiempo</td>
+                            </tr>
+                        </thead>
+                        <tbody id="activity-list">
+                            <!-- will be filled in script -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="index-area">
+                    <h2>Random</h2>
+                    <a onclick="genRandomList()" class="more" style="cursor:pointer;">换一换</a>
+                    <hr/>
+                    <div class="beatmap-list" id="beatmap-list-random">
+                        <!-- to be filled in script -->
+                    </div>
+                </div>
+                <div class="index-area">
+                    <h2>Jugado recientemente</h2>
+                    <a href="history.html" class="more">查看自己的游玩记录</a>
+                    <hr/>
+                    <div class="beatmap-list" id="beatmap-list-history">
+                        <!-- to be filled in script -->
+                    </div>
+                </div>
+                <div class="index-area">
+                    <h2>Lo mas nuevo</h2>
+                    <a href="new.html" class="more">查看更多最新曲目</a>
+                    <hr/>
+                    <div class="beatmap-list" id="beatmap-list-new">
+                        <!-- to be filled in script -->
+                    </div>
+                </div>
+                <div class="index-area">
+                    <h2>Favoritos</h2>
+                    <a href="local.html" class="more">查看更多已收藏曲目</a>
+                    <hr/>
+                    <div class="beatmap-list" id="beatmap-list-liked">
+                        <!-- to be filled in script -->
+                    </div>
+                </div>
+                <div class="index-area">
+                    <h2>Mapas populares</h2>
+                    <a href="hot.html" class="more">查看更多热门曲目</a>
+                    <hr/>
+                    <div class="beatmap-list" id="beatmap-list-hot">
+                        <!-- to be filled in script -->
+                    </div>
+                </div>
+                <div class="text">
+                    <a href="https://osu.sayobot.cn/support">支持小夜</a>！请给服务器续命❤️
+                    <a href="https://paypal.me/Sayobot">Donate to Sayobot with Paypal</a>
+                </div>
+                <div class="text">Se recomienda utilizar la última versión de Firefox o Chrome disponible.</div>
+                <div class="text">Versión beta v1.4.3. <a href="https://github.com/111116/osu">Github</a></div>
+                <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
+            </div>
+            
+            <div class="statuslines" id="statuslines">
+                <div class="progress" id="script-progress">
+                    Scripts
+                    <div class="lds-dual-ring"></div>
+                </div>
+                <div class="progress" id="skin-progress">
+                    Skin
+                    <div class="lds-dual-ring"></div>
+                </div>
+                <div class="progress" id="sound-progress">
+                    Sonidos
+                    <div class="lds-dual-ring"></div>
+                </div>
+            </div>
+        </div>
+        <script>
+            // what's happening
+            let tbody = document.getElementById("activity-list");
+            function formattime(date) {
+                let m;
+                return date.getHours() + ":" + ((m=date.getMinutes())<10?('0'+m):m);
+            }
+            function showActivity(records) {
+                records = records.reverse();
+                while (tbody.firstChild)
+                    tbody.removeChild(tbody.firstChild);
+                for (let i=0; i<records.length && i<10; ++i) {
+                    let tr = document.createElement("tr");
+                    tbody.appendChild(tr);
+                    function nexttd(content) {
+                        let td = document.createElement("td");
+                        tr.appendChild(td);
+                        if (!content) return;
+                        if (content.tagName)
+                            td.appendChild(content);
+                        else
+                            td.innerText = content;
+                    }
+                    let b = records[i].ip.split(".");
+                    b[0]="**";
+                    if (b.length>3) b[3]="**";
+                    nexttd(b.join("."));
+                    let title = document.createElement("a");
+                    title.innerText = records[i].title + " [" + records[i].version + "]";
+                    title.title = records[i].title + " [" + records[i].version + "]";
+                    if (records[i].sid == "undefined")
+                        records[i].sid = undefined;
+                    title.href = "search.html?q=" + (records[i].sid || records[i].title);
+                    nexttd(title);
+                    nexttd(records[i].combo + "x");
+                    nexttd(parseInt(records[i].score).toLocaleString());
+                    let acc = document.createElement("span");
+                    acc.innerText = records[i].acc;
+                    acc.className = records[i].grade;
+                    nexttd(acc);
+                    nexttd(records[i].mods);
+                    nexttd(formattime(new Date(parseInt(records[i].time))));
+                }
+            }
+            let b={ip:"",title:"",version:"loading",score:0,combo:0,acc:0};
+            showActivity([b,b,b,b,b,b,b,b,b,b])
+            function refreshLivescore(){
+                let xhr = new XMLHttpRequest();
+                xhr.responseType = 'text';
+                xhr.open("GET", "http://api.osugame.online/fetch/");
+                xhr.onload = function() {
+                    showActivity(JSON.parse(xhr.response));
+                }
+                xhr.onerror = function() {
+                    console.error("failed fetching activities");
+                }
+                xhr.send();
+            }
+            refreshLivescore();
+            window.setInterval(refreshLivescore, 5000);
+            // recently played
+            if (window.localforage) {
+                let listhistory = document.getElementById("beatmap-list-history");
+                localforage.getItem("playhistory1000", function(err, item) {
+                    if (err) {
+                        listhistory.innerText = "游玩记录加载失败";
+                        return;
+                    }
+                    if (item && item.length) {
+                        item = item.reverse();
+                        sid = [];
+                        for (let i=0; i<item.length; ++i) {
+                            if (item[i].sid)
+                                sid.push(item[i].sid);
+                        }
+                        sid = [...new Set(sid)]; // uniq
+                        for (let i=0; i<4 && i<sid.length; ++i)
+                            addBeatmapSid(sid[i], listhistory)
+                    }
+                    else {
+                        listhistory.innerText = "你还没有玩过一首歌曲哦！单击曲目，待加载完成后选择难度即开始游玩。";
+                    }
+                })
+            }
+            // new
+            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=2&5=1",
+                document.getElementById("beatmap-list-new"),
+                function(t){return (t.modes&1)!=0;}, 4);
+            // random
+            function genRandomList() {
+                // clear list
+                let list = document.getElementById("beatmap-list-random");
+                
+                // fill list
+                let randstart = Math.floor(Math.random()*20000);
+                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=10&1="+randstart+"&2=1&5=1", list,
+                    function(t){while (list.firstChild) list.removeChild(list.firstChild); return (t.modes&1)!=0;}, 4);
+            }
+            genRandomList();
+            // hot
+            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=4&1=0&2=1&5=1", document.getElementById("beatmap-list-hot"));
+            // liked
+            if (window.localforage) {
+                window.localforage.getItem("likedsidset", function(err, val){
+                    if (err) {
+                        document.getElementById("beatmap-list-liked").innerText = "收藏夹加载失败。";
+                        return;
+                    }
+                    if (val && val.size) {
+                        let listlike = document.getElementById("beatmap-list-liked");
+                        list = Array.from(val);
+                        for (let i=0; i<list.length && i<4; ++i)
+                            addBeatmapSid(list[i], listlike);
+                    }
+                    else {
+                        document.getElementById("beatmap-list-liked").innerText = "你还没有收藏一首歌曲哦！点击曲目右下角的爱心以收藏这个曲目。";
+                    }
+                });
+            }
+            else {
+                alert("localforage not supported")
+            }
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-169262247-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-169262247-1');
+</script>
+    </body>
+</html>
+
+<!-- attribution -->
+<!-- play icon made by https://www.flaticon.com/authors/those-icons -->
+<!-- search icon made by https://www.flaticon.com/authors/good-ware -->
