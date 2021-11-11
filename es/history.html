@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>游玩记录</title>
+        <title>osu!Web Online</title>
         <link rel="stylesheet" href="style/picnic.min.css">
         <link rel="stylesheet" type="text/css" href="style/main.css">
         <link rel="stylesheet" type="text/css" href="style/font.css">
@@ -11,23 +11,23 @@
     </head>
 
     <body>
-        <nav id="main-nav">
+          <nav id="main-nav">
             <div class="nav-link">
                 <a href="index.html" class="brand">Osaka Salmon University!</a>
-                <a href="new.html" class="pseudo button">最新</a>
-                <a href="hot.html" class="pseudo button">热门</a>
-                <a href="genre.html" class="pseudo button">分类</a>
+                <a href="new.html" class="pseudo button">Reciente</a>
+                <a href="hot.html" class="pseudo button">Popular</a>
+                <a href="genre.html" class="pseudo button">Buscar por clasificacion</a>
             </div>
             <div class="nav-search">
                 <form action="search.html">
-                    <input type="text" name="q" placeholder="谱面关键词或sid"/>
+                    <input type="text" name="q" placeholder="Buscar"/>
                     <input type="image" class="search-button" src="research.svg">
                 </form>
             </div>
             <div class="nav-tool">
-                <a href="local.html" class="pseudo button">收藏夹</a>
-                <a href="faq.html" class="pseudo button">常见问题</a>
-                <a href="settings.html" class="pseudo button">设置</a>
+                <a href="local.html" class="pseudo button">Favoritos</a>
+                <a href="faq.html" class="pseudo button">Preguntas frecuentes</a>
+                <a href="settings.html" class="pseudo button">Opciones</a>
                 <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">进入全屏</a>
             </div>
         </nav>
@@ -37,12 +37,12 @@
                 <table style="white-space: nowrap;">
                     <thead>
                         <tr>
-                            <td>歌曲</td>
-                            <td>连击</td>
-                            <td>分数</td>
-                            <td>评定</td>
+                            <td>Cancion</td>
+                            <td>Combo maximo</td>
+                            <td>Score</td>
+                            <td>Evaluacion</td>
                             <td>MODS</td>
-                            <td>时间</td>
+                            <td>Fecha</td>
                         </tr>
                     </thead>
                     <tbody id="history-list">
