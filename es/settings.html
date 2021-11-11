@@ -1,0 +1,315 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Opciones</title>
+        <link rel="stylesheet" type="text/css" href="style/main.css">
+        <link rel="icon" href="favicon.png">
+        <script src="scripts/lib/localforage.min.js"></script>
+        <script src="scripts/settings.js"></script>
+    </head>
+
+    <body>
+        <div class="main-page" id="main-page">
+            <div class="panel">
+                <!-- <h1>Settings</h1> -->
+                <table class="holder" id="settings-panel">
+                    <tr>
+                        <td>
+                            <h3>
+                                GAMEPLAY
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Brillo del fondo
+                            </div>
+                            <div class="option-control">
+                                <input id="dim-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="dim-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Desenfoque del fondo
+                            </div>
+                            <div class="option-control">
+                                <input id="blur-range" class="slider" type="range" min="0" max="8" value="0">
+                                <div class="range-indicator" id="blur-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Tamaño del cursor
+                            </div>
+                            <div class="option-control">
+                                <input id="cursorsize-range" class="slider" type="range" min="0.5" max="2.0" step="0.01" value="0.5">
+                                <div class="range-indicator" id="cursorsize-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name" title="less latency, but on some browsers donesn't display correctly">
+                                Usar el hardware para mostrar el cursor
+                            </div>
+                            <div class="option-control">
+                                <input id="showhwmouse-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Animacion de entrada de sliders
+                            </div>
+                            <div class="option-control">
+                                <input id="snakein-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Animacion de salida de sliders
+                            </div>
+                            <div class="option-control">
+                                <input id="snakeout-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <h3>
+                                INPUT
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name" title="So that you don't change volume accidentally">
+                                Desactivar rueda del mouse mientras juegas
+                            </div>
+                            <div class="option-control">
+                                <input id="disable-wheel-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name" title="So that you don't hit things accidentally">
+                                Desactivar botones del mouse mientras juegas
+                            </div>
+                            <div class="option-control">
+                                <input id="disable-button-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Boton izquierdo
+                            </div>
+                            <div class="option-control">
+                                <input id="lbutton1select" type="button" value="oops"/>
+                                <input type="button" value="M1"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Boton derecho 
+                            </div>
+                            <div class="option-control">
+                                <input id="rbutton1select" type="button" value="oops"/>
+                                <input type="button" value="M2"/>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <h3>
+                                AUDIO
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Volumen general
+                            </div>
+                            <div class="option-control">
+                                <input id="mastervolume-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="mastervolume-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Volumen de efectos
+                            </div>
+                            <div class="option-control">
+                                <input id="effectvolume-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="effectvolume-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Volumen de musica
+                            </div>
+                            <div class="option-control">
+                                <input id="musicvolume-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="musicvolume-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name disabled">
+                                Offset de la musica
+                            </div>
+                            <div class="option-control">
+                                <input id="audiooffset-range" class="slider" type="range" min="-80" max="80" value="-80">
+                                <div class="range-indicator" id="audiooffset-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name disabled">
+                                Usar sonidos de los mapas
+                            </div>
+                            <div class="option-control">
+                                <input id="beatmap-hitsound-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <h3>
+                                MODS
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name" title="This doesn't make things easier!">
+                                Easy
+                            </div>
+                            <div class="option-control">
+                                <input id="easy-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name" title="Everything gets slower...">
+                                Daycore
+                            </div>
+                            <div class="option-control">
+                                <input id="daycore-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name" title="Everything gets a bit harder...">
+                                Hard Rock
+                            </div>
+                            <div class="option-control">
+                                <input id="hardrock-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name" title="Play with no approach circles and fading circles/sliders">
+                                Hidden
+                            </div>
+                            <div class="option-control">
+                                <input id="hidden-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name" title="Everything gets faster...">
+                                Nightcore
+                            </div>
+                            <div class="option-control">
+                                <input id="nightcore-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name" title="Watch a perfect automated play">
+                                Autoplay
+                            </div>
+                            <div class="option-control">
+                                <input id="autoplay-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <h3>
+                                SKIN
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Ocultar los numeros de los circulos
+                            </div>
+                            <div class="option-control">
+                                <input id="hidenumbers-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                 Ocultar 300s
+                            </div>
+                            <div class="option-control">
+                                <input id="hidegreat-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Ocultar los puntos de seguimiento
+                            </div>
+                            <div class="option-control">
+                                <input id="hidefollowpoints-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <input id="restoredefault-btn" type="button" class="warnbtn" value="Restore all settings to default"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
