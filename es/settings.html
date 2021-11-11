@@ -1,0 +1,399 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>osu!Web Online</title>
+        <link rel="icon" href="favicon.png">
+        <link rel="stylesheet" href="style/picnic.min.css">
+        <link rel="stylesheet" type="text/css" href="style/main.css">
+        <link rel="stylesheet" type="text/css" href="style/font.css">
+        <script src="scripts/settings.js"></script>
+    </head>
+
+    <body>
+         <nav id="main-nav">
+            <div class="nav-link">
+                <a href="index.html" class="brand">Osaka Salmon University!</a>
+                <a href="new.html" class="pseudo button">Reciente</a>
+                <a href="hot.html" class="pseudo button">Popular</a>
+                <a href="genre.html" class="pseudo button">Buscar por clasificacion</a>
+            </div>
+            <div class="nav-search">
+                <form action="search.html">
+                    <input type="text" name="q" placeholder="Buscar"/>
+                    <input type="image" class="search-button" src="research.svg">
+                </form>
+            </div>
+            <div class="nav-tool">
+                <a href="local.html" class="pseudo button">Favoritos</a>
+                <a href="faq.html" class="pseudo button">Preguntas frecuentes</a>
+                <a href="settings.html" class="pseudo button">Opciones</a>
+                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">进入全屏</a>
+            </div>
+        </nav>
+        
+        <div class="main-page" id="main-page">
+            <div class="panel">
+                <!-- <h1>Settings</h1> -->
+                <table class="holder" id="settings-panel">
+                    <tr>
+                        <td>
+                            <h3>
+                                GAMEPLAY
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Oscurecer el fondo
+                            </div>
+                            <div class="option-control">
+                                <input id="dim-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="dim-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Difuminar el fondo
+                            </div>
+                            <div class="option-control">
+                                <input id="blur-range" class="slider" type="range" min="0" max="8" value="0">
+                                <div class="range-indicator" id="blur-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Tamaño del cursor
+                            </div>
+                            <div class="option-control">
+                                <input id="cursorsize-range" class="slider" type="range" min="0.5" max="2.0" step="0.01" value="0.5">
+                                <div class="range-indicator" id="cursorsize-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td title="减少光标延迟，但兼容性差，可能闪烁或无法显示">
+                            <div class="option-name">
+                                Usar el hardware para mostrar el cursor
+                            </div>
+                            <div class="option-control">
+                                <input id="showhwmouse-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Animacion de entrada en sliders
+                            </div>
+                            <div class="option-control">
+                                <input id="snakein-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Animacion de salida en sliders
+                            </div>
+                            <div class="option-control">
+                                <input id="snakeout-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Activar la pantalla completa automaticamente
+                            </div>
+                            <div class="option-control">
+                                <input id="autofullscreen-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Usar la resolucion del sistema
+                            </div>
+                            <div class="option-control">
+                                <input id="sysdpi-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Resolucion
+                            </div>
+                            <div class="option-control">
+                                <input id="dpi-range" class="slider" type="range" min="0.5" max="2.0" value="1.0" step="0.05">
+                                <div class="range-indicator" id="dpi-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <h3>
+                                INPUT
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td title="以避免偶然改变音量">
+                            <div class="option-name">
+                                Desactivar la rueda del mouse mientras juegas
+                            </div>
+                            <div class="option-control">
+                                <input id="disable-wheel-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td title="以避免偶然点击物体">
+                            <div class="option-name">
+                                Desactivar los botones del mouse mientras juegas
+                            </div>
+                            <div class="option-control">
+                                <input id="disable-button-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Boton izquierdo
+                            </div>
+                            <div class="option-control">
+                                <input id="lbutton1select" type="button" value="oops"/>
+                                <input type="button" value="M1"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Boton derecho
+                            </div>
+                            <div class="option-control">
+                                <input id="rbutton1select" type="button" value="oops"/>
+                                <input type="button" value="M2"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Boton de pausa
+                            </div>
+                            <div class="option-control">
+                                <input id="pausebuttonselect" type="button" value="oops"/>
+                                <input id="pausebutton2select" type="button" value="oops"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Boton de skip
+                            </div>
+                            <div class="option-control">
+                                <input id="skipbuttonselect" type="button" value="oops"/>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <h3>
+                                SONIDO
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Volumen general
+                            </div>
+                            <div class="option-control">
+                                <input id="mastervolume-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="mastervolume-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Volumen de efectos
+                            </div>
+                            <div class="option-control">
+                                <input id="effectvolume-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="effectvolume-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Volumen de la musica
+                            </div>
+                            <div class="option-control">
+                                <input id="musicvolume-range" class="slider" type="range" min="0" max="100" value="0">
+                                <div class="range-indicator" id="musicvolume-range-indicator" hidden></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr title="No lo uses si no estas seguro de que haya un retraso significativo en el audio">
+                        <td>
+                            <div class="option-name">
+                                Offset de la musica
+                            </div>
+                            <div class="option-control">
+                                <input id="audiooffset-range" class="slider" type="range" min="-50" max="50" value="-50">
+                                <div class="range-indicator" id="audiooffset-range-indicator" hidden></div>
+                            </div>
+                            <div style="font-size: 0.8em; color: #999; margin-top: 2.2em;">不建议使用！如使用请关闭打击音效，设为正值则使判定点相对于音乐延后。前往<a style="color: #8bc" href="https://bemuse.ninja/?mode=sync">bemuse sync</a>以判断键盘延迟。</div>
+                        </td>
+                    </tr>
+                    <tr hidden>
+                        <td>
+                            <div class="option-name disabled">
+                                Usar sonidos de los mapas
+                            </div>
+                            <div class="option-control">
+                                <input id="beatmap-hitsound-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <h3>
+                                MODS
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td title="Esto no sera mas facil...">
+                            <div class="option-name">
+                                Easy
+                            </div>
+                            <div class="option-control">
+                                <input id="easy-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td title="Todo ira un poco mas lento..">
+                            <div class="option-name">
+                                Daycore
+                            </div>
+                            <div class="option-control">
+                                <input id="daycore-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td title="Crees que tienes buenos reflejos? Demuestralo!">
+                            <div class="option-name">
+                                Hard Rock
+                            </div>
+                            <div class="option-control">
+                                <input id="hardrock-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td title="Esto hara el juego mas dificil de lo que crees...">
+                            <div class="option-name">
+                                Hidden
+                            </div>
+                            <div class="option-control">
+                                <input id="hidden-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td title="Modo veloz activado!">
+                            <div class="option-name">
+                                Nightcore
+                            </div>
+                            <div class="option-control">
+                                <input id="nightcore-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td title="Observa como la maquina juega por ti casi perfectamente">
+                            <div class="option-name">
+                                Autoplay
+                            </div>
+                            <div class="option-control">
+                                <input id="autoplay-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <h3>
+                                SKIN
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Ocultar los numeros de los circulos
+                            </div>
+                            <div class="option-control">
+                                <input id="hidenumbers-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Ocultar los golpes perfectos (300)
+                            </div>
+                            <div class="option-control">
+                                <input id="hidegreat-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="option-name">
+                                Ocultar los followpoints (unas lineas que marcan donde aparecera el siguuiente circulo)
+                            </div>
+                            <div class="option-control">
+                                <input id="hidefollowpoints-check" type="checkbox" /><span></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <input id="restoredefault-btn" type="button" class="warnbtn" value="全部恢复默认设置"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-169262247-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-169262247-1');
+</script>
+    </body>
+</html>
