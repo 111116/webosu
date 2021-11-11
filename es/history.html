@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>游玩记录</title>
+        <link rel="stylesheet" href="style/picnic.min.css">
+        <link rel="stylesheet" type="text/css" href="style/main.css">
+        <link rel="stylesheet" type="text/css" href="style/font.css">
+        <link rel="icon" href="favicon.png">
+        <script type="text/javascript" src="scripts/lib/localforage.min.js"></script>
+    </head>
+
+    <body>
+        <nav id="main-nav">
+            <div class="nav-link">
+                <a href="index.html" class="brand">Osaka Salmon University!</a>
+                <a href="new.html" class="pseudo button">最新</a>
+                <a href="hot.html" class="pseudo button">热门</a>
+                <a href="genre.html" class="pseudo button">分类</a>
+            </div>
+            <div class="nav-search">
+                <form action="search.html">
+                    <input type="text" name="q" placeholder="谱面关键词或sid"/>
+                    <input type="image" class="search-button" src="research.svg">
+                </form>
+            </div>
+            <div class="nav-tool">
+                <a href="local.html" class="pseudo button">收藏夹</a>
+                <a href="faq.html" class="pseudo button">常见问题</a>
+                <a href="settings.html" class="pseudo button">设置</a>
+                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">进入全屏</a>
+            </div>
+        </nav>
+
+        <div class="main-page" id="main-page">
+            <div class="main-content">
+                <table style="white-space: nowrap;">
+                    <thead>
+                        <tr>
+                            <td>歌曲</td>
+                            <td>连击</td>
+                            <td>分数</td>
+                            <td>评定</td>
+                            <td>MODS</td>
+                            <td>时间</td>
+                        </tr>
+                    </thead>
+                    <tbody id="history-list">
+                        <!-- will be filled in script -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            //*** This code is copyright 2002-2016 by Gavin Kistner, !@phrogz.net
+            //*** It is covered under the license viewable at http://phrogz.net/JS/_ReuseLicense.txt
+            //*** customFormat starts
+            Date.prototype.customFormat = function(formatString){
+                var YYYY,YY,MMMM,MMM,MM,M,DDDD,DDD,DD,D,hhhh,hhh,hh,h,mm,m,ss,s,ampm,AMPM,dMod,th;
+                var dateObject = this;
+                YY = ((YYYY=dateObject.getFullYear())+"").slice(-2);
+                MM = (M=dateObject.getMonth()+1)<10?('0'+M):M;
+                MMM = (MMMM=["January","February","March","April","May","June","July","August","September","October","November","December"][M-1]).substring(0,3);
+                DD = (D=dateObject.getDate())<10?('0'+D):D;
+                DDD = (DDDD=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dateObject.getDay()]).substring(0,3);
+                th=(D>=10&&D<=20)?'th':((dMod=D%10)==1)?'st':(dMod==2)?'nd':(dMod==3)?'rd':'th';
+                formatString = formatString.replace("#YYYY#",YYYY).replace("#YY#",YY).replace("#MMMM#",MMMM).replace("#MMM#",MMM).replace("#MM#",MM).replace("#M#",M).replace("#DDDD#",DDDD).replace("#DDD#",DDD).replace("#DD#",DD).replace("#D#",D).replace("#th#",th);
+
+                h=(hhh=dateObject.getHours());
+                if (h==0) h=24;
+                if (h>12) h-=12;
+                hh = h<10?('0'+h):h;
+              hhhh = hhh<10?('0'+hhh):hhh;
+                AMPM=(ampm=hhh<12?'am':'pm').toUpperCase();
+                mm=(m=dateObject.getMinutes())<10?('0'+m):m;
+                ss=(s=dateObject.getSeconds())<10?('0'+s):s;
+                return formatString.replace("#hhhh#",hhhh).replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
+            }
+            //*** customFormat ends
+
+            var list = document.getElementById("history-list");
+            function addEntry(summary) {
+                let tr = document.createElement("tr");
+                list.appendChild(tr);
+                function nexttd(content) {
+                    let td = document.createElement("td");
+                    tr.appendChild(td);
+                    if (content.tagName)
+                        td.appendChild(content);
+                    else
+                        td.innerText = content;
+                }
+                let title = document.createElement("a");
+                title.innerText = summary.title + " [" + summary.version + "]";
+                title.href = "search.html?q=" + (summary.sid || summary.title);
+                nexttd(title);
+                nexttd(summary.combo);
+                nexttd(summary.score);
+                nexttd(summary.grade);
+                nexttd(summary.mods);
+                nexttd(new Date(summary.time).customFormat("#D# #MMM# #hhhh#:#mm#"));
+            }
+            if (window.localforage) {
+                localforage.getItem("playhistory1000", function(err, item) {
+                    if (!err && item && item.length) {
+                        item = item.reverse();
+                        for (let i=0; i<item.length; ++i) {
+                            addEntry(item[i]);
+                        }
+                    }
+                })
+            }
+            else {
+                alert("localforage is not supported.")
+            }
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-169262247-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-169262247-1');
+</script>
+    </body>
+</html>
+
+<!-- attribution -->
+<!-- play icon made by https://www.flaticon.com/authors/those-icons -->
+<!-- search icon made by https://www.flaticon.com/authors/good-ware -->
