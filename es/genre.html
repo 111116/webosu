@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>戳泡泡</title>
+        <link rel="stylesheet" href="style/picnic.min.css">
+        <link rel="stylesheet" type="text/css" href="style/main.css">
+        <link rel="stylesheet" type="text/css" href="style/font.css">
+        <link rel="icon" href="favicon.png">
+        <script src="scripts/launchgame.js"></script>
+        <script src="scripts/downloader.js"></script>
+        <script src="scripts/addbeatmaplist.js"></script>
+        <script src="scripts/settings.js"></script>
+        <script src="scripts/jsloader.js"></script>
+    </head>
+
+    <body>
+        <div class="game-area" id="game-area" hidden>
+        </div>
+
+        <div class="pause-menu" id="pause-menu" hidden>
+            <div class="paused-title">paused</div>
+            <div class="button-list">
+                <div class="pausebutton continue" id="pausebtn-continue">
+                    <div class="inner">Continue</div>
+                </div>
+                <div class="pausebutton retry" id="pausebtn-retry">
+                    <div class="inner">Retry</div>
+                </div>
+                <div class="pausebutton quit" id="pausebtn-quit">
+                    <div class="inner">Quit</div>
+                </div>
+            </div>
+        </div>
+
+        <nav id="main-nav">
+            <div class="nav-link">
+                <a href="index.html" class="brand">Osaka Salmon University!</a>
+                <a href="new.html" class="pseudo button">最新</a>
+                <a href="hot.html" class="pseudo button">热门</a>
+                <a href="genre.html" class="pseudo button active">分类</a>
+            </div>
+            <div class="nav-search">
+                <form action="search.html">
+                    <input type="text" name="q" placeholder="谱面关键词或sid"/>
+                    <input type="image" class="search-button" src="research.svg">
+                </form>
+            </div>
+            <div class="nav-tool">
+                <a href="local.html" class="pseudo button">收藏夹</a>
+                <a href="faq.html" class="pseudo button">常见问题</a>
+                <a href="settings.html" class="pseudo button">设置</a>
+                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">进入全屏</a>
+            </div>
+        </nav>
+
+        <div class="main-page" id="main-page">
+            <div class="main-content">
+                <div class="sort-nav">
+                    <div class="title">风格</div>
+                    <div class="selitem" genre="1">全部</div>
+                    <div class="selitem" genre="4">游戏</div>
+                    <div class="selitem" genre="8">动漫</div>
+                    <div class="selitem" genre="16">摇滚</div>
+                    <div class="selitem" genre="32">流行</div>
+                    <div class="selitem" genre="128">新奇</div>
+                    <div class="selitem" genre="1024">电子</div>
+                    <div class="selitem" genre="2+64+256">其它</div>
+                </div>
+                <div class="sort-nav">
+                    <div class="title">语言</div>
+                    <div class="selitem" lang="1">全部</div>
+                    <div class="selitem" lang="16">汉语</div>
+                    <div class="selitem" lang="4">英语</div>
+                    <div class="selitem" lang="8">日语</div>
+                    <div class="selitem" lang="32">器乐</div>
+                    <div class="selitem" lang="64">韩语</div>
+                    <div class="selitem" lang="128">法语</div>
+                    <div class="selitem" lang="256">德语</div>
+                    <div class="selitem" lang="2048">意大利语</div>
+                    <div class="selitem" lang="512">瑞典语</div>
+                    <div class="selitem" lang="2+1024">其它</div>
+                </div>
+                <hr>
+
+                <div class="beatmap-list" id="beatmap-list">
+                    <!-- to be filled in script -->
+                </div>
+                <div class="button" style="width:100%; margin-bottom: 10px;" id="btnmore">加载更多</div>
+                <div class="text">推荐使用最新版本 Firefox 或 Chrome.</div>
+                <div class="text">内测版v1.4.3. <a href="https://github.com/111116/osu">Github</a></div>
+                <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
+            </div>
+            <!-- <div class="side-panel">
+                to be activated in script
+            </div> -->
+            <div class="statuslines" id="statuslines">
+                <div class="progress" id="script-progress">
+                    Scripts
+                    <div class="lds-dual-ring"></div>
+                </div>
+                <div class="progress" id="skin-progress">
+                    Skin
+                    <div class="lds-dual-ring"></div>
+                </div>
+                <div class="progress" id="sound-progress">
+                    Hitsounds
+                    <div class="lds-dual-ring"></div>
+                </div>
+            </div>
+        </div>
+        <script>
+            let btns = document.getElementsByClassName("selitem");
+            function search(genre, lang) {
+                // clear list
+                list = document.getElementById("beatmap-list");
+                document.getElementById("btnmore").innerText = "查看更多";
+                while (list.firstChild) {
+                    list.removeChild(list.firstChild);
+                }
+                addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1=0&2=4&5=1&7=" + genre + "&8=" + lang);
+                var cur = 20;
+                document.getElementById("btnmore").onclick = function() {
+                    if (typeof(window.list_endid) == "undefined") {
+                        addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+cur+"&2=4&5=1&7=" + genre + "&8=" + lang);
+                    }
+                    else {
+                        if (window.list_endid == 0)
+                            document.getElementById("btnmore").innerText = "已经没有更多了哦！";
+                        else
+                            addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+window.list_endid+"&2=4&5=1&7=" + genre + "&8=" + lang);
+                    }
+                    cur += 20;
+                }
+                // update buttons state
+                for (let i=0; i<btns.length; ++i) {
+                    let g = eval(btns[i].getAttribute("genre"));
+                    let l = eval(btns[i].getAttribute("lang"));
+                    if (g==genre || l==lang) {
+                        btns[i].classList.add("active");
+                    }
+                    else {
+                        btns[i].classList.remove("active");
+                    }
+                }
+            }
+            let curgenre = 1;
+            let curlang = 1;
+            search(curgenre, curlang);
+            for (let i=0; i<btns.length; ++i) {
+                btns[i].onclick = function() {
+                    let g = eval(btns[i].getAttribute("genre"));
+                    let l = eval(btns[i].getAttribute("lang"));
+                    if (g) curgenre = g;
+                    if (l) curlang = l;
+                    search(curgenre, curlang);
+                }
+            }
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-169262247-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-169262247-1');
+</script>
+    </body>
+</html>
+
+<!-- attribution -->
+<!-- play icon made by https://www.flaticon.com/authors/those-icons -->
+<!-- search icon made by https://www.flaticon.com/authors/good-ware -->
