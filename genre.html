@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>戳泡泡</title>
+        <title>OsuMATHS</title>
         <link rel="stylesheet" href="style/picnic.min.css">
         <link rel="stylesheet" type="text/css" href="style/main.css">
         <link rel="stylesheet" type="text/css" href="style/font.css">
@@ -36,9 +36,9 @@
         <nav id="main-nav">
             <div class="nav-link">
                 <a href="index.html" class="brand">Osaka Salmon University!</a>
-                <a href="new.html" class="pseudo button">最新</a>
-                <a href="hot.html" class="pseudo button">热门</a>
-                <a href="genre.html" class="pseudo button active">分类</a>
+                <a href="new.html" class="pseudo button">New</a>
+                <a href="hot.html" class="pseudo button">Popular</a>
+                <a href="genre.html" class="pseudo button active">Genre</a>
             </div>
             <div class="nav-search">
                 <form action="search.html">
@@ -47,49 +47,49 @@
                 </form>
             </div>
             <div class="nav-tool">
-                <a href="local.html" class="pseudo button">收藏夹</a>
-                <a href="faq.html" class="pseudo button">常见问题</a>
-                <a href="settings.html" class="pseudo button">设置</a>
-                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">进入全屏</a>
+                <a href="local.html" class="pseudo button">Favorites</a>
+                <a href="faq.html" class="pseudo button">problems</a>
+                <a href="settings.html" class="pseudo button">settings</a>
+                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">Go to full screen</a>
             </div>
         </nav>
 
         <div class="main-page" id="main-page">
             <div class="main-content">
                 <div class="sort-nav">
-                    <div class="title">风格</div>
-                    <div class="selitem" genre="1">全部</div>
-                    <div class="selitem" genre="4">游戏</div>
-                    <div class="selitem" genre="8">动漫</div>
-                    <div class="selitem" genre="16">摇滚</div>
-                    <div class="selitem" genre="32">流行</div>
-                    <div class="selitem" genre="128">新奇</div>
-                    <div class="selitem" genre="1024">电子</div>
-                    <div class="selitem" genre="2+64+256">其它</div>
+                    <div class="title">style:</div>
+                    <div class="selitem" genre="1">all</div>
+                    <div class="selitem" genre="4">game</div>
+                    <div class="selitem" genre="8">anime</div>
+                    <div class="selitem" genre="16">rock</div>
+                    <div class="selitem" genre="32">popularity</div>
+                    <div class="selitem" genre="128">novel</div>
+                    <div class="selitem" genre="1024">electron</div>
+                    <div class="selitem" genre="2+64+256">other</div>
                 </div>
                 <div class="sort-nav">
-                    <div class="title">语言</div>
-                    <div class="selitem" lang="1">全部</div>
-                    <div class="selitem" lang="16">汉语</div>
-                    <div class="selitem" lang="4">英语</div>
-                    <div class="selitem" lang="8">日语</div>
-                    <div class="selitem" lang="32">器乐</div>
-                    <div class="selitem" lang="64">韩语</div>
-                    <div class="selitem" lang="128">法语</div>
-                    <div class="selitem" lang="256">德语</div>
-                    <div class="selitem" lang="2048">意大利语</div>
-                    <div class="selitem" lang="512">瑞典语</div>
-                    <div class="selitem" lang="2+1024">其它</div>
+                    <div class="title">language:</div>
+                    <div class="selitem" lang="1">all</div>
+                    <div class="selitem" lang="16">chinese</div>
+                    <div class="selitem" lang="4">english</div>
+                    <div class="selitem" lang="8">japanese</div>
+                    <div class="selitem" lang="32">instrumental music</div>
+                    <div class="selitem" lang="64">korean</div>
+                    <div class="selitem" lang="128">french</div>
+                    <div class="selitem" lang="256">german</div>
+                    <div class="selitem" lang="2048">italian</div>
+                    <div class="selitem" lang="512">swedish</div>
+                    <div class="selitem" lang="2+1024">other</div>
                 </div>
                 <hr>
 
                 <div class="beatmap-list" id="beatmap-list">
                     <!-- to be filled in script -->
                 </div>
-                <div class="button" style="width:100%; margin-bottom: 10px;" id="btnmore">加载更多</div>
-                <div class="text">推荐使用最新版本 Firefox 或 Chrome.</div>
-                <div class="text">内测版v1.4.3. <a href="https://github.com/111116/osu">Github</a></div>
-                <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
+                <div class="button" style="width:100%; margin-bottom: 10px;" id="btnmore">load more</div>
+                <div class="text">It is recommended to use the latest version of Firefox or Chrome.</div>
+                <div class="text">nternal beta version v1.4.3. <a href="https://github.com/111116/osu">Github</a></div>
+                <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>Provide music charts</div>
             </div>
             <!-- <div class="side-panel">
                 to be activated in script
@@ -114,7 +114,7 @@
             function search(genre, lang) {
                 // clear list
                 list = document.getElementById("beatmap-list");
-                document.getElementById("btnmore").innerText = "查看更多";
+                document.getElementById("btnmore").innerText = "see more";
                 while (list.firstChild) {
                     list.removeChild(list.firstChild);
                 }
@@ -126,7 +126,7 @@
                     }
                     else {
                         if (window.list_endid == 0)
-                            document.getElementById("btnmore").innerText = "已经没有更多了哦！";
+                            document.getElementById("btnmore").innerText = "There is no more！";
                         else
                             addBeatmapList("https://api.sayobot.cn/beatmaplist?0=20&1="+window.list_endid+"&2=4&5=1&7=" + genre + "&8=" + lang);
                     }

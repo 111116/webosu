@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>常见问题</title>
+        <title>OsuMATHS</title>
         <link rel="stylesheet" href="style/picnic.min.css">
         <link rel="stylesheet" type="text/css" href="style/main.css">
         <!-- <link href="//fonts.googleapis.com/css?family=Exo+2:400,600italic" rel="stylesheet" type="text/css"> -->
@@ -14,9 +14,9 @@
         <nav id="main-nav">
             <div class="nav-link">
                 <a href="index.html" class="brand">Osaka Salmon University!</a>
-                <a href="new.html" class="pseudo button">最新</a>
-                <a href="hot.html" class="pseudo button">热门</a>
-                <a href="genre.html" class="pseudo button">分类</a>
+                <a href="new.html" class="pseudo button">New</a>
+                <a href="hot.html" class="pseudo button">Popular</a>
+                <a href="genre.html" class="pseudo button">Genre</a>
             </div>
             <div class="nav-search">
                 <form action="search.html">
@@ -25,51 +25,54 @@
                 </form>
             </div>
             <div class="nav-tool">
-                <a href="local.html" class="pseudo button">收藏夹</a>
-                <a href="faq.html" class="pseudo button active">常见问题</a>
-                <a href="settings.html" class="pseudo button">设置</a>
-                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">进入全屏</a>
+                <a href="local.html" class="pseudo button">Favorites</a>
+                <a href="faq.html" class="pseudo button active">problems</a>
+                <a href="settings.html" class="pseudo button">settings</a>
+                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">Go to full screen</a>
             </div>
         </nav>
 
         <div class="main-page" id="main-page">
             <div class="main-content">
                 <div class="faqentry">
-                    <h2>这游戏怎么玩？</h2>
-                    按键默认是鼠标左右键和Z、X键，可以在设置中修改。
-                    游戏屏幕上出现的圆片称为打击圈。当打击圈外侧的圆圈缩小并刚好落到打击圈上时，点击打击圈。
-                    有些打击圈带有一条滑条，你需要按住打击圈不放，并跟随其移动。
-                    当屏幕上出现一个大圆盘时，按住按键绕圆心快速转动。
+                    <h2>How to play this game？</h2>
+                    By default, the buttons are the left and right mouse buttons and the Z and X buttons, which can be modified in the settings.
+                    The disc that appears on the game screen is called a striking circle. When the circle on the outside of the strike circle shrinks and falls just on the strike circle, tap the strike circle.
+                    Some circles come with a slider that you hold down and follow as it moves.
+                    When a large disc appears on the screen, press and hold the button to quickly rotate around the center of the circle. By default, the buttons are the left and right mouse buttons and the Z and X buttons, which can be modified in the settings.
+                    The disc that appears on the game screen is called a striking circle. When the circle on the outside of the strike circle shrinks and falls just on the strike circle, tap the strike circle.
+                    Some circles come with a slider that you hold down and follow as it moves.
+                    When a large disc appears on the screen, press and hold the button to quickly rotate around the center of the circle.
                 </div>
                 <div class="faqentry">
-                    <h2>光标移动好像有点延迟？</h2>
-                    试着在设置中启用硬件光标，这可以降低光标反馈的延迟。不过在有些操作系统或浏览器中可能出现闪烁或无法显示光标等问题，因此默认是关闭的。此外，目前硬件光标的光标大小调整只有固定3档，在0.65以下显示为最小，在0.95以上显示为最大。
+                    <h2>Cursor movement seems to be a bit delayed？</h2>
+                    Try enabling the hardware cursor in the settings, this will reduce the latency of the cursor feedback. However, in some operating systems or browsers, there may be problems such as flickering or not displaying the cursor, so it is turned off by default. In addition, at present, the cursor size of the hardware cursor is only fixed in 3 stops, which is displayed as the smallest below 0.65 and the largest above 0.95.
                 </div>
                 <div class="faqentry">
-        			<h2>游戏玩起来非常卡，怎么办？</h2>
-        			可以在设置中取消勾选“使用系统分辨率”，并将分辨率设为比系统缩放更低的值（笔记本电脑或高分辨率屏幕的电脑系统缩放通常超过100%）。建议避免CPU占用过高，关闭类似360的杀毒软件/电脑管家，试着关闭浏览器的其它标签页并重启浏览器。请确保使用的是主流的现代浏览器（如Firefox，Chrome）。如果还是卡，请<a href="https://github.com/111116/osu">提issue</a>。
+        			<h2>The game is very stuck, what to do？</h2>
+        			You can uncheck "Use system resolution" in the settings and set the resolution to a lower value than the system scale (the computer system scale for laptops or high-resolution screens is usually more than 100%). It is recommended to avoid excessive CPU usage, close an antivirus software like 360/PC Manager, and try closing other tabs in the browser and restarting the browser. Make sure you are using a mainstream modern browser (e.g. Firefox, Chrome). If it's still a card, please<a href="https://github.com/111116/osu">提issue</a>。
                 </div>
                 <div class="faqentry">
-                    <h2>为什么网页上什么都没显示？</h2>
-                    可能是提供谱面的镜像站出错了。您可以发现镜像站<a href="https://osu.sayobot.cn/home/new">Sayobot</a>主页上也没有任何内容。如果是这样，您可以联系镜像站的站长恢复。
+                    <h2>Why nothing is displayed on the web page？</h2>
+                    It could be that the mirror station that provided the beatmap was wrong. You can discover the mirror station<a href="https://osu.sayobot.cn/home/new">Sayobot</a>There is also no content on the homepage. If so, you can contact the webmaster of the mirror site to restore it.
                     <!--此外，您可以将谱面加入收藏夹，游玩已收藏谱面不受镜像站出错影响。-->
                 </div>
                 <div class="faqentry">
-                    <h2>我电脑上的下载器(IDM)弹出好多弹窗！</h2>
-                    本站使用XHR加载音画资源。请设置下载器(IDM)为在本站禁用。
+                    <h2>There are a lot of pop-ups on the downloader (IDM) on my computer！</h2>
+                    This site uses XHR to load audio and video resources. Please set the Downloader (IDM) to be disabled on this site。
                 </div>
                 <div class="faqentry">
-                    <h2>能不能从本地上传谱面？</h2>
-                    此功能还在开发中。您可以搜索谱库中已有的谱面。
+                    <h2>Is it possible to upload beatmaps locally？</h2>
+                    This feature is still under development. You can search for beatmaps that are already in the library.
                     <!-- 可以。您可以在“已收藏”谱面列表里找到添加本地谱面的入口。您添加的本地谱面只有您自己能够看到。 -->
                 </div>
                 <div class="faqentry">
-                    <h2>音画不同步？</h2>
-                    请<a href="https://github.com/111116/osu">提issue</a>。
+                    <h2>The sound and picture are out of sync？</h2>
+                    please<a href="https://github.com/111116/osu">提issue</a>。
                 </div>
 
                 <div class="faqentry">
-                    <h2>其他问题？</h2>
+                    <h2>Miscellaneous questions？</h2>
                     请<a href="https://github.com/111116/osu">提issue</a>。
                 </div>
             </div>

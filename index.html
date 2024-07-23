@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>戳泡泡</title>
+        <title>OsuMATHS</title>
         <link rel="stylesheet" href="style/picnic.min.css">
         <link rel="stylesheet" type="text/css" href="style/main.css">
         <!-- <link href="//fonts.googleapis.com/css?family=Exo+2:400,600italic" rel="stylesheet" type="text/css"> -->
@@ -38,9 +38,9 @@
         <nav id="main-nav">
             <div class="nav-link">
                 <a href="index.html" class="brand">Osaka Salmon University!</a>
-                <a href="new.html" class="pseudo button">最新</a>
-                <a href="hot.html" class="pseudo button">热门</a>
-                <a href="genre.html" class="pseudo button">分类</a>
+                <a href="new.html" class="pseudo button">New</a>
+                <a href="hot.html" class="pseudo button">Popular</a>
+                <a href="genre.html" class="pseudo button">Genre</a>
             </div>
             <div class="nav-search">
                 <form action="search.html">
@@ -49,33 +49,33 @@
                 </form>
             </div>
             <div class="nav-tool">
-                <a href="local.html" class="pseudo button">收藏夹</a>
-                <a href="faq.html" class="pseudo button">常见问题</a>
-                <a href="settings.html" class="pseudo button">设置</a>
-                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">进入全屏</a>
+                <a href="local.html" class="pseudo button">Favorites</a>
+                <a href="faq.html" class="pseudo button">problems</a>
+                <a href="settings.html" class="pseudo button">settings</a>
+                <a onclick="document.documentElement.requestFullscreen();" class="pseudo button">Go to full screen</a>
             </div>
         </nav>
 
         <div class="main-page" id="main-page">
             <div class="main-content">
                 <div class="announcement">
-                    公告：请考虑<a href="https://osu.sayobot.cn/support">支持Sayobot</a>！Sayobot是本站的谱面源，请给服务器续命❤️
+                    Announcement: Please consider<a href="https://osu.sayobot.cn/support">Support Sayobot</a>！Sayobot is the beat chart source of this site，Please renew the server life❤️
                     <a href="https://paypal.me/Sayobot">Donate with Paypal</a>
                 </div>
                 <br>
                 <div class="index-area">
-                    <h2>发生了什么</h2>
+                    <h2>what happened</h2>
                     <hr/>
                     <table>
                         <thead>
                             <tr>
-                                <td>玩家</td>
-                                <td>歌曲</td>
-                                <td>连击</td>
-                                <td>分数</td>
-                                <td>准确率</td>
+                                <td>Player</td>
+                                <td>Song</td>
+                                <td>Batter</td>
+                                <td>Fraction</td>
+                                <td>Accuracy</td>
                                 <td>MODS</td>
-                                <td>时间</td>
+                                <td>time</td>
                             </tr>
                         </thead>
                         <tbody id="activity-list">
@@ -84,52 +84,52 @@
                     </table>
                 </div>
                 <div class="index-area">
-                    <h2>随机曲目</h2>
-                    <a onclick="genRandomList()" class="more" style="cursor:pointer;">换一换</a>
+                    <h2>Random track</h2>
+                    <a onclick="genRandomList()" class="more" style="cursor:pointer;">change it</a>
                     <hr/>
                     <div class="beatmap-list" id="beatmap-list-random">
                         <!-- to be filled in script -->
                     </div>
                 </div>
                 <div class="index-area">
-                    <h2>最近游玩</h2>
-                    <a href="history.html" class="more">查看自己的游玩记录</a>
+                    <h2>Recently visited</h2>
+                    <a href="history.html" class="more">View your play history</a>
                     <hr/>
                     <div class="beatmap-list" id="beatmap-list-history">
                         <!-- to be filled in script -->
                     </div>
                 </div>
                 <div class="index-area">
-                    <h2>最新曲目</h2>
-                    <a href="new.html" class="more">查看更多最新曲目</a>
+                    <h2>Latest tracks</h2>
+                    <a href="new.html" class="more">Check out more latest tracks</a>
                     <hr/>
                     <div class="beatmap-list" id="beatmap-list-new">
                         <!-- to be filled in script -->
                     </div>
                 </div>
                 <div class="index-area">
-                    <h2>已收藏曲目</h2>
-                    <a href="local.html" class="more">查看更多已收藏曲目</a>
+                    <h2>Collected tracks</h2>
+                    <a href="local.html" class="more">View more favorited tracks</a>
                     <hr/>
                     <div class="beatmap-list" id="beatmap-list-liked">
                         <!-- to be filled in script -->
                     </div>
                 </div>
                 <div class="index-area">
-                    <h2>热门曲目</h2>
-                    <a href="hot.html" class="more">查看更多热门曲目</a>
+                    <h2>Hot tracks</h2>
+                    <a href="hot.html" class="more">Check out more popular tracks</a>
                     <hr/>
                     <div class="beatmap-list" id="beatmap-list-hot">
                         <!-- to be filled in script -->
                     </div>
                 </div>
                 <div class="text">
-                    <a href="https://osu.sayobot.cn/support">支持小夜</a>！请给服务器续命❤️
+                    <a href="https://osu.sayobot.cn/support">Support Xiao Ye</a>！Please renew the server life❤️
                     <a href="https://paypal.me/Sayobot">Donate to Sayobot with Paypal</a>
                 </div>
-                <div class="text">推荐使用最新版本 Firefox 或 Chrome.</div>
-                <div class="text">内测版v1.4.3. <a href="https://github.com/111116/osu">Github</a></div>
-                <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>提供谱面</div>
+                <div class="text">It is recommended to use the latest version of Firefox or Chrome.</div>
+                <div class="text">Internal beta version v1.4.3. <a href="https://github.com/111116/osu">Github</a></div>
+                <div class="text">由<a href="https://osu.sayobot.cn/">Sayobot</a>provide music charts</div>
             </div>
             
             <div class="statuslines" id="statuslines">
@@ -212,7 +212,7 @@
                 let listhistory = document.getElementById("beatmap-list-history");
                 localforage.getItem("playhistory1000", function(err, item) {
                     if (err) {
-                        listhistory.innerText = "游玩记录加载失败";
+                        listhistory.innerText = "Failed to load your play history";
                         return;
                     }
                     if (item && item.length) {
@@ -227,7 +227,7 @@
                             addBeatmapSid(sid[i], listhistory)
                     }
                     else {
-                        listhistory.innerText = "你还没有玩过一首歌曲哦！单击曲目，待加载完成后选择难度即开始游玩。";
+                        listhistory.innerText = "You haven't played a song yet! Click on the track, select the difficulty when the load is complete, and start playing.";
                     }
                 })
             }
@@ -252,7 +252,7 @@
             if (window.localforage) {
                 window.localforage.getItem("likedsidset", function(err, val){
                     if (err) {
-                        document.getElementById("beatmap-list-liked").innerText = "收藏夹加载失败。";
+                        document.getElementById("beatmap-list-liked").innerText = "Favorites failed to load。";
                         return;
                     }
                     if (val && val.size) {
@@ -262,7 +262,7 @@
                             addBeatmapSid(list[i], listlike);
                     }
                     else {
-                        document.getElementById("beatmap-list-liked").innerText = "你还没有收藏一首歌曲哦！点击曲目右下角的爱心以收藏这个曲目。";
+                        document.getElementById("beatmap-list-liked").innerText = "You haven't bookmarked a song yet! Click on the heart in the bottom right corner of the track to bookmark it.";
                     }
                 });
             }
